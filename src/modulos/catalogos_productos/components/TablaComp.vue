@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="bodegas"
+        :rows="catalogos"
         :columns="columns"
         :filter="filter"
         :loading="loading"
@@ -35,7 +35,7 @@
                   icon="edit"
                   @click="editar(col.value)"
                 >
-                  <q-tooltip>Editar bodega</q-tooltip>
+                  <q-tooltip>Editar catálogo</q-tooltip>
                 </q-btn>
                 <q-btn
                   flat
@@ -44,7 +44,7 @@
                   icon="delete"
                   @click="eliminar(col.value)"
                 >
-                  <q-tooltip>Eliminar bodega</q-tooltip>
+                  <q-tooltip>Eliminar catálogo</q-tooltip>
                 </q-btn>
               </div>
               <label v-else>{{ col.value }}</label>
@@ -60,31 +60,39 @@ import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { onBeforeMount, ref } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
-import { useBodegaStore } from "../../../stores/bodega_store";
+import { useCatalogoProductoStore } from "../../../stores/catalogos_producto_store";
 
 const $q = useQuasar();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
-const bodegaStore = useBodegaStore();
-const { bodegas } = storeToRefs(bodegaStore);
+const catalagoStore = useCatalogoProductoStore();
+const { catalogos } = storeToRefs(catalagoStore);
 
 onBeforeMount(() => {
-  bodegaStore.loadInformacionBodega();
+  catalagoStore.loadInformacionCatalago();
+  console.log("on", catalogos);
 });
 
 const columns = [
   {
+    name: "clave",
+    align: "center",
+    label: "Clave del catálogo",
+    field: "clave",
+    sortable: true,
+  },
+  {
     name: "nombre",
     align: "center",
-    label: "Nombre de la bodega",
+    label: "Nombre del catálogo",
     field: "nombre",
     sortable: true,
   },
   {
-    name: "area",
+    name: "nombre_Corto",
     align: "center",
-    label: "Área responsable de la bodega",
-    field: "area",
+    label: "Nombre corto del catálogo",
+    field: "nombre_Corto",
     sortable: true,
   },
   {
@@ -108,15 +116,15 @@ const filter = ref("");
 
 const editar = async (id) => {
   $q.loading.show();
-  await bodegaStore.loadBodega(id);
-  bodegaStore.updateEditar(true);
-  bodegaStore.actualizarModal(true);
+  await catalagoStore.loadCatalago(id);
+  catalagoStore.updateEditar(true);
+  catalagoStore.actualizarModal(true);
   $q.loading.hide();
 };
 const eliminar = async (id) => {
   $q.dialog({
-    title: "Eliminar bodega",
-    message: "¿Está seguro de eliminar la bodega?",
+    title: "Eliminar catalogo",
+    message: "¿Está seguro de eliminar el catálogo?",
     icon: "Warning",
     persistent: true,
     transitionShow: "scale",
@@ -131,14 +139,14 @@ const eliminar = async (id) => {
     },
   }).onOk(async () => {
     $q.loading.show();
-    const resp = await bodegaStore.deleteBodega(id);
+    const resp = await catalagoStore.deleteCatalogo(id);
     if (resp.success) {
       $q.loading.hide();
       $q.notify({
         type: "positive",
         message: resp.data,
       });
-      bodegaStore.loadInformacionBodega();
+      catalagoStore.loadInformacionCatalago();
     } else {
       $q.loading.hide();
       $q.notify({

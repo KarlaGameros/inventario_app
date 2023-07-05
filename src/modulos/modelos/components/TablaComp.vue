@@ -2,11 +2,10 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="bodegas"
+        :rows="modelos"
         :columns="columns"
         :filter="filter"
         :loading="loading"
-        :pagination="pagination"
         row-key="id"
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
@@ -55,42 +54,40 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { storeToRefs } from "pinia";
+import { useModeloStore } from "../../../stores/modelo_store";
 import { useQuasar } from "quasar";
 import { onBeforeMount, ref } from "vue";
-import { useAuthStore } from "../../../stores/auth_store";
-import { useBodegaStore } from "../../../stores/bodega_store";
 
 const $q = useQuasar();
-const authStore = useAuthStore();
-const { modulo } = storeToRefs(authStore);
-const bodegaStore = useBodegaStore();
-const { bodegas } = storeToRefs(bodegaStore);
+const modeloStore = useModeloStore();
+const { modelos } = storeToRefs(modeloStore);
 
 onBeforeMount(() => {
-  bodegaStore.loadInformacionBodega();
+  modeloStore.loadInformacionModelo();
 });
 
 const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre de la bodega",
+    label: "Nombre del modelo",
     field: "nombre",
     sortable: true,
   },
   {
-    name: "area",
+    name: "marca",
     align: "center",
-    label: "Área responsable de la bodega",
-    field: "area",
+    label: "Marca",
+    field: "Marca",
     sortable: true,
   },
   {
     name: "id",
     align: "center",
-    label: "Opciones",
+    label: "Acciones",
     field: "id",
     sortable: false,
   },
@@ -108,15 +105,15 @@ const filter = ref("");
 
 const editar = async (id) => {
   $q.loading.show();
-  await bodegaStore.loadBodega(id);
-  bodegaStore.updateEditar(true);
-  bodegaStore.actualizarModal(true);
+  //await marcaStore.loadMarca(id)
+  modeloStore.actualizarModal(true);
   $q.loading.hide();
 };
+
 const eliminar = async (id) => {
   $q.dialog({
-    title: "Eliminar bodega",
-    message: "¿Está seguro de eliminar la bodega?",
+    title: "Eliminar marca",
+    message: "¿Está seguro de eliminar el modelo?",
     icon: "Warning",
     persistent: true,
     transitionShow: "scale",
@@ -130,22 +127,9 @@ const eliminar = async (id) => {
       label: " No Cancelar",
     },
   }).onOk(async () => {
-    $q.loading.show();
-    const resp = await bodegaStore.deleteBodega(id);
-    if (resp.success) {
-      $q.loading.hide();
-      $q.notify({
-        type: "positive",
-        message: resp.data,
-      });
-      bodegaStore.loadInformacionBodega();
-    } else {
-      $q.loading.hide();
-      $q.notify({
-        type: "negative",
-        message: resp.data,
-      });
-    }
+    console.log("eliminar", id);
   });
 };
 </script>
+
+<style></style>

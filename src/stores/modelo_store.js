@@ -1,50 +1,45 @@
 import { defineStore } from "pinia";
 import { api } from "src/boot/axios";
 
-export const useMarcaStore = defineStore("marcas", {
+export const useModeloStore = defineStore("modelos", {
   state: () => ({
     modal: false,
     isEditar: false,
-    listMarca: [],
+    listModelo: [],
+    modelos: [],
     marcas: [],
-    marca: {
+    modelo: {
       id: null,
-      name: null,
+      marca_id: null,
+      nombre: null,
     },
   }),
   actions: {
-    initMarca() {
-      this.marca.id = null;
-      this.marca.nombre = null;
+    initModelo() {
+      this.modelo.id = null;
+      this.modelo.nombre = null;
+      this.modelo.marca_id = null;
     },
 
     //-----------------------------------------------------------
-    async loadInformacionMarca() {
+    async loadInformacionModelo() {
       try {
-        let resp = await fetch("api.json");
+        let resp = await fetch("apiModelo.json");
         let data = await resp.json();
         console.log("data", data);
-        let listMarca = data.map((marca) => {
+        let listModelo = data.map((modelo) => {
           return {
-            id: marca.id,
-            nombre: marca.name,
+            id: modelo.id,
+            nombre: modelo.name,
           };
         });
-        this.marcas = listMarca;
+        this.modelos = listModelo;
       } catch (error) {
         console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
         };
-      }
-    },
-
-    //-----------------------------------------------------------
-    async loadMarca(id) {
-      try {
-      } catch (error) {
-        console.log(error);
       }
     },
 

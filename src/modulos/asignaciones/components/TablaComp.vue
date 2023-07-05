@@ -24,7 +24,7 @@
             </template>
           </q-input>
         </template>
-        <template v-slot:body="props">
+        <template>
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'id'">
@@ -35,7 +35,7 @@
                   icon="edit"
                   @click="editar(col.value)"
                 >
-                  <q-tooltip>Editar bodega</q-tooltip>
+                  <q-tooltip>Editar asignación</q-tooltip>
                 </q-btn>
                 <q-btn
                   flat
@@ -44,7 +44,7 @@
                   icon="delete"
                   @click="eliminar(col.value)"
                 >
-                  <q-tooltip>Eliminar bodega</q-tooltip>
+                  <q-tooltip>Eliminar asignación</q-tooltip>
                 </q-btn>
               </div>
               <label v-else>{{ col.value }}</label>
@@ -55,42 +55,36 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
-import { onBeforeMount, ref } from "vue";
-import { useAuthStore } from "../../../stores/auth_store";
-import { useBodegaStore } from "../../../stores/bodega_store";
+import { useAsignacionStore } from "src/stores/asignacion_store";
+import { ref } from "vue";
 
 const $q = useQuasar();
-const authStore = useAuthStore();
-const { modulo } = storeToRefs(authStore);
-const bodegaStore = useBodegaStore();
-const { bodegas } = storeToRefs(bodegaStore);
-
-onBeforeMount(() => {
-  bodegaStore.loadInformacionBodega();
-});
+const asignacionStore = useAsignacionStore();
+const { asignaciones } = storeToRefs(asignacionStore);
 
 const columns = [
   {
     name: "nombre",
     align: "center",
-    label: "Nombre de la bodega",
+    label: "Nombre del modelo",
     field: "nombre",
     sortable: true,
   },
   {
-    name: "area",
+    name: "marca",
     align: "center",
-    label: "Área responsable de la bodega",
-    field: "area",
+    label: "Marca",
+    field: "Marca",
     sortable: true,
   },
   {
     name: "id",
     align: "center",
-    label: "Opciones",
+    label: "Acciones",
     field: "id",
     sortable: false,
   },
@@ -105,47 +99,6 @@ const pagination = ref({
 });
 
 const filter = ref("");
-
-const editar = async (id) => {
-  $q.loading.show();
-  await bodegaStore.loadBodega(id);
-  bodegaStore.updateEditar(true);
-  bodegaStore.actualizarModal(true);
-  $q.loading.hide();
-};
-const eliminar = async (id) => {
-  $q.dialog({
-    title: "Eliminar bodega",
-    message: "¿Está seguro de eliminar la bodega?",
-    icon: "Warning",
-    persistent: true,
-    transitionShow: "scale",
-    transitionHide: "scale",
-    ok: {
-      color: "positive",
-      label: "¡Sí!, eliminar",
-    },
-    cancel: {
-      color: "negative",
-      label: " No Cancelar",
-    },
-  }).onOk(async () => {
-    $q.loading.show();
-    const resp = await bodegaStore.deleteBodega(id);
-    if (resp.success) {
-      $q.loading.hide();
-      $q.notify({
-        type: "positive",
-        message: resp.data,
-      });
-      bodegaStore.loadInformacionBodega();
-    } else {
-      $q.loading.hide();
-      $q.notify({
-        type: "negative",
-        message: resp.data,
-      });
-    }
-  });
-};
 </script>
+
+<style></style>

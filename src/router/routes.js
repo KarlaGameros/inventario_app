@@ -14,6 +14,27 @@ const routes = [
         name: "bodegas",
         component: () => import("../modulos/bodegas/pages/IndexPage"),
       },
+      {
+        path: "/modelos",
+        name: "modelos",
+        component: () => import("../modulos/modelos/pages/IndexPage"),
+      },
+      {
+        path: "/inventario",
+        name: "inventario",
+        component: () => import("../modulos/inventario/pages/IndexPage"),
+      },
+      {
+        path: "/catalogos",
+        name: "catalogos",
+        component: () =>
+          import("../modulos/catalogos_productos/pages/IndexPage"),
+      },
+      {
+        path: "/asignaciones",
+        name: "asignaciones",
+        component: () => import("../modulos/asignaciones/pages/IndexPage"),
+      },
     ],
   },
 

@@ -42,7 +42,7 @@
               :header-inset-level="2"
             >
               <q-item-section avatar>
-                <q-icon name="warehouse" color="purple-ieen" />
+                <q-icon name="library_books" color="purple-ieen" />
               </q-item-section>
               <q-item-section>
                 <q-item-label class="text-purple-ieen label-title text-bold"
@@ -50,6 +50,7 @@
                 >
               </q-item-section>
             </q-item>
+
             <q-item
               :to="{ name: 'bodegas' }"
               :content-inset-level="2"
@@ -64,7 +65,59 @@
                 >
               </q-item-section>
             </q-item>
+
+            <q-item
+              :to="{ name: 'modelos' }"
+              :content-inset-level="2"
+              :header-inset-level="2"
+            >
+              <q-item-section avatar>
+                <q-icon name="wysiwyg" color="purple-ieen" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-purple-ieen label-title text-bold"
+                  >Modelo</q-item-label
+                >
+              </q-item-section>
+            </q-item>
+
+            <q-item
+              :to="{ name: 'catalogos' }"
+              :content-inset-level="2"
+              :header-inset-level="2"
+            >
+              <q-item-section avatar>
+                <q-icon name="list_alt" color="purple-ieen" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-purple-ieen label-title text-bold"
+                  >Catálogo de productos</q-item-label
+                >
+              </q-item-section>
+            </q-item>
           </q-expansion-item>
+
+          <q-item :to="{ name: 'inventario' }">
+            <q-item-section avatar>
+              <q-icon name="inventory" color="purple-ieen" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-purple-ieen label-title text-bold"
+                >Inventario</q-item-label
+              >
+            </q-item-section>
+          </q-item>
+
+          <q-item :to="{ name: 'asignaciones' }">
+            <q-item-section avatar>
+              <q-icon name="add_box" color="purple-ieen" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-purple-ieen label-title text-bold"
+                >Asignaciones</q-item-label
+              >
+            </q-item-section>
+          </q-item>
         </q-list>
       </q-scroll-area>
 
@@ -99,53 +152,11 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
-import EssentialLink from "components/EssentialLink.vue";
-
-const linksList = [
-  {
-    title: "Docs",
-    caption: "quasar.dev",
-    icon: "school",
-    link: "https://quasar.dev",
-  },
-  {
-    title: "Github",
-    caption: "github.com/quasarframework",
-    icon: "code",
-    link: "https://github.com/quasarframework",
-  },
-  {
-    title: "Discord Chat Channel",
-    caption: "chat.quasar.dev",
-    icon: "chat",
-    link: "https://chat.quasar.dev",
-  },
-  {
-    title: "Forum",
-    caption: "forum.quasar.dev",
-    icon: "record_voice_over",
-    link: "https://forum.quasar.dev",
-  },
-  {
-    title: "Twitter",
-    caption: "@quasarframework",
-    icon: "rss_feed",
-    link: "https://twitter.quasar.dev",
-  },
-  {
-    title: "Facebook",
-    caption: "@QuasarFramework",
-    icon: "public",
-    link: "https://facebook.quasar.dev",
-  },
-  {
-    title: "Quasar Awesome",
-    caption: "Community Quasar projects",
-    icon: "favorite",
-    link: "https://awesome.quasar.dev",
-  },
-];
+import { storeToRefs } from "pinia";
+import { useQuasar } from "quasar";
+import { useAuthStore } from "src/stores/auth_store";
+import { defineComponent, onBeforeMount, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 export default defineComponent({
   name: "MainLayout",
@@ -154,10 +165,111 @@ export default defineComponent({
 
   setup() {
     const leftDrawerOpen = ref(false);
+    const $q = useQuasar();
+    const route = useRoute();
+    const router = useRouter();
+    const authStore = useAuthStore();
+    const usuario = ref("");
+    const { modulos, sistemas, apps } = storeToRefs(authStore);
+    const CatalogosConList = ref([]);
+    const ConsumiblesList = ref([]);
+    const SolicitudesList = ref([]);
+
+    onBeforeMount(async () => {
+      if (route.query.key) {
+        localStorage.setItem("key", route.query.key);
+      }
+
+      if (route.query.sistema) {
+        localStorage.setItem("sistema", route.query.sistema);
+      }
+
+      if (route.query.usr) {
+        localStorage.setItem("usuario", route.query.usr);
+        usuario.value = localStorage.getItem("usuario");
+      } else {
+        if (localStorage.getItem("usuario") != null) {
+          usuario.value = localStorage.getItem("usuario");
+        }
+      }
+      await loadMenu();
+    });
+
+    const show = () => {
+      $q.bottomSheet({
+        message: "Aplicaciones",
+        grid: true,
+        actions: apps.value,
+      }).onOk((action) => {
+        if (action.label == "Cerrar sesión") {
+          localStorage.clear();
+          window.location = "http://sistema.ieenayarit.org:9171?return=false";
+        } else if (action.label == "Ir a universo") {
+          window.location = "http://sistema.ieenayarit.org:9171?return=true";
+        } else {
+          window.location =
+            action.url +
+            `/#/?key=${localStorage.getItem("key")}&sistema=${
+              action.id
+            }&usr=${localStorage.getItem("usuario")}`;
+        }
+      });
+    };
+
+    const loadMenu = async () => {
+      $q.loading.show();
+      await authStore.loadSistemas();
+      await authStore.loadModulos();
+      await authStore.loadPerfil();
+      //console.log("Estos son los modulos", modulos.value);
+      modulos.value.forEach((element) => {
+        switch (element.siglas_Modulo) {
+          case "SI-CAT-BOD":
+            CatalogosConList.value.push("SI-CAT-BOD");
+            break;
+          case "SI-CAT-COS":
+            CatalogosConList.value.push("SI-CAT-COS");
+            break;
+          case "SI-CAT-CLA":
+            CatalogosConList.value.push("SI-CAT-CLA");
+            break;
+          case "SI-CAT-UDM":
+            CatalogosConList.value.push("SI-CAT-UDM");
+            break;
+          case "SI-CAT-PRO":
+            CatalogosConList.value.push("SI-CAT-PRO");
+            break;
+          case "SI-CAT-TIP":
+            CatalogosConList.value.push("SI-CAT-TIP");
+            break;
+          case "SI-CAT-CMO":
+            CatalogosConList.value.push("SI-CAT-CMO");
+            break;
+          case "SI-CAT-MOV":
+            CatalogosConList.value.push("SI-CAT-MOV");
+            break;
+          case "SI-CON-REG":
+            ConsumiblesList.value.push("SI-CON-REG");
+            break;
+          case "SI-REG-SOL":
+            SolicitudesList.value.push("SI-REG-SOL");
+            break;
+          case "SI-REG-ARE":
+            SolicitudesList.value.push("SI-REG-ARE");
+            break;
+        }
+      });
+      $q.loading.hide();
+    };
 
     return {
-      essentialLinks: linksList,
       leftDrawerOpen,
+      CatalogosConList,
+      ConsumiblesList,
+      SolicitudesList,
+      usuario,
+      //PruebaReporte,
+      show,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },

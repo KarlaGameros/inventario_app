@@ -4,13 +4,20 @@
       <q-table
         :rows="marcas"
         :columns="columns"
+        :filter="filter"
         :loading="loading"
         row-key="id"
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
       >
         <template v-slot:top-right>
-          <q-input borderless dense debounce="300" placeholder="Buscar..">
+          <q-input
+            borderless
+            dense
+            debounce="300"
+            v-model="filter"
+            placeholder="Buscar.."
+          >
             <template v-slot:append>
               <q-icon name="search" />
             </template>
@@ -30,7 +37,13 @@
                 >
                   <q-tooltip>Editar marca</q-tooltip>
                 </q-btn>
-                <q-btn flat round color="purple-ieen" icon="delete">
+                <q-btn
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="delete"
+                  @click="eliminar(col.value)"
+                >
                   <q-tooltip>Eliminar marca</q-tooltip>
                 </q-btn>
               </div>
@@ -46,7 +59,7 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
-import { onBeforeMount } from "vue";
+import { onBeforeMount, ref } from "vue";
 import { useMarcaStore } from "../../../stores/marcas_store";
 
 const $q = useQuasar();
@@ -74,8 +87,42 @@ const columns = [
   },
 ];
 
+const pagination = ref({
+  //********** */
+  page: 1,
+  rowsPerPage: 25,
+  sortBy: "name",
+  descending: false,
+});
+
+const filter = ref("");
+
 const editar = async (id) => {
-  console.log("editar", id);
+  $q.loading.show();
+  //await marcaStore.loadMarca(id)
+  marcaStore.actualizarModal(true);
+  $q.loading.hide();
+};
+
+const eliminar = async (id) => {
+  $q.dialog({
+    title: "Eliminar marca",
+    message: "¿Está seguro de eliminar la marca?",
+    icon: "Warning",
+    persistent: true,
+    transitionShow: "scale",
+    transitionHide: "scale",
+    ok: {
+      color: "positive",
+      label: "¡Sí!, eliminar",
+    },
+    cancel: {
+      color: "negative",
+      label: " No Cancelar",
+    },
+  }).onOk(async () => {
+    console.log("eliminar", id);
+  });
 };
 </script>
 
