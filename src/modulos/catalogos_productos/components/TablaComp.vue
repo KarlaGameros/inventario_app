@@ -5,7 +5,6 @@
         :rows="catalogos"
         :columns="columns"
         :filter="filter"
-        :loading="loading"
         :pagination="pagination"
         row-key="id"
         rows-per-page-label="Filas por pagina"
@@ -70,7 +69,6 @@ const { catalogos } = storeToRefs(catalagoStore);
 
 onBeforeMount(() => {
   catalagoStore.loadInformacionCatalago();
-  console.log("on", catalogos);
 });
 
 const columns = [

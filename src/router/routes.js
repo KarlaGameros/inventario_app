@@ -35,6 +35,11 @@ const routes = [
         name: "asignaciones",
         component: () => import("../modulos/asignaciones/pages/IndexPage"),
       },
+      {
+        path: "/estatus",
+        name: "estatus",
+        component: () => import("../modulos/estatus/pages/IndexPage"),
+      },
     ],
   },
 

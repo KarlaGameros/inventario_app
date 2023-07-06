@@ -5,7 +5,7 @@
         :rows="marcas"
         :columns="columns"
         :filter="filter"
-        :loading="loading"
+        :pagination="pagination"
         row-key="id"
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
@@ -32,6 +32,15 @@
                   flat
                   round
                   color="purple-ieen"
+                  icon="add_circle"
+                  @click="actualizarModal(true, props.row.id, props.row)"
+                >
+                  <q-tooltip>Agregar modelo</q-tooltip>
+                </q-btn>
+                <q-btn
+                  flat
+                  round
+                  color="purple-ieen"
                   icon="edit"
                   @click="editar(col.value)"
                 >
@@ -52,6 +61,7 @@
           </q-tr>
         </template>
       </q-table>
+      <ModalModeloComp />
     </div>
   </div>
 </template>
@@ -61,21 +71,32 @@ import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { onBeforeMount, ref } from "vue";
 import { useMarcaStore } from "../../../stores/marcas_store";
+import { useModeloStore } from "../../../stores/modelo_store";
+import ModalModeloComp from "../../modelos/components/ModalComp.vue";
 
 const $q = useQuasar();
 const marcaStore = useMarcaStore();
+const modeloStore = useModeloStore();
 const { marcas } = storeToRefs(marcaStore);
 
 onBeforeMount(() => {
   marcaStore.loadInformacionMarca();
+  console.log("marcas", marcas);
 });
 
 const columns = [
   {
-    name: "nombre",
+    name: "clave",
     align: "center",
-    label: "Nombre de la marca",
-    field: "nombre",
+    label: "Clave de la marca",
+    field: "clave",
+    sortable: true,
+  },
+  {
+    name: "descripcion",
+    align: "center",
+    label: "Descripción",
+    field: "descripcion",
     sortable: true,
   },
   {
@@ -99,12 +120,14 @@ const filter = ref("");
 
 const editar = async (id) => {
   $q.loading.show();
-  //await marcaStore.loadMarca(id)
+  await marcaStore.loadMarca(id);
+  marcaStore.updateEditar(true);
   marcaStore.actualizarModal(true);
   $q.loading.hide();
 };
 
 const eliminar = async (id) => {
+  console.log("id", id);
   $q.dialog({
     title: "Eliminar marca",
     message: "¿Está seguro de eliminar la marca?",
@@ -121,8 +144,29 @@ const eliminar = async (id) => {
       label: " No Cancelar",
     },
   }).onOk(async () => {
-    console.log("eliminar", id);
+    $q.loading.show();
+    const resp = await marcaStore.deleteMarca(id);
+    if (resp.success) {
+      $q.loading.hide();
+      $q.notify({
+        type: "positive",
+        message: resp.data,
+      });
+      marcaStore.loadInformacionMarca();
+    } else {
+      $q.loading.hide();
+      $q.notify({
+        type: "negative",
+        message: resp.data,
+      });
+    }
   });
+};
+
+const actualizarModal = (valor, props, clave) => {
+  $q.loading.show();
+  modeloStore.actualizarModal(valor, props, clave);
+  $q.loading.hide();
 };
 </script>
 

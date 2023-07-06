@@ -24,7 +24,6 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
       try {
         let resp = await api.get("/Catalagos");
         let { data } = resp.data;
-        console.log("data", data);
         let listCatalogo = data.map((catalogo) => {
           return {
             id: catalogo.id,

@@ -2,10 +2,9 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="bodegas"
+        :rows="asignaciones"
         :columns="columns"
         :filter="filter"
-        :loading="loading"
         :pagination="pagination"
         row-key="id"
         rows-per-page-label="Filas por pagina"
@@ -68,17 +67,46 @@ const { asignaciones } = storeToRefs(asignacionStore);
 
 const columns = [
   {
-    name: "nombre",
+    name: "empleado",
     align: "center",
-    label: "Nombre del modelo",
-    field: "nombre",
+    label: "Empleado",
+    field: "empleado",
     sortable: true,
   },
   {
-    name: "marca",
+    name: "area",
     align: "center",
-    label: "Marca",
-    field: "Marca",
+    label: "Area",
+    field: "area",
+    sortable: true,
+  },
+  ,
+  {
+    name: "puesto",
+    align: "center",
+    label: "Puesto",
+    field: "puesto",
+    sortable: true,
+  },
+  {
+    name: "estatus",
+    align: "center",
+    label: "Estatus",
+    field: "estatus",
+    sortable: true,
+  },
+  {
+    name: "fecha_Registro",
+    align: "center",
+    label: "Fecha de registro",
+    field: "fecha_registro",
+    sortable: true,
+  },
+  {
+    name: "fecha_Asignacion",
+    align: "center",
+    label: "Fecha de asignación",
+    field: "fecha_Asigncion",
     sortable: true,
   },
   {
@@ -99,6 +127,46 @@ const pagination = ref({
 });
 
 const filter = ref("");
+
+const editar = async (id) => {
+  $q.loading.show();
+  bodegaStore.actualizarModal(true);
+  $q.loading.hide();
+};
+
+const eliminar = async (id) => {
+  $q.dialog({
+    title: "Eliminar asignación",
+    message: "¿Está seguro de eliminar la asignación?",
+    icon: "Warning",
+    persistent: true,
+    transitionShow: "scale",
+    transitionHide: "scale",
+    ok: {
+      color: "positive",
+      label: "¡Sí!, eliminar",
+    },
+    cancel: {
+      color: "negative",
+      label: " No Cancelar",
+    },
+  }).onOk(async () => {
+    $q.loading.show();
+    if (resp.success) {
+      $q.loading.hide();
+      $q.notify({
+        type: "positive",
+        message: resp.data,
+      });
+    } else {
+      $q.loading.hide();
+      $q.notify({
+        type: "negative",
+        message: resp.data,
+      });
+    }
+  });
+};
 </script>
 
 <style></style>

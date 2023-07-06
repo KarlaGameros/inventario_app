@@ -2,9 +2,8 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="consumibles"
+        :rows="inventarios"
         :columns="columns"
-        :loading="loading"
         :pagination="pagination"
         row-key="id"
         rows-per-page-label="Filas por pagina"

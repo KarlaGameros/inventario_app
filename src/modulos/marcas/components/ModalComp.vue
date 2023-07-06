@@ -23,12 +23,23 @@
         <q-form class="row q-col-gutter-xs" @submit="onSubmit">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
-              v-model="marca.nombre"
+              v-model="marca.clave"
               label="Nombre de la marca"
               hint="Ingrese nombre de la marca"
               autogrow
               lazy-rules
-              :rules="[(val) => !!val || 'El nombre es requerido']"
+              :rules="[(val) => !!val || 'El nombre de la marca es requerido']"
+            >
+            </q-input>
+          </div>
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <q-input
+              v-model="marca.descripcion"
+              label="Descripción de la marca"
+              hint="Ingrese una descripción"
+              autogrow
+              lazy-rules
+              :rules="[(val) => !!val || 'La descripción es requerido']"
             >
             </q-input>
           </div>
@@ -58,7 +69,6 @@
 import { useQuasar } from "quasar";
 import { storeToRefs } from "pinia";
 import { useMarcaStore } from "src/stores/marcas_store";
-import { watch } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
 
 const $q = useQuasar();
@@ -69,20 +79,32 @@ const { marca, modal, isEditar } = storeToRefs(marcaStore);
 
 const actualizarModal = (valor) => {
   marcaStore.actualizarModal(valor);
+  marcaStore.updateEditar(valor);
   marcaStore.initMarca();
 };
 
-watch(marca.value, (val) => {
-  if (val.id != null) {
-    console.log("watch", val);
-    cargarArea(val);
+const onSubmit = async () => {
+  let resp = null;
+  $q.loading.show();
+  if (isEditar.value == true) {
+    resp = await marcaStore.updateMarca(marca.value);
+  } else {
+    resp = await marcaStore.createMarca(marca.value);
   }
-});
-
-const cargarArea = async (val) => {
-  if (marca.nombre == null) {
-    console.log("Esto es value, desde cargar area", val);
+  if (resp.success) {
+    $q.notify({
+      type: "positive",
+      message: resp.data,
+    });
+    marcaStore.loadInformacionMarca();
+    actualizarModal(false);
+  } else {
+    $q.notify({
+      type: "negative",
+      message: resp.data,
+    });
   }
+  $q.loading.hide();
 };
 </script>
 

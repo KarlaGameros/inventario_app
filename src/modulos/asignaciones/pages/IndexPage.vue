@@ -44,9 +44,7 @@ const { modulo } = storeToRefs(authStore);
 
 const actualizarModal = (valor) => {
   $q.loading.show();
-  bodegaStore.actualizarModal(valor);
+  asignacionStore.actualizarModal(valor);
   $q.loading.hide();
 };
 </script>
-
-<style></style>

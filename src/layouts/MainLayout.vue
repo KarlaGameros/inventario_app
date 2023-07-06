@@ -95,6 +95,17 @@
                 >
               </q-item-section>
             </q-item>
+
+            <q-item :to="{ name: 'estatus' }">
+              <q-item-section avatar>
+                <q-icon name="add_box" color="purple-ieen" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-purple-ieen label-title text-bold">
+                  Estatus
+                </q-item-label>
+              </q-item-section>
+            </q-item>
           </q-expansion-item>
 
           <q-item :to="{ name: 'inventario' }">
@@ -113,9 +124,9 @@
               <q-icon name="add_box" color="purple-ieen" />
             </q-item-section>
             <q-item-section>
-              <q-item-label class="text-purple-ieen label-title text-bold"
-                >Asignaciones</q-item-label
-              >
+              <q-item-label class="text-purple-ieen label-title text-bold">
+                Asignaciones
+              </q-item-label>
             </q-item-section>
           </q-item>
         </q-list>

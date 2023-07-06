@@ -5,7 +5,7 @@
         <div class="q-pa-md q-gutter-sm">
           <q-breadcrumbs>
             <q-breadcrumbs-el icon="home" to="/" />
-            <q-breadcrumbs-el label="Modelos" icon="library_books" />
+            <q-breadcrumbs-el label="Estatus" icon="library_books" />
           </q-breadcrumbs>
         </div>
       </div>
@@ -24,23 +24,11 @@
         </div>
       </div>
     </div>
-    <TablaComp />
-    <ModalComp />
   </q-page>
 </template>
 
-<script setup>
-import { useQuasar } from "quasar";
-import { useModeloStore } from "src/stores/modelo_store";
-import TablaComp from "../components/TablaComp.vue";
-import ModalComp from "../components/ModalComp.vue";
-
-const $q = useQuasar();
-const modeloStore = useModeloStore();
-
-const actualizarModal = (valor) => {
-  modeloStore.actualizarModal(valor);
-};
+<script>
+export default {};
 </script>
 
 <style></style>

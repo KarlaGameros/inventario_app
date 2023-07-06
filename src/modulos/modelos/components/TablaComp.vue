@@ -5,7 +5,7 @@
         :rows="modelos"
         :columns="columns"
         :filter="filter"
-        :loading="loading"
+        :pagination="pagination"
         row-key="id"
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
