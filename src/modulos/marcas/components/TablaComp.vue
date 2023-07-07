@@ -177,6 +177,7 @@ const actualizarModal = (valor, props) => {
   $q.loading.show();
   modeloStore.actualizarModal(valor, props);
   modeloStore.modeloByMarca(props.id);
+  modeloStore.initModelo();
   $q.loading.hide();
 };
 </script>

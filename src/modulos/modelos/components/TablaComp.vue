@@ -93,8 +93,6 @@ const columns = [
   },
 ];
 
-//-----------------------------------------------------------
-
 const pagination = ref({
   //********** */
   page: 1,
@@ -105,6 +103,8 @@ const pagination = ref({
 
 const filter = ref("");
 
+//-----------------------------------------------------------
+
 const editar = async (id) => {
   $q.loading.show();
   await modeloStore.loadModelo(id);
@@ -112,6 +112,8 @@ const editar = async (id) => {
   //modeloStore.actualizarModal(true);
   $q.loading.hide();
 };
+
+//-----------------------------------------------------------
 
 const eliminar = async (id) => {
   $q.dialog({

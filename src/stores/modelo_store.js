@@ -20,7 +20,7 @@ export const useModeloStore = defineStore("modelos", {
     //-----------------------------------------------------------
     initModelo() {
       this.modelo.id = null;
-      this.modelo.nombre = null;
+      this.modelo.clave = null;
       this.modelo.marca_id = null;
       this.modelo.descripcion = null;
     },
