@@ -1,13 +1,154 @@
 <template>
   <div class="row">
     <div class="col">
-      <q-table> </q-table>
+      <q-table
+        :rows="estatus"
+        :columns="columns"
+        :filter="filter"
+        :pagination="pagination"
+        row-key="id"
+        rows-per-page-label="Filas por pagina"
+        no-data-label="No hay registros"
+      >
+        <template v-slot:top-right>
+          <q-input
+            borderless
+            dense
+            debounce="300"
+            v-model="filter"
+            placeholder="Buscar.."
+          >
+            <template v-slot:template>
+              <q-icon name="search"></q-icon>
+            </template>
+          </q-input>
+        </template>
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td v-for="col in props.cols" :key="col.name" :props="props">
+              <div v-if="col.name === 'id'">
+                <q-btn
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="edit"
+                  @click="editar(col.value)"
+                >
+                  <q-tooltip>Editar estatus</q-tooltip>
+                </q-btn>
+                <q-btn
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="delete"
+                  @click="eliminar(col.value)"
+                >
+                  <q-tooltip>Eliminar estatus</q-tooltip>
+                </q-btn>
+              </div>
+              <label v-else>{{ col.value }}</label>
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
     </div>
   </div>
 </template>
 
-<script>
-export default {};
+<script setup>
+import { storeToRefs } from "pinia";
+import { useQuasar } from "quasar";
+import { useEstatusStore } from "src/stores/estatus_store";
+import { onBeforeMount, ref } from "vue";
+
+//-----------------------------------------------------------
+
+const $q = useQuasar();
+const estatusStore = useEstatusStore();
+const { estatus } = storeToRefs(estatusStore);
+
+//-----------------------------------------------------------
+
+onBeforeMount(() => {
+  estatusStore.loadInformacionEstatus();
+});
+
+//-----------------------------------------------------------
+
+const columns = [
+  {
+    name: "nombre",
+    align: "center",
+    label: "Estatus",
+    field: "nombre",
+    sortable: true,
+  },
+  {
+    name: "id",
+    align: "center",
+    label: "Acciones",
+    field: "id",
+    sortable: false,
+  },
+];
+
+const pagination = ref({
+  //********** */
+  page: 1,
+  rowsPerPage: 25,
+  sortBy: "name",
+  descending: false,
+});
+
+const filter = ref("");
+
+//-----------------------------------------------------------
+
+const editar = async (id) => {
+  $q.loading.show();
+  await estatusStore.loadEstatu(id);
+  estatusStore.actualizarModal(true);
+  estatusStore.updateEditar(true);
+  $q.loading.hide();
+};
+
+//-----------------------------------------------------------
+
+const eliminar = async (id) => {
+  $q.dialog({
+    title: "Eliminar bodega",
+    message: "¿Está seguro de eliminar el estatus?",
+    icon: "Warning",
+    persistent: true,
+    transitionShow: "scale",
+    transitionHide: "scale",
+    ok: {
+      color: "positive",
+      label: "¡Sí!, eliminar",
+    },
+    cancel: {
+      color: "negative",
+      label: " No Cancelar",
+    },
+  }).onOk(async () => {
+    $q.loading.show();
+    const resp = await estatusStore.deleteEstatu(id);
+    if (resp.success) {
+      $q.loading.hide();
+      $q.notify({
+        type: "positive",
+        message: resp.data,
+      });
+      estatusStore.loadInformacionEstatus();
+    } else {
+      $q.loading.hide();
+      $q.notify({
+        type: "negative",
+        message: resp.data,
+      });
+    }
+  });
+};
 </script>
 
 <style></style>

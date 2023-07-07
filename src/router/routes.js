@@ -15,11 +15,6 @@ const routes = [
         component: () => import("../modulos/bodegas/pages/IndexPage"),
       },
       {
-        path: "/modelos",
-        name: "modelos",
-        component: () => import("../modulos/modelos/pages/IndexPage"),
-      },
-      {
         path: "/inventario",
         name: "inventario",
         component: () => import("../modulos/inventario/pages/IndexPage"),

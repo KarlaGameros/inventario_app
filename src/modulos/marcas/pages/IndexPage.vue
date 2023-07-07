@@ -35,8 +35,12 @@ import { useMarcaStore } from "src/stores/marcas_store";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 
+//-----------------------------------------------------------
+
 const $q = useQuasar();
 const marcaStore = useMarcaStore();
+
+//-----------------------------------------------------------
 
 const actualizarModal = (valor) => {
   marcaStore.actualizarModal(valor);

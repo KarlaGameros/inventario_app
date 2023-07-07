@@ -67,21 +67,6 @@
             </q-item>
 
             <q-item
-              :to="{ name: 'modelos' }"
-              :content-inset-level="2"
-              :header-inset-level="2"
-            >
-              <q-item-section avatar>
-                <q-icon name="wysiwyg" color="purple-ieen" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label class="text-purple-ieen label-title text-bold"
-                  >Modelo</q-item-label
-                >
-              </q-item-section>
-            </q-item>
-
-            <q-item
               :to="{ name: 'catalogos' }"
               :content-inset-level="2"
               :header-inset-level="2"

@@ -7,19 +7,21 @@ export const useModeloStore = defineStore("modelos", {
     isEditar: false,
     listModelo: [],
     modelos: [],
-    marcas: [],
+    marca_id: null,
+    modelos: [],
     modelo: {
       id: null,
-      marca_Id: null,
+      marca_id: null,
       clave: null,
       descripcion: null,
     },
   }),
   actions: {
+    //-----------------------------------------------------------
     initModelo() {
       this.modelo.id = null;
       this.modelo.nombre = null;
-      this.modelo.marca_Id = null;
+      this.modelo.marca_id = null;
       this.modelo.descripcion = null;
     },
 
@@ -48,8 +50,60 @@ export const useModeloStore = defineStore("modelos", {
     },
 
     //-----------------------------------------------------------
+    async loadModelo(id) {
+      try {
+        let resp = null;
+        resp = await api.get(`/Modelos/${id}`);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          console.log("data", data, success);
+          if (success === true) {
+            this.modelo.id = data.id;
+            this.modelo.clave = data.clave;
+            this.modelo.descripcion = data.descripcion;
+            this.modelo.marca_id = data.marca_Id;
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+    async modeloByMarca(id) {
+      try {
+        let detalle = await api.get(`/Modelos/ByMarca/${id}`);
+        let detalleArray = detalle.data.data.map((detalle) => {
+          return {
+            clave: detalle.clave,
+            descripcion: detalle.descripcion,
+            id: detalle.id,
+          };
+        });
+        this.listModelo = detalleArray;
+      } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+    //-----------------------------------------------------------
     async createModelo(modelo) {
       try {
+        modelo.marca_Id = this.marca_id;
         console.log("modelo", modelo);
         const resp = await api.post(`/Modelos`, modelo);
         console.log("create modelo", resp);
@@ -74,11 +128,66 @@ export const useModeloStore = defineStore("modelos", {
         };
       }
     },
+
     //-----------------------------------------------------------
-    actualizarModal(valor, props, clave) {
+    async updateModelo(modelo) {
+      try {
+        const resp = await api.put(`/Modelos/${modelo.id}`, modelo);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        console.group(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+    async deleteModelo(id) {
+      try {
+        console.log("id", id);
+        const resp = await api.delete(`/Modelos/${id}`);
+        if (resp.status == 200) {
+          let { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrio un error, intentelo de nuevo",
+          };
+        }
+      } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          data: "Ocurrio un error, intentelo de nuevo",
+        };
+      }
+    },
+    //-----------------------------------------------------------
+    actualizarModal(valor, props) {
       this.modal = valor;
-      this.marcas = clave;
-      this.modelo.marca_Id = props;
+      this.marca_id = props.id;
+    },
+    updateEditar(valor) {
+      this.isEditar = valor;
     },
   },
 });

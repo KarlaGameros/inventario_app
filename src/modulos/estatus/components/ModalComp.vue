@@ -7,10 +7,7 @@
   >
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
-        <div class="text-h6">
-          Registro de modelo de la marca
-          <span style="color: red">"{{ marca }}"</span>
-        </div>
+        <div class="text-h6">Registro de estatus</div>
         <q-space />
         <q-btn
           icon="close"
@@ -25,23 +22,12 @@
         <q-form class="row q-col-gutter-xs" @submit="onSubmit">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
-              v-model="modelo.clave"
-              label="Clave del modelo"
-              hint="Ingrese clave"
+              v-model="estatu.nombre"
+              label="Estatus"
+              hint="Ingrese estatus"
               autogrow
               lazy-rules
-              :rules="[(val) => !!val || 'La clave es requerido']"
-            >
-            </q-input>
-          </div>
-          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <q-input
-              v-model="modelo.descripcion"
-              label="Descripción"
-              hint="Ingrese una descripción"
-              autogrow
-              lazy-rules
-              :rules="[(val) => !!val || 'La descripción es requerida']"
+              :rules="[(val) => !!val || 'El estatus es requerido']"
             >
             </q-input>
           </div>
@@ -64,32 +50,25 @@
           </div>
         </q-form>
       </q-card-section>
-
-      <q-card-section>
-        <TablaModelo />
-      </q-card-section>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup>
-import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
-import { onMounted, ref } from "vue";
-import { useModeloStore } from "../../../stores/modelo_store";
-import TablaModelo from "./TablaComp.vue";
-
-//-----------------------------------------------------------
+import { storeToRefs } from "pinia";
+import { useEstatusStore } from "src/stores/estatus_store";
 
 const $q = useQuasar();
-const modeloStore = useModeloStore();
-const { modal, modelo, isEditar, marca } = storeToRefs(modeloStore);
+const estatusStore = useEstatusStore();
+const { estatu, modal, isEditar } = storeToRefs(estatusStore);
 
 //-----------------------------------------------------------
 
 const actualizarModal = (valor) => {
-  modeloStore.actualizarModal(valor);
-  modeloStore.initModelo();
+  estatusStore.actualizarModal(valor);
+  estatusStore.updateEditar(valor);
+  estatusStore.initEstatus();
 };
 
 //-----------------------------------------------------------
@@ -98,22 +77,24 @@ const onSubmit = async () => {
   let resp = null;
   $q.loading.show();
   if (isEditar.value == true) {
-    resp = await modeloStore.updateModelo(modelo.value);
+    resp = await estatusStore.updateEstatus(estatu.value);
   } else {
-    resp = await modeloStore.createModelo(modelo.value);
+    resp = await estatusStore.createEstatu(estatu.value);
   }
+
   if (resp.success) {
     $q.notify({
       type: "positive",
       message: resp.data,
     });
-    //modeloStore.modeloByMarca();
-    //actualizarModal(false);
+    estatusStore.loadInformacionEstatus();
+    actualizarModal(false);
   } else {
     $q.notify({
       type: "negative",
       message: resp.data,
     });
+    //loading.value = false;
   }
   $q.loading.hide();
 };

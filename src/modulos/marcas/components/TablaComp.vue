@@ -33,7 +33,7 @@
                   round
                   color="purple-ieen"
                   icon="add_circle"
-                  @click="actualizarModal(true, props.row.id, props.row)"
+                  @click="actualizarModal(true, props.row)"
                 >
                   <q-tooltip>Agregar modelo</q-tooltip>
                 </q-btn>
@@ -74,15 +74,20 @@ import { useMarcaStore } from "../../../stores/marcas_store";
 import { useModeloStore } from "../../../stores/modelo_store";
 import ModalModeloComp from "../../modelos/components/ModalComp.vue";
 
+//-----------------------------------------------------------
+
 const $q = useQuasar();
 const marcaStore = useMarcaStore();
 const modeloStore = useModeloStore();
 const { marcas } = storeToRefs(marcaStore);
 
+//-----------------------------------------------------------
+
 onBeforeMount(() => {
   marcaStore.loadInformacionMarca();
-  console.log("marcas", marcas);
 });
+
+//-----------------------------------------------------------
 
 const columns = [
   {
@@ -118,6 +123,8 @@ const pagination = ref({
 
 const filter = ref("");
 
+//-----------------------------------------------------------
+
 const editar = async (id) => {
   $q.loading.show();
   await marcaStore.loadMarca(id);
@@ -126,8 +133,9 @@ const editar = async (id) => {
   $q.loading.hide();
 };
 
+//-----------------------------------------------------------
+
 const eliminar = async (id) => {
-  console.log("id", id);
   $q.dialog({
     title: "Eliminar marca",
     message: "¿Está seguro de eliminar la marca?",
@@ -163,9 +171,12 @@ const eliminar = async (id) => {
   });
 };
 
-const actualizarModal = (valor, props, clave) => {
+//-----------------------------------------------------------
+
+const actualizarModal = (valor, props) => {
   $q.loading.show();
-  modeloStore.actualizarModal(valor, props, clave);
+  modeloStore.actualizarModal(valor, props);
+  modeloStore.modeloByMarca(props.id);
   $q.loading.hide();
 };
 </script>

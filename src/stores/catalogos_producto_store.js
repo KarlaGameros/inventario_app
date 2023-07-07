@@ -14,12 +14,15 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
     },
   }),
   actions: {
+    //-----------------------------------------------------------
     initCatalago() {
       this.catalogo.id = null;
       this.catalogo.nombre = null;
       this.catalogo.clave = null;
       this.catalogo.nombre_Corto = null;
     },
+
+    //-----------------------------------------------------------
     async loadInformacionCatalago() {
       try {
         let resp = await api.get("/Catalagos");
@@ -42,6 +45,7 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
       }
     },
 
+    //-----------------------------------------------------------
     async loadCatalago(id) {
       try {
         let resp = null;
@@ -64,6 +68,7 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
       }
     },
 
+    //-----------------------------------------------------------
     async createCatalogo(catalogo) {
       try {
         const resp = await api.post("/Catalagos", catalogo);
@@ -89,6 +94,7 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
       }
     },
 
+    //-----------------------------------------------------------
     async updateCatalogo(catalogo) {
       try {
         const resp = await api.put(`/Catalagos/${catalogo.id}`, catalogo);
@@ -114,6 +120,7 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
       }
     },
 
+    //-----------------------------------------------------------
     async deleteCatalogo(id) {
       try {
         const resp = await api.delete(`/Catalagos/${id}`);
@@ -141,6 +148,7 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
       }
     },
 
+    //-----------------------------------------------------------
     actualizarModal(valor) {
       this.modal = valor;
     },

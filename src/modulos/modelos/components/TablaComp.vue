@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="modelos"
+        :rows="listModelo"
         :columns="columns"
         :filter="filter"
         :pagination="pagination"
@@ -34,7 +34,7 @@
                   icon="edit"
                   @click="editar(col.value)"
                 >
-                  <q-tooltip>Editar bodega</q-tooltip>
+                  <q-tooltip>Editar modelo</q-tooltip>
                 </q-btn>
                 <q-btn
                   flat
@@ -43,7 +43,7 @@
                   icon="delete"
                   @click="eliminar(col.value)"
                 >
-                  <q-tooltip>Eliminar bodega</q-tooltip>
+                  <q-tooltip>Eliminar modelo</q-tooltip>
                 </q-btn>
               </div>
               <label v-else>{{ col.value }}</label>
@@ -59,29 +59,29 @@
 import { storeToRefs } from "pinia";
 import { useModeloStore } from "../../../stores/modelo_store";
 import { useQuasar } from "quasar";
-import { onBeforeMount, ref } from "vue";
+import { ref } from "vue";
+
+//-----------------------------------------------------------
 
 const $q = useQuasar();
 const modeloStore = useModeloStore();
-const { modelos } = storeToRefs(modeloStore);
+const { listModelo } = storeToRefs(modeloStore);
 
-onBeforeMount(() => {
-  modeloStore.loadInformacionModelo();
-});
+//-----------------------------------------------------------
 
 const columns = [
   {
-    name: "nombre",
+    name: "clave",
     align: "center",
-    label: "Nombre del modelo",
-    field: "nombre",
+    label: "Clave del modelo",
+    field: "clave",
     sortable: true,
   },
   {
-    name: "marca",
+    name: "descripcion",
     align: "center",
-    label: "Marca",
-    field: "Marca",
+    label: "Descripción",
+    field: "descripcion",
     sortable: true,
   },
   {
@@ -92,6 +92,8 @@ const columns = [
     sortable: false,
   },
 ];
+
+//-----------------------------------------------------------
 
 const pagination = ref({
   //********** */
@@ -105,8 +107,9 @@ const filter = ref("");
 
 const editar = async (id) => {
   $q.loading.show();
-  //await marcaStore.loadMarca(id)
-  modeloStore.actualizarModal(true);
+  await modeloStore.loadModelo(id);
+  modeloStore.updateEditar(true);
+  //modeloStore.actualizarModal(true);
   $q.loading.hide();
 };
 
@@ -127,7 +130,22 @@ const eliminar = async (id) => {
       label: " No Cancelar",
     },
   }).onOk(async () => {
-    console.log("eliminar", id);
+    $q.loading.show();
+    const resp = await modeloStore.deleteModelo(id);
+    if (resp.success) {
+      $q.loading.hide();
+      $q.notify({
+        type: "positive",
+        message: resp.data,
+      });
+      modeloStore.actualizarModal(false);
+    } else {
+      $q.loading.hide();
+      $q.notify({
+        type: "negative",
+        message: resp.data,
+      });
+    }
   });
 };
 </script>

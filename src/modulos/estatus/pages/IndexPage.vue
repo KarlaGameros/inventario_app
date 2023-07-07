@@ -24,11 +24,31 @@
         </div>
       </div>
     </div>
+    <TablaComp />
+    <ModalComp />
   </q-page>
 </template>
 
-<script>
-export default {};
+<script setup>
+import { useQuasar } from "quasar";
+import { useEstatusStore } from "src/stores/estatus_store";
+import TablaComp from "../components/TablaComp.vue";
+import ModalComp from "../components/ModalComp.vue";
+
+//-----------------------------------------------------------
+
+const $q = useQuasar();
+const estatusStore = useEstatusStore();
+
+//-----------------------------------------------------------
+
+const actualizarModal = (valor) => {
+  $q.loading.show();
+  estatusStore.actualizarModal(valor);
+  $q.loading.hide();
+};
+
+//-----------------------------------------------------------
 </script>
 
 <style></style>

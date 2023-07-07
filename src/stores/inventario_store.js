@@ -28,11 +28,15 @@ export const useInventarioStore = defineStore("inventario", {
     },
   }),
   actions: {
+    //-----------------------------------------------------------
     initInventario() {
       this.inventario.id = null;
     },
+
+    //-----------------------------------------------------------
     async loadInventarios() {},
 
+    //-----------------------------------------------------------
     actualizarModal(valor) {
       console.log("2", valor);
       this.modal = valor;

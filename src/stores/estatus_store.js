@@ -1,40 +1,62 @@
 import { defineStore } from "pinia";
 import { api } from "src/boot/axios";
 
-export const useMarcaStore = defineStore("marcas", {
+export const useEstatusStore = defineStore("estatus", {
   state: () => ({
     modal: false,
     isEditar: false,
-    listMarca: [],
-    marcas: [],
-    marca: {
+    listEstatus: [],
+    estatus: [],
+    estatu: {
       id: null,
-      clave: null,
-      descripcion: null,
+      nombre: null,
     },
   }),
   actions: {
     //-----------------------------------------------------------
-    initMarca() {
-      this.marca.id = null;
-      this.marca.clave = null;
-      this.marca.descripcion = null;
+    initEstatus() {
+      (this.estatu.id = null), (this.estatu.nombre = null);
     },
 
     //-----------------------------------------------------------
-    async loadInformacionMarca() {
+    async loadInformacionEstatus() {
       try {
-        let resp = await api.get("/Marcas");
+        let resp = await api.get("/EstatusInventarios");
         let { data } = resp.data;
-        let listMarca = data.map((marca) => {
+        let listEstatus = data.map((estatu) => {
           return {
-            id: marca.id,
-            clave: marca.clave,
-            descripcion: marca.descripcion,
+            id: estatu.id,
+            nombre: estatu.nombre,
           };
         });
-        this.marcas = listMarca;
+        this.estatus = listEstatus;
       } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+    //-----------------------------------------------------------
+    async createEstatu(estatu) {
+      try {
+        const resp = await api.post("/EstatusInventarios", estatu);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
@@ -43,63 +65,43 @@ export const useMarcaStore = defineStore("marcas", {
     },
 
     //-----------------------------------------------------------
-    async loadMarca(id) {
+    async updateEstatus(estatu) {
+      try {
+        const resp = await api.put(`/EstatusInventarios/${estatu.id}`, estatu);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+    //carga el estatus con el id que se mando para mostrarlo y asi poder editarlo
+    async loadEstatu(id) {
       try {
         let resp = null;
-        resp = await api.get(`/Marcas/${id}`);
+        resp = await api.get(`/EstatusInventarios/${id}`);
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success == true) {
-            this.marca.id = data.id;
-            this.marca.clave = data.clave;
-            this.marca.descripcion = data.descripcion;
+            this.estatu.id = data.id;
+            this.estatu.nombre = data.nombre;
           }
-        }
-      } catch (error) {
-        return {
-          success: false,
-          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
-        };
-      }
-    },
-
-    //-----------------------------------------------------------
-    async loadMarcaList() {
-      try {
-        let resp = await api.get("/Marcas/GetLista");
-        let { data } = resp.data;
-        let listMarca = data.map((marca) => {
-          return {
-            label: marca.clave,
-            value: marca.id,
-          };
-        });
-        this.listMarca = listMarca;
-      } catch (error) {
-        console.log(error);
-        return {
-          success: false,
-          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
-        };
-      }
-    },
-
-    //-----------------------------------------------------------
-    async createMarca(marca) {
-      try {
-        const resp = await api.post("/Marcas", marca);
-        if (resp.status == 200) {
-          const { success, data } = resp.data;
-          if (success === true) {
-            return { success, data };
-          } else {
-            return { success, data };
-          }
-        } else {
-          return {
-            success: false,
-            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
-          };
         }
       } catch (error) {
         console.log(error);
@@ -111,38 +113,11 @@ export const useMarcaStore = defineStore("marcas", {
     },
 
     //-----------------------------------------------------------
-    async updateMarca(marca) {
+    async deleteEstatu(id) {
       try {
-        const resp = await api.put(`/Marcas/${marca.id}`, marca);
-        if (resp.status == 200) {
-          const { success, data } = resp.data;
-          if (success === true) {
-            return { success, data };
-          } else {
-            return { success, data };
-          }
-        } else {
-          return {
-            success: false,
-            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
-          };
-        }
-      } catch (error) {
-        console.log(error);
-        return {
-          success: false,
-          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
-        };
-      }
-    },
-
-    //-----------------------------------------------------------
-    async deleteMarca(id) {
-      try {
-        const resp = await api.delete(`/Marcas/${id}`);
+        const resp = await api.delete(`/EstatusInventarios/${id}`);
         if (resp.status == 200) {
           let { success, data } = resp.data;
-          console.log("data", data);
           if (success === true) {
             return { success, data };
           } else {
@@ -162,11 +137,11 @@ export const useMarcaStore = defineStore("marcas", {
         };
       }
     },
+
     //-----------------------------------------------------------
     actualizarModal(valor) {
       this.modal = valor;
     },
-
     updateEditar(valor) {
       this.isEditar = valor;
     },

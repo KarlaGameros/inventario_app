@@ -17,6 +17,7 @@ export const useBodegaStore = defineStore("bodega", {
     },
   }),
   actions: {
+    //-----------------------------------------------------------
     initBodega() {
       this.bodega.id = null;
       this.bodega.area_Id = null;
@@ -24,6 +25,8 @@ export const useBodegaStore = defineStore("bodega", {
       this.bodega.nombre = null;
       this.bodega.eliminado = null;
     },
+
+    //-----------------------------------------------------------
     async loadInformacionBodega() {
       try {
         let resp = await api.get("/Bodegas");
@@ -46,6 +49,7 @@ export const useBodegaStore = defineStore("bodega", {
       }
     },
 
+    //-----------------------------------------------------------
     async loadBodega(id) {
       try {
         let resp = null;
@@ -67,6 +71,8 @@ export const useBodegaStore = defineStore("bodega", {
         };
       }
     },
+
+    //-----------------------------------------------------------
     async loadAreasList() {
       try {
         let resp = await api.get("/Areas/GetLista");
@@ -87,6 +93,7 @@ export const useBodegaStore = defineStore("bodega", {
       }
     },
 
+    //-----------------------------------------------------------
     async loadBodegasList() {
       try {
         let resp = await api.get("/Bodegas/GetLista");
@@ -107,6 +114,7 @@ export const useBodegaStore = defineStore("bodega", {
       }
     },
 
+    //-----------------------------------------------------------
     async createBodega(bodega) {
       try {
         const resp = await api.post("/Bodegas", bodega);
@@ -132,6 +140,7 @@ export const useBodegaStore = defineStore("bodega", {
       }
     },
 
+    //-----------------------------------------------------------
     async updateBodega(bodega) {
       try {
         const resp = await api.put(`/Bodegas/${bodega.id}`, bodega);
@@ -157,6 +166,7 @@ export const useBodegaStore = defineStore("bodega", {
       }
     },
 
+    //-----------------------------------------------------------
     async deleteBodega(id) {
       try {
         const resp = await api.delete(`/Bodegas/${id}`);
@@ -182,6 +192,7 @@ export const useBodegaStore = defineStore("bodega", {
       }
     },
 
+    //-----------------------------------------------------------
     actualizarModal(valor) {
       this.modal = valor;
     },
