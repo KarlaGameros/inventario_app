@@ -69,9 +69,10 @@ export const useMarcaStore = defineStore("marcas", {
         let resp = await api.get("/Marcas/GetLista");
         let { data } = resp.data;
         let listMarca = data.map((marca) => {
+          console.log(marca.value);
           return {
-            label: marca.clave,
-            value: marca.id,
+            label: marca.label,
+            value: marca.value,
           };
         });
         this.listMarca = listMarca;

@@ -23,7 +23,7 @@
         <q-form class="row q-col-gutter-xs" @submit="onSubmit">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
-              v-model="marca.clave"
+              v-model.trim="marca.clave"
               label="Nombre de la marca"
               hint="Ingrese nombre de la marca"
               autogrow
@@ -34,7 +34,7 @@
           </div>
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
-              v-model="marca.descripcion"
+              v-model.trim="marca.descripcion"
               label="Descripción de la marca"
               hint="Ingrese una descripción"
               autogrow
@@ -96,7 +96,7 @@ const onSubmit = async () => {
       type: "positive",
       message: resp.data,
     });
-    marcaStore.loadInformacionMarca();
+    //marcaStore.loadInformacionMarca();
     actualizarModal(false);
   } else {
     $q.notify({

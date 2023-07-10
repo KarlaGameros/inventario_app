@@ -22,7 +22,7 @@
         <q-form class="row q-col-gutter-xs" @submit="onSubmit">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
-              v-model="catalogo.clave"
+              v-model.trim="catalogo.clave"
               label="Clave del catálogo"
               hint="Ingrese una clave"
               autogrow
@@ -33,7 +33,7 @@
           </div>
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
-              v-model="catalogo.nombre"
+              v-model.trim="catalogo.nombre"
               label="Nombre del catálogo"
               hint="Ingrese un nombre"
               autogrow
@@ -44,7 +44,7 @@
           </div>
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
-              v-model="catalogo.nombre_Corto"
+              v-model.trim="catalogo.nombre_Corto"
               label="Nombre corto del catálogo"
               hint="Ingrese un nombre corto"
               autogrow

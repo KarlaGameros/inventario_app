@@ -6,6 +6,7 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
     modal: false,
     isEditar: false,
     catalogos: [],
+    listCatalogo: [],
     catalogo: {
       id: null,
       nombre: null,
@@ -68,6 +69,26 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
       }
     },
 
+    //-----------------------------------------------------------
+    async loadCatalogoList() {
+      try {
+        let resp = await api.get("/Catalagos");
+        let { data } = resp.data;
+        let listCatalogo = data.map((catalogo) => {
+          return {
+            label: catalogo.clave,
+            value: catalogo.id,
+          };
+        });
+        this.listCatalogo = listCatalogo;
+      } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
     //-----------------------------------------------------------
     async createCatalogo(catalogo) {
       try {

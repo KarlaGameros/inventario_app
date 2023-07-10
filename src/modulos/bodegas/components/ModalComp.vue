@@ -22,7 +22,7 @@
         <q-form class="row q-col-gutter-xs" @submit="onSubmit">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
-              v-model="bodega.nombre"
+              v-model.trim="bodega.nombre"
               label="Nombre de bodega"
               hint="Ingrese un nombre"
               autogrow
@@ -33,7 +33,7 @@
           </div>
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-select
-              v-model="area_Id"
+              v-model.trim="area_Id"
               :options="areas"
               label="Área responsable de bodega"
               hint="Seleccione un área"

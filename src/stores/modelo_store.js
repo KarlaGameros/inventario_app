@@ -81,6 +81,27 @@ export const useModeloStore = defineStore("modelos", {
     },
 
     //-----------------------------------------------------------
+    async loadModeloList() {
+      try {
+        let resp = await api.get("/Modelos/GetLista");
+        let { data } = resp.data;
+        let listModelo = data.map((modelo) => {
+          return {
+            label: modelo.label,
+            value: modelo.value,
+          };
+        });
+        this.listModelo = listModelo;
+      } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
     async modeloByMarca(id) {
       try {
         let detalle = await api.get(`/Modelos/ByMarca/${id}`);
