@@ -14,7 +14,6 @@
       <div class="col">
         <div class="text-right q-pa-md items-start q-gutter-md">
           <q-btn
-            v-if="modulo == null ? false : modulo.registrar"
             type="button"
             class="q-ma-sm"
             color="purple-ieen"

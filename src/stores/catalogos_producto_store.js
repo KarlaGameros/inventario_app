@@ -76,7 +76,7 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
         let { data } = resp.data;
         let listCatalogo = data.map((catalogo) => {
           return {
-            label: catalogo.clave,
+            label: `${catalogo.nombre} - ${catalogo.clave}`,
             value: catalogo.id,
           };
         });

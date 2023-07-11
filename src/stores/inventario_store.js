@@ -10,6 +10,12 @@ export const useInventarioStore = defineStore("inventario", {
     cantidad: null,
     listInventario: [],
     inventarios: [],
+    listaNumeroSerie: [],
+    numeroSerie: {
+      id: null,
+      cantidad: null,
+      catalogo_id: null,
+    },
     inventario: {
       id: null,
       catalogo_id: null,
@@ -66,25 +72,19 @@ export const useInventarioStore = defineStore("inventario", {
     },
 
     //-----------------------------------------------------------
-    async addProduct(numero_serie, id, cantidad) {
+    async addCantidad(cantidad, catalogoId) {
       try {
-        console.log("entro");
-        this.listaNumeroSerie.push({
-          numero_serie: numero_serie,
-          inventari_Id: id,
-          id: 0,
-          cantidad: cantidad,
-        });
+        this.listaNumeroSerie = Array.from(
+          { length: cantidad },
+          (_, index) => index + 1
+        );
+
         console.log("listaNumeroSerie", this.listaNumeroSerie);
       } catch (error) {
         console, log(error);
       }
     },
 
-    //-----------------------------------------------------------
-    async addCantidad(cantidad) {
-      console.log("store", cantidad);
-    },
     //-----------------------------------------------------------
     actualizarModal(valor) {
       this.modal = valor;

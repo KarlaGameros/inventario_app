@@ -105,14 +105,12 @@ export const useModeloStore = defineStore("modelos", {
     async modeloByMarca(id) {
       try {
         let detalle = await api.get(`/Modelos/ByMarca/${id}`);
-        let detalleArray = detalle.data.data.map((detalle) => {
+        this.listModelo = detalle.data.data.map((detalle) => {
           return {
-            clave: detalle.clave,
-            descripcion: detalle.descripcion,
-            id: detalle.id,
+            label: `${detalle.clave} - ${detalle.descripcion}`,
+            value: detalle.id,
           };
         });
-        this.listModelo = detalleArray;
       } catch (error) {
         console.log(error);
         return {
