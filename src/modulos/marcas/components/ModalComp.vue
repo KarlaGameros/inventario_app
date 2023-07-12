@@ -96,7 +96,7 @@ const onSubmit = async () => {
       type: "positive",
       message: resp.data,
     });
-    //marcaStore.loadInformacionMarca();
+    marcaStore.loadInformacionMarca();
     actualizarModal(false);
   } else {
     $q.notify({
