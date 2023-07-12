@@ -50,6 +50,7 @@
             @click="props.toggleFullscreen"
             class="q-ml-md"
           />
+
           <!-- <q-tr :props="props">
             <q-td key="cantidad" :props="props"
               >{{ props.row }}
@@ -88,12 +89,21 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useInventarioStore } from "src/stores/inventario_store";
-import { ref } from "vue";
+import { ref, watch } from "vue";
+
+//-----------------------------------------------------------
 
 const inventarioStore = useInventarioStore();
+const visibleColumns = ref([]);
 const { listaNumeroSerie } = storeToRefs(inventarioStore);
 
-const visibleColumns = ref(["extencionA", "extencionB", "extencionC"]);
+//-----------------------------------------------------------
+
+watch(visibleColumns, (val) => {
+  console.log("vivisble columns", visibleColumns.value);
+});
+
+//-----------------------------------------------------------
 
 const columns = [
   {

@@ -20,7 +20,7 @@
       </q-card-section>
 
       <q-card-section>
-        <q-form class="row q-col-gutter-xs">
+        <q-form @submit="registrar" class="row q-col-gutter-xs">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-radio
               v-model="radio"
@@ -43,7 +43,7 @@
               :options="listCatalogo"
               label="Catálogo perteneciente del inventario"
               hint="Selecciona una catalogo"
-              lazy-rules
+              :lazy-rules="true"
               :rules="[(val) => !!val || 'El catálogo es requerido']"
             >
             </q-select>
@@ -113,6 +113,14 @@
           </div>
 
           <q-space />
+
+          <div
+            v-if="radio == 'paquete'"
+            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+          >
+            <q-input label="Descripcion de extención"> </q-input>
+          </div>
+
           <div class="col-12 justify-end" v-if="radio == 'paquete'">
             <div class="text-right q-gutter-xs">
               <q-btn
@@ -124,32 +132,28 @@
               />
             </div>
           </div>
-        </q-form>
-      </q-card-section>
 
-      <q-card-section v-if="radio != 'agranel'">
-        <TablaNumeroSerie />
-      </q-card-section>
+          <q-card-section class="col-12" v-if="radio != 'agranel'">
+            <TablaNumeroSerie />
+          </q-card-section>
 
-      <q-card-section>
-        <q-space />
-        <div class="col-12 justify-end">
-          <div class="text-right q-gutter-xs">
-            <q-btn
-              label="Cancelar"
-              type="reset"
-              color="negative"
-              @click="actualizarModal(false)"
-            />
-            <q-btn
-              label="Guardar"
-              @click="solicitar()"
-              color="positive"
-              class="q-ml-sm"
-              :disable="habilitarGuardar"
-            />
+          <div class="col-12 justify-end">
+            <div class="text-right q-gutter-xs">
+              <q-btn
+                label="Cancelar"
+                type="reset"
+                color="negative"
+                @click="actualizarModal(false)"
+              />
+              <q-btn
+                label="Guardar"
+                type="submit"
+                color="positive"
+                class="q-ml-sm"
+              />
+            </div>
           </div>
-        </div>
+        </q-form>
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -195,9 +199,7 @@ const modeloId = ref(null);
 const cantidad = ref(null);
 const NumeroSerie = ref(null);
 const idInventaro = ref(null);
-let habilitarGuardar = ref(true);
 const radio = ref("agranel");
-const extencion = ref([]);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
