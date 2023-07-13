@@ -143,7 +143,6 @@ export const useMarcaStore = defineStore("marcas", {
         const resp = await api.delete(`/Marcas/${id}`);
         if (resp.status == 200) {
           let { success, data } = resp.data;
-          console.log("data", data);
           if (success === true) {
             return { success, data };
           } else {

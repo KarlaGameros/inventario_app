@@ -18,8 +18,18 @@
         </template>
         <template v-slot:body="props">
           <q-tr :props="props">
-            <q-td v-for="col in props.cols" :key="col.name" :props="propos">
+            <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'id'">
+                <q-btn
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="qr_code_scanner"
+                  @click="generarPDF(col.value)"
+                >
+                  <q-tooltip>Editar inventario</q-tooltip>
+                </q-btn>
+
                 <q-btn
                   flat
                   round
@@ -56,15 +66,22 @@ import { onBeforeMount, ref } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useInventarioStore } from "../../../stores/inventario_store";
 
+//-----------------------------------------------------------
+
 const $q = useQuasar();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const inventarioStore = useInventarioStore();
 const { inventarios } = storeToRefs(inventarioStore);
 
+//-----------------------------------------------------------
+
 onBeforeMount(() => {
-  inventarioStore.loadInventarios();
+  inventarioStore.loadInformacionInventarios();
 });
+
+//-----------------------------------------------------------
+
 const columns = [
   {
     name: "catalogo",
@@ -102,10 +119,10 @@ const columns = [
     sortable: true,
   },
   {
-    name: "nombre_corto",
+    name: "nombre_Corto",
     align: "center",
     label: "Nombre",
-    field: "nombre_corto",
+    field: "nombre_Corto",
     sortable: true,
   },
   {
@@ -143,7 +160,16 @@ const columns = [
     field: "empleado",
     sortable: true,
   },
+  {
+    name: "id",
+    align: "center",
+    label: "Acciones",
+    field: "id",
+    sortable: true,
+  },
 ];
+
+//-----------------------------------------------------------
 
 const pagination = ref({
   //********** */
@@ -152,6 +178,55 @@ const pagination = ref({
   sortBy: "name",
   descending: false,
 });
+
+const filter = ref("");
+
+//-----------------------------------------------------------
+
+const generarPDF = async (id) => {
+  $q.loading.show();
+  var { ruta_PDF } = await inventarioStore.generarPDF(id);
+  window.open(ruta_PDF, "_blank");
+  $q.loading.hide();
+};
+
+//-----------------------------------------------------------
+
+const eliminar = async (id) => {
+  $q.dialog({
+    title: "Eliminar inventario",
+    message: "¿Está seguro de eliminar el inventario?",
+    icon: "Warning",
+    persistent: true,
+    transitionShow: "scale",
+    transitionHide: "scale",
+    ok: {
+      color: "positive",
+      label: "¡Sí!, eliminar",
+    },
+    cancel: {
+      color: "negative",
+      label: " No Cancelar",
+    },
+  }).onOk(async () => {
+    $q.loading.show();
+    const resp = await inventarioStore.deleteInventario(id);
+    if (resp.success) {
+      $q.loading.hide();
+      $q.notify({
+        type: "positive",
+        message: resp.data,
+      });
+      inventarioStore.loadInformacionInventarios();
+    } else {
+      $q.loading.hide();
+      $q.notify({
+        type: "negative",
+        message: resp.data,
+      });
+    }
+  });
+};
 </script>
 
 <style></style>

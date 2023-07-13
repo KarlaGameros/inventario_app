@@ -23,56 +23,56 @@
         <q-form @submit="onSubmit" class="row q-col-gutter-xs">
           <!----------------------------------------------------------------------------->
 
-          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div
+            v-if="radio == 'paquete'"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+          >
             <q-radio
               v-model="radio"
-              checked-icon="task_alt"
-              unchecked-icon="panorama_fish_eye"
+              size="md"
               val="individual"
               label="Individual"
             />
-            <q-radio
-              v-model="radio"
-              checked-icon="task_alt"
-              unchecked-icon="panorama_fish_eye"
-              val="agranel"
-              label="Agranel"
-            />
-            <q-radio
-              v-model="radio"
-              checked-icon="task_alt"
-              unchecked-icon="panorama_fish_eye"
-              val="paquete"
-              label="Paquete"
-            />
+            <q-radio v-model="radio" size="md" val="agranel" label="Agranel" />
+            <q-radio v-model="radio" size="md" val="paquete" label="Paquete" />
           </div>
-
-          <!----------------------------------------------------------------------------->
+          <div v-else class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <q-radio
+              v-model="radio"
+              size="md"
+              val="individual"
+              label="Individual"
+            />
+            <q-radio v-model="radio" size="md" val="agranel" label="Agranel" />
+            <q-radio v-model="radio" size="md" val="paquete" label="Paquete" />
+          </div>
 
           <div
             v-if="radio == 'paquete'"
-            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+            :selection="selection"
           >
-            <div class="q-gutter-sm">
-              <q-checkbox
-                v-model="selection"
-                val="extencionA"
-                label="Extención A"
-                color="teal"
-              />
-              <q-checkbox
-                v-model="selection"
-                val="Extención B"
-                label="Orange"
-                color="orange"
-              />
-              <q-checkbox
-                v-model="selection"
-                val="Extención C"
-                label="Cyan"
-                color="cyan"
-              />
-            </div>
+            <q-checkbox
+              v-model="selection"
+              val="extencionA"
+              size="md"
+              label="Extención A"
+              color="teal"
+            />
+            <q-checkbox
+              v-model="selection"
+              val="Extención B"
+              size="md"
+              label="Orange"
+              color="orange"
+            />
+            <q-checkbox
+              v-model="selection"
+              val="Extención C"
+              size="md"
+              label="Cyan"
+              color="cyan"
+            />
           </div>
 
           <!----------------------------------------------------------------------------->
@@ -101,10 +101,7 @@
             </q-select>
           </div>
 
-          <div
-            v-if="radio == 'agranel'"
-            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
-          >
+          <div v-if="editar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
               disable
               label="Clave del producto"
@@ -122,6 +119,7 @@
             <q-input
               v-model.trim="inventario.descripcion"
               label="Descripción del producto"
+              name="descripcion"
               autogrow
               lazy-rules
               :rules="[(val) => !!val || 'La descripción es requerida']"
@@ -134,8 +132,9 @@
             class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
           >
             <q-input
-              v-model.trim="inventario.nombre_corto"
+              v-model.trim="inventario.nombre_Corto"
               label="Nombre corto"
+              name="nombre_corto"
               autogrow
               lazy-rules
               :rules="[(val) => !!val || 'La nombre corto es requerido']"
@@ -180,6 +179,7 @@
             <q-input
               v-model.trim="inventario.color"
               label="Color"
+              name="color"
               autogrow
               lazy-rules
               :rules="[(val) => !!val || 'El color es requerido']"
@@ -195,6 +195,7 @@
               v-model.trim="cantidad"
               label="Cantidad"
               type="number"
+              name="cantidad"
               autogrow
               lazy-rules
               :rules="[(val) => !!val || 'La cantidad es requerida']"
@@ -206,21 +207,39 @@
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
             v-if="radio != 'paquete'"
           >
-            <q-file filled bottom-slots v-model="files" label="Label" counter>
+            <!-- <q-file
+              filled
+              bottom-slots
+              label="Label"
+              counter
+              accept="image/png, image/jpeg"
+            >
               <template v-slot:prepend>
                 <q-icon name="cloud_upload" @click.stop.prevent />
               </template>
               <template v-slot:append>
                 <q-icon
                   name="close"
-                  v-model="inventario.img"
                   @click.stop.prevent="files = null"
                   class="cursor-pointer"
                 />
               </template>
 
               <template v-slot:hint> Field hint </template>
+            </q-file> -->
+
+            <q-file
+              v-model="fileInput"
+              filled
+              bottom-slots
+              label="Label"
+              counter
+              accept="image/png, image/jpeg"
+              @change="handleFileChange"
+            >
+              <!-- Resto del contenido del componente -->
             </q-file>
+            <input type="file" @change="handleFileChange" />
           </div>
 
           <q-space />
@@ -231,24 +250,24 @@
             v-if="radio == 'paquete'"
             class="q-gutter-y-md col-lg-12 col-md-12 col-sm-12 col-xs-12"
           >
-            <q-card :selection="selection">
+            <q-card>
               <q-tabs
                 class="bg-purple text-white shadow-2 rounded-borders"
                 align="justify"
                 narrow-indicator
                 :columns="columns"
-                :selection="selection"
+                v-model="selection"
               >
                 <q-tab name="general" label="General" />
                 <q-tab name="extencionA" label="Extención A" />
-                <!-- <q-tab name="extencionB" label="Extención B" />
-                <q-tab name="extencionC" label="Extención C" /> -->
+                <q-tab name="extencionB" label="Extención B" />
+                <q-tab name="extencionC" label="Extención C" />
               </q-tabs>
 
               <q-separator />
 
               <q-tab-panels animated>
-                <q-tab-panel name="general">
+                <q-tab-panel name="general" v-if="selection === 'general'">
                   <div class="text-h6">General</div>
 
                   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -276,7 +295,7 @@
 
                   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <q-input
-                      v-model.trim="inventario.nombre_corto"
+                      v-model.trim="inventario.nombre_Corto"
                       label="Nombre corto"
                       autogrow
                       lazy-rules
@@ -338,7 +357,7 @@
                 <!----------------------------------------------------------------------------->
 
                 <q-tab-panel
-                  v-model="selection"
+                  v-if="selection === 'extencionA'"
                   val="extencionA"
                   name="extencionA"
                 >
@@ -409,7 +428,10 @@
 
                 <!----------------------------------------------------------------------------->
 
-                <q-tab-panel name="extencionB">
+                <q-tab-panel
+                  name="extencionB"
+                  v-if="selection === 'extencionB'"
+                >
                   <div class="text-h6">Extención B</div>
                   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <q-input
@@ -477,7 +499,10 @@
 
                 <!----------------------------------------------------------------------------->
 
-                <q-tab-panel name="extencionC">
+                <q-tab-panel
+                  name="extencionC"
+                  v-if="selection === 'extencionC'"
+                >
                   <div class="text-h6">Extención C</div>
                   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <q-input
@@ -609,17 +634,14 @@ import TablaNumeroSerie from "../components/TablaNumeroSerie.vue";
 //-----------------------------------------------------------
 
 const $q = useQuasar();
-const authStore = useAuthStore();
 const inventarioStore = useInventarioStore();
 const catalogoStore = useCatalogoProductoStore();
 const bodegaStore = useBodegaStore();
 const marcaStore = useMarcaStore();
 const modeloStore = useModeloStore();
-const files = ref(null);
 
 //-----------------------------------------------------------
 
-const { modulo } = storeToRefs(authStore);
 const { inventario, modal, isEditar } = storeToRefs(inventarioStore);
 const { listCatalogo } = storeToRefs(catalogoStore);
 const { listBodega } = storeToRefs(bodegaStore);
@@ -637,11 +659,10 @@ const modeloId_A = ref(null);
 const modeloId_B = ref(null);
 const modeloId_C = ref(null);
 const cantidad = ref(null);
-const NumeroSerie = ref(null);
-const idInventaro = ref(null);
 const radio = ref("individual");
-const selection = ref([]);
-
+const selection = ref(["general"]);
+const fileInput = ref();
+let inputFiles = "";
 //-----------------------------------------------------------
 const columns = [
   {
@@ -684,8 +705,8 @@ watch(marcaId, (val) => {
     });
   }
 });
-watch(modeloId, (val) => {
-  console.log(modeloId.value);
+watch(fileInput, (val) => {
+  console.log("file", fileInput.value);
 });
 
 //-----------------------------------------------------------
@@ -700,29 +721,26 @@ const actualizarModal = (valor) => {
   inventarioStore.initInventario();
   radio.value = "agranel";
 };
-
+const handleFileChange = (event) => {
+  inputFiles = event.target.files[0].name;
+  console.log("file2", inputFiles);
+};
 //-----------------------------------------------------------
 
 const onSubmit = async () => {
-  // inventario.value.catalogo_id = catalogoId.value.value;
-  // inventario.value.bodega_id = bodegaId.value.value;
-  // inventario.value.marca_id = marcaId.value.value;
-  // inventario.value.modelo_id = modeloId.value.value;
-  // inventario.value.estatus = 2;
-
   const inventarioFormData = new FormData();
   inventarioFormData.append("Catalago_Id", catalogoId.value.value);
   inventarioFormData.append("Estatus_Id", 2);
   inventarioFormData.append("Bodega_Id", bodegaId.value.value);
   inventarioFormData.append("Marca_Id", marcaId.value.value);
   inventarioFormData.append("Modelo_Id", modeloId.value.value);
-  inventarioFormData.append("Descripcion", inventario.value);
-  inventarioFormData.append("Nombre_Corto", inventario.nombre_corto);
-  inventarioFormData.append("Color", inventario.color);
-  inventarioFormData.append("Descripcion", inventario.descripcion);
-  inventarioFormData.append("Foto_1", files.value.name);
+  inventarioFormData.append("Descripcion", inventario.value.descripcion);
+  inventarioFormData.append("Nombre_Corto", inventario.value.nombre_Corto);
+  inventarioFormData.append("Color", inventario.value.color);
 
-  console.log("catalogo", inventario.descripcion);
+  inventarioFormData.append("Foto_1", inputFiles);
+
+  console.log("inventarioFormData", inputFiles);
   let resp = null;
   $q.loading.show();
 
@@ -731,6 +749,7 @@ const onSubmit = async () => {
   } else {
     console.log("onSubmit", inventarioFormData);
     resp = await inventarioStore.createInventario(inventarioFormData);
+    console.log("resp", resp.data);
   }
 
   if (resp.success) {
@@ -739,6 +758,7 @@ const onSubmit = async () => {
       message: resp.data,
     });
     actualizarModal(false);
+    inventarioStore.loadInformacionInventarios();
   } else {
     $q.notify({
       type: "negative",
