@@ -4,9 +4,8 @@ import { api } from "src/boot/axios";
 export const useInventarioStore = defineStore("inventario", {
   state: () => ({
     modal: false,
+    modalFotos: false,
     isEditar: false,
-    isConsulta: false,
-    isSurtit: false,
     cantidad: null,
     listInventario: [],
     inventarios: [],
@@ -25,7 +24,10 @@ export const useInventarioStore = defineStore("inventario", {
       modelo_id: null,
       modelo: null,
       color: null,
-      img: null,
+      foto_1: null,
+      foto_2: null,
+      foto_3: null,
+      foto_4: null,
       numero_Serie: null,
       clave: null,
       empleado: null,
@@ -112,6 +114,7 @@ export const useInventarioStore = defineStore("inventario", {
     },
 
     //-----------------------------------------------------------
+
     async createInventario(inventarioFormData) {
       console.log("createInventario", inventarioFormData);
       try {
@@ -143,6 +146,74 @@ export const useInventarioStore = defineStore("inventario", {
       }
     },
 
+    //-----------------------------------------------------------
+
+    async loadInventario(id) {
+      try {
+        let resp = await api.get(`/Inventarios/${id}`);
+        console.log("load inventario", resp);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          console.log("load ", data);
+          if (success == true) {
+            this.inventario.id = data.id;
+            this.inventario.foto_1 = data.foto_1_URL;
+            this.inventario.foto_2 = data.foto_2_URL;
+            this.inventario.foto_3 = data.foto_3_URL;
+            this.inventario.foto_4 = data.foto_4_URL;
+            this.inventario.catalogo_id = data.catalago_Id;
+            this.inventario.catalogo = data.catalago;
+            this.inventario.modelo_id = data.modelo_Id;
+            this.inventario.modelo = data.modelo;
+            this.inventario.marca_id = data.marca_Id;
+            this.inventario.marca = data.marca;
+            this.inventario.clave = data.clave;
+            this.inventario.bodega_id = data.bodega_Id;
+            this.inventario.bodega = data.bodega;
+            this.inventario.catalogo = data.catalago;
+            this.inventario.descripcion = data.descripcion;
+            this.inventario.nombre_Corto = data.nombre_Corto;
+            this.inventario.color = data.color;
+            this.inventario.cantidad = data.cantidad;
+          }
+          console.log("inventariooo", this.inventario);
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
+    async updateInventario(innventario) {
+      try {
+        const resp = await api.put(
+          `/Inventarios/${innventario.id}`,
+          innventario
+        );
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
     //-----------------------------------------------------------
 
     async addCantidad(cantidad, catalogoId) {
@@ -214,8 +285,12 @@ export const useInventarioStore = defineStore("inventario", {
     actualizarModal(valor) {
       this.modal = valor;
     },
-    updateConsulta(valor) {
-      this.isConsulta = valor;
+    actualizarModalFotos(valor) {
+      console.log("modal", valor);
+      this.modalFotos = valor;
+    },
+    updateEditar(valor) {
+      this.isEditar = valor;
     },
   },
 });

@@ -4,13 +4,20 @@
       <q-table
         :rows="inventarios"
         :columns="columns"
+        :filter="filter"
         :pagination="pagination"
         row-key="id"
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
       >
         <template v-slot:top-right>
-          <q-input borderless dense debounce="300" placeholder="Buscar..">
+          <q-input
+            borderless
+            dense
+            debounce="300"
+            v-model="filter"
+            placeholder="Buscar.."
+          >
             <template v-slot:append>
               <q-icon name="search" />
             </template>
@@ -20,6 +27,14 @@
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'id'">
+                <q-btn
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="image"
+                  @click="loadFotos(col.value, true)"
+                >
+                </q-btn>
                 <q-btn
                   flat
                   round
@@ -55,6 +70,7 @@
           </q-tr>
         </template>
       </q-table>
+      <ModalFotos />
     </div>
   </div>
 </template>
@@ -65,6 +81,7 @@ import { useQuasar } from "quasar";
 import { onBeforeMount, ref } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useInventarioStore } from "../../../stores/inventario_store";
+import ModalFotos from "../components/ModalViewFotos.vue";
 
 //-----------------------------------------------------------
 
@@ -133,10 +150,10 @@ const columns = [
     sortable: true,
   },
   {
-    name: "numero_serie",
+    name: "numero_Serie",
     align: "center",
     label: "Número de serie",
-    field: "numero_serie",
+    field: "numero_Serie",
     sortable: true,
   },
   {
@@ -180,6 +197,23 @@ const pagination = ref({
 });
 
 const filter = ref("");
+
+//-----------------------------------------------------------
+
+const editar = async (id) => {
+  $q.loading.show();
+  await inventarioStore.loadInventario(id);
+  inventarioStore.updateEditar(true);
+  inventarioStore.actualizarModal(true);
+  $q.loading.hide();
+};
+
+//-----------------------------------------------------------
+
+const loadFotos = (id, valor) => {
+  inventarioStore.loadInventario(id);
+  inventarioStore.actualizarModalFotos(valor);
+};
 
 //-----------------------------------------------------------
 

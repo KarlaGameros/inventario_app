@@ -83,7 +83,7 @@ import TablaModelo from "./TablaComp.vue";
 
 const $q = useQuasar();
 const modeloStore = useModeloStore();
-const { modal, modelo, isEditar, marca } = storeToRefs(modeloStore);
+const { modal, modelo, isEditar, marca, marca_id } = storeToRefs(modeloStore);
 
 //-----------------------------------------------------------
 
@@ -100,6 +100,7 @@ const onSubmit = async () => {
   if (isEditar.value == true) {
     resp = await modeloStore.updateModelo(modelo.value);
   } else {
+    console.log("create", modelo.value);
     resp = await modeloStore.createModelo(modelo.value);
   }
   if (resp.success) {
@@ -107,8 +108,8 @@ const onSubmit = async () => {
       type: "positive",
       message: resp.data,
     });
-    //modeloStore.modeloByMarca();
-    actualizarModal(false);
+    modeloStore.modeloByMarca(marca_id.value);
+    modeloStore.initModelo();
   } else {
     $q.notify({
       type: "negative",

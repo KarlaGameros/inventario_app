@@ -103,6 +103,7 @@ export const useModeloStore = defineStore("modelos", {
 
     //-----------------------------------------------------------
     async modeloByMarca(id) {
+      this.marca_id = id;
       try {
         let detalle = await api.get(`/Modelos/ByMarca/${id}`);
         this.listModelo = detalle.data.data.map((detalle) => {
@@ -119,13 +120,13 @@ export const useModeloStore = defineStore("modelos", {
         };
       }
     },
+
     //-----------------------------------------------------------
+
     async createModelo(modelo) {
       try {
         modelo.marca_Id = this.marca_id;
-        console.log("modelo", modelo);
         const resp = await api.post(`/Modelos`, modelo);
-        console.log("create modelo", resp);
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success === true) {
@@ -201,9 +202,8 @@ export const useModeloStore = defineStore("modelos", {
       }
     },
     //-----------------------------------------------------------
-    actualizarModal(valor, props) {
+    actualizarModal(valor) {
       this.modal = valor;
-      this.marca_id = props.id;
     },
     updateEditar(valor) {
       this.isEditar = valor;

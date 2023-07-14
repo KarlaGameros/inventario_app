@@ -104,6 +104,7 @@
           <div v-if="editar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
               disable
+              v-model="inventario.clave"
               label="Clave del producto"
               autogrow
               lazy-rules
@@ -173,8 +174,8 @@
           </div>
 
           <div
-            v-if="radio != 'paquete'"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+            v-if="radio == 'individual'"
+            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
           >
             <q-input
               v-model.trim="inventario.color"
@@ -192,6 +193,21 @@
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
           >
             <q-input
+              v-model.trim="inventario.color"
+              label="Color"
+              name="color"
+              autogrow
+              lazy-rules
+              :rules="[(val) => !!val || 'El color es requerido']"
+            >
+            </q-input>
+          </div>
+
+          <div
+            v-if="radio != 'individual'"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+          >
+            <q-input
               v-model.trim="cantidad"
               label="Cantidad"
               type="number"
@@ -204,13 +220,14 @@
           </div>
 
           <div
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
             v-if="radio != 'paquete'"
           >
-            <!-- <q-file
+            <q-file
+              v-model="foto1"
               filled
               bottom-slots
-              label="Label"
+              label="Foto 1"
               counter
               accept="image/png, image/jpeg"
             >
@@ -224,24 +241,85 @@
                   class="cursor-pointer"
                 />
               </template>
-
-              <template v-slot:hint> Field hint </template>
-            </q-file> -->
-
-            <q-file
-              v-model="fileInput"
-              filled
-              bottom-slots
-              label="Label"
-              counter
-              accept="image/png, image/jpeg"
-              @change="handleFileChange"
-            >
-              <!-- Resto del contenido del componente -->
             </q-file>
-            <input type="file" @change="handleFileChange" />
           </div>
 
+          <div
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
+            v-if="radio != 'paquete'"
+          >
+            <q-file
+              v-model="foto2"
+              filled
+              bottom-slots
+              label="Foto 2"
+              counter
+              accept="image/png, image/jpeg"
+            >
+              <template v-slot:prepend>
+                <q-icon name="cloud_upload" @click.stop.prevent />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  name="close"
+                  @click.stop.prevent="files = null"
+                  class="cursor-pointer"
+                />
+              </template>
+            </q-file>
+          </div>
+
+          <div
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
+            v-if="radio != 'paquete'"
+          >
+            <q-file
+              v-model="foto3"
+              filled
+              bottom-slots
+              label="Foto 3"
+              counter
+              accept="image/png, image/jpeg"
+            >
+              <template v-slot:prepend>
+                <q-icon name="cloud_upload" @click.stop.prevent />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  name="close"
+                  @click.stop.prevent="files = null"
+                  class="cursor-pointer"
+                />
+              </template>
+            </q-file>
+          </div>
+
+          <div
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
+            v-if="radio != 'paquete'"
+          >
+            <q-file
+              v-model="foto4"
+              filled
+              bottom-slots
+              label="Foto 4"
+              counter
+              accept="image/png, image/jpeg"
+            >
+              <template v-slot:prepend>
+                <q-icon name="cloud_upload" @click.stop.prevent />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  name="close"
+                  @click.stop.prevent="files = null"
+                  class="cursor-pointer"
+                />
+              </template>
+            </q-file>
+          </div>
+
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>
           <q-space />
 
           <!----------------------------------------------------------------------------->
@@ -661,9 +739,13 @@ const modeloId_C = ref(null);
 const cantidad = ref(null);
 const radio = ref("individual");
 const selection = ref(["general"]);
-const fileInput = ref();
-let inputFiles = "";
+const foto1 = ref();
+const foto2 = ref();
+const foto3 = ref();
+const foto4 = ref();
+
 //-----------------------------------------------------------
+
 const columns = [
   {
     name: "extencionA",
@@ -702,14 +784,48 @@ watch(marcaId, (val) => {
   if (val != null) {
     modeloStore.modeloByMarca(marcaId.value.value).then(() => {
       modeloId.value = listModelo.value[0];
+      console.log("watch", modeloId.value, listModelo.value[0].clave);
     });
   }
 });
-watch(fileInput, (val) => {
-  console.log("file", fileInput.value);
+
+watch(radio, (val) => {
+  catalogoId.value = null;
+  bodegaId.value = null;
+  marcaId.value = null;
+  modeloId.value = null;
+  foto1.value = null;
+  foto2.value = null;
+  foto3.value = null;
+  foto4.value = null;
+  inventarioStore.initInventario();
 });
 
+watch(inventario.value, (val) => {
+  if (val.id != null) {
+    cargarBodega(val);
+    cargarCatalogo(val);
+  }
+});
 //-----------------------------------------------------------
+
+const cargarBodega = async (val) => {
+  if (bodegaId.value == null) {
+    let bodegaFiltrado = listBodega.value.find(
+      (x) => x.value == `${val.bodega_id}`
+    );
+    bodegaId.value = bodegaFiltrado;
+  }
+};
+
+const cargarCatalogo = async (val) => {
+  if (catalogoId.value == null) {
+    let catalogoFiltrado = listCatalogo.value.find(
+      (x) => x.value == `${val.catalogo_id}`
+    );
+    catalogoId.value = catalogoFiltrado;
+  }
+};
 
 const agregarProducto = (cantidad, catalogoId) => {
   console.log("cantidad", cantidad, catalogoId);
@@ -719,11 +835,6 @@ const agregarProducto = (cantidad, catalogoId) => {
 const actualizarModal = (valor) => {
   inventarioStore.actualizarModal(valor);
   inventarioStore.initInventario();
-  radio.value = "agranel";
-};
-const handleFileChange = (event) => {
-  inputFiles = event.target.files[0].name;
-  console.log("file2", inputFiles);
 };
 //-----------------------------------------------------------
 
@@ -737,19 +848,80 @@ const onSubmit = async () => {
   inventarioFormData.append("Descripcion", inventario.value.descripcion);
   inventarioFormData.append("Nombre_Corto", inventario.value.nombre_Corto);
   inventarioFormData.append("Color", inventario.value.color);
+  inventarioFormData.append("Foto_1", foto1.value);
+  inventarioFormData.append("Foto_2", foto2.value);
+  inventarioFormData.append("Foto_3", foto3.value);
+  inventarioFormData.append("Foto_4", foto4.value);
+  inventarioFormData.append("Cantidad", cantidad.value);
 
-  inventarioFormData.append("Foto_1", inputFiles);
-
-  console.log("inventarioFormData", inputFiles);
   let resp = null;
+  let error = 0;
+
   $q.loading.show();
 
   if (isEditar.value == true) {
-    console.log("editar");
+    resp = await inventarioStore.updateInventario(inventarioFormData);
   } else {
-    console.log("onSubmit", inventarioFormData);
-    resp = await inventarioStore.createInventario(inventarioFormData);
-    console.log("resp", resp.data);
+    if (cantidad.value == null) {
+      //individual
+      resp = await inventarioStore.createInventario(inventarioFormData);
+    } else {
+      //agranel
+
+      for (let i = 0; i < cantidad.value; i++) {
+        try {
+          resp = await inventarioStore.createInventario(inventarioFormData);
+          if (!resp.success) error++;
+        } catch (error) {
+          error++;
+          console.log(error);
+        }
+      }
+    }
+  }
+
+  if (error > 0) {
+    $q.notify({
+      type: "negative",
+      message: `Error, ${error} no se registraron`,
+    });
+  } else {
+    $q.dialog({
+      title: "Volver a registrar",
+      message: "¿Quieres volver a registrar los que arrojaron error?",
+      icon: "Warning",
+      persistent: true,
+      transitionShow: "scale",
+      transitionHide: "scale",
+      ok: {
+        color: "positive",
+        label: "¡Sí!, volver a registrar",
+      },
+      cancel: {
+        color: "negative",
+        label: " No Cancelar",
+      },
+    }).onOk(async () => {
+      $q.loading.show();
+      console.log("onOk");
+      for (let i = 0; i < error; i++) {
+        resp = await inventarioStore.createInventario(inventarioFormData);
+      }
+      if (resp.success) {
+        $q.loading.hide();
+        $q.notify({
+          type: "positive",
+          message: resp.data,
+        });
+        inventarioStore.loadInformacionInventarios();
+      } else {
+        $q.loading.hide();
+        $q.notify({
+          type: "negative",
+          message: resp.data,
+        });
+      }
+    });
   }
 
   if (resp.success) {
@@ -758,13 +930,13 @@ const onSubmit = async () => {
       message: resp.data,
     });
     actualizarModal(false);
+    inventarioStore.initInventario();
     inventarioStore.loadInformacionInventarios();
   } else {
     $q.notify({
       type: "negative",
       message: resp.data,
     });
-    //loading.value = false;
   }
   $q.loading.hide();
 };

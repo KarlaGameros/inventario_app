@@ -26,7 +26,7 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              <div v-if="col.name === 'id'">
+              <div v-if="col.name === 'value'">
                 <q-btn
                   flat
                   round
@@ -65,30 +65,23 @@ import { ref } from "vue";
 
 const $q = useQuasar();
 const modeloStore = useModeloStore();
-const { listModelo } = storeToRefs(modeloStore);
+const { listModelo, marca_id } = storeToRefs(modeloStore);
 
 //-----------------------------------------------------------
 
 const columns = [
   {
-    name: "clave",
+    name: "label",
     align: "center",
     label: "Clave del modelo",
-    field: "clave",
+    field: "label",
     sortable: true,
   },
   {
-    name: "descripcion",
-    align: "center",
-    label: "Descripción",
-    field: "descripcion",
-    sortable: true,
-  },
-  {
-    name: "id",
+    name: "value",
     align: "center",
     label: "Acciones",
-    field: "id",
+    field: "value",
     sortable: false,
   },
 ];
@@ -140,7 +133,7 @@ const eliminar = async (id) => {
         type: "positive",
         message: resp.data,
       });
-      modeloStore.actualizarModal(false);
+      modeloStore.modeloByMarca(marca_id.value);
     } else {
       $q.loading.hide();
       $q.notify({

@@ -33,7 +33,7 @@
                   round
                   color="purple-ieen"
                   icon="add_circle"
-                  @click="actualizarModal(true, props.row)"
+                  @click="addModelo(true, props.row)"
                 >
                   <q-tooltip>Agregar modelo</q-tooltip>
                 </q-btn>
@@ -173,9 +173,9 @@ const eliminar = async (id) => {
 
 //-----------------------------------------------------------
 
-const actualizarModal = (valor, props) => {
+const addModelo = (valor, props) => {
   $q.loading.show();
-  modeloStore.actualizarModal(valor, props);
+  modeloStore.actualizarModal(valor);
   modeloStore.modeloByMarca(props.id);
   modeloStore.initModelo();
   $q.loading.hide();
