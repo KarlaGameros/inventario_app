@@ -36,7 +36,10 @@
             <q-radio v-model="radio" size="md" val="agranel" label="Agranel" />
             <q-radio v-model="radio" size="md" val="paquete" label="Paquete" />
           </div>
-          <div v-else class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div
+            v-if="radio != 'paquete'"
+            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+          >
             <q-radio
               v-model="radio"
               size="md"
@@ -50,29 +53,22 @@
           <div
             v-if="radio == 'paquete'"
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-            :selection="selection"
           >
-            <q-checkbox
-              v-model="selection"
-              val="extencionA"
-              size="md"
-              label="Extención A"
-              color="teal"
-            />
-            <q-checkbox
-              v-model="selection"
-              val="Extención B"
-              size="md"
-              label="Orange"
-              color="orange"
-            />
-            <q-checkbox
-              v-model="selection"
-              val="Extención C"
-              size="md"
-              label="Cyan"
-              color="cyan"
-            />
+            <q-list>
+              <q-checkbox
+                v-for="item in allTabs"
+                :key="item.tab.name"
+                tag="label"
+                :model-value="item.selected"
+                @update:model-value="
+                  (status) => {
+                    setTabSelected(item.tab, status);
+                  }
+                "
+              >
+                {{ item.tab.label }}
+              </q-checkbox>
+            </q-list>
           </div>
 
           <!----------------------------------------------------------------------------->
@@ -100,6 +96,386 @@
             >
             </q-select>
           </div>
+
+          <div
+            v-if="radio == 'paquete'"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+          >
+            <q-input
+              v-model.trim="cantidad"
+              label="Cantidad"
+              type="number"
+              autogrow
+              lazy-rules
+              :rules="[(val) => !!val || 'La cantidad es requerida']"
+            >
+            </q-input>
+          </div>
+
+          <!----------------------------------------------------------------------------->
+
+          <div class="col-12 justify-end" v-if="radio == 'paquete'">
+            <div class="text-right q-gutter-xs">
+              <q-btn
+                icon-right="add"
+                label="Agregar"
+                color="positive"
+                class="q-ml-sm"
+                @click="agregarProducto(cantidad, catalogoId)"
+              />
+            </div>
+          </div>
+
+          <!----------------------------------------------------------------------------->
+
+          <div
+            v-if="radio == 'paquete'"
+            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+          >
+            <q-toolbar
+              class="bg-purple-ieen text-white shadow-2 rounded-borders"
+            >
+              <q-tabs v-model="tab" inline-label shrink stretch>
+                <q-tab v-model="tab" name="general">General</q-tab>
+                <q-tab v-for="tab in tabs" :key="tab.name" v-bind="tab" />
+              </q-tabs>
+            </q-toolbar>
+            <q-separator />
+            <q-tab-panels v-model="tab" animated class="shadow-2">
+              <q-tab-panel name="general">
+                <div class="text-h6">General</div>
+
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <q-input
+                    disable
+                    v-model.trim="inventario.clave"
+                    label="Clave del producto"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La clave es requerido']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <q-input
+                    v-model.trim="inventario.descripcion"
+                    label="Descripción del producto"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La descripción es requerida']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <q-input
+                    v-model.trim="inventario.nombre_Corto"
+                    label="Nombre corto"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La nombre corto es requerido']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-select
+                    v-model="marcaId"
+                    :options="listMarca"
+                    label="Marca"
+                    hint="Selecciona una marca"
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La marca es requerida']"
+                  >
+                  </q-select>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-select
+                    v-model="modeloId"
+                    :options="listModelo"
+                    label="Modelo"
+                    hint="Selecciona modelo"
+                    lazy-rules
+                    :rules="[(val) => !!val || 'El modelo es requerida']"
+                  >
+                  </q-select>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-input
+                    v-model.trim="inventario.color"
+                    label="Color"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'El color es requerido']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col">
+                  <q-table
+                    :rows="listaNumeroSerie"
+                    :columns="columns"
+                    row-key="name"
+                  >
+                    <template>
+                      <div class="col"></div>
+                    </template>
+                  </q-table>
+                </div>
+              </q-tab-panel>
+
+              <!---------------------------------------------------------------->
+
+              <q-tab-panel name="mails">
+                <div class="text-h6">Extención A</div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <q-input
+                    disable
+                    v-model.trim="inventario.clave"
+                    label="Clave del producto"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La clave es requerido']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <q-input
+                    v-model.trim="inventario.descripcion"
+                    label="Descripción del producto"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La descripción es requerida']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <q-input
+                    v-model.trim="inventario.nombre_Corto"
+                    label="Nombre corto"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La nombre corto es requerido']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-select
+                    v-model="marcaId"
+                    :options="listMarca"
+                    label="Marca"
+                    hint="Selecciona una marca"
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La marca es requerida']"
+                  >
+                  </q-select>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-select
+                    v-model="modeloId"
+                    :options="listModelo"
+                    label="Modelo"
+                    hint="Selecciona modelo"
+                    lazy-rules
+                    :rules="[(val) => !!val || 'El modelo es requerida']"
+                  >
+                  </q-select>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-input
+                    v-model.trim="inventario.color"
+                    label="Color"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'El color es requerido']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col">
+                  <q-table
+                    :rows="listaNumeroSerie"
+                    :columns="columns"
+                    row-key="name"
+                  >
+                    <template>
+                      <div class="col"></div>
+                    </template>
+                  </q-table>
+                </div>
+              </q-tab-panel>
+
+              <!---------------------------------------------------------------->
+
+              <q-tab-panel name="alarms">
+                <div class="text-h6">Extención B</div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <q-input
+                    disable
+                    v-model.trim="inventario.clave"
+                    label="Clave del producto"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La clave es requerido']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <q-input
+                    v-model.trim="inventario.descripcion"
+                    label="Descripción del producto"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La descripción es requerida']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <q-input
+                    v-model.trim="inventario.nombre_Corto"
+                    label="Nombre corto"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La nombre corto es requerido']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-select
+                    v-model="marcaId"
+                    :options="listMarca"
+                    label="Marca"
+                    hint="Selecciona una marca"
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La marca es requerida']"
+                  >
+                  </q-select>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-select
+                    v-model="modeloId"
+                    :options="listModelo"
+                    label="Modelo"
+                    hint="Selecciona modelo"
+                    lazy-rules
+                    :rules="[(val) => !!val || 'El modelo es requerida']"
+                  >
+                  </q-select>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-input
+                    v-model.trim="inventario.color"
+                    label="Color"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'El color es requerido']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col">
+                  <q-table
+                    :rows="listaNumeroSerie"
+                    :columns="columns"
+                    row-key="name"
+                  >
+                    <template>
+                      <div class="col"></div>
+                    </template>
+                  </q-table>
+                </div>
+              </q-tab-panel>
+
+              <!---------------------------------------------------------------->
+
+              <q-tab-panel name="movies">
+                <div class="text-h6">Extención C</div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <q-input
+                    disable
+                    v-model.trim="inventario.clave"
+                    label="Clave del producto"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La clave es requerido']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <q-input
+                    v-model.trim="inventario.descripcion"
+                    label="Descripción del producto"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La descripción es requerida']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                  <q-input
+                    v-model.trim="inventario.nombre_Corto"
+                    label="Nombre corto"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La nombre corto es requerido']"
+                  >
+                  </q-input>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-select
+                    v-model="marcaId"
+                    :options="listMarca"
+                    label="Marca"
+                    hint="Selecciona una marca"
+                    lazy-rules
+                    :rules="[(val) => !!val || 'La marca es requerida']"
+                  >
+                  </q-select>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-select
+                    v-model="modeloId"
+                    :options="listModelo"
+                    label="Modelo"
+                    hint="Selecciona modelo"
+                    lazy-rules
+                    :rules="[(val) => !!val || 'El modelo es requerida']"
+                  >
+                  </q-select>
+                </div>
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-input
+                    v-model.trim="inventario.color"
+                    label="Color"
+                    autogrow
+                    lazy-rules
+                    :rules="[(val) => !!val || 'El color es requerido']"
+                  >
+                  </q-input>
+                </div>
+              </q-tab-panel>
+            </q-tab-panels>
+          </div>
+
+          <!----------------------------------------------------------------------------->
 
           <div v-if="editar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
@@ -204,7 +580,7 @@
           </div>
 
           <div
-            v-if="radio != 'individual'"
+            v-if="radio == 'agranel'"
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
           >
             <q-input
@@ -319,357 +695,6 @@
             </q-file>
           </div>
 
-          <q-space />
-
-          <!----------------------------------------------------------------------------->
-
-          <div
-            v-if="radio == 'paquete'"
-            class="q-gutter-y-md col-lg-12 col-md-12 col-sm-12 col-xs-12"
-          >
-            <q-card>
-              <q-tabs
-                class="bg-purple text-white shadow-2 rounded-borders"
-                align="justify"
-                narrow-indicator
-                :columns="columns"
-                v-model="selection"
-              >
-                <q-tab name="general" label="General" />
-                <q-tab name="extencionA" label="Extención A" />
-                <q-tab name="extencionB" label="Extención B" />
-                <q-tab name="extencionC" label="Extención C" />
-              </q-tabs>
-
-              <q-separator />
-
-              <q-tab-panels animated>
-                <q-tab-panel name="general" v-if="selection === 'general'">
-                  <div class="text-h6">General</div>
-
-                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <q-input
-                      disable
-                      v-model.trim="inventario.clave"
-                      label="Clave del producto"
-                      autogrow
-                      lazy-rules
-                      :rules="[(val) => !!val || 'La clave es requerido']"
-                    >
-                    </q-input>
-                  </div>
-
-                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <q-input
-                      v-model.trim="inventario.descripcion"
-                      label="Descripción del producto"
-                      autogrow
-                      lazy-rules
-                      :rules="[(val) => !!val || 'La descripción es requerida']"
-                    >
-                    </q-input>
-                  </div>
-
-                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <q-input
-                      v-model.trim="inventario.nombre_Corto"
-                      label="Nombre corto"
-                      autogrow
-                      lazy-rules
-                      :rules="[
-                        (val) => !!val || 'La nombre corto es requerido',
-                      ]"
-                    >
-                    </q-input>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-select
-                      v-model="marcaId"
-                      :options="listMarca"
-                      label="Marca"
-                      hint="Selecciona una marca"
-                      lazy-rules
-                      :rules="[(val) => !!val || 'La marca es requerida']"
-                    >
-                    </q-select>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-select
-                      v-model="modeloId"
-                      :options="listModelo"
-                      label="Modelo"
-                      hint="Selecciona modelo"
-                      lazy-rules
-                      :rules="[(val) => !!val || 'El modelo es requerida']"
-                    >
-                    </q-select>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-input
-                      v-model.trim="inventario.color"
-                      label="Color"
-                      autogrow
-                      lazy-rules
-                      :rules="[(val) => !!val || 'El color es requerido']"
-                    >
-                    </q-input>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-input
-                      v-model.trim="cantidad"
-                      label="Cantidad"
-                      type="number"
-                      autogrow
-                      lazy-rules
-                      :rules="[(val) => !!val || 'La cantidad es requerida']"
-                    >
-                    </q-input>
-                  </div>
-                </q-tab-panel>
-
-                <!----------------------------------------------------------------------------->
-
-                <q-tab-panel
-                  v-if="selection === 'extencionA'"
-                  val="extencionA"
-                  name="extencionA"
-                >
-                  <div class="text-h6">Extención A</div>
-                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <q-input
-                      v-model.trim="
-                        inventario.extencionA.descripcion_extencion_a
-                      "
-                      label="Descripción del producto"
-                      autogrow
-                      lazy-rules
-                      :rules="[(val) => !!val || 'La descripción es requerida']"
-                    >
-                    </q-input>
-                  </div>
-
-                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <q-input
-                      v-model.trim="
-                        inventario.extencionA.nombre_corto_extencion_a
-                      "
-                      label="Nombre corto"
-                      autogrow
-                      lazy-rules
-                      :rules="[
-                        (val) => !!val || 'La nombre corto es requerido',
-                      ]"
-                    >
-                    </q-input>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-select
-                      v-model="marcaId_A"
-                      :options="listMarca"
-                      label="Marca"
-                      hint="Selecciona una marca"
-                      lazy-rules
-                      :rules="[(val) => !!val || 'La marca es requerida']"
-                    >
-                    </q-select>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-select
-                      v-model="modeloId_A"
-                      :options="listModelo"
-                      label="Modelo"
-                      hint="Selecciona modelo"
-                      lazy-rules
-                      :rules="[(val) => !!val || 'El modelo es requerida']"
-                    >
-                    </q-select>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-input
-                      v-model.trim="inventario.extencionA.color_extencion_a"
-                      label="Color"
-                      autogrow
-                      lazy-rules
-                      :rules="[(val) => !!val || 'El color es requerido']"
-                    >
-                    </q-input>
-                  </div>
-                </q-tab-panel>
-
-                <!----------------------------------------------------------------------------->
-
-                <q-tab-panel
-                  name="extencionB"
-                  v-if="selection === 'extencionB'"
-                >
-                  <div class="text-h6">Extención B</div>
-                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <q-input
-                      v-model.trim="
-                        inventario.extencionB.descripcion_extencion_b
-                      "
-                      label="Descripción del producto"
-                      autogrow
-                      lazy-rules
-                      :rules="[(val) => !!val || 'La descripción es requerida']"
-                    >
-                    </q-input>
-                  </div>
-
-                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <q-input
-                      v-model.trim="
-                        inventario.extencionB.nombre_corto_extencion_b
-                      "
-                      label="Nombre corto"
-                      autogrow
-                      lazy-rules
-                      :rules="[
-                        (val) => !!val || 'La nombre corto es requerido',
-                      ]"
-                    >
-                    </q-input>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-select
-                      v-model="marcaId_B"
-                      :options="listMarca"
-                      label="Marca"
-                      hint="Selecciona una marca"
-                      lazy-rules
-                      :rules="[(val) => !!val || 'La marca es requerida']"
-                    >
-                    </q-select>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-select
-                      v-model="modeloId_B"
-                      :options="listModelo"
-                      label="Modelo"
-                      hint="Selecciona modelo"
-                      lazy-rules
-                      :rules="[(val) => !!val || 'El modelo es requerida']"
-                    >
-                    </q-select>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-input
-                      v-model.trim="inventario.extencionB.color_extencion_b"
-                      label="Color"
-                      autogrow
-                      lazy-rules
-                      :rules="[(val) => !!val || 'El color es requerido']"
-                    >
-                    </q-input>
-                  </div>
-                </q-tab-panel>
-
-                <!----------------------------------------------------------------------------->
-
-                <q-tab-panel
-                  name="extencionC"
-                  v-if="selection === 'extencionC'"
-                >
-                  <div class="text-h6">Extención C</div>
-                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <q-input
-                      v-model.trim="
-                        inventario.extencionC.descripcion_extencion_c
-                      "
-                      label="Descripción del producto"
-                      autogrow
-                      lazy-rules
-                      :rules="[(val) => !!val || 'La descripción es requerida']"
-                    >
-                    </q-input>
-                  </div>
-
-                  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <q-input
-                      v-model.trim="
-                        inventario.extencionC.nombre_corto_extencion_c
-                      "
-                      label="Nombre corto"
-                      autogrow
-                      lazy-rules
-                      :rules="[
-                        (val) => !!val || 'La nombre corto es requerido',
-                      ]"
-                    >
-                    </q-input>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-select
-                      v-model="marcaId_C"
-                      :options="listMarca"
-                      label="Marca"
-                      hint="Selecciona una marca"
-                      lazy-rules
-                      :rules="[(val) => !!val || 'La marca es requerida']"
-                    >
-                    </q-select>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-select
-                      v-model="modeloId_C"
-                      :options="listModelo"
-                      label="Modelo"
-                      hint="Selecciona modelo"
-                      lazy-rules
-                      :rules="[(val) => !!val || 'El modelo es requerida']"
-                    >
-                    </q-select>
-                  </div>
-
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-input
-                      v-model.trim="inventario.extencionC.color_extencion_c"
-                      label="Color"
-                      autogrow
-                      lazy-rules
-                      :rules="[(val) => !!val || 'El color es requerido']"
-                    >
-                    </q-input>
-                  </div>
-                </q-tab-panel>
-              </q-tab-panels>
-            </q-card>
-          </div>
-
-          <q-space />
-
-          <!----------------------------------------------------------------------------->
-
-          <div class="col-12 justify-end" v-if="radio == 'paquete'">
-            <div class="text-right q-gutter-xs">
-              <q-btn
-                icon-right="add"
-                label="Agregar"
-                color="positive"
-                class="q-ml-sm"
-                @click="agregarProducto(cantidad, catalogoId)"
-              />
-            </div>
-          </div>
-
-          <!----------------------------------------------------------------------------->
-
-          <q-card-section class="col-12" v-if="radio == 'paquete'">
-            <TablaNumeroSerie />
-          </q-card-section>
-
           <!----------------------------------------------------------------------------->
 
           <div class="col-12 justify-end">
@@ -719,7 +744,8 @@ const modeloStore = useModeloStore();
 
 //-----------------------------------------------------------
 
-const { inventario, modal, isEditar } = storeToRefs(inventarioStore);
+const { inventario, modal, isEditar, listaNumeroSerie } =
+  storeToRefs(inventarioStore);
 const { listCatalogo } = storeToRefs(catalogoStore);
 const { listBodega } = storeToRefs(bodegaStore);
 const { listMarca } = storeToRefs(marcaStore);
@@ -737,34 +763,44 @@ const modeloId_B = ref(null);
 const modeloId_C = ref(null);
 const cantidad = ref(null);
 const radio = ref("individual");
-const selection = ref(["general"]);
+const rows = ref();
 const foto1 = ref();
 const foto2 = ref();
 const foto3 = ref();
 const foto4 = ref();
 
 //-----------------------------------------------------------
+const tabsDefinition = [
+  { name: "mails", label: "Extención A" },
+  { name: "alarms", label: "Extención B" },
+  { name: "movies", label: "Extención C" },
+];
+const tabs = ref(tabsDefinition.slice(0, 1));
+const tab = ref("general");
 
+const allTabs = computed(() => {
+  return tabsDefinition.map((tab) => ({
+    tab,
+    selected: tabs.value.indexOf(tab) > -1,
+  }));
+});
+
+const setTabSelected = (tab, status) => {
+  if (status === true) {
+    tabs.value.push(tab);
+  } else {
+    const index = tabs.value.indexOf(tab);
+    if (index > -1) {
+      tabs.value.splice(index, 1);
+    }
+  }
+};
 const columns = [
   {
-    name: "extencionA",
+    name: "numero_serie",
     align: "center",
-    label: "Extencion A",
-    field: "extencionA",
-    sortable: true,
-  },
-  {
-    name: "extencionB",
-    align: "center",
-    label: "Extencion B",
-    field: "extencionB",
-    sortable: true,
-  },
-  {
-    name: "extencionC",
-    align: "center",
-    label: "Extencion C",
-    field: "extencionC",
+    label: "Números de serie",
+    field: "numero_serie",
     sortable: true,
   },
 ];
@@ -852,20 +888,24 @@ const actualizarModal = (valor) => {
 //-----------------------------------------------------------
 
 const onSubmit = async () => {
-  const inventarioFormData = new FormData();
-  inventarioFormData.append("Catalago_Id", catalogoId.value.value);
-  inventarioFormData.append("Estatus_Id", 2);
-  inventarioFormData.append("Bodega_Id", bodegaId.value.value);
-  inventarioFormData.append("Marca_Id", marcaId.value.value);
-  inventarioFormData.append("Modelo_Id", modeloId.value.value);
-  inventarioFormData.append("Descripcion", inventario.value.descripcion);
-  inventarioFormData.append("Nombre_Corto", inventario.value.nombre_Corto);
-  inventarioFormData.append("Color", inventario.value.color);
-  inventarioFormData.append("Foto_1", foto1.value);
-  inventarioFormData.append("Foto_2", foto2.value);
-  inventarioFormData.append("Foto_3", foto3.value);
-  inventarioFormData.append("Foto_4", foto4.value);
-  inventarioFormData.append("Cantidad", cantidad.value);
+  if (radio.value == "individual" || "agranel") {
+    const inventarioFormData = new FormData();
+    inventarioFormData.append("Catalago_Id", catalogoId.value.value);
+    inventarioFormData.append("Estatus_Id", 2);
+    inventarioFormData.append("Bodega_Id", bodegaId.value.value);
+    inventarioFormData.append("Marca_Id", marcaId.value.value);
+    inventarioFormData.append("Modelo_Id", modeloId.value.value);
+    inventarioFormData.append("Descripcion", inventario.value.descripcion);
+    inventarioFormData.append("Nombre_Corto", inventario.value.nombre_Corto);
+    inventarioFormData.append("Color", inventario.value.color);
+    inventarioFormData.append("Foto_1", foto1.value);
+    inventarioFormData.append("Foto_2", foto2.value);
+    inventarioFormData.append("Foto_3", foto3.value);
+    inventarioFormData.append("Foto_4", foto4.value);
+    inventarioFormData.append("Cantidad", cantidad.value);
+  }
+
+  const inventarioGeneralFormData = new FormData();
 
   let resp = null;
   let error = 0;
@@ -882,7 +922,6 @@ const onSubmit = async () => {
       inventarioStore.initInventario();
     } else {
       //agranel
-
       for (let i = 0; i < cantidad.value; i++) {
         try {
           resp = await inventarioStore.createInventario(inventarioFormData);

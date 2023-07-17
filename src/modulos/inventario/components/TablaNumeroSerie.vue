@@ -37,36 +37,6 @@
             @click="props.toggleFullscreen"
             class="q-ml-md"
           />
-
-          <!-- <q-tr :props="props">
-            <q-td key="cantidad" :props="props"
-              >{{ props.row }}
-              <q-popup-edit
-                v-model.number="props.row"
-                title="Número de serie"
-                v-slot="scope"
-              >
-                <q-input
-                  type="number"
-                  v-model.number="scope.value"
-                  dense
-                  autofocus
-                  @keyup.enter="scope.set"
-                />
-              </q-popup-edit>
-            </q-td>
-            <q-td key="inventario_Id" :props="props">
-              <q-btn
-                flat
-                round
-                color="purple-ieen"
-                icon="cancel"
-                @click="eliminar()"
-              >
-                <q-tooltip>Eliminar inventario</q-tooltip>
-              </q-btn>
-            </q-td>
-          </q-tr> -->
         </template>
       </q-table>
     </div>

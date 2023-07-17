@@ -21,7 +21,7 @@
 
       <q-card-section>
         <div
-          class="q-col-gutter-md row items-start"
+          class="q-pa-md"
           v-if="
             inventario.foto_1 ||
             inventario.foto_2 ||
@@ -29,49 +29,12 @@
             inventario.foto_4
           "
         >
-          <div
-            v-if="inventario.foto_1"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-          >
-            <q-img :src="inventario.foto_1">
-              <div class="absolute-bottom text-subtitle1 text-center">
-                Foto 1
-              </div>
-            </q-img>
-          </div>
-
-          <div
-            v-if="inventario.foto_2"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-          >
-            <q-img :src="inventario.foto_2">
-              <div class="absolute-bottom text-subtitle1 text-center">
-                Foto 2
-              </div>
-            </q-img>
-          </div>
-
-          <div
-            v-if="inventario.foto_3"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-          >
-            <q-img :src="inventario.foto_3">
-              <div class="absolute-bottom text-subtitle1 text-center">
-                Foto 3
-              </div>
-            </q-img>
-          </div>
-
-          <div
-            v-if="inventario.foto_4"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-          >
-            <q-img :src="inventario.foto_4">
-              <div class="absolute-bottom text-subtitle1 text-center">
-                Foto 4
-              </div>
-            </q-img>
-          </div>
+          <q-carousel swipeable animated v-model="slide" thumbnails infinite>
+            <q-carousel-slide :name="1" :img-src="inventario.foto_1" />
+            <q-carousel-slide :name="2" :img-src="inventario.foto_2" />
+            <q-carousel-slide :name="3" :img-src="inventario.foto_3" />
+            <q-carousel-slide :name="4" :img-src="inventario.foto_4" />
+          </q-carousel>
         </div>
         <div v-else class="text-h6">No hay fotos</div>
 
@@ -94,6 +57,7 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
+import { ref } from "vue";
 import { useInventarioStore } from "../../../stores/inventario_store";
 
 //-----------------------------------------------------------
@@ -101,7 +65,7 @@ import { useInventarioStore } from "../../../stores/inventario_store";
 const inventarioStore = useInventarioStore();
 
 const { modalFotos, inventario } = storeToRefs(inventarioStore);
-
+const slide = ref(1);
 //-----------------------------------------------------------
 
 const actualizarModalFotos = (valor) => {
