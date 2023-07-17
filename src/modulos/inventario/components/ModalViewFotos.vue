@@ -20,7 +20,15 @@
       </q-card-section>
 
       <q-card-section>
-        <div class="q-col-gutter-md row items-start">
+        <div
+          class="q-col-gutter-md row items-start"
+          v-if="
+            inventario.foto_1 ||
+            inventario.foto_2 ||
+            inventario.foto_3 ||
+            inventario.foto_4
+          "
+        >
           <div
             v-if="inventario.foto_1"
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
@@ -65,6 +73,7 @@
             </q-img>
           </div>
         </div>
+        <div v-else class="text-h6">No hay fotos</div>
 
         <q-space />
 

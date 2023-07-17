@@ -11,7 +11,7 @@
       >
         <template v-slot:top="props">
           <q-space />
-          <div v-if="$q.screen.gt.xs" class="col">
+          <div class="col">
             <q-toggle
               v-model="visibleColumns"
               val="extencionA"
@@ -28,20 +28,7 @@
               label="Extención C"
             />
           </div>
-          <q-select
-            v-else
-            v-model="visibleColumns"
-            multiple
-            borderless
-            dense
-            options-dense
-            :display-value="$q.lang.table.columns"
-            emit-value
-            map-options
-            :options="columns"
-            option-value="name"
-            style="min-width: 150px"
-          />
+
           <q-btn
             flat
             round
@@ -128,39 +115,6 @@ const columns = [
     sortable: true,
   },
 ];
-
-// const columns = [
-//   {
-//     name: "cantidad",
-//     align: "center",
-//     label: "Numero de serie",
-//     field: "cantidad",
-//     sortable: true,
-//   },
-//   {
-//     name: "inventario_Id",
-//     align: "center",
-//     label: "Opciones",
-//     field: "inventario_Id",
-//     sortable: false,
-//   },
-// ];
-
-// const numeroDeColumnas = 3;
-// const columns = [];
-
-// for (let i = 1; i <= numeroDeColumnas; i++) {
-//   // Crear la columna dinámica
-//   const columna = {
-//     name: `columna${i}`,
-//     align: "center",
-//     label: `Columna ${i}`,
-//     field: `columna${i}`,
-//     sortable: true,
-//   };
-
-//   columns.push(columna);
-// }
 </script>
 
 <style></style>

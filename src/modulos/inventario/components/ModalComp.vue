@@ -319,7 +319,6 @@
             </q-file>
           </div>
 
-          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>
           <q-space />
 
           <!----------------------------------------------------------------------------->
@@ -805,6 +804,7 @@ watch(inventario.value, (val) => {
   if (val.id != null) {
     cargarBodega(val);
     cargarCatalogo(val);
+    cargarMarca(val);
   }
 });
 //-----------------------------------------------------------
@@ -827,6 +827,15 @@ const cargarCatalogo = async (val) => {
   }
 };
 
+const cargarMarca = async (val) => {
+  if (marcaId.value == null) {
+    let marcaFiltrado = listMarca.value.find(
+      (x) => x.value == `${val.marca_id}`
+    );
+    marcaId.value = marcaFiltrado;
+  }
+};
+
 const agregarProducto = (cantidad, catalogoId) => {
   console.log("cantidad", cantidad, catalogoId);
   inventarioStore.addCantidad(cantidad, catalogoId);
@@ -834,6 +843,10 @@ const agregarProducto = (cantidad, catalogoId) => {
 
 const actualizarModal = (valor) => {
   inventarioStore.actualizarModal(valor);
+  catalogoId.value = null;
+  bodegaId.value = null;
+  marcaId.value = null;
+  modeloId.value = null;
   inventarioStore.initInventario();
 };
 //-----------------------------------------------------------
@@ -861,10 +874,12 @@ const onSubmit = async () => {
 
   if (isEditar.value == true) {
     resp = await inventarioStore.updateInventario(inventarioFormData);
+    inventarioStore.initInventario();
   } else {
     if (cantidad.value == null) {
       //individual
       resp = await inventarioStore.createInventario(inventarioFormData);
+      inventarioStore.initInventario();
     } else {
       //agranel
 
@@ -880,12 +895,22 @@ const onSubmit = async () => {
     }
   }
 
-  if (error > 0) {
+  if (resp.success) {
+    $q.notify({
+      type: "positive",
+      message: resp.data,
+    });
+    actualizarModal(false);
+    inventarioStore.initInventario();
+    inventarioStore.loadInformacionInventarios();
+  } else {
     $q.notify({
       type: "negative",
-      message: `Error, ${error} no se registraron`,
+      message: resp.data,
     });
-  } else {
+  }
+
+  if (error > 0) {
     $q.dialog({
       title: "Volver a registrar",
       message: "¿Quieres volver a registrar los que arrojaron error?",
@@ -924,20 +949,6 @@ const onSubmit = async () => {
     });
   }
 
-  if (resp.success) {
-    $q.notify({
-      type: "positive",
-      message: resp.data,
-    });
-    actualizarModal(false);
-    inventarioStore.initInventario();
-    inventarioStore.loadInformacionInventarios();
-  } else {
-    $q.notify({
-      type: "negative",
-      message: resp.data,
-    });
-  }
   $q.loading.hide();
 };
 </script>

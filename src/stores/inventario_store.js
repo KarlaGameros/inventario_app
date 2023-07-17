@@ -151,10 +151,9 @@ export const useInventarioStore = defineStore("inventario", {
     async loadInventario(id) {
       try {
         let resp = await api.get(`/Inventarios/${id}`);
-        console.log("load inventario", resp);
         if (resp.status == 200) {
           const { success, data } = resp.data;
-          console.log("load ", data);
+          console.log("load", data);
           if (success == true) {
             this.inventario.id = data.id;
             this.inventario.foto_1 = data.foto_1_URL;
@@ -176,7 +175,6 @@ export const useInventarioStore = defineStore("inventario", {
             this.inventario.color = data.color;
             this.inventario.cantidad = data.cantidad;
           }
-          console.log("inventariooo", this.inventario);
         }
       } catch (error) {
         return {
@@ -286,7 +284,6 @@ export const useInventarioStore = defineStore("inventario", {
       this.modal = valor;
     },
     actualizarModalFotos(valor) {
-      console.log("modal", valor);
       this.modalFotos = valor;
     },
     updateEditar(valor) {
