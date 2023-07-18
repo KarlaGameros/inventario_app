@@ -147,7 +147,7 @@
 
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
-                    disable
+                    v-if="isEditar"
                     v-model.trim="inventario.clave"
                     label="Clave del producto"
                     autogrow
@@ -170,7 +170,7 @@
 
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
-                    v-model.trim="inventario.nombre_Corto"
+                    v-model.trim="inventario.nombre_corto"
                     label="Nombre corto"
                     autogrow
                     lazy-rules
@@ -216,12 +216,31 @@
 
                 <div class="col">
                   <q-table
-                    :rows="listaNumeroSerie"
+                    :rows="rows"
                     :columns="columns"
                     row-key="name"
+                    :rows-per-page-options="[]"
                   >
-                    <template>
-                      <div class="col"></div>
+                    <template v-slot:body="props">
+                      <q-tr :props="props">
+                        <q-td key="numero_serie" :props="props">
+                          {{ props.row }}
+                          <q-popup-edit
+                            v-model.number="props.row"
+                            buttons
+                            persistent
+                            v-slot="scope"
+                          >
+                            <q-input
+                              type="number"
+                              v-model.number="scope.value"
+                              dense
+                              autofocus
+                              @keyup.enter="scope.set"
+                            />
+                          </q-popup-edit>
+                        </q-td>
+                      </q-tr>
                     </template>
                   </q-table>
                 </div>
@@ -229,12 +248,12 @@
 
               <!---------------------------------------------------------------->
 
-              <q-tab-panel name="mails">
+              <q-tab-panel name="extencion_a">
                 <div class="text-h6">Extención A</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
-                    disable
-                    v-model.trim="inventario.clave"
+                    v-if="isEditar"
+                    v-model.trim="inventario.clave_a"
                     label="Clave del producto"
                     autogrow
                     lazy-rules
@@ -245,7 +264,7 @@
 
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
-                    v-model.trim="inventario.descripcion"
+                    v-model.trim="inventario.descripcion_a"
                     label="Descripción del producto"
                     autogrow
                     lazy-rules
@@ -256,7 +275,7 @@
 
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
-                    v-model.trim="inventario.nombre_Corto"
+                    v-model.trim="inventario.nombre_corto_a"
                     label="Nombre corto"
                     autogrow
                     lazy-rules
@@ -267,7 +286,7 @@
 
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
-                    v-model="marcaId"
+                    v-model="marcaId_A"
                     :options="listMarca"
                     label="Marca"
                     hint="Selecciona una marca"
@@ -279,7 +298,7 @@
 
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
-                    v-model="modeloId"
+                    v-model="modeloId_A"
                     :options="listModelo"
                     label="Modelo"
                     hint="Selecciona modelo"
@@ -291,7 +310,7 @@
 
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-input
-                    v-model.trim="inventario.color"
+                    v-model.trim="inventario.color_a"
                     label="Color"
                     autogrow
                     lazy-rules
@@ -302,12 +321,31 @@
 
                 <div class="col">
                   <q-table
-                    :rows="listaNumeroSerie"
+                    :rows="rows"
                     :columns="columns"
                     row-key="name"
+                    :rows-per-page-options="[]"
                   >
-                    <template>
-                      <div class="col"></div>
+                    <template v-slot:body="props">
+                      <q-tr :props="props">
+                        <q-td key="numero_serie" :props="props">
+                          {{ props.row }}
+                          <q-popup-edit
+                            v-model.number="props.row"
+                            buttons
+                            persistent
+                            v-slot="scope"
+                          >
+                            <q-input
+                              type="number"
+                              v-model.number="scope.value"
+                              dense
+                              autofocus
+                              @keyup.enter="scope.set"
+                            />
+                          </q-popup-edit>
+                        </q-td>
+                      </q-tr>
                     </template>
                   </q-table>
                 </div>
@@ -315,12 +353,12 @@
 
               <!---------------------------------------------------------------->
 
-              <q-tab-panel name="alarms">
+              <q-tab-panel name="extencion_b">
                 <div class="text-h6">Extención B</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
-                    disable
-                    v-model.trim="inventario.clave"
+                    v-if="isEditar"
+                    v-model.trim="inventario.clave_b"
                     label="Clave del producto"
                     autogrow
                     lazy-rules
@@ -331,7 +369,7 @@
 
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
-                    v-model.trim="inventario.descripcion"
+                    v-model.trim="inventario.descripcion_b"
                     label="Descripción del producto"
                     autogrow
                     lazy-rules
@@ -342,7 +380,7 @@
 
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
-                    v-model.trim="inventario.nombre_Corto"
+                    v-model.trim="inventario.nombre_corto_b"
                     label="Nombre corto"
                     autogrow
                     lazy-rules
@@ -353,7 +391,7 @@
 
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
-                    v-model="marcaId"
+                    v-model="marcaId_B"
                     :options="listMarca"
                     label="Marca"
                     hint="Selecciona una marca"
@@ -365,7 +403,7 @@
 
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
-                    v-model="modeloId"
+                    v-model="modeloId_B"
                     :options="listModelo"
                     label="Modelo"
                     hint="Selecciona modelo"
@@ -377,7 +415,7 @@
 
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-input
-                    v-model.trim="inventario.color"
+                    v-model.trim="inventario.color_b"
                     label="Color"
                     autogrow
                     lazy-rules
@@ -401,12 +439,12 @@
 
               <!---------------------------------------------------------------->
 
-              <q-tab-panel name="movies">
+              <q-tab-panel name="extencion_c">
                 <div class="text-h6">Extención C</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
-                    disable
-                    v-model.trim="inventario.clave"
+                    v-if="isEditar"
+                    v-model.trim="inventario.clave_c"
                     label="Clave del producto"
                     autogrow
                     lazy-rules
@@ -417,7 +455,7 @@
 
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
-                    v-model.trim="inventario.descripcion"
+                    v-model.trim="inventario.descripcion_c"
                     label="Descripción del producto"
                     autogrow
                     lazy-rules
@@ -428,7 +466,7 @@
 
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
-                    v-model.trim="inventario.nombre_Corto"
+                    v-model.trim="inventario.nombre_corto_c"
                     label="Nombre corto"
                     autogrow
                     lazy-rules
@@ -439,7 +477,7 @@
 
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
-                    v-model="marcaId"
+                    v-model="marcaId_C"
                     :options="listMarca"
                     label="Marca"
                     hint="Selecciona una marca"
@@ -451,7 +489,7 @@
 
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
-                    v-model="modeloId"
+                    v-model="modeloId_C"
                     :options="listModelo"
                     label="Modelo"
                     hint="Selecciona modelo"
@@ -463,7 +501,7 @@
 
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-input
-                    v-model.trim="inventario.color"
+                    v-model.trim="inventario.color_a"
                     label="Color"
                     autogrow
                     lazy-rules
@@ -509,7 +547,7 @@
             class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
           >
             <q-input
-              v-model.trim="inventario.nombre_Corto"
+              v-model.trim="inventario.nombre_corto"
               label="Nombre corto"
               name="nombre_corto"
               autogrow
@@ -731,8 +769,6 @@ import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useBodegaStore } from "src/stores/bodega_store";
 import { useMarcaStore } from "src/stores/marcas_store";
 import { useModeloStore } from "src/stores/modelo_store";
-import TablaNumeroSerie from "../components/TablaNumeroSerie.vue";
-
 //-----------------------------------------------------------
 
 const $q = useQuasar();
@@ -763,17 +799,15 @@ const modeloId_B = ref(null);
 const modeloId_C = ref(null);
 const cantidad = ref(null);
 const radio = ref("individual");
-const rows = ref();
 const foto1 = ref();
 const foto2 = ref();
 const foto3 = ref();
 const foto4 = ref();
-
 //-----------------------------------------------------------
 const tabsDefinition = [
-  { name: "mails", label: "Extención A" },
-  { name: "alarms", label: "Extención B" },
-  { name: "movies", label: "Extención C" },
+  { name: "extencion_a", label: "Extención A" },
+  { name: "extencion_b", label: "Extención B" },
+  { name: "extencion_c", label: "Extención C" },
 ];
 const tabs = ref(tabsDefinition.slice(0, 1));
 const tab = ref("general");
@@ -804,6 +838,7 @@ const columns = [
     sortable: true,
   },
 ];
+const rows = ["123", "456"];
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -829,6 +864,7 @@ watch(radio, (val) => {
   bodegaId.value = null;
   marcaId.value = null;
   modeloId.value = null;
+  cantidad.value = null;
   foto1.value = null;
   foto2.value = null;
   foto3.value = null;
@@ -873,7 +909,6 @@ const cargarMarca = async (val) => {
 };
 
 const agregarProducto = (cantidad, catalogoId) => {
-  console.log("cantidad", cantidad, catalogoId);
   inventarioStore.addCantidad(cantidad, catalogoId);
 };
 
@@ -883,29 +918,71 @@ const actualizarModal = (valor) => {
   bodegaId.value = null;
   marcaId.value = null;
   modeloId.value = null;
+  cantidad.value = null;
   inventarioStore.initInventario();
 };
 //-----------------------------------------------------------
 
 const onSubmit = async () => {
-  if (radio.value == "individual" || "agranel") {
-    const inventarioFormData = new FormData();
+  let inventarioFormData = new FormData();
+  let inventarioPaqueteFormData = new FormData();
+
+  if (radio.value != "paquete") {
     inventarioFormData.append("Catalago_Id", catalogoId.value.value);
     inventarioFormData.append("Estatus_Id", 2);
     inventarioFormData.append("Bodega_Id", bodegaId.value.value);
     inventarioFormData.append("Marca_Id", marcaId.value.value);
     inventarioFormData.append("Modelo_Id", modeloId.value.value);
     inventarioFormData.append("Descripcion", inventario.value.descripcion);
-    inventarioFormData.append("Nombre_Corto", inventario.value.nombre_Corto);
+    inventarioFormData.append("Nombre_Corto", inventario.value.nombre_corto);
     inventarioFormData.append("Color", inventario.value.color);
     inventarioFormData.append("Foto_1", foto1.value);
     inventarioFormData.append("Foto_2", foto2.value);
     inventarioFormData.append("Foto_3", foto3.value);
     inventarioFormData.append("Foto_4", foto4.value);
     inventarioFormData.append("Cantidad", cantidad.value);
-  }
+  } else if (radio.value == "paquete") {
+    //-----------------------------------------------------------
+    //General
+    inventarioPaqueteFormData.append("Catalago_Id", catalogoId.value.value);
+    inventarioPaqueteFormData.append("Bodega_Id", bodegaId.value.value);
+    inventarioPaqueteFormData.append("General.Marca_Id", marcaId.value.value);
+    inventarioPaqueteFormData.append("General.Modelo_Id", modeloId.value.value);
+    inventarioPaqueteFormData.append(
+      "General.Descripcion",
+      inventario.value.descripcion
+    );
+    inventarioPaqueteFormData.append(
+      "General.Nombre_Corto",
+      inventario.value.nombre_corto
+    );
+    rows.forEach((row) => {
+      inventarioPaqueteFormData.append("General.Numeros_Serie[]", row);
+    });
+    inventarioPaqueteFormData.append("General.Color", inventario.value.color);
+    inventarioPaqueteFormData.append("Cantidad", cantidad.value);
+    //fotos
 
-  const inventarioGeneralFormData = new FormData();
+    //-----------------------------------------------------------
+    //Extencion A
+    if (marcaId_A.value) {
+      inventarioPaqueteFormData.append("Extension_A.Marca_Id", marcaId_A.value);
+      inventarioPaqueteFormData.append("Extension_A.Modelo_Id", modeloId_A);
+      inventarioPaqueteFormData.append(
+        "Extension_A.Descripcion",
+        inventario.value.descripcion_a
+      );
+      inventarioPaqueteFormData.append(
+        "Extension_A.Nombre_Corto",
+        inventario.value.nombre_corto_a
+      );
+      inventarioPaqueteFormData.append(
+        "Extension_A.Color",
+        inventario.value.color_a
+      );
+      //fotos
+    }
+  }
 
   let resp = null;
   let error = 0;
@@ -920,7 +997,7 @@ const onSubmit = async () => {
       //individual
       resp = await inventarioStore.createInventario(inventarioFormData);
       inventarioStore.initInventario();
-    } else {
+    } else if (radio.value == "agranel") {
       //agranel
       for (let i = 0; i < cantidad.value; i++) {
         try {
@@ -931,62 +1008,72 @@ const onSubmit = async () => {
           console.log(error);
         }
       }
+    } else if (radio.value == "paquete") {
+      try {
+        console.log("inventarioPaqueteFormData", inventarioPaqueteFormData);
+        inventarioPaqueteFormData.forEach((element) => console.log(element));
+        resp = await inventarioStore.createInventarioPaquete(
+          inventarioPaqueteFormData
+        );
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 
-  if (resp.success) {
-    $q.notify({
-      type: "positive",
-      message: resp.data,
-    });
-    actualizarModal(false);
-    inventarioStore.initInventario();
-    inventarioStore.loadInformacionInventarios();
-  } else {
-    $q.notify({
-      type: "negative",
-      message: resp.data,
-    });
-  }
+  // if (resp.success) {
+  //   $q.notify({
+  //     type: "positive",
+  //     message: resp.data,
+  //   });
+  //   actualizarModal(false);
+  //   inventarioStore.initInventario();
+  //   inventarioStore.loadInformacionInventarios();
+  // } else {
+  //   $q.notify({
+  //     type: "negative",
+  //     message: resp.data,
+  //   });
+  // }
 
-  if (error > 0) {
-    $q.dialog({
-      title: "Volver a registrar",
-      message: "¿Quieres volver a registrar los que arrojaron error?",
-      icon: "Warning",
-      persistent: true,
-      transitionShow: "scale",
-      transitionHide: "scale",
-      ok: {
-        color: "positive",
-        label: "¡Sí!, volver a registrar",
-      },
-      cancel: {
-        color: "negative",
-        label: " No Cancelar",
-      },
-    }).onOk(async () => {
-      $q.loading.show();
-      console.log("onOk");
-      for (let i = 0; i < error; i++) {
-        resp = await inventarioStore.createInventario(inventarioFormData);
-      }
-      if (resp.success) {
-        $q.loading.hide();
-        $q.notify({
-          type: "positive",
-          message: resp.data,
-        });
-        inventarioStore.loadInformacionInventarios();
-      } else {
-        $q.loading.hide();
-        $q.notify({
-          type: "negative",
-          message: resp.data,
-        });
-      }
-    });
-  }
+  // if (error > 0) {
+  //   $q.dialog({
+  //     title: "Volver a registrar",
+  //     message: "¿Quieres volver a registrar los que arrojaron error?",
+  //     icon: "Warning",
+  //     persistent: true,
+  //     transitionShow: "scale",
+  //     transitionHide: "scale",
+  //     ok: {
+  //       color: "positive",
+  //       label: "¡Sí!, volver a registrar",
+  //     },
+  //     cancel: {
+  //       color: "negative",
+  //       label: " No Cancelar",
+  //     },
+  //   }).onOk(async () => {
+  //     $q.loading.show();
+  //     console.log("onOk");
+  //     for (let i = 0; i < error; i++) {
+  //       resp = await inventarioStore.createInventario(inventarioFormData);
+  //     }
+  //     if (resp.success) {
+  //       $q.loading.hide();
+  //       $q.notify({
+  //         type: "positive",
+  //         message: resp.data,
+  //       });
+  //       inventarioStore.loadInformacionInventarios();
+  //     } else {
+  //       $q.loading.hide();
+  //       $q.notify({
+  //         type: "negative",
+  //         message: resp.data,
+  //       });
+  //     }
+  //   });
+  // }
 
   $q.loading.hide();
 };

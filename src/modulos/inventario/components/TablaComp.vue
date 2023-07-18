@@ -136,10 +136,10 @@ const columns = [
     sortable: true,
   },
   {
-    name: "nombre_Corto",
+    name: "nombre_corto",
     align: "center",
     label: "Nombre",
-    field: "nombre_Corto",
+    field: "nombre_corto",
     sortable: true,
   },
   {

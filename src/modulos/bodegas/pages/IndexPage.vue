@@ -14,6 +14,7 @@
       <div class="col">
         <div class="text-right q-pa-md items-start q-gutter-md">
           <q-btn
+            v-if="modulo == null ? false : modulo.registrar"
             type="button"
             class="q-ma-sm"
             color="purple-ieen"
@@ -43,15 +44,15 @@ const bodegaStore = useBodegaStore();
 const { modulo } = storeToRefs(authStore);
 const siglas = "SI-CAT-BOD";
 
-// onBeforeMount(() => {
-//   //leerPermisos();
-// });
+onBeforeMount(() => {
+  leerPermisos();
+});
 
-// const leerPermisos = async () => {
-//   $q.loading.show();
-//   await authStore.loadModulo(siglas);
-//   $q.loading.hide();
-// };
+const leerPermisos = async () => {
+  $q.loading.show();
+  await authStore.loadModulo(siglas);
+  $q.loading.hide();
+};
 
 const actualizarModal = (valor) => {
   $q.loading.show();

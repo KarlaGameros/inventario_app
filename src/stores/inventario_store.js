@@ -18,7 +18,7 @@ export const useInventarioStore = defineStore("inventario", {
       bodega_id: null,
       bodega: null,
       descripcion: null,
-      nombre_Corto: null,
+      nombre_corto: null,
       marca_id: null,
       marca: null,
       modelo_id: null,
@@ -32,28 +32,30 @@ export const useInventarioStore = defineStore("inventario", {
       clave: null,
       empleado: null,
       ruta_PDF: null,
-      //empleado_registro_id: null,
-      // extencionA: {
-      //   descripcion_extencion_a: null,
-      //   nombre_corto_extencion_a: null,
-      //   marca_id_extencion_a: null,
-      //   modelo_id_extencion_a: null,
-      //   color_extencion_a: null,
-      // },
-      // extencionB: {
-      //   descripcion_extencion_b: null,
-      //   nombre_corto_extencion_b: null,
-      //   marca_id_extencion_b: null,
-      //   modelo_id_extencion_b: null,
-      //   color_extencion_b: null,
-      // },
-      // extencionC: {
-      //   descripcion_extencion_c: null,
-      //   nombre_corto_extencion_c: null,
-      //   marca_id_extencion_c: null,
-      //   modelo_id_extencion_c: null,
-      //   color_extencion_c: null,
-      // },
+      //-----------------------------
+      descripcion_a: null,
+      nombre_corto_a: null,
+      marca_id_a: null,
+      modelo_id_a: null,
+      color_a: null,
+      clave_a: null,
+      numero_serie_a: null,
+      //-----------------------------
+      descripcion_b: null,
+      nombre_corto_b: null,
+      marca_id_b: null,
+      modelo_id_b: null,
+      color_b: null,
+      clave_b: null,
+      numero_serie_b: null,
+      //-----------------------------
+      descripcion_c: null,
+      nombre_corto_c: null,
+      marca_id_c: null,
+      modelo_id_c: null,
+      color_c: null,
+      clave_c: null,
+      numero_serie_c: null,
     },
   }),
   actions: {
@@ -66,7 +68,7 @@ export const useInventarioStore = defineStore("inventario", {
       this.inventario.bodega = null;
       this.inventario.clave = null;
       this.inventario.descripcion = null;
-      this.inventario.nombre_Corto = null;
+      this.inventario.nombre_corto = null;
       this.inventario.marca_id = null;
       this.inventario.marca = null;
       this.inventario.modelo_id = null;
@@ -91,7 +93,7 @@ export const useInventarioStore = defineStore("inventario", {
             bodega_id: inventario.bodega_id,
             bodega: inventario.bodega,
             descripcion: inventario.descripcion,
-            nombre_Corto: inventario.nombre_Corto,
+            nombre_corto: inventario.nombre_Corto,
             marca_id: inventario.marca_id,
             marca: inventario.marca,
             modelo_id: inventario.modelo_id,
@@ -148,6 +150,46 @@ export const useInventarioStore = defineStore("inventario", {
 
     //-----------------------------------------------------------
 
+    async createInventarioPaquete(inventarioPaqueteFormData) {
+      inventarioPaqueteFormData.forEach((element) =>
+        console.log("createInventario paquete", element)
+      );
+      console.log(inventarioPaqueteFormData);
+      try {
+        const resp = await api.post(
+          "/Inventarios/Paquete",
+          inventarioPaqueteFormData,
+          {
+            headers: {
+              "Conten-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log("resp", resp);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        console.log(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
     async loadInventario(id) {
       try {
         let resp = await api.get(`/Inventarios/${id}`);
@@ -174,6 +216,7 @@ export const useInventarioStore = defineStore("inventario", {
             this.inventario.nombre_Corto = data.nombre_Corto;
             this.inventario.color = data.color;
             this.inventario.cantidad = data.cantidad;
+            this.inventario.numero_Serie = data.numero_Serie;
           }
         }
       } catch (error) {
