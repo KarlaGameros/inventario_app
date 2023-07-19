@@ -809,7 +809,7 @@ const tabsDefinition = [
   { name: "extencion_b", label: "Extención B" },
   { name: "extencion_c", label: "Extención C" },
 ];
-const tabs = ref(tabsDefinition.slice(0, 1));
+const tabs = ref(tabsDefinition.slice(0, 0));
 const tab = ref("general");
 
 const allTabs = computed(() => {
