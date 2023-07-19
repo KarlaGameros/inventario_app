@@ -7,7 +7,6 @@
   >
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
-        <div class="text-h6">Fotos</div>
         <q-space />
         <q-btn
           icon="close"
@@ -29,7 +28,14 @@
             inventario.foto_4
           "
         >
-          <q-carousel swipeable animated v-model="slide" thumbnails infinite>
+          <q-carousel
+            swipeable
+            animated
+            v-model="slide"
+            thumbnails
+            infinite
+            class="shadow-10"
+          >
             <q-carousel-slide :name="1" :img-src="inventario.foto_1" />
             <q-carousel-slide :name="2" :img-src="inventario.foto_2" />
             <q-carousel-slide :name="3" :img-src="inventario.foto_3" />

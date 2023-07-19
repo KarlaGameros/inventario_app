@@ -133,18 +133,6 @@
 
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
-                    v-if="isEditar"
-                    v-model.trim="inventario.clave"
-                    label="Clave del producto"
-                    autogrow
-                    lazy-rules
-                    :rules="[(val) => !!val || 'La clave es requerido']"
-                  >
-                  </q-input>
-                </div>
-
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                  <q-input
                     v-model.trim="inventario.descripcion"
                     label="Descripción del producto"
                     autogrow
@@ -301,11 +289,12 @@
                     <template v-slot:body="props">
                       <q-tr :props="props">
                         <q-td key="numero_serie" :props="props">
-                          {{ props.row }}
+                          {{ props.row.numero_serie }}
                           <q-popup-edit
-                            v-model.number="props.row"
+                            v-model.number="props.row.numero_serie"
                             buttons
                             persistent
+                            auto-save
                             v-slot="scope"
                           >
                             <q-input
@@ -465,7 +454,7 @@
 
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
-                    v-model="foto_a"
+                    v-model="foto4_a"
                     filled
                     bottom-slots
                     label="Foto 4"
@@ -489,7 +478,7 @@
 
                 <div class="col">
                   <q-table
-                    :rows="rows"
+                    :rows="listaNumeroSerie_a"
                     :columns="columns"
                     row-key="name"
                     :rows-per-page-options="[]"
@@ -497,11 +486,12 @@
                     <template v-slot:body="props">
                       <q-tr :props="props">
                         <q-td key="numero_serie" :props="props">
-                          {{ props.row }}
+                          {{ props.row.numero_serie }}
                           <q-popup-edit
-                            v-model.number="props.row"
+                            v-model.number="props.row.numero_serie"
                             buttons
                             persistent
+                            auto-save
                             v-slot="scope"
                           >
                             <q-input
@@ -685,7 +675,7 @@
 
                 <div class="col">
                   <q-table
-                    :rows="rows"
+                    :rows="listaNumeroSerie_b"
                     :columns="columns"
                     row-key="name"
                     :rows-per-page-options="[]"
@@ -693,11 +683,12 @@
                     <template v-slot:body="props">
                       <q-tr :props="props">
                         <q-td key="numero_serie" :props="props">
-                          {{ props.row }}
+                          {{ props.row.numero_serie }}
                           <q-popup-edit
-                            v-model.number="props.row"
+                            v-model.number="props.row.numero_serie"
                             buttons
                             persistent
+                            auto-save
                             v-slot="scope"
                           >
                             <q-input
@@ -881,7 +872,7 @@
 
                 <div class="col">
                   <q-table
-                    :rows="rows"
+                    :rows="listaNumeroSerie_c"
                     :columns="columns"
                     row-key="name"
                     :rows-per-page-options="[]"
@@ -889,11 +880,12 @@
                     <template v-slot:body="props">
                       <q-tr :props="props">
                         <q-td key="numero_serie" :props="props">
-                          {{ props.row }}
+                          {{ props.row.numero_serie }}
                           <q-popup-edit
-                            v-model.number="props.row"
+                            v-model.number="props.row.numero_serie"
                             buttons
                             persistent
+                            auto-save
                             v-slot="scope"
                           >
                             <q-input
@@ -917,7 +909,10 @@
 
           <!----------------------------------------------------------------------------->
 
-          <div v-if="isEditar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div
+            v-if="isEditar && radio != 'paquete'"
+            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+          >
             <q-input
               disable
               v-model="inventario.clave"
@@ -1035,105 +1030,85 @@
             </q-input>
           </div>
 
-          <div
+          <q-card
             v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
           >
             <q-file
+              accept="image/png, image/jpeg"
+              color="purple-12"
               v-model="foto1"
-              filled
-              bottom-slots
-              label="Foto 1"
-              counter
-              accept="image/png, image/jpeg"
+              label="Label"
             >
               <template v-slot:prepend>
-                <q-icon name="cloud_upload" @click.stop.prevent />
-              </template>
-              <template v-slot:append>
-                <q-icon
-                  name="close"
-                  @click.stop.prevent="files = null"
-                  class="cursor-pointer"
-                />
+                <q-icon name="attach_file" />
               </template>
             </q-file>
-          </div>
+            <img
+              v-if="isEditar"
+              src="https://cdn.quasar.dev/img/parallax2.jpg"
+            />
+          </q-card>
 
-          <div
+          <q-card
             v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
           >
             <q-file
+              accept="image/png, image/jpeg"
+              color="purple-12"
               v-model="foto2"
-              filled
-              bottom-slots
-              label="Foto 2"
-              counter
-              accept="image/png, image/jpeg"
+              label="Label"
             >
               <template v-slot:prepend>
-                <q-icon name="cloud_upload" @click.stop.prevent />
-              </template>
-              <template v-slot:append>
-                <q-icon
-                  name="close"
-                  @click.stop.prevent="files = null"
-                  class="cursor-pointer"
-                />
+                <q-icon name="attach_file" />
               </template>
             </q-file>
-          </div>
+            <img
+              v-if="isEditar"
+              src="https://cdn.quasar.dev/img/parallax2.jpg"
+            />
+          </q-card>
 
-          <div
+          <q-card
             v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
           >
             <q-file
+              accept="image/png, image/jpeg"
+              color="purple-12"
               v-model="foto3"
-              filled
-              bottom-slots
-              label="Foto 3"
-              counter
-              accept="image/png, image/jpeg"
+              label="Label"
             >
               <template v-slot:prepend>
-                <q-icon name="cloud_upload" @click.stop.prevent />
-              </template>
-              <template v-slot:append>
-                <q-icon
-                  name="close"
-                  @click.stop.prevent="files = null"
-                  class="cursor-pointer"
-                />
+                <q-icon name="attach_file" />
               </template>
             </q-file>
-          </div>
+            <img
+              v-if="isEditar"
+              src="https://cdn.quasar.dev/img/parallax2.jpg"
+            />
+          </q-card>
 
-          <div
+          <q-card
             v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
           >
             <q-file
-              v-model="foto4"
-              filled
-              bottom-slots
-              label="Foto 4"
-              counter
               accept="image/png, image/jpeg"
+              color="purple-12"
+              v-model="foto4"
+              label="Label"
             >
               <template v-slot:prepend>
-                <q-icon name="cloud_upload" @click.stop.prevent />
-              </template>
-              <template v-slot:append>
-                <q-icon
-                  name="close"
-                  @click.stop.prevent="files = null"
-                  class="cursor-pointer"
-                />
+                <q-icon name="attach_file" />
               </template>
             </q-file>
-          </div>
+            <img
+              v-if="isEditar"
+              src="https://cdn.quasar.dev/img/parallax2.jpg"
+            />
+          </q-card>
 
           <!----------------------------------------------------------------------------->
 
@@ -1171,6 +1146,7 @@ import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useBodegaStore } from "src/stores/bodega_store";
 import { useMarcaStore } from "src/stores/marcas_store";
 import { useModeloStore } from "src/stores/modelo_store";
+
 //-----------------------------------------------------------
 
 const $q = useQuasar();
@@ -1182,8 +1158,15 @@ const modeloStore = useModeloStore();
 
 //-----------------------------------------------------------
 
-const { inventario, modal, isEditar, listaNumeroSerie } =
-  storeToRefs(inventarioStore);
+const {
+  inventario,
+  modal,
+  isEditar,
+  listaNumeroSerie,
+  listaNumeroSerie_a,
+  listaNumeroSerie_b,
+  listaNumeroSerie_c,
+} = storeToRefs(inventarioStore);
 const { listCatalogo } = storeToRefs(catalogoStore);
 const { listBodega } = storeToRefs(bodegaStore);
 const { listMarca } = storeToRefs(marcaStore);
@@ -1220,6 +1203,7 @@ const foto1_c = ref();
 const foto2_c = ref();
 const foto3_c = ref();
 const foto4_c = ref();
+
 //-----------------------------------------------------------
 const tabsDefinition = [
   { name: "extencion_a", label: "Extención A" },
@@ -1255,7 +1239,6 @@ const columns = [
     sortable: true,
   },
 ];
-const rows = ["123"];
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -1267,7 +1250,6 @@ onBeforeMount(() => {
 //-----------------------------------------------------------
 
 watch(marcaId, (val) => {
-  console.log(marcaId.value);
   if (val != null) {
     modeloStore.modeloByMarca(marcaId.value.value).then(() => {
       modeloId.value = listModelo.value[0];
@@ -1297,9 +1279,9 @@ watch(inventario.value, (val) => {
 });
 
 watch(cantidad, (val) => {
-  console.log("cantidad:", cantidad);
-  inventarioStore.addCantidad(cantidad, catalogoId);
+  inventarioStore.addCantidad(cantidad.value, catalogoId);
 });
+
 //-----------------------------------------------------------
 
 const cargarBodega = async (val) => {
@@ -1338,6 +1320,7 @@ const actualizarModal = (valor) => {
   cantidad.value = null;
   inventarioStore.initInventario();
 };
+
 //-----------------------------------------------------------
 
 const onSubmit = async () => {
@@ -1373,8 +1356,11 @@ const onSubmit = async () => {
       "General.Nombre_Corto",
       inventario.value.nombre_corto
     );
-    rows.forEach((row) => {
-      inventarioPaqueteFormData.append("General.Numeros_Serie[]", row);
+    listaNumeroSerie.value.forEach((row) => {
+      inventarioPaqueteFormData.append(
+        "General.Numeros_Serie[]",
+        row.numero_serie
+      );
     });
     inventarioPaqueteFormData.append("General.Color", inventario.value.color);
     inventarioPaqueteFormData.append("Cantidad", cantidad.value);
@@ -1382,7 +1368,6 @@ const onSubmit = async () => {
     inventarioPaqueteFormData.append("General.Foto_2", foto2.value);
     inventarioPaqueteFormData.append("General.Foto_3", foto3.value);
     inventarioPaqueteFormData.append("General.Foto_4", foto4.value);
-    //fotos
 
     //-----------------------------------------------------------
     //Extencion A
@@ -1407,15 +1392,17 @@ const onSubmit = async () => {
         "Extension_A.Color",
         inventario.value.color_a
       );
-      rows.forEach((row) => {
-        inventarioPaqueteFormData.append("Extension_A.Numeros_Serie[]", row);
+      listaNumeroSerie_a.value.forEach((row) => {
+        inventarioPaqueteFormData.append(
+          "Extension_A.Numeros_Serie[]",
+          row.numero_serie
+        );
       });
       inventarioPaqueteFormData.append("Extension_A.Foto_1", foto1_a.value);
       inventarioPaqueteFormData.append("Extension_A.Foto_2", foto2_a.value);
       inventarioPaqueteFormData.append("Extension_A.Foto_3", foto3_a.value);
       inventarioPaqueteFormData.append("Extension_A.Foto_1", foto4_a.value);
 
-      //fotos
       //-----------------------------------------------------------
       //Extencion B
       if (marcaId_B.value) {
@@ -1439,8 +1426,11 @@ const onSubmit = async () => {
           "Extension_B.Color",
           inventario.value.color_b
         );
-        rows.forEach((row) => {
-          inventarioPaqueteFormData.append("Extension_B.Numeros_Serie[]", row);
+        listaNumeroSerie_b.value.forEach((row) => {
+          inventarioPaqueteFormData.append(
+            "Extension_B.Numeros_Serie[]",
+            row.numero_serie
+          );
         });
         inventarioPaqueteFormData.append("Extension_B.Foto_1", foto1_b.value);
         inventarioPaqueteFormData.append("Extension_B.Foto_2", foto2_b.value);
@@ -1471,8 +1461,11 @@ const onSubmit = async () => {
           "Extension_C.Color",
           inventario.value.color_c
         );
-        rows.forEach((row) => {
-          inventarioPaqueteFormData.append("Extension_C.Numeros_Serie[]", row);
+        listaNumeroSerie_c.value.forEach((row) => {
+          inventarioPaqueteFormData.append(
+            "Extension_C.Numeros_Serie[]",
+            row.numero_serie
+          );
         });
         inventarioPaqueteFormData.append("Extension_C.Foto_1", foto1_c.value);
         inventarioPaqueteFormData.append("Extension_C.Foto_2", foto2_c.value);
@@ -1507,6 +1500,7 @@ const onSubmit = async () => {
         }
       }
     } else if (radio.value == "paquete") {
+      //paquete
       try {
         resp = await inventarioStore.createInventarioPaquete(
           inventarioPaqueteFormData

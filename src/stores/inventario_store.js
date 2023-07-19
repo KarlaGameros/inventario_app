@@ -9,7 +9,26 @@ export const useInventarioStore = defineStore("inventario", {
     cantidad: null,
     listInventario: [],
     inventarios: [],
-    listaNumeroSerie: [],
+    listaNumeroSerie: [
+      {
+        numero_serie: null,
+      },
+    ],
+    listaNumeroSerie_a: [
+      {
+        numero_serie: null,
+      },
+    ],
+    listaNumeroSerie_b: [
+      {
+        numero_serie: null,
+      },
+    ],
+    listaNumeroSerie_c: [
+      {
+        numero_serie: null,
+      },
+    ],
     inventario: {
       id: null,
       catalogo_id: null,
@@ -267,10 +286,30 @@ export const useInventarioStore = defineStore("inventario", {
       try {
         this.listaNumeroSerie = Array.from(
           { length: cantidad },
-          (_, index) => index + 1
+          (_, index) => ({
+            numero_serie: "",
+          })
+        );
+        this.listaNumeroSerie_a = Array.from(
+          { length: cantidad },
+          (_, index) => ({
+            numero_serie: index + 1,
+          })
+        );
+        this.listaNumeroSerie_b = Array.from(
+          { length: cantidad },
+          (_, index) => ({
+            numero_serie: index + 1,
+          })
+        );
+        this.listaNumeroSerie_c = Array.from(
+          { length: cantidad },
+          (_, index) => ({
+            numero_serie: index + 1,
+          })
         );
       } catch (error) {
-        console, log(error);
+        console.log(error);
       }
     },
 
