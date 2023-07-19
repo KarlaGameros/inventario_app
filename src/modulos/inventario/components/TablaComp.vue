@@ -35,7 +35,7 @@
                   @click="loadFotos(col.value, true)"
                 >
                 </q-btn>
-                <!-- <q-btn
+                <q-btn
                   flat
                   round
                   color="purple-ieen"
@@ -43,16 +43,7 @@
                   @click="generarPDF(col.value)"
                 >
                   <q-tooltip>Generar PDF</q-tooltip>
-                </q-btn> -->
-                <div>
-                  <q-btn @click="showPDFDialog">Abrir PDF</q-btn>
-
-                  <q-dialog ref="pdfDialog" v-model="dialogVisible" persistent>
-                    <div class="pdf-dialog-content">
-                      <canvas ref="pdfCanvas"></canvas>
-                    </div>
-                  </q-dialog>
-                </div>
+                </q-btn>
 
                 <q-btn
                   flat
@@ -91,7 +82,7 @@ import { onBeforeMount, ref } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useInventarioStore } from "../../../stores/inventario_store";
 import ModalFotos from "../components/ModalViewFotos.vue";
-import { PDFDocumentProxy } from "pdfjs-dist";
+
 //-----------------------------------------------------------
 
 const $q = useQuasar();
@@ -99,7 +90,6 @@ const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const inventarioStore = useInventarioStore();
 const { inventarios } = storeToRefs(inventarioStore);
-const dialogVisible = false;
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -217,37 +207,6 @@ const editar = async (id) => {
   $q.loading.hide();
 };
 
-const showPDFDialog = async () => {
-  try {
-    const pdfURL = "./UTIE-0021_2023.pdf"; // Reemplaza con la ruta de tu archivo PDF
-
-    const loadingTask = PDFDocumentProxy.load(pdfURL);
-    const pdf = await loadingTask.promise;
-
-    const numPages = pdf.numPages;
-
-    const canvas = this.$refs.pdfCanvas;
-    const context = canvas.getContext("2d");
-
-    for (let i = 1; i <= numPages; i++) {
-      const page = await pdf.getPage(i);
-      const viewport = page.getViewport({ scale: 1 });
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
-
-      const renderContext = {
-        canvasContext: context,
-        viewport: viewport,
-      };
-
-      await page.render(renderContext);
-    }
-
-    this.dialogVisible = true;
-  } catch (error) {
-    console.error("Error al cargar el archivo PDF:", error);
-  }
-};
 //-----------------------------------------------------------
 
 const loadFotos = (id, valor) => {
