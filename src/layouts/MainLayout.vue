@@ -217,7 +217,6 @@ export default defineComponent({
       await authStore.loadSistemas();
       await authStore.loadModulos();
       await authStore.loadPerfil();
-      //console.log("Estos son los modulos", modulos.value);
       modulos.value.forEach((element) => {
         switch (element.siglas_Modulo) {
           case "SI-CAT-BOD":

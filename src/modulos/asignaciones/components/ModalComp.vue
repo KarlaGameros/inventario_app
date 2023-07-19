@@ -63,7 +63,6 @@ const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
 const { modal } = storeToRefs(asignacionStore);
 const actualizarModal = (valor) => {
-  console.log(valor);
   asignacionStore.actualizarModal(valor);
 };
 </script>

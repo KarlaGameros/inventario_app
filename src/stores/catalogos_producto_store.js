@@ -147,8 +147,6 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
         const resp = await api.delete(`/Catalagos/${id}`);
         if (resp.status == 200) {
           let { success, data } = resp.data;
-          console.log(resp.data);
-          console.log("Esto es success", success, "Esto es data", data);
           if (success === true) {
             return { success, data };
           } else {

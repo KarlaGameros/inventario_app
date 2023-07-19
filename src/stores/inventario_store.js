@@ -63,18 +63,33 @@ export const useInventarioStore = defineStore("inventario", {
     initInventario() {
       this.inventario.id = null;
       this.inventario.catalogo_id = null;
+
       this.inventario.catalogo = null;
       this.inventario.bodega_id = null;
       this.inventario.bodega = null;
       this.inventario.clave = null;
+
       this.inventario.descripcion = null;
+      this.inventario.descripcion_a = null;
+      this.inventario.descripcion_b = null;
+      this.inventario.descripcion_c = null;
+
       this.inventario.nombre_corto = null;
+      this.inventario.nombre_corto_a = null;
+      this.inventario.nombre_corto_b = null;
+      this.inventario.nombre_corto_c = null;
+
       this.inventario.marca_id = null;
       this.inventario.marca = null;
       this.inventario.modelo_id = null;
       this.inventario.modelo = null;
       this.inventario.numero_Serie = null;
+
       this.inventario.color = null;
+      this.inventario.color_a = null;
+      this.inventario.color_b = null;
+      this.inventario.color_c = null;
+
       this.inventario.img = null;
       this.inventario.empleado = null;
     },
@@ -84,7 +99,6 @@ export const useInventarioStore = defineStore("inventario", {
       try {
         let resp = await api.get("/Inventarios");
         let { data } = resp.data;
-        console.log("resp inventarios", data);
         let listInventario = data.map((inventario) => {
           return {
             id: inventario.id,
@@ -118,14 +132,12 @@ export const useInventarioStore = defineStore("inventario", {
     //-----------------------------------------------------------
 
     async createInventario(inventarioFormData) {
-      console.log("createInventario", inventarioFormData);
       try {
         const resp = await api.post("/Inventarios", inventarioFormData, {
           headers: {
             "Conten-Type": "multipart/form-data",
           },
         });
-        console.log("resp", resp);
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success === true) {
@@ -151,10 +163,6 @@ export const useInventarioStore = defineStore("inventario", {
     //-----------------------------------------------------------
 
     async createInventarioPaquete(inventarioPaqueteFormData) {
-      inventarioPaqueteFormData.forEach((element) =>
-        console.log("createInventario paquete", element)
-      );
-      console.log(inventarioPaqueteFormData);
       try {
         const resp = await api.post(
           "/Inventarios/Paquete",
@@ -165,7 +173,6 @@ export const useInventarioStore = defineStore("inventario", {
             },
           }
         );
-        console.log("resp", resp);
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success === true) {
@@ -195,7 +202,6 @@ export const useInventarioStore = defineStore("inventario", {
         let resp = await api.get(`/Inventarios/${id}`);
         if (resp.status == 200) {
           const { success, data } = resp.data;
-          console.log("load", data);
           if (success == true) {
             this.inventario.id = data.id;
             this.inventario.foto_1 = data.foto_1_URL;
@@ -213,7 +219,7 @@ export const useInventarioStore = defineStore("inventario", {
             this.inventario.bodega = data.bodega;
             this.inventario.catalogo = data.catalago;
             this.inventario.descripcion = data.descripcion;
-            this.inventario.nombre_Corto = data.nombre_Corto;
+            this.inventario.nombre_corto = data.nombre_Corto;
             this.inventario.color = data.color;
             this.inventario.cantidad = data.cantidad;
             this.inventario.numero_Serie = data.numero_Serie;
@@ -263,8 +269,6 @@ export const useInventarioStore = defineStore("inventario", {
           { length: cantidad },
           (_, index) => index + 1
         );
-
-        console.log("listaNumeroSerie", this.listaNumeroSerie);
       } catch (error) {
         console, log(error);
       }
@@ -277,7 +281,6 @@ export const useInventarioStore = defineStore("inventario", {
         let resp = null;
         resp = await api.get(`/Inventarios/GeneraPDF/${id}`);
         if (resp.status == 200) {
-          console.log(resp.data);
           let ruta_PDF = resp.data;
           if (ruta_PDF) {
             return ruta_PDF;

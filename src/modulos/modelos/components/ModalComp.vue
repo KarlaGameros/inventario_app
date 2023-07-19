@@ -100,7 +100,6 @@ const onSubmit = async () => {
   if (isEditar.value == true) {
     resp = await modeloStore.updateModelo(modelo.value);
   } else {
-    console.log("create", modelo.value);
     resp = await modeloStore.createModelo(modelo.value);
   }
   if (resp.success) {

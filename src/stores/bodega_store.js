@@ -31,7 +31,6 @@ export const useBodegaStore = defineStore("bodega", {
       try {
         let resp = await api.get("/Bodegas");
         let { data } = resp.data;
-        console.log("data", data);
         let listBodega = data.map((bodega) => {
           return {
             id: bodega.id,

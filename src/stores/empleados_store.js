@@ -19,7 +19,6 @@ export const useEmpleadosStore = defineStore("empleados", {
       try {
         let resp = await api.get("/Empleados/GetLista");
         let { data } = resp.data;
-        console.log("getlist", data);
         let listEmpleados = data.map((empleado) => {
           return {
             label: empleado.label,

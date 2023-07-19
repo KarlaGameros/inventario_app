@@ -114,20 +114,6 @@
 
           <!----------------------------------------------------------------------------->
 
-          <div class="col-12 justify-end" v-if="radio == 'paquete'">
-            <div class="text-right q-gutter-xs">
-              <q-btn
-                icon-right="add"
-                label="Agregar"
-                color="positive"
-                class="q-ml-sm"
-                @click="agregarProducto(cantidad, catalogoId)"
-              />
-            </div>
-          </div>
-
-          <!----------------------------------------------------------------------------->
-
           <div
             v-if="radio == 'paquete'"
             class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
@@ -214,9 +200,100 @@
                   </q-input>
                 </div>
 
+                <!-------------------------------------------------------------------------->
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto1"
+                    filled
+                    bottom-slots
+                    label="Foto 1"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto2"
+                    filled
+                    bottom-slots
+                    label="Foto 2"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto3"
+                    filled
+                    bottom-slots
+                    label="Foto 3"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto4"
+                    filled
+                    bottom-slots
+                    label="Foto 4"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <!-------------------------------------------------------------------------->
+
                 <div class="col">
                   <q-table
-                    :rows="rows"
+                    :rows="listaNumeroSerie"
                     :columns="columns"
                     row-key="name"
                     :rows-per-page-options="[]"
@@ -318,6 +395,97 @@
                   >
                   </q-input>
                 </div>
+
+                <!-------------------------------------------------------------------------->
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto1_a"
+                    filled
+                    bottom-slots
+                    label="Foto 1"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto2_a"
+                    filled
+                    bottom-slots
+                    label="Foto 2"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto3_a"
+                    filled
+                    bottom-slots
+                    label="Foto 3"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto_a"
+                    filled
+                    bottom-slots
+                    label="Foto 4"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <!-------------------------------------------------------------------------->
 
                 <div class="col">
                   <q-table
@@ -424,14 +592,124 @@
                   </q-input>
                 </div>
 
+                <!-------------------------------------------------------------------------->
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto1_b"
+                    filled
+                    bottom-slots
+                    label="Foto 1"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto2_b"
+                    filled
+                    bottom-slots
+                    label="Foto 2"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto3_b"
+                    filled
+                    bottom-slots
+                    label="Foto 3"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto4_b"
+                    filled
+                    bottom-slots
+                    label="Foto 4"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <!-------------------------------------------------------------------------->
+
                 <div class="col">
                   <q-table
-                    :rows="listaNumeroSerie"
+                    :rows="rows"
                     :columns="columns"
                     row-key="name"
+                    :rows-per-page-options="[]"
                   >
-                    <template>
-                      <div class="col"></div>
+                    <template v-slot:body="props">
+                      <q-tr :props="props">
+                        <q-td key="numero_serie" :props="props">
+                          {{ props.row }}
+                          <q-popup-edit
+                            v-model.number="props.row"
+                            buttons
+                            persistent
+                            v-slot="scope"
+                          >
+                            <q-input
+                              type="number"
+                              v-model.number="scope.value"
+                              dense
+                              autofocus
+                              @keyup.enter="scope.set"
+                            />
+                          </q-popup-edit>
+                        </q-td>
+                      </q-tr>
                     </template>
                   </q-table>
                 </div>
@@ -501,7 +779,7 @@
 
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-input
-                    v-model.trim="inventario.color_a"
+                    v-model.trim="inventario.color_c"
                     label="Color"
                     autogrow
                     lazy-rules
@@ -509,13 +787,137 @@
                   >
                   </q-input>
                 </div>
+
+                <!-------------------------------------------------------------------------->
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto1_c"
+                    filled
+                    bottom-slots
+                    label="Foto 1"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto2_c"
+                    filled
+                    bottom-slots
+                    label="Foto 2"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto3_c"
+                    filled
+                    bottom-slots
+                    label="Foto 3"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                  <q-file
+                    v-model="foto4_c"
+                    filled
+                    bottom-slots
+                    label="Foto 4"
+                    counter
+                    accept="image/png, image/jpeg"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="cloud_upload" @click.stop.prevent />
+                    </template>
+                    <template v-slot:append>
+                      <q-icon
+                        name="close"
+                        @click.stop.prevent="files = null"
+                        class="cursor-pointer"
+                      />
+                    </template>
+                  </q-file>
+                </div>
+
+                <!-------------------------------------------------------------------------->
+
+                <div class="col">
+                  <q-table
+                    :rows="rows"
+                    :columns="columns"
+                    row-key="name"
+                    :rows-per-page-options="[]"
+                  >
+                    <template v-slot:body="props">
+                      <q-tr :props="props">
+                        <q-td key="numero_serie" :props="props">
+                          {{ props.row }}
+                          <q-popup-edit
+                            v-model.number="props.row"
+                            buttons
+                            persistent
+                            v-slot="scope"
+                          >
+                            <q-input
+                              type="number"
+                              v-model.number="scope.value"
+                              dense
+                              autofocus
+                              @keyup.enter="scope.set"
+                            />
+                          </q-popup-edit>
+                        </q-td>
+                      </q-tr>
+                    </template>
+                  </q-table>
+                </div>
               </q-tab-panel>
+
+              <!---------------------------------------------------------------->
             </q-tab-panels>
           </div>
 
           <!----------------------------------------------------------------------------->
 
-          <div v-if="editar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <div v-if="isEditar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
               disable
               v-model="inventario.clave"
@@ -634,8 +1036,8 @@
           </div>
 
           <div
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
             v-if="radio != 'paquete'"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
           >
             <q-file
               v-model="foto1"
@@ -659,8 +1061,8 @@
           </div>
 
           <div
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
             v-if="radio != 'paquete'"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
           >
             <q-file
               v-model="foto2"
@@ -684,8 +1086,8 @@
           </div>
 
           <div
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
             v-if="radio != 'paquete'"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
           >
             <q-file
               v-model="foto3"
@@ -709,8 +1111,8 @@
           </div>
 
           <div
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
             v-if="radio != 'paquete'"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
           >
             <q-file
               v-model="foto4"
@@ -803,6 +1205,21 @@ const foto1 = ref();
 const foto2 = ref();
 const foto3 = ref();
 const foto4 = ref();
+
+const foto1_a = ref();
+const foto2_a = ref();
+const foto3_a = ref();
+const foto4_a = ref();
+
+const foto1_b = ref();
+const foto2_b = ref();
+const foto3_b = ref();
+const foto4_b = ref();
+
+const foto1_c = ref();
+const foto2_c = ref();
+const foto3_c = ref();
+const foto4_c = ref();
 //-----------------------------------------------------------
 const tabsDefinition = [
   { name: "extencion_a", label: "Extención A" },
@@ -838,7 +1255,7 @@ const columns = [
     sortable: true,
   },
 ];
-const rows = ["123", "456"];
+const rows = ["123"];
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -854,7 +1271,6 @@ watch(marcaId, (val) => {
   if (val != null) {
     modeloStore.modeloByMarca(marcaId.value.value).then(() => {
       modeloId.value = listModelo.value[0];
-      console.log("watch", modeloId.value, listModelo.value[0].clave);
     });
   }
 });
@@ -878,6 +1294,11 @@ watch(inventario.value, (val) => {
     cargarCatalogo(val);
     cargarMarca(val);
   }
+});
+
+watch(cantidad, (val) => {
+  console.log("cantidad:", cantidad);
+  inventarioStore.addCantidad(cantidad, catalogoId);
 });
 //-----------------------------------------------------------
 
@@ -906,10 +1327,6 @@ const cargarMarca = async (val) => {
     );
     marcaId.value = marcaFiltrado;
   }
-};
-
-const agregarProducto = (cantidad, catalogoId) => {
-  inventarioStore.addCantidad(cantidad, catalogoId);
 };
 
 const actualizarModal = (valor) => {
@@ -961,13 +1378,23 @@ const onSubmit = async () => {
     });
     inventarioPaqueteFormData.append("General.Color", inventario.value.color);
     inventarioPaqueteFormData.append("Cantidad", cantidad.value);
+    inventarioPaqueteFormData.append("General.Foto_1", foto1.value);
+    inventarioPaqueteFormData.append("General.Foto_2", foto2.value);
+    inventarioPaqueteFormData.append("General.Foto_3", foto3.value);
+    inventarioPaqueteFormData.append("General.Foto_4", foto4.value);
     //fotos
 
     //-----------------------------------------------------------
     //Extencion A
     if (marcaId_A.value) {
-      inventarioPaqueteFormData.append("Extension_A.Marca_Id", marcaId_A.value);
-      inventarioPaqueteFormData.append("Extension_A.Modelo_Id", modeloId_A);
+      inventarioPaqueteFormData.append(
+        "Extension_A.Marca_Id",
+        marcaId_A.value.value
+      );
+      inventarioPaqueteFormData.append(
+        "Extension_A.Modelo_Id",
+        modeloId_A.value.value
+      );
       inventarioPaqueteFormData.append(
         "Extension_A.Descripcion",
         inventario.value.descripcion_a
@@ -980,7 +1407,78 @@ const onSubmit = async () => {
         "Extension_A.Color",
         inventario.value.color_a
       );
+      rows.forEach((row) => {
+        inventarioPaqueteFormData.append("Extension_A.Numeros_Serie[]", row);
+      });
+      inventarioPaqueteFormData.append("Extension_A.Foto_1", foto1_a.value);
+      inventarioPaqueteFormData.append("Extension_A.Foto_2", foto2_a.value);
+      inventarioPaqueteFormData.append("Extension_A.Foto_3", foto3_a.value);
+      inventarioPaqueteFormData.append("Extension_A.Foto_1", foto4_a.value);
+
       //fotos
+      //-----------------------------------------------------------
+      //Extencion B
+      if (marcaId_B.value) {
+        inventarioPaqueteFormData.append(
+          "Extension_B.Marca_Id",
+          marcaId_B.value.value
+        );
+        inventarioPaqueteFormData.append(
+          "Extension_B.Modelo_Id",
+          modeloId_B.value.value
+        );
+        inventarioPaqueteFormData.append(
+          "Extension_B.Descripcion",
+          inventario.value.descripcion_b
+        );
+        inventarioPaqueteFormData.append(
+          "Extension_B.Nombre_Corto",
+          inventario.value.nombre_corto_b
+        );
+        inventarioPaqueteFormData.append(
+          "Extension_B.Color",
+          inventario.value.color_b
+        );
+        rows.forEach((row) => {
+          inventarioPaqueteFormData.append("Extension_B.Numeros_Serie[]", row);
+        });
+        inventarioPaqueteFormData.append("Extension_B.Foto_1", foto1_b.value);
+        inventarioPaqueteFormData.append("Extension_B.Foto_2", foto2_b.value);
+        inventarioPaqueteFormData.append("Extension_B.Foto_3", foto3_b.value);
+        inventarioPaqueteFormData.append("Extension_B.Foto_1", foto4_b.value);
+      }
+
+      //-----------------------------------------------------------
+      //Extencion C
+      if (marcaId_C.value) {
+        inventarioPaqueteFormData.append(
+          "Extension_C.Marca_Id",
+          marcaId_C.value.value
+        );
+        inventarioPaqueteFormData.append(
+          "Extension_C.Modelo_Id",
+          modeloId_C.value.value
+        );
+        inventarioPaqueteFormData.append(
+          "Extension_C.Descripcion",
+          inventario.value.descripcion_c
+        );
+        inventarioPaqueteFormData.append(
+          "Extension_C.Nombre_Corto",
+          inventario.value.nombre_corto_c
+        );
+        inventarioPaqueteFormData.append(
+          "Extension_C.Color",
+          inventario.value.color_c
+        );
+        rows.forEach((row) => {
+          inventarioPaqueteFormData.append("Extension_C.Numeros_Serie[]", row);
+        });
+        inventarioPaqueteFormData.append("Extension_C.Foto_1", foto1_c.value);
+        inventarioPaqueteFormData.append("Extension_C.Foto_2", foto2_c.value);
+        inventarioPaqueteFormData.append("Extension_C.Foto_3", foto3_c.value);
+        inventarioPaqueteFormData.append("Extension_C.Foto_1", foto4_c.value);
+      }
     }
   }
 
@@ -1010,8 +1508,6 @@ const onSubmit = async () => {
       }
     } else if (radio.value == "paquete") {
       try {
-        console.log("inventarioPaqueteFormData", inventarioPaqueteFormData);
-        inventarioPaqueteFormData.forEach((element) => console.log(element));
         resp = await inventarioStore.createInventarioPaquete(
           inventarioPaqueteFormData
         );
@@ -1021,20 +1517,20 @@ const onSubmit = async () => {
     }
   }
 
-  // if (resp.success) {
-  //   $q.notify({
-  //     type: "positive",
-  //     message: resp.data,
-  //   });
-  //   actualizarModal(false);
-  //   inventarioStore.initInventario();
-  //   inventarioStore.loadInformacionInventarios();
-  // } else {
-  //   $q.notify({
-  //     type: "negative",
-  //     message: resp.data,
-  //   });
-  // }
+  if (resp.success) {
+    $q.notify({
+      type: "positive",
+      message: resp.data,
+    });
+    actualizarModal(false);
+    inventarioStore.initInventario();
+    inventarioStore.loadInformacionInventarios();
+  } else {
+    $q.notify({
+      type: "negative",
+      message: resp.data,
+    });
+  }
 
   // if (error > 0) {
   //   $q.dialog({

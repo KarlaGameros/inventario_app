@@ -30,7 +30,6 @@ export const useModeloStore = defineStore("modelos", {
       try {
         let resp = await api.get("/Modelos");
         let { data } = resp.data;
-        console.log("data", data);
         let listModelo = data.map((modelo) => {
           return {
             id: modelo.id,
@@ -56,7 +55,6 @@ export const useModeloStore = defineStore("modelos", {
         resp = await api.get(`/Modelos/${id}`);
         if (resp.status == 200) {
           const { success, data } = resp.data;
-          console.log("data", data, success);
           if (success === true) {
             this.modelo.id = data.id;
             this.modelo.clave = data.clave;
@@ -178,7 +176,6 @@ export const useModeloStore = defineStore("modelos", {
     //-----------------------------------------------------------
     async deleteModelo(id) {
       try {
-        console.log("id", id);
         const resp = await api.delete(`/Modelos/${id}`);
         if (resp.status == 200) {
           let { success, data } = resp.data;

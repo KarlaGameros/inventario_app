@@ -96,7 +96,6 @@ watch(bodega.value, (val) => {
 
 const cargarArea = async (val) => {
   if (area_Id.value == null) {
-    console.log("Esto es value, desde cargar area", val);
     let areaFiltrado = areas.value.find((x) => x.value == `${val.area_Id}`);
     area_Id.value = areaFiltrado;
   }
