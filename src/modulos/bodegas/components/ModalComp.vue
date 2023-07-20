@@ -71,22 +71,29 @@ import { useQuasar } from "quasar";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useBodegaStore } from "../../../stores/bodega_store";
 
+//-----------------------------------------------------------
+
 const $q = useQuasar();
 const bodegaStore = useBodegaStore();
 const authStore = useAuthStore();
 
 const { bodega, modal, areas, isEditar } = storeToRefs(bodegaStore);
 const area_Id = ref(null);
+
+//-----------------------------------------------------------
+
+onBeforeMount(() => {
+  bodegaStore.loadAreasList();
+});
+
+//-----------------------------------------------------------
+
 const actualizarModal = (valor) => {
   bodegaStore.actualizarModal(valor);
   bodegaStore.updateEditar(valor);
   bodegaStore.initBodega();
   area_Id.value = null;
 };
-
-onBeforeMount(() => {
-  bodegaStore.loadAreasList();
-});
 
 watch(bodega.value, (val) => {
   if (val.id != null) {

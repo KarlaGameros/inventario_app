@@ -1,13 +1,4 @@
 <template>
-  <q-btn
-    flat
-    round
-    color="purple-ieen"
-    icon="qr_code_scanner"
-    @click="mostrarPDF(true)"
-  >
-    <q-tooltip>Generar PDF</q-tooltip>
-  </q-btn>
   <div class="row">
     <div class="col">
       <q-table
@@ -44,16 +35,15 @@
                   @click="loadFotos(col.value, true)"
                 >
                 </q-btn>
-                <!-- <q-btn
+                <q-btn
                   flat
                   round
                   color="purple-ieen"
                   icon="qr_code_scanner"
-                  @click="generarPDF(col.value)"
+                  @click="mostrarPDF(true, col.value)"
                 >
                   <q-tooltip>Generar PDF</q-tooltip>
-                </q-btn> -->
-
+                </q-btn>
                 <q-btn
                   flat
                   round
@@ -100,8 +90,6 @@ const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const inventarioStore = useInventarioStore();
 const { inventarios } = storeToRefs(inventarioStore);
-let dialogVisible = false;
-let pdfUrl = "";
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -189,6 +177,27 @@ const columns = [
     sortable: true,
   },
   {
+    name: "fecha_compra",
+    align: "center",
+    label: "Fecha de Compra",
+    field: "fecha_compra",
+    sortable: true,
+  },
+  {
+    name: "factura",
+    align: "center",
+    label: "No. Factura",
+    field: "factura",
+    sortable: true,
+  },
+  {
+    name: "importe",
+    align: "center",
+    label: "Importe",
+    field: "importe",
+    sortable: true,
+  },
+  {
     name: "id",
     align: "center",
     label: "Acciones",
@@ -228,30 +237,16 @@ const loadFotos = (id, valor) => {
 
 //-----------------------------------------------------------
 
-const generarPDF = async (id) => {
-  $q.loading.show();
-  var { ruta_PDF } = await inventarioStore.generarPDF(id);
-  window.open(ruta_PDF, "_blank");
-  $q.loading.hide();
-};
+// const generarPDF = async (id) => {
+//   $q.loading.show();
+//   var { ruta_PDF } = await inventarioStore.generarPDF(id);
+//   window.open(ruta_PDF, "_blank");
+//   $q.loading.hide();
+// };
 
-const openPdfDialog = () => {
-  // Establecer la URL del PDF que deseas mostrar
-  dialogVisible = true;
-  console.log("entro", pdfUrl, dialogVisible);
-  pdfUrl =
-    "https://www.turnerlibros.com/wp-content/uploads/2021/02/ejemplo.pdf";
-  console.log(pdfUrl);
-};
-const closePdfDialog = () => {
-  // Limpiar la URL del PDF al cerrar el diálogo para evitar que se cargue nuevamente al abrirlo.
-  pdfUrl = "";
-};
-
-const mostrarPDF = (valor) => {
-  $q.loading.show();
+const mostrarPDF = async (valor, id) => {
+  await inventarioStore.generarPDF(id);
   inventarioStore.actualizarModalPDF(valor);
-  $q.loading.hide();
 };
 
 //-----------------------------------------------------------

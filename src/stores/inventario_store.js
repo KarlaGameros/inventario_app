@@ -12,6 +12,7 @@ export const useInventarioStore = defineStore("inventario", {
     inventarios: [],
     listaNumeroSerie: [
       {
+        id: null,
         numero_serie: null,
       },
     ],
@@ -52,6 +53,9 @@ export const useInventarioStore = defineStore("inventario", {
       clave: null,
       empleado: null,
       ruta_PDF: null,
+      fecha_compra: null,
+      factura: null,
+      importe: null,
       //-----------------------------
       descripcion_a: null,
       nombre_corto_a: null,
@@ -110,7 +114,11 @@ export const useInventarioStore = defineStore("inventario", {
       this.inventario.color_b = null;
       this.inventario.color_c = null;
 
-      this.inventario.img = null;
+      this.inventario.foto_1 = null;
+      this.inventario.foto_2 = null;
+      this.inventario.foto_3 = null;
+      this.inventario.foto_4 = null;
+
       this.inventario.empleado = null;
     },
 
@@ -255,14 +263,22 @@ export const useInventarioStore = defineStore("inventario", {
 
     //-----------------------------------------------------------
 
-    async updateInventario(innventario) {
+    async updateInventario(inventario, editarInventarioFormData) {
       try {
+        console.log("inventario", inventario.value.id);
+        console.log("editarInventarioFormData", editarInventarioFormData);
         const resp = await api.put(
-          `/Inventarios/${innventario.id}`,
-          innventario
+          `/Inventarios/${inventario.value.id}`,
+          editarInventarioFormData,
+          {
+            headers: {
+              "Conten-Type": "multipart/form-data",
+            },
+          }
         );
         if (resp.status == 200) {
           const { success, data } = resp.data;
+          console.log("data", data);
           if (success === true) {
             return { success, data };
           } else {
@@ -288,25 +304,29 @@ export const useInventarioStore = defineStore("inventario", {
         this.listaNumeroSerie = Array.from(
           { length: cantidad },
           (_, index) => ({
+            id: index + 1,
             numero_serie: "",
           })
         );
         this.listaNumeroSerie_a = Array.from(
           { length: cantidad },
           (_, index) => ({
-            numero_serie: index + 1,
+            id: index + 1,
+            numero_serie: "",
           })
         );
         this.listaNumeroSerie_b = Array.from(
           { length: cantidad },
           (_, index) => ({
-            numero_serie: index + 1,
+            id: index + 1,
+            numero_serie: "",
           })
         );
         this.listaNumeroSerie_c = Array.from(
           { length: cantidad },
           (_, index) => ({
-            numero_serie: index + 1,
+            id: index + 1,
+            numero_serie: "",
           })
         );
       } catch (error) {
@@ -322,9 +342,7 @@ export const useInventarioStore = defineStore("inventario", {
         resp = await api.get(`/Inventarios/GeneraPDF/${id}`);
         if (resp.status == 200) {
           let ruta_PDF = resp.data;
-          if (ruta_PDF) {
-            return ruta_PDF;
-          }
+          this.inventario.ruta_PDF = ruta_PDF.ruta_PDF;
         } else {
           return {
             success: false,

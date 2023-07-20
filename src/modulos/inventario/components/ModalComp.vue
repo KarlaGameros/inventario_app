@@ -7,7 +7,9 @@
   >
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
-        <div class="text-h6">Registro de inventario</div>
+        <div class="text-h6">
+          {{ !isEditar ? "Registrar inventario" : "Editar inventario" }}
+        </div>
         <q-space />
         <q-btn
           icon="close"
@@ -37,7 +39,7 @@
             <q-radio v-model="radio" size="md" val="paquete" label="Paquete" />
           </div>
           <div
-            v-if="radio != 'paquete'"
+            v-if="radio != 'paquete' && isEditar == false"
             class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
           >
             <q-radio
@@ -288,6 +290,9 @@
                   >
                     <template v-slot:body="props">
                       <q-tr :props="props">
+                        <q-td key="id" :props="props">
+                          {{ props.row.id }}
+                        </q-td>
                         <q-td key="numero_serie" :props="props">
                           {{ props.row.numero_serie }}
                           <q-popup-edit
@@ -475,38 +480,8 @@
                 </div>
 
                 <!-------------------------------------------------------------------------->
-
-                <div class="col">
-                  <q-table
-                    :rows="listaNumeroSerie_a"
-                    :columns="columns"
-                    row-key="name"
-                    :rows-per-page-options="[]"
-                  >
-                    <template v-slot:body="props">
-                      <q-tr :props="props">
-                        <q-td key="numero_serie" :props="props">
-                          {{ props.row.numero_serie }}
-                          <q-popup-edit
-                            v-model.number="props.row.numero_serie"
-                            buttons
-                            persistent
-                            auto-save
-                            v-slot="scope"
-                          >
-                            <q-input
-                              type="number"
-                              v-model.number="scope.value"
-                              dense
-                              autofocus
-                              @keyup.enter="scope.set"
-                            />
-                          </q-popup-edit>
-                        </q-td>
-                      </q-tr>
-                    </template>
-                  </q-table>
-                </div>
+                <TablaNumerosSeriesA />
+                <!-------------------------------------------------------------------------->
               </q-tab-panel>
 
               <!---------------------------------------------------------------->
@@ -672,38 +647,8 @@
                 </div>
 
                 <!-------------------------------------------------------------------------->
-
-                <div class="col">
-                  <q-table
-                    :rows="listaNumeroSerie_b"
-                    :columns="columns"
-                    row-key="name"
-                    :rows-per-page-options="[]"
-                  >
-                    <template v-slot:body="props">
-                      <q-tr :props="props">
-                        <q-td key="numero_serie" :props="props">
-                          {{ props.row.numero_serie }}
-                          <q-popup-edit
-                            v-model.number="props.row.numero_serie"
-                            buttons
-                            persistent
-                            auto-save
-                            v-slot="scope"
-                          >
-                            <q-input
-                              type="number"
-                              v-model.number="scope.value"
-                              dense
-                              autofocus
-                              @keyup.enter="scope.set"
-                            />
-                          </q-popup-edit>
-                        </q-td>
-                      </q-tr>
-                    </template>
-                  </q-table>
-                </div>
+                <TablaNumerosSeriesB />
+                <!-------------------------------------------------------------------------->
               </q-tab-panel>
 
               <!---------------------------------------------------------------->
@@ -869,38 +814,8 @@
                 </div>
 
                 <!-------------------------------------------------------------------------->
-
-                <div class="col">
-                  <q-table
-                    :rows="listaNumeroSerie_c"
-                    :columns="columns"
-                    row-key="name"
-                    :rows-per-page-options="[]"
-                  >
-                    <template v-slot:body="props">
-                      <q-tr :props="props">
-                        <q-td key="numero_serie" :props="props">
-                          {{ props.row.numero_serie }}
-                          <q-popup-edit
-                            v-model.number="props.row.numero_serie"
-                            buttons
-                            persistent
-                            auto-save
-                            v-slot="scope"
-                          >
-                            <q-input
-                              type="number"
-                              v-model.number="scope.value"
-                              dense
-                              autofocus
-                              @keyup.enter="scope.set"
-                            />
-                          </q-popup-edit>
-                        </q-td>
-                      </q-tr>
-                    </template>
-                  </q-table>
-                </div>
+                <TablaNumerosSeriesC />
+                <!-------------------------------------------------------------------------->
               </q-tab-panel>
 
               <!---------------------------------------------------------------->
@@ -909,17 +824,23 @@
 
           <!----------------------------------------------------------------------------->
 
-          <div
-            v-if="isEditar && radio != 'paquete'"
-            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
-          >
+          <div v-if="isEditar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
               disable
               v-model="inventario.clave"
               label="Clave del producto"
               autogrow
+            >
+            </q-input>
+          </div>
+
+          <div v-if="isEditar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <q-input
+              v-model="inventario.numero_Serie"
+              label="Numero de serie"
+              autogrow
               lazy-rules
-              :rules="[(val) => !!val || 'La clave es requerido']"
+              :rules="[(val) => !!val || 'El número de serie es requerido']"
             >
             </q-input>
           </div>
@@ -1044,10 +965,7 @@
                 <q-icon name="attach_file" />
               </template>
             </q-file>
-            <img
-              v-if="isEditar"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-            />
+            <img v-if="isEditar" :src="inventario.foto_1" />
           </q-card>
 
           <q-card
@@ -1057,17 +975,14 @@
             <q-file
               accept="image/png, image/jpeg"
               color="purple-12"
-              v-model="foto2"
+              v-model="inventario.foto_2"
               label="Label"
             >
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
               </template>
             </q-file>
-            <img
-              v-if="isEditar"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-            />
+            <img v-if="isEditar" :src="inventario.foto_2" />
           </q-card>
 
           <q-card
@@ -1077,17 +992,14 @@
             <q-file
               accept="image/png, image/jpeg"
               color="purple-12"
-              v-model="foto3"
+              v-model="inventario.foto_3"
               label="Label"
             >
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
               </template>
             </q-file>
-            <img
-              v-if="isEditar"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-            />
+            <img v-if="isEditar" :src="inventario.foto_3" />
           </q-card>
 
           <q-card
@@ -1097,17 +1009,14 @@
             <q-file
               accept="image/png, image/jpeg"
               color="purple-12"
-              v-model="foto4"
+              v-model="inventario.foto_4"
               label="Label"
             >
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
               </template>
             </q-file>
-            <img
-              v-if="isEditar"
-              src="https://cdn.quasar.dev/img/parallax2.jpg"
-            />
+            <img v-if="isEditar" :src="inventario.foto_4" />
           </q-card>
 
           <!----------------------------------------------------------------------------->
@@ -1146,7 +1055,9 @@ import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useBodegaStore } from "src/stores/bodega_store";
 import { useMarcaStore } from "src/stores/marcas_store";
 import { useModeloStore } from "src/stores/modelo_store";
-
+import TablaNumerosSeriesA from "./TablaNumeroSerieA.vue";
+import TablaNumerosSeriesB from "./TablaNumeroSerieB.vue";
+import TablaNumerosSeriesC from "./TablaNumeroSerieC.vue";
 //-----------------------------------------------------------
 
 const $q = useQuasar();
@@ -1184,6 +1095,7 @@ const modeloId_B = ref(null);
 const modeloId_C = ref(null);
 const cantidad = ref(null);
 const radio = ref("individual");
+
 const foto1 = ref();
 const foto2 = ref();
 const foto3 = ref();
@@ -1203,7 +1115,6 @@ const foto1_c = ref();
 const foto2_c = ref();
 const foto3_c = ref();
 const foto4_c = ref();
-
 //-----------------------------------------------------------
 const tabsDefinition = [
   { name: "extencion_a", label: "Extención A" },
@@ -1230,15 +1141,6 @@ const setTabSelected = (tab, status) => {
     }
   }
 };
-const columns = [
-  {
-    name: "numero_serie",
-    align: "center",
-    label: "Números de serie",
-    field: "numero_serie",
-    sortable: true,
-  },
-];
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -1318,6 +1220,8 @@ const actualizarModal = (valor) => {
   marcaId.value = null;
   modeloId.value = null;
   cantidad.value = null;
+  radio.value = null;
+  isEditar.value = false;
   inventarioStore.initInventario();
 };
 
@@ -1326,151 +1230,180 @@ const actualizarModal = (valor) => {
 const onSubmit = async () => {
   let inventarioFormData = new FormData();
   let inventarioPaqueteFormData = new FormData();
+  let editarInventarioFormData = new FormData();
 
-  if (radio.value != "paquete") {
-    inventarioFormData.append("Catalago_Id", catalogoId.value.value);
-    inventarioFormData.append("Estatus_Id", 2);
-    inventarioFormData.append("Bodega_Id", bodegaId.value.value);
-    inventarioFormData.append("Marca_Id", marcaId.value.value);
-    inventarioFormData.append("Modelo_Id", modeloId.value.value);
-    inventarioFormData.append("Descripcion", inventario.value.descripcion);
-    inventarioFormData.append("Nombre_Corto", inventario.value.nombre_corto);
-    inventarioFormData.append("Color", inventario.value.color);
-    inventarioFormData.append("Foto_1", foto1.value);
-    inventarioFormData.append("Foto_2", foto2.value);
-    inventarioFormData.append("Foto_3", foto3.value);
-    inventarioFormData.append("Foto_4", foto4.value);
-    inventarioFormData.append("Cantidad", cantidad.value);
-  } else if (radio.value == "paquete") {
-    //-----------------------------------------------------------
-    //General
-    inventarioPaqueteFormData.append("Catalago_Id", catalogoId.value.value);
-    inventarioPaqueteFormData.append("Bodega_Id", bodegaId.value.value);
-    inventarioPaqueteFormData.append("General.Marca_Id", marcaId.value.value);
-    inventarioPaqueteFormData.append("General.Modelo_Id", modeloId.value.value);
-    inventarioPaqueteFormData.append(
-      "General.Descripcion",
+  if (isEditar) {
+    editarInventarioFormData.append("Catalago_Id", catalogoId.value.value);
+    editarInventarioFormData.append("Estatus_Id", 2);
+    editarInventarioFormData.append("Bodega_Id", bodegaId.value.value);
+    editarInventarioFormData.append("Marca_Id", marcaId.value.value);
+    editarInventarioFormData.append("Modelo_Id", modeloId.value.value);
+    editarInventarioFormData.append(
+      "Descripcion",
       inventario.value.descripcion
     );
-    inventarioPaqueteFormData.append(
-      "General.Nombre_Corto",
+    editarInventarioFormData.append(
+      "Nombre_Corto",
       inventario.value.nombre_corto
     );
-    listaNumeroSerie.value.forEach((row) => {
+    editarInventarioFormData.append(
+      "Numero_Serie",
+      inventario.value.numero_Serie
+    );
+    editarInventarioFormData.append("Color", inventario.value.color);
+    editarInventarioFormData.append("Foto_1", foto1.value);
+    editarInventarioFormData.append("Foto_2", foto2.value);
+    editarInventarioFormData.append("Foto_3", foto3.value);
+    editarInventarioFormData.append("Foto_4", foto4.value);
+  } else {
+    if (radio.value != "paquete") {
+      inventarioFormData.append("Catalago_Id", catalogoId.value.value);
+      inventarioFormData.append("Estatus_Id", 2);
+      inventarioFormData.append("Bodega_Id", bodegaId.value.value);
+      inventarioFormData.append("Marca_Id", marcaId.value.value);
+      inventarioFormData.append("Modelo_Id", modeloId.value.value);
+      inventarioFormData.append("Descripcion", inventario.value.descripcion);
+      inventarioFormData.append("Nombre_Corto", inventario.value.nombre_corto);
+      inventarioFormData.append("Color", inventario.value.color);
+      inventarioFormData.append("Foto_1", foto1.value);
+      inventarioFormData.append("Foto_2", foto2.value);
+      inventarioFormData.append("Foto_3", foto3.value);
+      inventarioFormData.append("Foto_4", foto4.value);
+      inventarioFormData.append("Cantidad", cantidad.value);
+    } else if (radio.value == "paquete") {
+      //-----------------------------------------------------------
+      //General
+      inventarioPaqueteFormData.append("Catalago_Id", catalogoId.value.value);
+      inventarioPaqueteFormData.append("Bodega_Id", bodegaId.value.value);
+      inventarioPaqueteFormData.append("General.Marca_Id", marcaId.value.value);
       inventarioPaqueteFormData.append(
-        "General.Numeros_Serie[]",
-        row.numero_serie
-      );
-    });
-    inventarioPaqueteFormData.append("General.Color", inventario.value.color);
-    inventarioPaqueteFormData.append("Cantidad", cantidad.value);
-    inventarioPaqueteFormData.append("General.Foto_1", foto1.value);
-    inventarioPaqueteFormData.append("General.Foto_2", foto2.value);
-    inventarioPaqueteFormData.append("General.Foto_3", foto3.value);
-    inventarioPaqueteFormData.append("General.Foto_4", foto4.value);
-
-    //-----------------------------------------------------------
-    //Extencion A
-    if (marcaId_A.value) {
-      inventarioPaqueteFormData.append(
-        "Extension_A.Marca_Id",
-        marcaId_A.value.value
+        "General.Modelo_Id",
+        modeloId.value.value
       );
       inventarioPaqueteFormData.append(
-        "Extension_A.Modelo_Id",
-        modeloId_A.value.value
+        "General.Descripcion",
+        inventario.value.descripcion
       );
       inventarioPaqueteFormData.append(
-        "Extension_A.Descripcion",
-        inventario.value.descripcion_a
+        "General.Nombre_Corto",
+        inventario.value.nombre_corto
       );
-      inventarioPaqueteFormData.append(
-        "Extension_A.Nombre_Corto",
-        inventario.value.nombre_corto_a
-      );
-      inventarioPaqueteFormData.append(
-        "Extension_A.Color",
-        inventario.value.color_a
-      );
-      listaNumeroSerie_a.value.forEach((row) => {
+      listaNumeroSerie.value.forEach((row) => {
         inventarioPaqueteFormData.append(
-          "Extension_A.Numeros_Serie[]",
+          "General.Numeros_Serie[]",
           row.numero_serie
         );
       });
-      inventarioPaqueteFormData.append("Extension_A.Foto_1", foto1_a.value);
-      inventarioPaqueteFormData.append("Extension_A.Foto_2", foto2_a.value);
-      inventarioPaqueteFormData.append("Extension_A.Foto_3", foto3_a.value);
-      inventarioPaqueteFormData.append("Extension_A.Foto_1", foto4_a.value);
+      inventarioPaqueteFormData.append("General.Color", inventario.value.color);
+      inventarioPaqueteFormData.append("Cantidad", cantidad.value);
+      inventarioPaqueteFormData.append("General.Foto_1", foto1.value);
+      inventarioPaqueteFormData.append("General.Foto_2", foto2.value);
+      inventarioPaqueteFormData.append("General.Foto_3", foto3.value);
+      inventarioPaqueteFormData.append("General.Foto_4", foto4.value);
 
       //-----------------------------------------------------------
-      //Extencion B
-      if (marcaId_B.value) {
+      //Extencion A
+      if (marcaId_A.value) {
         inventarioPaqueteFormData.append(
-          "Extension_B.Marca_Id",
-          marcaId_B.value.value
+          "Extension_A.Marca_Id",
+          marcaId_A.value.value
         );
         inventarioPaqueteFormData.append(
-          "Extension_B.Modelo_Id",
-          modeloId_B.value.value
+          "Extension_A.Modelo_Id",
+          modeloId_A.value.value
         );
         inventarioPaqueteFormData.append(
-          "Extension_B.Descripcion",
-          inventario.value.descripcion_b
+          "Extension_A.Descripcion",
+          inventario.value.descripcion_a
         );
         inventarioPaqueteFormData.append(
-          "Extension_B.Nombre_Corto",
-          inventario.value.nombre_corto_b
+          "Extension_A.Nombre_Corto",
+          inventario.value.nombre_corto_a
         );
         inventarioPaqueteFormData.append(
-          "Extension_B.Color",
-          inventario.value.color_b
+          "Extension_A.Color",
+          inventario.value.color_a
         );
-        listaNumeroSerie_b.value.forEach((row) => {
+        listaNumeroSerie_a.value.forEach((row) => {
           inventarioPaqueteFormData.append(
-            "Extension_B.Numeros_Serie[]",
+            "Extension_A.Numeros_Serie[]",
             row.numero_serie
           );
         });
-        inventarioPaqueteFormData.append("Extension_B.Foto_1", foto1_b.value);
-        inventarioPaqueteFormData.append("Extension_B.Foto_2", foto2_b.value);
-        inventarioPaqueteFormData.append("Extension_B.Foto_3", foto3_b.value);
-        inventarioPaqueteFormData.append("Extension_B.Foto_1", foto4_b.value);
-      }
+        inventarioPaqueteFormData.append("Extension_A.Foto_1", foto1_a.value);
+        inventarioPaqueteFormData.append("Extension_A.Foto_2", foto2_a.value);
+        inventarioPaqueteFormData.append("Extension_A.Foto_3", foto3_a.value);
+        inventarioPaqueteFormData.append("Extension_A.Foto_1", foto4_a.value);
 
-      //-----------------------------------------------------------
-      //Extencion C
-      if (marcaId_C.value) {
-        inventarioPaqueteFormData.append(
-          "Extension_C.Marca_Id",
-          marcaId_C.value.value
-        );
-        inventarioPaqueteFormData.append(
-          "Extension_C.Modelo_Id",
-          modeloId_C.value.value
-        );
-        inventarioPaqueteFormData.append(
-          "Extension_C.Descripcion",
-          inventario.value.descripcion_c
-        );
-        inventarioPaqueteFormData.append(
-          "Extension_C.Nombre_Corto",
-          inventario.value.nombre_corto_c
-        );
-        inventarioPaqueteFormData.append(
-          "Extension_C.Color",
-          inventario.value.color_c
-        );
-        listaNumeroSerie_c.value.forEach((row) => {
+        //-----------------------------------------------------------
+        //Extencion B
+        if (marcaId_B.value) {
           inventarioPaqueteFormData.append(
-            "Extension_C.Numeros_Serie[]",
-            row.numero_serie
+            "Extension_B.Marca_Id",
+            marcaId_B.value.value
           );
-        });
-        inventarioPaqueteFormData.append("Extension_C.Foto_1", foto1_c.value);
-        inventarioPaqueteFormData.append("Extension_C.Foto_2", foto2_c.value);
-        inventarioPaqueteFormData.append("Extension_C.Foto_3", foto3_c.value);
-        inventarioPaqueteFormData.append("Extension_C.Foto_1", foto4_c.value);
+          inventarioPaqueteFormData.append(
+            "Extension_B.Modelo_Id",
+            modeloId_B.value.value
+          );
+          inventarioPaqueteFormData.append(
+            "Extension_B.Descripcion",
+            inventario.value.descripcion_b
+          );
+          inventarioPaqueteFormData.append(
+            "Extension_B.Nombre_Corto",
+            inventario.value.nombre_corto_b
+          );
+          inventarioPaqueteFormData.append(
+            "Extension_B.Color",
+            inventario.value.color_b
+          );
+          listaNumeroSerie_b.value.forEach((row) => {
+            inventarioPaqueteFormData.append(
+              "Extension_B.Numeros_Serie[]",
+              row.numero_serie
+            );
+          });
+          inventarioPaqueteFormData.append("Extension_B.Foto_1", foto1_b.value);
+          inventarioPaqueteFormData.append("Extension_B.Foto_2", foto2_b.value);
+          inventarioPaqueteFormData.append("Extension_B.Foto_3", foto3_b.value);
+          inventarioPaqueteFormData.append("Extension_B.Foto_1", foto4_b.value);
+        }
+
+        //-----------------------------------------------------------
+        //Extencion C
+        if (marcaId_C.value) {
+          inventarioPaqueteFormData.append(
+            "Extension_C.Marca_Id",
+            marcaId_C.value.value
+          );
+          inventarioPaqueteFormData.append(
+            "Extension_C.Modelo_Id",
+            modeloId_C.value.value
+          );
+          inventarioPaqueteFormData.append(
+            "Extension_C.Descripcion",
+            inventario.value.descripcion_c
+          );
+          inventarioPaqueteFormData.append(
+            "Extension_C.Nombre_Corto",
+            inventario.value.nombre_corto_c
+          );
+          inventarioPaqueteFormData.append(
+            "Extension_C.Color",
+            inventario.value.color_c
+          );
+          listaNumeroSerie_c.value.forEach((row) => {
+            inventarioPaqueteFormData.append(
+              "Extension_C.Numeros_Serie[]",
+              row.numero_serie
+            );
+          });
+          inventarioPaqueteFormData.append("Extension_C.Foto_1", foto1_c.value);
+          inventarioPaqueteFormData.append("Extension_C.Foto_2", foto2_c.value);
+          inventarioPaqueteFormData.append("Extension_C.Foto_3", foto3_c.value);
+          inventarioPaqueteFormData.append("Extension_C.Foto_1", foto4_c.value);
+        }
       }
     }
   }
@@ -1481,7 +1414,10 @@ const onSubmit = async () => {
   $q.loading.show();
 
   if (isEditar.value == true) {
-    resp = await inventarioStore.updateInventario(inventarioFormData);
+    resp = await inventarioStore.updateInventario(
+      inventario,
+      editarInventarioFormData
+    );
     inventarioStore.initInventario();
   } else {
     if (cantidad.value == null) {
