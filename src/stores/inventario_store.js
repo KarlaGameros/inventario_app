@@ -5,6 +5,7 @@ export const useInventarioStore = defineStore("inventario", {
   state: () => ({
     modal: false,
     modalFotos: false,
+    modalPDF: false,
     isEditar: false,
     cantidad: null,
     listInventario: [],
@@ -370,6 +371,9 @@ export const useInventarioStore = defineStore("inventario", {
     },
     actualizarModalFotos(valor) {
       this.modalFotos = valor;
+    },
+    actualizarModalPDF(valor) {
+      this.modalPDF = valor;
     },
     updateEditar(valor) {
       this.isEditar = valor;

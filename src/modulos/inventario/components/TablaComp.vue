@@ -1,4 +1,13 @@
 <template>
+  <q-btn
+    flat
+    round
+    color="purple-ieen"
+    icon="qr_code_scanner"
+    @click="mostrarPDF(true)"
+  >
+    <q-tooltip>Generar PDF</q-tooltip>
+  </q-btn>
   <div class="row">
     <div class="col">
       <q-table
@@ -35,7 +44,7 @@
                   @click="loadFotos(col.value, true)"
                 >
                 </q-btn>
-                <q-btn
+                <!-- <q-btn
                   flat
                   round
                   color="purple-ieen"
@@ -43,7 +52,7 @@
                   @click="generarPDF(col.value)"
                 >
                   <q-tooltip>Generar PDF</q-tooltip>
-                </q-btn>
+                </q-btn> -->
 
                 <q-btn
                   flat
@@ -71,6 +80,7 @@
         </template>
       </q-table>
       <ModalFotos />
+      <ModalPDF />
     </div>
   </div>
 </template>
@@ -82,7 +92,7 @@ import { onBeforeMount, ref } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useInventarioStore } from "../../../stores/inventario_store";
 import ModalFotos from "../components/ModalViewFotos.vue";
-
+import ModalPDF from "../components/ModalPDF.vue";
 //-----------------------------------------------------------
 
 const $q = useQuasar();
@@ -90,6 +100,8 @@ const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const inventarioStore = useInventarioStore();
 const { inventarios } = storeToRefs(inventarioStore);
+let dialogVisible = false;
+let pdfUrl = "";
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -220,6 +232,25 @@ const generarPDF = async (id) => {
   $q.loading.show();
   var { ruta_PDF } = await inventarioStore.generarPDF(id);
   window.open(ruta_PDF, "_blank");
+  $q.loading.hide();
+};
+
+const openPdfDialog = () => {
+  // Establecer la URL del PDF que deseas mostrar
+  dialogVisible = true;
+  console.log("entro", pdfUrl, dialogVisible);
+  pdfUrl =
+    "https://www.turnerlibros.com/wp-content/uploads/2021/02/ejemplo.pdf";
+  console.log(pdfUrl);
+};
+const closePdfDialog = () => {
+  // Limpiar la URL del PDF al cerrar el diálogo para evitar que se cargue nuevamente al abrirlo.
+  pdfUrl = "";
+};
+
+const mostrarPDF = (valor) => {
+  $q.loading.show();
+  inventarioStore.actualizarModalPDF(valor);
   $q.loading.hide();
 };
 
