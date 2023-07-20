@@ -288,6 +288,9 @@
                   >
                     <template v-slot:body="props">
                       <q-tr :props="props">
+                        <q-td key="id">
+                          {{ props.row.id }}
+                        </q-td>
                         <q-td key="numero_serie" :props="props">
                           {{ props.row.numero_serie }}
                           <q-popup-edit
@@ -1232,6 +1235,13 @@ const setTabSelected = (tab, status) => {
 };
 const columns = [
   {
+    name: "id",
+    align: "center",
+    label: "No.",
+    field: "id",
+    sortable: true,
+  },
+  {
     name: "numero_serie",
     align: "center",
     label: "Números de serie",
@@ -1245,6 +1255,7 @@ onBeforeMount(() => {
   bodegaStore.loadBodegasList();
   catalogoStore.loadCatalogoList();
   marcaStore.loadMarcaList();
+  console.log("listaNumeroSerie", listaNumeroSerie.value);
 });
 
 //-----------------------------------------------------------

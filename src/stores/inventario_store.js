@@ -12,6 +12,7 @@ export const useInventarioStore = defineStore("inventario", {
     inventarios: [],
     listaNumeroSerie: [
       {
+        id: null,
         numero_serie: null,
       },
     ],
@@ -288,9 +289,11 @@ export const useInventarioStore = defineStore("inventario", {
         this.listaNumeroSerie = Array.from(
           { length: cantidad },
           (_, index) => ({
+            id: index + 1,
             numero_serie: "",
           })
         );
+
         this.listaNumeroSerie_a = Array.from(
           { length: cantidad },
           (_, index) => ({

@@ -19,11 +19,7 @@
       </q-card-section>
 
       <q-card-section>
-        <iframe
-          src="https://www.turnerlibros.com/wp-content/uploads/2021/02/ejemplo.pdf"
-          width="100%"
-          height="500"
-        ></iframe>
+        <iframe :src="pdfUrl" width="100%" height="500"></iframe>
         <div class="col-12 justify-end">
           <div class="text-right q-gutter-xs">
             <q-btn
@@ -49,7 +45,8 @@ import { useInventarioStore } from "../../../stores/inventario_store";
 const inventarioStore = useInventarioStore();
 
 const { modalPDF, inventario } = storeToRefs(inventarioStore);
-
+const pdfUrl =
+  "https://www.turnerlibros.com/wp-content/uploads/2021/02/ejemplo.pdf";
 //-----------------------------------------------------------
 
 const mostrarPDF = (valor) => {
