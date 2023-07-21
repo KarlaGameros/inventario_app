@@ -1,4 +1,6 @@
 <template>
+  <q-btn @click="downloadPDF">Descargar PDF</q-btn>
+  <q-btn @click="downloadXML">Descargar Excel</q-btn>
   <div class="row">
     <div class="col">
       <q-table
@@ -59,10 +61,14 @@
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { useAsignacionStore } from "src/stores/asignacion_store";
+import { useInventarioStore } from "../../../stores/inventario_store";
 import { ref } from "vue";
+import jsPDF from "jspdf";
 
 const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
+const inventarioStore = useInventarioStore();
+const { inventarios } = storeToRefs(inventarioStore);
 const { asignaciones } = storeToRefs(asignacionStore);
 
 const columns = [
@@ -118,6 +124,20 @@ const columns = [
   },
 ];
 
+const downloadPDF = () => {
+  let pdf = new jsPDF();
+
+  pdf.text("Hola", 10, 10);
+  pdf.save("info.pdf");
+};
+
+const downloadXML = async () => {
+  import("../../../plugins/ExportExcel").then((excel) => {
+    inventarioStore.loadInformacionInventarios().then((resp) => {
+      console.log("resp", resp);
+    });
+  });
+};
 const pagination = ref({
   //********** */
   page: 1,

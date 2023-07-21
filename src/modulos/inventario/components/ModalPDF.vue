@@ -19,7 +19,7 @@
       </q-card-section>
 
       <q-card-section>
-        <iframe :src="pdfUrl" width="100%" height="500"></iframe>
+        <iframe :src="inventario.ruta_PDF" width="100%" height="500"></iframe>
         <div class="col-12 justify-end">
           <div class="text-right q-gutter-xs">
             <q-btn
@@ -37,7 +37,6 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
 import { useInventarioStore } from "../../../stores/inventario_store";
 
 //-----------------------------------------------------------

@@ -77,17 +77,17 @@ onBeforeMount(() => {
 
 const columns = [
   {
-    name: "nombre",
+    name: "label",
     align: "center",
     label: "Estatus",
-    field: "nombre",
+    field: "label",
     sortable: true,
   },
   {
     name: "id",
     align: "center",
     label: "Acciones",
-    field: "id",
+    field: "value",
     sortable: false,
   },
 ];
@@ -106,7 +106,7 @@ const filter = ref("");
 
 const editar = async (id) => {
   $q.loading.show();
-  await estatusStore.loadEstatu(id);
+  await estatusStore.loadEstatus(id);
   estatusStore.actualizarModal(true);
   estatusStore.updateEditar(true);
   $q.loading.hide();

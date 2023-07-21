@@ -23,15 +23,16 @@ export const useEstatusStore = defineStore("estatus", {
       try {
         let resp = await api.get("/EstatusInventarios");
         let { data } = resp.data;
+
         let listEstatus = data.map((estatu) => {
           return {
-            id: estatu.id,
-            nombre: estatu.nombre,
+            value: estatu.id,
+            label: estatu.nombre,
           };
         });
         this.estatus = listEstatus;
+        console.log("estatus", this.estatus, listEstatus);
       } catch (error) {
-        console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
@@ -92,7 +93,7 @@ export const useEstatusStore = defineStore("estatus", {
 
     //-----------------------------------------------------------
     //carga el estatus con el id que se mando para mostrarlo y asi poder editarlo
-    async loadEstatu(id) {
+    async loadEstatus(id) {
       try {
         let resp = null;
         resp = await api.get(`/EstatusInventarios/${id}`);
