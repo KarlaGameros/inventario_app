@@ -262,6 +262,31 @@ export const useInventarioStore = defineStore("inventario", {
     },
 
     //-----------------------------------------------------------
+    async loadListInventario(id) {
+      try {
+        let resp = await api.get("/Inventarios");
+        let { data } = resp.data;
+        let ListaFiltro = [];
+
+        if (id == 0) {
+          ListaFiltro = data;
+        } else {
+          ListaFiltro = data.filter((x) => x.catalago_Id == id);
+        }
+
+        let listInvenatrio = ListaFiltro.map((inventario) => {
+          return {
+            value: inventario.id,
+            label: `${inventario.clave} - ${inventario.nombre_Corto}`,
+            descripcion: inventario.descripcion,
+            clave: inventario.clave,
+          };
+        });
+        this.listInventario = listInvenatrio;
+      } catch (error) {}
+    },
+
+    //-----------------------------------------------------------
 
     async updateInventario(inventario, editarInventarioFormData) {
       try {
@@ -369,6 +394,34 @@ export const useInventarioStore = defineStore("inventario", {
           } else {
             return { success, data };
           }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
+    async inventarioByCatalogo(id) {
+      try {
+        const resp = await api.get(`/Inventarios/ByCatalogo/${id}`);
+        if (resp.status == 200) {
+          let { data } = resp.data;
+          let listInventario = data.map((inventario) => {
+            return {
+              label: inventario.nombre_Corto,
+              value: inventario.id,
+            };
+          });
+          this.listInventario = listInventario;
         } else {
           return {
             success: false,

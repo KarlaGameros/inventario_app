@@ -1147,7 +1147,6 @@ onBeforeMount(() => {
   bodegaStore.loadBodegasList();
   catalogoStore.loadCatalogoList();
   marcaStore.loadMarcaList();
-  console.log("listaNumeroSerie", listaNumeroSerie.value);
 });
 
 //-----------------------------------------------------------

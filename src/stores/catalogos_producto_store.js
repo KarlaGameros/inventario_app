@@ -70,7 +70,8 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
     },
 
     //-----------------------------------------------------------
-    async loadCatalogoList() {
+
+    async loadCatalogoList(especial) {
       try {
         let resp = await api.get("/Catalagos");
         let { data } = resp.data;
@@ -80,6 +81,12 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
             value: catalogo.id,
           };
         });
+        if (especial == true) {
+          listCatalogo.splice(0, 0, {
+            value: 0,
+            label: "Todos",
+          });
+        }
         this.listCatalogo = listCatalogo;
       } catch (error) {
         console.log(error);
@@ -89,7 +96,9 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
         };
       }
     },
+
     //-----------------------------------------------------------
+
     async createCatalogo(catalogo) {
       try {
         const resp = await api.post("/Catalagos", catalogo);
