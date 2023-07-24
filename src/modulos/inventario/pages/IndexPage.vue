@@ -21,6 +21,24 @@
             label="Nuevo"
             @click="actualizarModal(true)"
           />
+
+          <q-btn
+            type="button"
+            class="q-ma-sm"
+            color="purple-ieen"
+            icon-right="print"
+            label="Listado de inventario"
+            @click="generar()"
+          />
+
+          <q-btn
+            type="button"
+            class="q-ma-sm"
+            color="purple-ieen"
+            icon-right="print"
+            label="Vale resguardo"
+            @click="generarVale()"
+          />
         </div>
       </div>
     </div>
@@ -37,6 +55,8 @@ import { useInventarioStore } from "src/stores/inventario_store";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 import { onBeforeMount } from "vue";
+import ReporteListadoInventario from "../../../helpers/ListadoInventario";
+import ValeResguardo from "../../../helpers/ValeResguardo";
 
 const $q = useQuasar();
 const authStore = useAuthStore();
@@ -58,6 +78,15 @@ const actualizarModal = (valor) => {
   $q.loading.show();
   inventarioStore.actualizarModal(valor);
   $q.loading.hide();
+};
+
+const generar = async () => {
+  ReporteListadoInventario();
+};
+
+const generarVale = async () => {
+  console.log("entro");
+  ValeResguardo();
 };
 </script>
 

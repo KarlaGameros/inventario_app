@@ -114,9 +114,22 @@ const eliminar = async (id) => {
     },
   }).onOk(async () => {
     $q.loading.show();
-    if (isEditar) {
-      console.log("editar");
+    let resp = null;
+    resp = await asignacionStore.deleteProducto(id);
+    $q.loading.hide();
+
+    if (resp.success) {
+      $q.loading.hide();
+      $q.notify({
+        type: "positive",
+        message: resp.data,
+      });
     } else {
+      $q.loading.hide();
+      $q.notify({
+        type: "negative",
+        message: resp.data,
+      });
     }
   });
 };

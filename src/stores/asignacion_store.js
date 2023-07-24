@@ -129,7 +129,7 @@ export const useAsignacionStore = defineStore("asignacion", {
         );
 
         this.listaAsignacionInventario.splice(nIndex, 1);
-
+        console.log("eliminar", this.listaAsignacionInventario);
         return {
           success: true,
           data: "Producto eliminado de la lista",

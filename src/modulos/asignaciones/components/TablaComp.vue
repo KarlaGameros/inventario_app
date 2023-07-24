@@ -1,6 +1,4 @@
 <template>
-  <q-btn @click="downloadPDF">Descargar PDF</q-btn>
-  <q-btn @click="downloadXML">Descargar Excel</q-btn>
   <div class="row">
     <div class="col">
       <q-table
@@ -124,20 +122,6 @@ const columns = [
   },
 ];
 
-const downloadPDF = () => {
-  let pdf = new jsPDF();
-
-  pdf.text("Hola", 10, 10);
-  pdf.save("info.pdf");
-};
-
-const downloadXML = async () => {
-  import("../../../plugins/ExportExcel").then((excel) => {
-    inventarioStore.loadInformacionInventarios().then((resp) => {
-      console.log("resp", resp);
-    });
-  });
-};
 const pagination = ref({
   //********** */
   page: 1,
