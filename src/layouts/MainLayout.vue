@@ -114,6 +114,17 @@
               </q-item-label>
             </q-item-section>
           </q-item>
+
+          <q-item :to="{ name: 'movimiento_inventario' }">
+            <q-item-section avatar>
+              <q-icon name="add_box" color="purple-ieen" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-purple-ieen label-title text-bold">
+                Movimiento Inventario
+              </q-item-label>
+            </q-item-section>
+          </q-item>
         </q-list>
       </q-scroll-area>
 

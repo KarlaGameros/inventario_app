@@ -35,6 +35,12 @@ const routes = [
         name: "estatus",
         component: () => import("../modulos/estatus/pages/IndexPage"),
       },
+      {
+        path: "/movimiento_inventario",
+        name: "movimiento_inventario",
+        component: () =>
+          import("../modulos/movimientos_inventarios/pages/IndexPage"),
+      },
     ],
   },
 

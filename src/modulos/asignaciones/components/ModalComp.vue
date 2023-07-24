@@ -161,7 +161,7 @@ import { useAuthStore } from "src/stores/auth_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useEstatusStore } from "src/stores/estatus_store";
 import { useInventarioStore } from "src/stores/inventario_store";
-import { normalizeClass, onBeforeMount, ref, watch } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useAsignacionStore } from "../../../stores/asignacion_store";
 import TablaAsignacionInventario from "./TablaAsignacionInventario.vue";
 
