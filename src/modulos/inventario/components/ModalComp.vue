@@ -959,7 +959,7 @@
               accept="image/png, image/jpeg"
               color="purple-12"
               v-model="foto1"
-              label="Label"
+              label="Foto 1"
             >
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
@@ -976,7 +976,7 @@
               accept="image/png, image/jpeg"
               color="purple-12"
               v-model="inventario.foto_2"
-              label="Label"
+              label="Foto 2"
             >
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
@@ -993,7 +993,7 @@
               accept="image/png, image/jpeg"
               color="purple-12"
               v-model="inventario.foto_3"
-              label="Label"
+              label="Foto 3"
             >
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
@@ -1010,7 +1010,7 @@
               accept="image/png, image/jpeg"
               color="purple-12"
               v-model="inventario.foto_4"
-              label="Label"
+              label="Foto 4"
             >
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
@@ -1200,7 +1200,6 @@ watch(inventario.value, (val) => {
 watch(cantidad, (val) => {
   inventarioStore.addCantidad(cantidad.value, catalogoId);
 });
-
 //-----------------------------------------------------------
 
 const cargarBodega = async (val) => {
@@ -1249,7 +1248,7 @@ const onSubmit = async () => {
   let inventarioPaqueteFormData = new FormData();
   let editarInventarioFormData = new FormData();
 
-  if (isEditar) {
+  if (isEditar == true) {
     editarInventarioFormData.append("Catalago_Id", catalogoId.value.value);
     editarInventarioFormData.append("Estatus_Id", 2);
     editarInventarioFormData.append("Bodega_Id", bodegaId.value.value);

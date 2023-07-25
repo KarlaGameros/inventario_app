@@ -14,6 +14,7 @@
       <div class="col">
         <div class="text-right q-pa-md items-start q-gutter-md">
           <q-btn
+            v-if="modulo == null ? false : modulo.registrar"
             type="button"
             class="q-ma-sm"
             color="purple-ieen"
@@ -36,11 +37,23 @@ import { storeToRefs } from "pinia";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 import { useAsignacionStore } from "src/stores/asignacion_store";
+import { onBeforeMount } from "vue";
 
 const $q = useQuasar();
 const authStore = useAuthStore();
 const asignacionStore = useAsignacionStore();
 const { modulo } = storeToRefs(authStore);
+const siglas = "SI-CAT-ASI";
+
+onBeforeMount(() => {
+  leerPermisos();
+});
+
+const leerPermisos = async () => {
+  $q.loading.show();
+  await authStore.loadModulo(siglas);
+  $q.loading.hide();
+};
 
 const actualizarModal = (valor) => {
   $q.loading.show();

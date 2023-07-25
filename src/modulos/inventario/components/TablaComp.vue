@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="inventarios"
+        :rows="listInventario"
         :columns="columns"
         :filter="filter"
         :pagination="pagination"
@@ -10,6 +10,25 @@
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
       >
+        <template v-slot:top-left>
+          <q-select
+            v-model="catalogoId"
+            :options="listCatalogo"
+            label="Selecciona un catalogo"
+            hint="Seleccione un estatus de inventarios a mostrar"
+            style="width: 260px"
+          >
+          </q-select>
+
+          <q-select
+            v-model="estatusId"
+            :options="estatus"
+            label="Selecciona un estatus"
+            hint="Seleccione un catalogo de inventarios a mostrar"
+            style="width: 260px"
+          >
+          </q-select>
+        </template>
         <template v-slot:top-right>
           <q-input
             borderless
@@ -45,6 +64,7 @@
                   <q-tooltip>Generar PDF</q-tooltip>
                 </q-btn>
                 <q-btn
+                  v-if="modulo.actualizar"
                   flat
                   round
                   color="purple-ieen"
@@ -55,6 +75,7 @@
                 </q-btn>
 
                 <q-btn
+                  v-if="modulo.eliminar"
                   flat
                   round
                   color="purple-ieen"
@@ -78,9 +99,11 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, onMounted, ref, watch } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useInventarioStore } from "../../../stores/inventario_store";
+import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
+import { useEstatusStore } from "src/stores/estatus_store";
 import ModalFotos from "../components/ModalViewFotos.vue";
 import ModalPDF from "../components/ModalPDF.vue";
 //-----------------------------------------------------------
@@ -89,13 +112,27 @@ const $q = useQuasar();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const inventarioStore = useInventarioStore();
-const { inventarios } = storeToRefs(inventarioStore);
+const catalogoStore = useCatalogoProductoStore();
+const estatusStore = useEstatusStore();
+const { listInventario } = storeToRefs(inventarioStore);
+const { listCatalogo } = storeToRefs(catalogoStore);
+const { estatus } = storeToRefs(estatusStore);
+const catalogoId = ref(null);
+const estatusId = ref(null);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
   inventarioStore.loadInformacionInventarios();
+  estatusStore.loadInformacionEstatus();
 });
 
+watch(catalogoId, (val) => {
+  inventarioStore.inventarioByCatalogo(catalogoId.value.value);
+});
+
+watch(estatusId, (val) => {
+  console.log("estatus", estatusId.value.value);
+});
 //-----------------------------------------------------------
 
 const columns = [

@@ -28,6 +28,7 @@
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'id'">
                 <q-btn
+                  v-if="modulo.actualizar"
                   flat
                   round
                   color="purple-ieen"
@@ -37,6 +38,7 @@
                   <q-tooltip>Editar bodega</q-tooltip>
                 </q-btn>
                 <q-btn
+                  v-if="modulo.eliminar"
                   flat
                   round
                   color="purple-ieen"

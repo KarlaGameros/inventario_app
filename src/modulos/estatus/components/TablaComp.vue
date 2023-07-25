@@ -28,6 +28,7 @@
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'id'">
                 <q-btn
+                  v-if="modulo.actualizar"
                   flat
                   round
                   color="purple-ieen"
@@ -37,6 +38,7 @@
                   <q-tooltip>Editar estatus</q-tooltip>
                 </q-btn>
                 <q-btn
+                  v-if="modulo.eliminar"
                   flat
                   round
                   color="purple-ieen"
@@ -60,13 +62,15 @@ import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { useEstatusStore } from "src/stores/estatus_store";
 import { onBeforeMount, ref } from "vue";
+import { useAuthStore } from "../../../stores/auth_store";
 
 //-----------------------------------------------------------
 
 const $q = useQuasar();
 const estatusStore = useEstatusStore();
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const { estatus } = storeToRefs(estatusStore);
-
 //-----------------------------------------------------------
 
 onBeforeMount(() => {

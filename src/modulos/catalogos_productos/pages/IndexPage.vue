@@ -45,7 +45,7 @@ const $q = useQuasar();
 const authStore = useAuthStore();
 const catalagoStore = useCatalogoProductoStore();
 const { modulo } = storeToRefs(authStore);
-const siglas = "SI-CAT-COS";
+const siglas = "SI-CAT-CAT";
 
 onBeforeMount(() => {
   leerPermisos();

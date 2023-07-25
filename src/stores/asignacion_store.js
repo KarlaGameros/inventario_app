@@ -92,8 +92,6 @@ export const useAsignacionStore = defineStore("asignacion", {
             puesto: detalle.puesto,
           };
         });
-
-        console.log("lis", this.listEmpleados);
       } catch (error) {
         return {
           success: false,
@@ -106,7 +104,6 @@ export const useAsignacionStore = defineStore("asignacion", {
 
     async addInventario(id) {
       try {
-        console.log("request", id);
         this.listaAsignacionInventario.push({
           inventario_Id: id.value,
           nombre_producto: id.label,
@@ -129,7 +126,6 @@ export const useAsignacionStore = defineStore("asignacion", {
         );
 
         this.listaAsignacionInventario.splice(nIndex, 1);
-        console.log("eliminar", this.listaAsignacionInventario);
         return {
           success: true,
           data: "Producto eliminado de la lista",

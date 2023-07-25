@@ -17,7 +17,6 @@ const ReporteListadoInventario = async () => {
     let resp = await api.get("/Inventarios");
 
     let detalleData = resp.data.data;
-    console.log("detalle", detalleData);
     let img = new Image();
     img.src = require("../assets/IEEN300.png");
     let totalPagesExp = "{total_pages_count_string}";
@@ -80,7 +79,7 @@ const ReporteListadoInventario = async () => {
         item.modelo,
         item.color,
         item.estatus,
-        item.qr,
+        (item.qr = true ? "Si" : "No"),
       ]),
       bodyStyles: { fontSize: 10, textColor: [0, 0, 0] },
       tableLineColor: [0, 0, 0],
@@ -88,7 +87,6 @@ const ReporteListadoInventario = async () => {
 
     var footer = function () {
       var pageCount = doc.internal.getNumberOfPages();
-      console.log("Esto es el total de paginas", pageCount);
       for (var i = 0; i < pageCount; i++) {
         doc.setPage(i + 1);
         doc.text(
@@ -109,7 +107,6 @@ const ReporteListadoInventario = async () => {
       msj: "Recibo generado con exito",
     };
   } catch (error) {
-    console.error(error);
     return {
       success: false,
       data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",

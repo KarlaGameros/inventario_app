@@ -28,6 +28,7 @@
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'value'">
                 <q-btn
+                  v-if="modulo.actualizar"
                   flat
                   round
                   color="purple-ieen"
@@ -37,6 +38,7 @@
                   <q-tooltip>Editar modelo</q-tooltip>
                 </q-btn>
                 <q-btn
+                  v-if="modulo.eliminar"
                   flat
                   round
                   color="purple-ieen"
@@ -60,12 +62,15 @@ import { storeToRefs } from "pinia";
 import { useModeloStore } from "../../../stores/modelo_store";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
+import { useAuthStore } from "../../../stores/auth_store";
 
 //-----------------------------------------------------------
 
 const $q = useQuasar();
 const modeloStore = useModeloStore();
 const { listModelo, marca_id } = storeToRefs(modeloStore);
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 
 //-----------------------------------------------------------
 

@@ -40,7 +40,6 @@ export const useBodegaStore = defineStore("bodega", {
         });
         this.bodegas = listBodega;
       } catch (error) {
-        console.error(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
@@ -84,7 +83,6 @@ export const useBodegaStore = defineStore("bodega", {
         });
         this.areas = listaArea;
       } catch (error) {
-        console.error(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
@@ -131,7 +129,6 @@ export const useBodegaStore = defineStore("bodega", {
           };
         }
       } catch (error) {
-        console.error(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
@@ -183,7 +180,6 @@ export const useBodegaStore = defineStore("bodega", {
           };
         }
       } catch (error) {
-        console.error(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",

@@ -60,6 +60,8 @@
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
+                v-model="bodegaId"
+                :options="listBodega"
                 label="Bodega origen"
                 hint="Selecciona bodega origen"
                 :lazy-rules="true"
@@ -70,6 +72,8 @@
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
+                v-model="bodegaId"
+                :options="listBodega"
                 label="Bodega destino"
                 hint="Selecciona bodega destino"
                 :lazy-rules="true"
@@ -97,7 +101,7 @@
                 use-input
                 @filter="filterInventario"
                 label="Productos"
-                hint="Selecciona un consumible"
+                hint="Selecciona un producto"
                 :lazy-rules="true"
                 :rules="[(val) => !!val || 'El inventario es requerido']"
               >
@@ -116,6 +120,11 @@
               </div>
             </div>
           </div>
+        </q-card-section>
+
+        <q-separator></q-separator>
+        <q-card-section>
+          <TablaMovimientoInventario />
         </q-card-section>
 
         <q-card-section>
@@ -145,21 +154,30 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
+import { useBodegaStore } from "src/stores/bodega_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
-import { onBeforeMount, ref } from "vue";
+import { useInventarioStore } from "src/stores/inventario_store";
+import { onBeforeMount, ref, watch } from "vue";
 import { useMovimientoInventario } from "../../../stores/movimiento_inventario";
-
+import TablaMovimientoInventario from "../components/TablaMovimientoInventario.vue";
 //-----------------------------------------------------------
 
 const $q = useQuasar();
 const movimientoInventarioStore = useMovimientoInventario();
 const catalogoStore = useCatalogoProductoStore();
+const bodegaStore = useBodegaStore();
+const inventarioStore = useInventarioStore();
 
-const { modal } = storeToRefs(movimientoInventarioStore);
+const { modal, listaMovimientoInventario } = storeToRefs(
+  movimientoInventarioStore
+);
 const { listCatalogo } = storeToRefs(catalogoStore);
-
+const { listBodega } = storeToRefs(bodegaStore);
+const { listInventario } = storeToRefs(inventarioStore);
 const catalogoId = ref(null);
-
+const bodegaId = ref(null);
+const inventarioId = ref(null);
+const opcionesInventario = ref([...listInventario.value]);
 //-----------------------------------------------------------
 //Get fecha actual
 
@@ -172,13 +190,66 @@ const date = ref(`${year}/${month}/${day}`);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
+  inventarioStore.loadListInventario(0);
+  inventarioStore.loadInformacionInventarios();
   catalogoStore.loadCatalogoList(true);
+  bodegaStore.loadBodegasList();
+  catalogoId.value = { value: 0, label: "Todos" };
 });
 
+watch(catalogoId, (val) => {
+  inventarioStore.loadListInventario(catalogoId.value.value);
+});
 //-----------------------------------------------------------
 
 const actualizarModal = (valor) => {
-  asignacionStore.actualizarModal(valor);
+  movimientoInventarioStore.actualizarModal(valor);
+  movimientoInventarioStore.initMovimiento();
+  catalogoId.value = { value: 0, label: "Todos" };
+};
+
+const limpiarRegistro = () => {
+  inventarioId.value = null;
+};
+//-----------------------------------------------------------
+const filterInventario = (val, update) => {
+  if (val === "") {
+    update(() => {
+      opcionesInventario.value = listInventario.value;
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    opcionesInventario.value = listInventario.value.filter(
+      (v) => v.label.toLowerCase().indexOf(needle) > -1
+    );
+  });
+};
+
+//-----------------------------------------------------------
+const agregarProducto = async () => {
+  if (listaMovimientoInventario.value.length == 0) {
+    await movimientoInventarioStore.addMovimiento(inventarioId.value);
+    limpiarRegistro();
+  } else {
+    let filtro = listaMovimientoInventario.value.find(
+      (x) => x.inventario_Id == inventarioId.value.value
+    );
+    if (filtro == undefined) {
+      await movimientoInventarioStore.addMovimiento(inventarioId.value);
+      limpiarRegistro();
+    } else {
+      $q.dialog({
+        title: "Atención",
+        message: "El producto ya se agrego",
+        icon: "Warning",
+        persistent: true,
+        transitionShow: "scale",
+        transitionHide: "scale",
+      });
+    }
+  }
 };
 </script>
 

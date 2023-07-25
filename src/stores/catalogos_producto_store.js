@@ -38,7 +38,6 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
         });
         this.catalogos = listCatalogo;
       } catch (error) {
-        console.error(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
@@ -75,6 +74,7 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
       try {
         let resp = await api.get("/Catalagos");
         let { data } = resp.data;
+        this.listCatalogo = [];
         let listCatalogo = data.map((catalogo) => {
           return {
             label: `${catalogo.clave} - ${catalogo.nombre}`,
@@ -87,9 +87,19 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
             label: "Todos",
           });
         }
+
+        // Encontrar el índice del elemento con label "consumible"
+        const indexConsumible = listCatalogo.findIndex(
+          (element) => element.label === "EY-99 - Consumibles"
+        );
+
+        if (indexConsumible !== -1) {
+          // Eliminar la lista "consumible" si se encontró en la lista
+          listCatalogo.splice(indexConsumible, 1);
+        }
+
         this.listCatalogo = listCatalogo;
       } catch (error) {
-        console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
@@ -142,7 +152,6 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
           };
         }
       } catch (error) {
-        console.error(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",

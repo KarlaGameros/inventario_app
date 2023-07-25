@@ -66,7 +66,6 @@ const Reporte = async () => {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.text("Responsable:", 15, 65);
-    doc.text("Tipo de uso:", 150, 65, null, null, "right");
 
     doc.rect(10, 70, 191.8, 10);
     doc.setFont("helvetica", "bold");
@@ -77,7 +76,7 @@ const Reporte = async () => {
     doc.rect(10, 80, 191.8, 10);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    doc.text("Dependencia:", 15, 85);
+    doc.text("Área:", 15, 85);
     doc.text("Localidad:", 150, 85, null, null, "right");
 
     doc.setFont("helvetica", "normal");
@@ -151,7 +150,6 @@ const Reporte = async () => {
     //Codigo numeracion de paginas
     var footer = function () {
       var pageCount = doc.internal.getNumberOfPages();
-      console.log("Esto es el total de paginas", pageCount);
       for (var i = 0; i < pageCount; i++) {
         doc.setPage(i + 1);
         doc.setTextColor(0, 0, 0);
@@ -200,7 +198,6 @@ const Reporte = async () => {
       msj: "Recibo generado con éxito",
     };
   } catch (error) {
-    console.error(error);
     return {
       success: false,
       data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",

@@ -55,6 +55,7 @@
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
                 v-model="estatus_Id"
+                :options="estatus"
                 label="Estatus"
                 hint="Selecciona un estatus"
                 lazy-rules
@@ -106,7 +107,7 @@
                 use-input
                 @filter="filterInventario"
                 label="Productos"
-                hint="Selecciona un consumible"
+                hint="Selecciona un producto"
                 :lazy-rules="true"
                 :rules="[(val) => !!val || 'El inventario es requerido']"
               >

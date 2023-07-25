@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="asignaciones"
+        :rows="listaMovimientoInventario"
         :columns="columns"
         :filter="filter"
         :pagination="pagination"
@@ -23,29 +23,18 @@
             </template>
           </q-input>
         </template>
-        <template>
+        <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              <div v-if="col.name === 'id'">
+              <div v-if="col.name === 'inventario_Id'">
                 <q-btn
-                  v-if="modulo.actualizar"
                   flat
                   round
                   color="purple-ieen"
-                  icon="edit"
-                  @click="editar(col.value)"
-                >
-                  <q-tooltip>Editar asignación</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="modulo.eliminar"
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="delete"
+                  icon="cancel"
                   @click="eliminar(col.value)"
                 >
-                  <q-tooltip>Eliminar asignación</q-tooltip>
+                  <q-tooltip>Eliminar inventario</q-tooltip>
                 </q-btn>
               </div>
               <label v-else>{{ col.value }}</label>
@@ -60,66 +49,37 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
-import { useAsignacionStore } from "src/stores/asignacion_store";
-import { useInventarioStore } from "../../../stores/inventario_store";
+import { useMovimientoInventario } from "src/stores/movimiento_inventario";
 import { ref } from "vue";
-import jsPDF from "jspdf";
+
+//-----------------------------------------------------------
 
 const $q = useQuasar();
-const asignacionStore = useAsignacionStore();
-const inventarioStore = useInventarioStore();
-const { inventarios } = storeToRefs(inventarioStore);
-const { asignaciones } = storeToRefs(asignacionStore);
+const movimientoStore = useMovimientoInventario();
+const { listaMovimientoInventario } = storeToRefs(movimientoStore);
+
+//-----------------------------------------------------------
 
 const columns = [
   {
-    name: "empleado",
+    name: "clave",
     align: "center",
-    label: "Empleado",
-    field: "empleado",
+    label: "Clave",
+    field: "clave",
     sortable: true,
   },
   {
-    name: "area",
+    name: "descripcion",
     align: "center",
-    label: "Area",
-    field: "area",
-    sortable: true,
-  },
-  ,
-  {
-    name: "puesto",
-    align: "center",
-    label: "Puesto",
-    field: "puesto",
+    label: "Descripción",
+    field: "descripcion",
     sortable: true,
   },
   {
-    name: "estatus",
-    align: "center",
-    label: "Estatus",
-    field: "estatus",
-    sortable: true,
-  },
-  {
-    name: "fecha_Registro",
-    align: "center",
-    label: "Fecha de registro",
-    field: "fecha_registro",
-    sortable: true,
-  },
-  {
-    name: "fecha_Asignacion",
-    align: "center",
-    label: "Fecha de asignación",
-    field: "fecha_Asigncion",
-    sortable: true,
-  },
-  {
-    name: "id",
+    name: "inventario_Id",
     align: "center",
     label: "Acciones",
-    field: "id",
+    field: "inventario_Id",
     sortable: false,
   },
 ];
@@ -134,16 +94,12 @@ const pagination = ref({
 
 const filter = ref("");
 
-const editar = async (id) => {
-  $q.loading.show();
-  bodegaStore.actualizarModal(true);
-  $q.loading.hide();
-};
+//-----------------------------------------------------------
 
 const eliminar = async (id) => {
   $q.dialog({
-    title: "Eliminar asignación",
-    message: "¿Está seguro de eliminar la asignación?",
+    title: "Eliminar producto",
+    message: "¿Está seguro de eliminar el producto del listado?",
     icon: "Warning",
     persistent: true,
     transitionShow: "scale",
@@ -158,6 +114,10 @@ const eliminar = async (id) => {
     },
   }).onOk(async () => {
     $q.loading.show();
+    let resp = null;
+    resp = await movimientoStore.deleteProducto(id);
+    $q.loading.hide();
+
     if (resp.success) {
       $q.loading.hide();
       $q.notify({

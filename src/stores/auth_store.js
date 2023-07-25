@@ -142,7 +142,6 @@ export const useAuthStore = defineStore("auth", {
           };
         }
       } catch (error) {
-        console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
@@ -180,7 +179,6 @@ export const useAuthStore = defineStore("auth", {
           };
         }
       } catch (error) {
-        console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
@@ -193,7 +191,6 @@ export const useAuthStore = defineStore("auth", {
         if ((this.modulos = [])) await this.loadModulos();
         this.modulo = this.modulos.find((x) => x.siglas_Modulo == siglas);
       } catch (error) {
-        console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
@@ -210,7 +207,6 @@ export const useAuthStore = defineStore("auth", {
         );
         localStorage.setItem("perfil", filtro.perfil_Id);
       } catch (error) {
-        console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",

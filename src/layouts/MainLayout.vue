@@ -31,12 +31,14 @@
       >
         <q-list>
           <q-expansion-item
+            v-if="CatalogosConList.length > 0"
             expand-separator
             icon="menu_book"
             label="Catálogos generales"
             class="text-purple-ieen label-title text-bold"
           >
             <q-item
+              v-if="CatalogosConList.some((element) => element == 'SI-CAT-MAR')"
               :to="{ name: 'marcas' }"
               :content-inset-level="2"
               :header-inset-level="2"
@@ -52,6 +54,7 @@
             </q-item>
 
             <q-item
+              v-if="CatalogosConList.some((element) => element == 'SI-CAT-BOD')"
               :to="{ name: 'bodegas' }"
               :content-inset-level="2"
               :header-inset-level="2"
@@ -67,6 +70,7 @@
             </q-item>
 
             <q-item
+              v-if="CatalogosConList.some((element) => element == 'SI-CAT-CAT')"
               :to="{ name: 'catalogos' }"
               :content-inset-level="2"
               :header-inset-level="2"
@@ -81,7 +85,12 @@
               </q-item-section>
             </q-item>
 
-            <q-item :to="{ name: 'estatus' }">
+            <q-item
+              v-if="CatalogosConList.some((element) => element == 'SI-CAT-EST')"
+              :content-inset-level="2"
+              :header-inset-level="2"
+              :to="{ name: 'estatus' }"
+            >
               <q-item-section avatar>
                 <q-icon name="add_box" color="purple-ieen" />
               </q-item-section>
@@ -93,7 +102,12 @@
             </q-item>
           </q-expansion-item>
 
-          <q-item :to="{ name: 'inventario' }">
+          <q-item
+            v-if="CatalogosConList.some((element) => element == 'SI-CAT-INV')"
+            :to="{ name: 'inventario' }"
+            :content-inset-level="2"
+            :header-inset-level="2"
+          >
             <q-item-section avatar>
               <q-icon name="inventory" color="purple-ieen" />
             </q-item-section>
@@ -104,7 +118,12 @@
             </q-item-section>
           </q-item>
 
-          <q-item :to="{ name: 'asignaciones' }">
+          <q-item
+            v-if="CatalogosConList.some((element) => element == 'SI-CAT-ASI')"
+            :content-inset-level="2"
+            :header-inset-level="2"
+            :to="{ name: 'asignaciones' }"
+          >
             <q-item-section avatar>
               <q-icon name="add_box" color="purple-ieen" />
             </q-item-section>
@@ -115,7 +134,12 @@
             </q-item-section>
           </q-item>
 
-          <q-item :to="{ name: 'movimiento_inventario' }">
+          <q-item
+            v-if="CatalogosConList.some((element) => element == 'SI-MOV-INV')"
+            :content-inset-level="2"
+            :header-inset-level="2"
+            :to="{ name: 'movimiento_inventario' }"
+          >
             <q-item-section avatar>
               <q-icon name="add_box" color="purple-ieen" />
             </q-item-section>
@@ -136,7 +160,7 @@
         <div class="bg-transparent">
           <div class="text-weight-bold text-black">
             <br />
-            Bienvenido(a)
+            Bienvenido(a) {{ usuario }}
           </div>
         </div>
       </q-img>
@@ -228,40 +252,32 @@ export default defineComponent({
       await authStore.loadSistemas();
       await authStore.loadModulos();
       await authStore.loadPerfil();
+      console.log("modulos", modulos);
       modulos.value.forEach((element) => {
         switch (element.siglas_Modulo) {
           case "SI-CAT-BOD":
             CatalogosConList.value.push("SI-CAT-BOD");
             break;
-          case "SI-CAT-COS":
-            CatalogosConList.value.push("SI-CAT-COS");
+          case "SI-CAT-ASI":
+            CatalogosConList.value.push("SI-CAT-ASI");
             break;
-          case "SI-CAT-CLA":
-            CatalogosConList.value.push("SI-CAT-CLA");
+          case "SI-CAT-CAT":
+            CatalogosConList.value.push("SI-CAT-CAT");
             break;
-          case "SI-CAT-UDM":
-            CatalogosConList.value.push("SI-CAT-UDM");
+          case "SI-CAT-EST":
+            CatalogosConList.value.push("SI-CAT-EST");
             break;
-          case "SI-CAT-PRO":
-            CatalogosConList.value.push("SI-CAT-PRO");
+          case "SI-CAT-INV":
+            CatalogosConList.value.push("SI-CAT-INV");
             break;
-          case "SI-CAT-TIP":
-            CatalogosConList.value.push("SI-CAT-TIP");
+          case "SI-CAT-MAR":
+            CatalogosConList.value.push("SI-CAT-MAR");
             break;
-          case "SI-CAT-CMO":
-            CatalogosConList.value.push("SI-CAT-CMO");
+          case "SI-MOV-INV":
+            CatalogosConList.value.push("SI-MOV-INV");
             break;
-          case "SI-CAT-MOV":
-            CatalogosConList.value.push("SI-CAT-MOV");
-            break;
-          case "SI-CON-REG":
-            ConsumiblesList.value.push("SI-CON-REG");
-            break;
-          case "SI-REG-SOL":
-            SolicitudesList.value.push("SI-REG-SOL");
-            break;
-          case "SI-REG-ARE":
-            SolicitudesList.value.push("SI-REG-ARE");
+          case "SI-CAT-MOD":
+            CatalogosConList.value.push("SI-CAT-MOD");
             break;
         }
       });

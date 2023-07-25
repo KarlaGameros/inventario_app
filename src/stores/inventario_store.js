@@ -148,6 +148,7 @@ export const useInventarioStore = defineStore("inventario", {
           };
         });
         this.inventarios = listInventario;
+        this.listInventario = listInventario;
       } catch (error) {
         console.log(error);
         return {
@@ -180,7 +181,6 @@ export const useInventarioStore = defineStore("inventario", {
           };
         }
       } catch (error) {
-        console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
@@ -278,8 +278,22 @@ export const useInventarioStore = defineStore("inventario", {
           return {
             value: inventario.id,
             label: `${inventario.clave} - ${inventario.nombre_Corto}`,
+            id: inventario.id,
+            catalogo_id: inventario.catalogo_id,
+            catalogo: inventario.catalago,
+            bodega_id: inventario.bodega_id,
+            bodega: inventario.bodega,
             descripcion: inventario.descripcion,
+            nombre_corto: inventario.nombre_Corto,
+            marca_id: inventario.marca_id,
+            marca: inventario.marca,
+            modelo_id: inventario.modelo_id,
+            modelo: inventario.modelo,
+            color: inventario.color,
+            estatus: inventario.estatus,
             clave: inventario.clave,
+            numero_Serie: inventario.numero_Serie,
+            empleado: inventario.empleado,
           };
         });
         this.listInventario = listInvenatrio;
@@ -290,8 +304,6 @@ export const useInventarioStore = defineStore("inventario", {
 
     async updateInventario(inventario, editarInventarioFormData) {
       try {
-        console.log("inventario", inventario.value.id);
-        console.log("editarInventarioFormData", editarInventarioFormData);
         const resp = await api.put(
           `/Inventarios/${inventario.value.id}`,
           editarInventarioFormData,
@@ -303,7 +315,6 @@ export const useInventarioStore = defineStore("inventario", {
         );
         if (resp.status == 200) {
           const { success, data } = resp.data;
-          console.log("data", data);
           if (success === true) {
             return { success, data };
           } else {
@@ -417,8 +428,22 @@ export const useInventarioStore = defineStore("inventario", {
           let { data } = resp.data;
           let listInventario = data.map((inventario) => {
             return {
-              label: inventario.nombre_Corto,
-              value: inventario.id,
+              id: inventario.id,
+              catalogo_id: inventario.catalogo_id,
+              catalogo: inventario.catalago,
+              bodega_id: inventario.bodega_id,
+              bodega: inventario.bodega,
+              descripcion: inventario.descripcion,
+              nombre_corto: inventario.nombre_Corto,
+              marca_id: inventario.marca_id,
+              marca: inventario.marca,
+              modelo_id: inventario.modelo_id,
+              modelo: inventario.modelo,
+              color: inventario.color,
+              estatus: inventario.estatus,
+              clave: inventario.clave,
+              numero_Serie: inventario.numero_Serie,
+              empleado: inventario.empleado,
             };
           });
           this.listInventario = listInventario;

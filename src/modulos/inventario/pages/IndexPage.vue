@@ -14,6 +14,7 @@
       <div class="col">
         <div class="text-right q-pa-md items-start q-gutter-md">
           <q-btn
+            v-if="modulo == null ? false : modulo.registrar"
             type="button"
             class="q-ma-sm"
             color="purple-ieen"
@@ -62,7 +63,7 @@ const $q = useQuasar();
 const authStore = useAuthStore();
 const inventarioStore = useInventarioStore();
 const { modulo } = storeToRefs(authStore);
-const siglas = "SI-CON-REG";
+const siglas = "SI-CAT-INV";
 
 onBeforeMount(() => {
   leerPermisos();
@@ -85,7 +86,6 @@ const generar = async () => {
 };
 
 const generarVale = async () => {
-  console.log("entro");
   ValeResguardo();
 };
 </script>
