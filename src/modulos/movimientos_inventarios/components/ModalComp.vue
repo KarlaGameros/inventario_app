@@ -7,7 +7,7 @@
   >
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
-        <div class="text-h6">Registro de asignaciones</div>
+        <div class="text-h6">Movimientos de inventario</div>
         <q-space />
         <q-btn
           icon="close"

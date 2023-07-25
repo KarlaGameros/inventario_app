@@ -281,7 +281,7 @@
 
                 <!-------------------------------------------------------------------------->
 
-                <div class="col">
+                <div v-if="cantidad >= 1" class="col">
                   <q-table
                     :rows="listaNumeroSerie"
                     :columns="columns"
@@ -480,7 +480,7 @@
                 </div>
 
                 <!-------------------------------------------------------------------------->
-                <TablaNumerosSeriesA />
+                <TablaNumerosSeriesA v-if="cantidad >= 1" />
                 <!-------------------------------------------------------------------------->
               </q-tab-panel>
 
@@ -647,7 +647,7 @@
                 </div>
 
                 <!-------------------------------------------------------------------------->
-                <TablaNumerosSeriesB />
+                <TablaNumerosSeriesB v-if="cantidad >= 1" />
                 <!-------------------------------------------------------------------------->
               </q-tab-panel>
 
@@ -814,7 +814,7 @@
                 </div>
 
                 <!-------------------------------------------------------------------------->
-                <TablaNumerosSeriesC />
+                <TablaNumerosSeriesC v-if="cantidad >= 1" />
                 <!-------------------------------------------------------------------------->
               </q-tab-panel>
 
@@ -1123,6 +1123,23 @@ const tabsDefinition = [
 ];
 const tabs = ref(tabsDefinition.slice(0, 0));
 const tab = ref("general");
+
+const columns = [
+  {
+    name: "id",
+    align: "center",
+    label: "No.",
+    field: "id",
+    sortable: true,
+  },
+  {
+    name: "numero_serie",
+    align: "center",
+    label: "Números de serie",
+    field: "numero_serie",
+    sortable: true,
+  },
+];
 
 const allTabs = computed(() => {
   return tabsDefinition.map((tab) => ({
