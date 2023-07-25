@@ -13,6 +13,7 @@ const Reporte = async () => {
     const doc = new jsPDF({ orientation: "portrait", format: "letter" });
     doc.addImage(img, "png", 10, 5, 35, 21);
     doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
     doc.text(
       "INSTITULO ESTATAL ELECTORAL DEL ESTADO DE NAYARIT \n \n VALE DE RESGUARDO",
       110,
@@ -55,7 +56,7 @@ const Reporte = async () => {
     doc.setFillColor(84, 37, 131);
     doc.rect(10, 50, 191.8, 10, "FD");
     doc.setTextColor(255, 255, 255);
-    doc.setFont("helvetica", "normal");
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.text("DATOS DEL RESPONSABLE", 85, 55);
 
@@ -65,42 +66,27 @@ const Reporte = async () => {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.text("Responsable:", 15, 65);
+    doc.text("Tipo de uso:", 150, 65, null, null, "right");
 
-    //----------------------------------------------------------------------------------------//
-
-    doc.line(70, 180, 150, 180);
+    doc.rect(10, 70, 191.8, 10);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    doc.text("Empleado responsable", 90, 185);
+    doc.text("Cargo:", 15, 75);
+    doc.text("Municipio:", 150, 75, null, null, "right");
 
-    //----------------------------------------------------------------------------------------//
-
-    doc.rect(10, 200, 194, 15);
+    doc.rect(10, 80, 191.8, 10);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-
-    doc.text("NOTA:", 12, 205);
+    doc.text("Dependencia:", 15, 85);
+    doc.text("Localidad:", 150, 85, null, null, "right");
 
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
+    doc.text("CENTRO DE CAPACITACIÓN DEL IEE", 40, 85);
+    doc.text("Tepic", 155, 85);
+    doc.text("Tepic", 155, 75);
 
-    doc.text(
-      "Resguardo temporal para prestamo de Bien Mueble del Instituto Estatal Electoral de Nayarit, cualquier daño, \n " +
-        "perdida o extravio del bien es responsabilidad del usuario responsable. Este resguardo se cancela al momento \n " +
-        "de la entrega del bien del usuario responsable a la Unidad Técnica de Informática y Estadistica",
-      24,
-      205
-    );
     //----------------------------------------------------------------------------------------//
     var rows = [
-      [
-        "EY-06-0108",
-        "6C12",
-        "Almacenamiento, control y distribucion de bienes muebles",
-        "Lenovo",
-        "Lenovo",
-        "Negro",
-      ],
       [
         "EY-06-0108",
         "6C12",
@@ -155,7 +141,7 @@ const Reporte = async () => {
     });
     autoTable(doc, {
       theme: "grid",
-      startY: 70,
+      startY: 90,
       margin: { left: 10, rigth: 10 },
       head: header,
       body: [...rows],
@@ -168,14 +154,43 @@ const Reporte = async () => {
       console.log("Esto es el total de paginas", pageCount);
       for (var i = 0; i < pageCount; i++) {
         doc.setPage(i + 1);
+        doc.setTextColor(0, 0, 0);
         doc.text(
           "Página " + (i + 1) + " de " + pageCount,
-          340,
-          205,
+          200,
+          270,
           null,
           null,
           "right"
         );
+
+        if (i === pageCount - 1) {
+          //----------------------------------------------------------------------------------------//
+
+          doc.line(70, 180, 150, 180);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.text("Empleado responsable", 90, 185);
+
+          //----------------------------------------------------------------------------------------//
+
+          doc.rect(10, 200, 194, 15);
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+
+          doc.text("NOTA:", 12, 205);
+
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(10);
+
+          doc.text(
+            "Resguardo temporal para prestamo de Bien Mueble del Instituto Estatal Electoral de Nayarit, cualquier daño, \n " +
+              "perdida o extravio del bien es responsabilidad del usuario responsable. Este resguardo se cancela al momento \n " +
+              "de la entrega del bien del usuario responsable a la Unidad Técnica de Informática y Estadistica",
+            24,
+            205
+          );
+        }
       }
     };
     footer();
