@@ -22,6 +22,24 @@
             label="Nuevo"
             @click="actualizarModal(true)"
           />
+
+          <q-btn
+            type="button"
+            class="q-ma-sm"
+            color="purple-ieen"
+            icon-right="print"
+            label="Vale resguardo"
+            @click="generarVale()"
+          />
+
+          <q-btn
+            type="button"
+            class="q-ma-sm"
+            color="purple-ieen"
+            icon-right="print"
+            label="Vale prestamo"
+            @click="generarValePrestamo()"
+          />
         </div>
       </div>
     </div>
@@ -38,6 +56,10 @@ import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 import { useAsignacionStore } from "src/stores/asignacion_store";
 import { onBeforeMount } from "vue";
+import ValeResguardo from "../../../helpers/ValeResguardo";
+import ValePrestamo from "../../../helpers/ValePrestamo";
+
+//-----------------------------------------------------------
 
 const $q = useQuasar();
 const authStore = useAuthStore();
@@ -45,9 +67,13 @@ const asignacionStore = useAsignacionStore();
 const { modulo } = storeToRefs(authStore);
 const siglas = "SI-CAT-ASI";
 
+//-----------------------------------------------------------
+
 onBeforeMount(() => {
   leerPermisos();
 });
+
+//-----------------------------------------------------------
 
 const leerPermisos = async () => {
   $q.loading.show();
@@ -61,4 +87,14 @@ const actualizarModal = (valor) => {
   asignacionStore.initAsignacion();
   $q.loading.hide();
 };
+
+const generarVale = async () => {
+  ValeResguardo();
+};
+
+const generarValePrestamo = async () => {
+  ValePrestamo();
+};
+
+//-----------------------------------------------------------
 </script>

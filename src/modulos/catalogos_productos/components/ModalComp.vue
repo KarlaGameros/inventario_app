@@ -7,7 +7,9 @@
   >
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
-        <div class="text-h6">Registro de catálogo</div>
+        <div class="text-h6">
+          {{ !isEditar ? "Registrar catálogo" : "Editar catálogo" }}
+        </div>
         <q-space />
         <q-btn
           icon="close"

@@ -35,7 +35,7 @@ const ValePrestamo = async () => {
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    doc.text("No. Resguardo", 12, 34);
+    doc.text("No. Prestamo", 12, 34);
 
     doc.setTextColor(0, 0, 0);
 
@@ -192,7 +192,7 @@ const ValePrestamo = async () => {
       }
     };
     footer();
-    doc.save("ValeResguardo" + ".pdf");
+    doc.save("ValePrestamo" + ".pdf");
     return {
       success: true,
       msj: "Recibo generado con éxito",

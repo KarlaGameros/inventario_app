@@ -6,7 +6,7 @@ import { useInventarioStore } from "src/stores/inventario_store";
 import { onBeforeMount } from "vue";
 
 const inventarioStore = useInventarioStore();
-const { inventarios } = storeToRefs(inventarioStore);
+const { listInventario } = storeToRefs(inventarioStore);
 
 onBeforeMount(() => {
   inventarioStore.loadInformacionInventarios();
@@ -14,9 +14,9 @@ onBeforeMount(() => {
 
 const ReporteListadoInventario = async () => {
   try {
-    let resp = await api.get("/Inventarios");
-
-    let detalleData = resp.data.data;
+    //let resp = await api.get("/Inventarios");
+    console.log("list", listInventario.value);
+    let detalleData = listInventario.value;
     let img = new Image();
     img.src = require("../assets/IEEN300.png");
     let totalPagesExp = "{total_pages_count_string}";
@@ -71,9 +71,9 @@ const ReporteListadoInventario = async () => {
       body: detalleData.map((item, index) => [
         index + 1,
         item.clave,
-        item.catalago,
+        item.catalogo,
         item.descripcion,
-        item.nombre_Corto,
+        item.nombre_corto,
         item.numero_Serie,
         item.marca,
         item.modelo,

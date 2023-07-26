@@ -39,6 +39,32 @@ export const useEstatusStore = defineStore("estatus", {
       }
     },
     //-----------------------------------------------------------
+    async loadEstatusList(especial) {
+      try {
+        let resp = await api.get("/EstatusInventarios");
+        let { data } = resp.data;
+
+        let listEstatus = data.map((estatu) => {
+          return {
+            value: estatu.id,
+            label: estatu.nombre,
+          };
+        });
+        if (especial == true) {
+          listEstatus.splice(0, 0, {
+            value: 0,
+            label: "Todos",
+          });
+        }
+        this.estatus = listEstatus;
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+    //-----------------------------------------------------------
     async createEstatu(estatu) {
       try {
         const resp = await api.post("/EstatusInventarios", estatu);

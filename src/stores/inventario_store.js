@@ -278,22 +278,22 @@ export const useInventarioStore = defineStore("inventario", {
           return {
             value: inventario.id,
             label: `${inventario.clave} - ${inventario.nombre_Corto}`,
-            id: inventario.id,
-            catalogo_id: inventario.catalogo_id,
-            catalogo: inventario.catalago,
-            bodega_id: inventario.bodega_id,
-            bodega: inventario.bodega,
-            descripcion: inventario.descripcion,
-            nombre_corto: inventario.nombre_Corto,
-            marca_id: inventario.marca_id,
-            marca: inventario.marca,
-            modelo_id: inventario.modelo_id,
-            modelo: inventario.modelo,
-            color: inventario.color,
-            estatus: inventario.estatus,
-            clave: inventario.clave,
-            numero_Serie: inventario.numero_Serie,
-            empleado: inventario.empleado,
+            // id: inventario.id,
+            // catalogo_id: inventario.catalogo_id,
+            // catalogo: inventario.catalago,
+            // bodega_id: inventario.bodega_id,
+            // bodega: inventario.bodega,
+            // descripcion: inventario.descripcion,
+            // nombre_corto: inventario.nombre_Corto,
+            // marca_id: inventario.marca_id,
+            // marca: inventario.marca,
+            // modelo_id: inventario.modelo_id,
+            // modelo: inventario.modelo,
+            // color: inventario.color,
+            // estatus: inventario.estatus,
+            // clave: inventario.clave,
+            // numero_Serie: inventario.numero_Serie,
+            // empleado: inventario.empleado,
           };
         });
         this.listInventario = listInvenatrio;
@@ -421,9 +421,76 @@ export const useInventarioStore = defineStore("inventario", {
 
     //-----------------------------------------------------------
 
-    async inventarioByCatalogo(id) {
+    async inventarioByCatalogo1(id, estatus) {
       try {
         const resp = await api.get(`/Inventarios/ByCatalogo/${id}`);
+        if (resp.status == 200) {
+          let { data } = resp.data;
+          if (estatus != "Todos") {
+            this.listInventario = data.map((inventario) => {
+              return {
+                id: inventario.id,
+                catalogo_id: inventario.catalogo_id,
+                catalogo: inventario.catalago,
+                bodega_id: inventario.bodega_id,
+                bodega: inventario.bodega,
+                descripcion: inventario.descripcion,
+                nombre_corto: inventario.nombre_Corto,
+                marca_id: inventario.marca_id,
+                marca: inventario.marca,
+                modelo_id: inventario.modelo_id,
+                modelo: inventario.modelo,
+                color: inventario.color,
+                estatus: inventario.estatus,
+                clave: inventario.clave,
+                numero_Serie: inventario.numero_Serie,
+                empleado: inventario.empleado,
+              };
+            });
+            this.listInventario = this.listInventario.filter(
+              (item) => item.estatus === estatus
+            );
+          } else {
+            this.listInventario = data.map((inventario) => {
+              return {
+                id: inventario.id,
+                catalogo_id: inventario.catalogo_id,
+                catalogo: inventario.catalago,
+                bodega_id: inventario.bodega_id,
+                bodega: inventario.bodega,
+                descripcion: inventario.descripcion,
+                nombre_corto: inventario.nombre_Corto,
+                marca_id: inventario.marca_id,
+                marca: inventario.marca,
+                modelo_id: inventario.modelo_id,
+                modelo: inventario.modelo,
+                color: inventario.color,
+                estatus: inventario.estatus,
+                clave: inventario.clave,
+                numero_Serie: inventario.numero_Serie,
+                empleado: inventario.empleado,
+              };
+            });
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
+    async inventarioByCatalogo(estatus) {
+      try {
+        const resp = await api.get(`/Inventarios`);
         if (resp.status == 200) {
           let { data } = resp.data;
           let listInventario = data.map((inventario) => {
@@ -446,6 +513,9 @@ export const useInventarioStore = defineStore("inventario", {
               empleado: inventario.empleado,
             };
           });
+          listInventario = listInventario.filter(
+            (item) => item.estatus === estatus
+          );
           this.listInventario = listInventario;
         } else {
           return {

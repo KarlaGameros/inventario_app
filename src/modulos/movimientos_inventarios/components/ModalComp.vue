@@ -7,7 +7,9 @@
   >
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
-        <div class="text-h6">Movimientos de inventario</div>
+        <div class="text-h6">
+          {{ !isEditar ? "Registrar movimiento" : "Editar movimiento" }}
+        </div>
         <q-space />
         <q-btn
           icon="close"

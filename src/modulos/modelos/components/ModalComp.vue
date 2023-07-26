@@ -8,8 +8,7 @@
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
         <div class="text-h6">
-          Registro de modelo de la marca
-          <span style="color: red">"{{ marca }}"</span>
+          {{ !isEditar ? "Registrar modelos" : "Editar modelos" }}
         </div>
         <q-space />
         <q-btn

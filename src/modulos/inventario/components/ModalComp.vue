@@ -296,18 +296,19 @@
                         <q-td key="numero_serie" :props="props">
                           {{ props.row.numero_serie }}
                           <q-popup-edit
-                            v-model.number="props.row.numero_serie"
+                            v-model="props.row.numero_serie"
                             buttons
                             persistent
                             auto-save
                             v-slot="scope"
                           >
                             <q-input
-                              type="number"
-                              v-model.number="scope.value"
+                              type="text"
+                              v-model="scope.value"
                               dense
                               autofocus
                               @keyup.enter="scope.set"
+                              :rules="[required]"
                             />
                           </q-popup-edit>
                         </q-td>
@@ -1162,7 +1163,7 @@ const setTabSelected = (tab, status) => {
 
 onBeforeMount(() => {
   bodegaStore.loadBodegasList();
-  catalogoStore.loadCatalogoList();
+  //catalogoStore.loadCatalogoList();
   marcaStore.loadMarcaList();
 });
 

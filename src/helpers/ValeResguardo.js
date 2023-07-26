@@ -102,6 +102,150 @@ const Reporte = async () => {
         "Lenovo",
         "Negro",
       ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
+      [
+        "EY-06-0108",
+        "6C12",
+        "Almacenamiento, control y distribucion de bienes muebles",
+        "Lenovo",
+        "Lenovo",
+        "Negro",
+      ],
     ];
 
     var newRow = [
@@ -164,30 +308,66 @@ const Reporte = async () => {
 
         if (i === pageCount - 1) {
           //----------------------------------------------------------------------------------------//
+          console.log("doc.lastAutoTable", doc.lastAutoTable);
+          console.log("doc.lastAutoTable.finalY", doc.lastAutoTable.finalY);
+          if (doc.lastAutoTable && doc.lastAutoTable.finalY) {
+            var maxY = 250;
+            var currentY = doc.lastAutoTable.finalY;
 
-          doc.line(70, 180, 150, 180);
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(10);
-          doc.text("Empleado responsable", 90, 185);
+            if (currentY > maxY) {
+              doc.addPage();
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(10);
+              doc.text("_____________________________", 80, 100);
+              doc.text("Empleado responsable", 90, 105);
 
-          //----------------------------------------------------------------------------------------//
+              //----------------------------------------------------------------------------------------//
 
-          doc.rect(10, 200, 194, 15);
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(10);
+              doc.rect(10, 115 + 25, 194, 17);
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(10);
 
-          doc.text("NOTA:", 12, 205);
+              doc.text("NOTA:", 12, 120);
 
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(10);
 
-          doc.text(
-            "Resguardo temporal para prestamo de Bien Mueble del Instituto Estatal Electoral de Nayarit, cualquier daño, \n " +
-              "perdida o extravio del bien es responsabilidad del usuario responsable. Este resguardo se cancela al momento \n " +
-              "de la entrega del bien del usuario responsable a la Unidad Técnica de Informática y Estadistica",
-            24,
-            205
-          );
+              doc.text(
+                "Resguardo temporal para prestamo de Bien Mueble del Instituto Estatal Electoral de Nayarit, cualquier daño, \n " +
+                  "perdida o extravio del bien es responsabilidad del usuario responsable. Este resguardo se cancela al momento \n " +
+                  "de la entrega del bien del usuario responsable a la Unidad Técnica de Informática y Estadistica",
+                24,
+                120
+              );
+            }
+          }
+          // doc.setFont("helvetica", "bold");
+          // doc.setFontSize(10);
+          // doc.text(
+          //   "_____________________________",
+          //   80,
+          //   doc.lastAutoTable.finalY + 15
+          // );
+          // doc.text("Empleado responsable", 90, doc.lastAutoTable.finalY + 20);
+
+          // //----------------------------------------------------------------------------------------//
+
+          // doc.rect(10, doc.lastAutoTable.finalY + 25, 194, 17);
+          // doc.setFont("helvetica", "bold");
+          // doc.setFontSize(10);
+
+          // doc.text("NOTA:", 12, doc.lastAutoTable.finalY + 30);
+
+          // doc.setFont("helvetica", "normal");
+          // doc.setFontSize(10);
+
+          // doc.text(
+          //   "Resguardo temporal para prestamo de Bien Mueble del Instituto Estatal Electoral de Nayarit, cualquier daño, \n " +
+          //     "perdida o extravio del bien es responsabilidad del usuario responsable. Este resguardo se cancela al momento \n " +
+          //     "de la entrega del bien del usuario responsable a la Unidad Técnica de Informática y Estadistica",
+          //   24,
+          //   doc.lastAutoTable.finalY + 30
+          // );
         }
       }
     };

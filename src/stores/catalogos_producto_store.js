@@ -7,6 +7,7 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
     isEditar: false,
     catalogos: [],
     listCatalogo: [],
+    listCatalogosTodos: [],
     catalogo: {
       id: null,
       nombre: null,
@@ -98,6 +99,7 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
           listCatalogo.splice(indexConsumible, 1);
         }
 
+        this.listCatalogosTodos = listCatalogo;
         this.listCatalogo = listCatalogo;
       } catch (error) {
         return {

@@ -13,7 +13,7 @@
         <template v-slot:top-left>
           <q-select
             v-model="catalogoId"
-            :options="listCatalogo"
+            :options="listCatalogosTodos"
             label="Selecciona un catalogo"
             hint="Seleccione un estatus de inventarios a mostrar"
             style="width: 260px"
@@ -115,24 +115,55 @@ const inventarioStore = useInventarioStore();
 const catalogoStore = useCatalogoProductoStore();
 const estatusStore = useEstatusStore();
 const { listInventario } = storeToRefs(inventarioStore);
-const { listCatalogo } = storeToRefs(catalogoStore);
+const { listCatalogosTodos } = storeToRefs(catalogoStore);
 const { estatus } = storeToRefs(estatusStore);
 const catalogoId = ref(null);
 const estatusId = ref(null);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
-  inventarioStore.loadInformacionInventarios();
-  estatusStore.loadInformacionEstatus();
+  if (catalogoId.value == null && estatusId.value == null) {
+    cargarInventarios();
+  }
+  estatusStore.loadEstatusList(true);
+  catalogoStore.loadCatalogoList(true);
+  estatusId.value = { value: 0, label: "Todos" };
+  catalogoId.value = { value: 0, label: "Todos" };
 });
 
 watch(catalogoId, (val) => {
-  inventarioStore.inventarioByCatalogo(catalogoId.value.value);
+  if (catalogoId.value.value != 0 && estatusId.value.value != 0) {
+    inventarioStore.inventarioByCatalogo1(
+      catalogoId.value.value,
+      estatusId.value.label
+    );
+  } else if (catalogoId.value.value != 0 && estatusId.value.value == 0) {
+    inventarioStore.inventarioByCatalogo1(
+      catalogoId.value.value,
+      estatusId.value.label
+    );
+  } else {
+    cargarInventarios();
+  }
 });
 
 watch(estatusId, (val) => {
-  console.log("estatus", estatusId.value.value);
+  if (estatusId.value.value != 0 && catalogoId.value.value != 0) {
+    inventarioStore.inventarioByCatalogo1(
+      catalogoId.value.value,
+      estatusId.value.label
+    );
+  } else if (estatusId.value.value != 0 && catalogoId.value.value == 0) {
+    inventarioStore.inventarioByCatalogo(estatusId.value.label);
+  } else {
+    cargarInventarios();
+  }
 });
+
+const cargarInventarios = () => {
+  inventarioStore.loadInformacionInventarios();
+};
+
 //-----------------------------------------------------------
 
 const columns = [
