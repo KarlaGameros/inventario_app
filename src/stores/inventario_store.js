@@ -278,22 +278,8 @@ export const useInventarioStore = defineStore("inventario", {
           return {
             value: inventario.id,
             label: `${inventario.clave} - ${inventario.nombre_Corto}`,
-            // id: inventario.id,
-            // catalogo_id: inventario.catalogo_id,
-            // catalogo: inventario.catalago,
-            // bodega_id: inventario.bodega_id,
-            // bodega: inventario.bodega,
-            // descripcion: inventario.descripcion,
-            // nombre_corto: inventario.nombre_Corto,
-            // marca_id: inventario.marca_id,
-            // marca: inventario.marca,
-            // modelo_id: inventario.modelo_id,
-            // modelo: inventario.modelo,
-            // color: inventario.color,
-            // estatus: inventario.estatus,
-            // clave: inventario.clave,
-            // numero_Serie: inventario.numero_Serie,
-            // empleado: inventario.empleado,
+            descripcion: inventario.descripcion,
+            clave: inventario.clave,
           };
         });
         this.listInventario = listInvenatrio;

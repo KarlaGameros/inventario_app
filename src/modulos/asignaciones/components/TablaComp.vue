@@ -23,29 +23,52 @@
             </template>
           </q-input>
         </template>
-        <template>
+        <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'id'">
                 <q-btn
-                  v-if="modulo.actualizar"
+                  v-if="modulo.leer"
                   flat
                   round
                   color="purple-ieen"
-                  icon="edit"
-                  @click="editar(col.value)"
+                  icon="search"
+                  @click="visualizar(col.value)"
                 >
                   <q-tooltip>Editar asignación</q-tooltip>
                 </q-btn>
+
                 <q-btn
-                  v-if="modulo.eliminar"
+                  v-if="modulo.actualizar && props.row.estatus == 'Pendiente'"
                   flat
                   round
                   color="purple-ieen"
-                  icon="delete"
-                  @click="eliminar(col.value)"
+                  icon="send"
+                  @click="afectar(col.value)"
                 >
-                  <q-tooltip>Eliminar asignación</q-tooltip>
+                  <q-tooltip>Afectar asignación</q-tooltip>
+                </q-btn>
+
+                <q-btn
+                  v-if="modulo.actualizar && props.row.estatus == 'Afectado'"
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="print"
+                  @click="GenerarVale(col.value)"
+                >
+                  <q-tooltip>Afectar asignación</q-tooltip>
+                </q-btn>
+
+                <q-btn
+                  v-if="modulo.actualizar && props.row.estatus == 'Pendiente'"
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="cancel"
+                  @click="cancelar(col.value)"
+                >
+                  <q-tooltip>Cancelar asignación</q-tooltip>
                 </q-btn>
               </div>
               <label v-else>{{ col.value }}</label>
@@ -60,22 +83,34 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
+import { useAuthStore } from "../../../stores/auth_store";
 import { useAsignacionStore } from "src/stores/asignacion_store";
 import { useInventarioStore } from "../../../stores/inventario_store";
-import { ref } from "vue";
-import jsPDF from "jspdf";
+import { onBeforeMount, ref } from "vue";
+import ValeResguardo from "../../../helpers/ValeResguardo";
+
+//-----------------------------------------------------------
 
 const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
 const inventarioStore = useInventarioStore();
+const authStore = useAuthStore();
+const { modulo } = storeToRefs(authStore);
 const { inventarios } = storeToRefs(inventarioStore);
 const { asignaciones } = storeToRefs(asignacionStore);
 
+//-----------------------------------------------------------
+
+onBeforeMount(() => {
+  asignacionStore.loadInformacionAsignaciones();
+});
+//-----------------------------------------------------------
+
 const columns = [
   {
-    name: "empleado",
+    name: "empleado_",
     align: "center",
-    label: "Empleado",
+    label: "Empleado asignación",
     field: "empleado",
     sortable: true,
   },
@@ -86,7 +121,6 @@ const columns = [
     field: "area",
     sortable: true,
   },
-  ,
   {
     name: "puesto",
     align: "center",
@@ -105,14 +139,14 @@ const columns = [
     name: "fecha_Registro",
     align: "center",
     label: "Fecha de registro",
-    field: "fecha_registro",
+    field: "fecha_Registro",
     sortable: true,
   },
   {
     name: "fecha_Asignacion",
     align: "center",
     label: "Fecha de asignación",
-    field: "fecha_Asigncion",
+    field: "fecha_Asignacion",
     sortable: true,
   },
   {
@@ -134,36 +168,34 @@ const pagination = ref({
 
 const filter = ref("");
 
-const editar = async (id) => {
-  $q.loading.show();
-  bodegaStore.actualizarModal(true);
-  $q.loading.hide();
-};
+//-----------------------------------------------------------
 
-const eliminar = async (id) => {
+const afectar = async (id) => {
   $q.dialog({
-    title: "Eliminar asignación",
-    message: "¿Está seguro de eliminar la asignación?",
+    title: "Afectar asignación",
+    message: "Al aceptar, se ejecutaran los movimientos realizados",
     icon: "Warning",
     persistent: true,
     transitionShow: "scale",
     transitionHide: "scale",
     ok: {
       color: "positive",
-      label: "¡Sí!, eliminar",
+      label: "Si, Aceptar",
     },
     cancel: {
       color: "negative",
-      label: " No Cancelar",
+      label: "No cancelar",
     },
   }).onOk(async () => {
     $q.loading.show();
+    const resp = await asignacionStore.afectarAsignacion(id);
     if (resp.success) {
       $q.loading.hide();
       $q.notify({
         type: "positive",
         message: resp.data,
       });
+      asignacionStore.loadInformacionAsignaciones();
     } else {
       $q.loading.hide();
       $q.notify({
@@ -172,6 +204,61 @@ const eliminar = async (id) => {
       });
     }
   });
+};
+
+//-----------------------------------------------------------
+
+const cancelar = async (id) => {
+  $q.dialog({
+    title: "Cancelar asignación",
+    message: "Al aceptar, se cancelará la asignación",
+    icon: "Warning",
+    persistent: true,
+    transitionShow: "scale",
+    transitionHide: "scale",
+    ok: {
+      color: "positive",
+      label: "Si, Aceptar",
+    },
+    cancel: {
+      color: "negative",
+      label: "No cancelar",
+    },
+  }).onOk(async () => {
+    $q.loading.show();
+    const resp = await asignacionStore.cancelarAsignacion(id);
+    if (resp.success) {
+      $q.loading.hide();
+      $q.notify({
+        type: "positive",
+        message: resp.data,
+      });
+      asignacionStore.loadInformacionAsignaciones();
+    } else {
+      $q.loading.hide();
+      $q.notify({
+        type: "negative",
+        message: resp.data,
+      });
+    }
+  });
+};
+const visualizar = async (id) => {
+  $q.loading.show();
+  asignacionStore.actualizarModal(true);
+  $q.loading.hide();
+};
+
+const GenerarVale = async (id) => {
+  let resp = null;
+  $q.loading.show();
+  resp = await asignacionStore.loadAsignacion(id);
+  console.log("resp", resp);
+  if (resp.success === true) {
+    ValeResguardo();
+  }
+
+  $q.loading.hide();
 };
 </script>
 

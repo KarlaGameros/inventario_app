@@ -20,9 +20,46 @@
           v-close-popup
         />
       </q-card-section>
-      <q-form @submit="onSubmit">
+      <q-form @submit="registrar">
         <q-card-section>
           <div class="row q-col-gutter-xs">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-input
+                v-if="isEditar"
+                readonly
+                v-model="asignacion.estatus"
+                label="Estatus"
+              >
+              </q-input>
+            </div>
+
+            <div v-if="isEditar" class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+              <q-input
+                v-model="asignacion.fecha_Asignacion"
+                label="Fecha de asignación"
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      ref="qDateProxy"
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="date" color="purple-3">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="purple-3"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
                 label="Área"
@@ -52,41 +89,6 @@
                 v-model="puesto_Id"
                 hint="Puesto"
               >
-              </q-input>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-              <q-select
-                v-model="estatus_Id"
-                :options="estatus"
-                label="Estatus"
-                hint="Selecciona un estatus"
-                lazy-rules
-                :rules="[(val) => !!val || 'El estatus es requerido']"
-              >
-              </q-select>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-              <q-input v-model="date" label="Fecha de asignación">
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy
-                      ref="qDateProxy"
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-date v-model="date" color="purple-3">
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="Cerrar"
-                            color="purple-3"
-                            flat
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
               </q-input>
             </div>
 
@@ -144,6 +146,7 @@
                 @click="actualizarModal(false)"
               />
               <q-btn
+                :disable="habilitarButton"
                 label="Guardar"
                 type="submit"
                 color="positive"
@@ -164,7 +167,7 @@ import { useAuthStore } from "src/stores/auth_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useEstatusStore } from "src/stores/estatus_store";
 import { useInventarioStore } from "src/stores/inventario_store";
-import { onBeforeMount, ref, watch } from "vue";
+import { onBeforeMount, ref, watch, watchEffect } from "vue";
 import { useAsignacionStore } from "../../../stores/asignacion_store";
 import TablaAsignacionInventario from "./TablaAsignacionInventario.vue";
 
@@ -186,6 +189,7 @@ const {
   puestos,
   listaAsignacionInventario,
   listEmpleados,
+  isEditar,
 } = storeToRefs(asignacionStore);
 
 const estatus_Id = ref(null);
@@ -195,6 +199,7 @@ const inventarioId = ref(null);
 const empleadoId = ref(null);
 const catalogoId = ref(null);
 const opcionesInventario = ref([...listInventario.value]);
+const habilitarButton = ref(null);
 //-----------------------------------------------------------
 //Get fecha actual
 
@@ -239,6 +244,13 @@ watch(empleadoId, (val) => {
   puesto_Id.value = empleadoId.value.puesto;
 });
 
+watchEffect(() => {
+  if (listaAsignacionInventario.value.length > 0) {
+    habilitarButton.value = false;
+  } else {
+    habilitarButton.value = true;
+  }
+});
 //-----------------------------------------------------------
 
 const cargarEstatus = async (val) => {
@@ -270,9 +282,9 @@ const actualizarModal = (valor) => {
   catalogoId.value = { value: 0, label: "Todos" };
 };
 
-const limpiarRegistro = () => {
-  inventarioId.value = null;
-};
+// const limpiarRegistro = () => {
+//   inventarioId.value = null;
+// };
 
 //-----------------------------------------------------------
 
@@ -295,14 +307,12 @@ const filterInventario = (val, update) => {
 const agregarProducto = async () => {
   if (listaAsignacionInventario.value.length == 0) {
     let resp = await asignacionStore.addInventario(inventarioId.value);
-    limpiarRegistro();
   } else {
     let filtro = listaAsignacionInventario.value.find(
       (x) => x.inventario_Id == inventarioId.value.value
     );
     if (filtro == undefined) {
       let resp = await asignacionStore.addInventario(inventarioId.value);
-      limpiarRegistro();
     } else {
       $q.dialog({
         title: "Atención",
@@ -317,6 +327,39 @@ const agregarProducto = async () => {
 };
 
 //-----------------------------------------------------------
+
+const registrar = async () => {
+  let resp = null;
+  $q.loading.show();
+  console.log("area", empleadoId.value);
+  asignacion.value.area_Id = area_Id.value.value;
+  asignacion.value.empleado_Id = empleadoId.value.value;
+  asignacion.value.puesto_Id = empleadoId.value.puesto_Id;
+  asignacion.value.eliminado = false;
+  asignacion.value.fecha_Asignacion = date.value;
+  asignacion.value.detalle = listaAsignacionInventario.value;
+  console.log("list invnetario", listaAsignacionInventario.value);
+  if (isEditar == true) {
+  } else {
+    console.log("entro", asignacion);
+    resp = await asignacionStore.createAsignacion(asignacion.value);
+  }
+
+  if (resp.success) {
+    $q.notify({
+      type: "positive",
+      message: resp.data,
+    });
+    actualizarModal(false);
+  } else {
+    $q.notify({
+      type: "negative",
+      message: resp.data,
+    });
+    //loading.value = false;
+  }
+  $q.loading.hide();
+};
 </script>
 
 <style></style>

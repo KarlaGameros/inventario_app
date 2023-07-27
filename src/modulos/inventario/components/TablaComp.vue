@@ -305,13 +305,6 @@ const loadFotos = (id, valor) => {
 
 //-----------------------------------------------------------
 
-// const generarPDF = async (id) => {
-//   $q.loading.show();
-//   var { ruta_PDF } = await inventarioStore.generarPDF(id);
-//   window.open(ruta_PDF, "_blank");
-//   $q.loading.hide();
-// };
-
 const mostrarPDF = async (valor, id) => {
   await inventarioStore.generarPDF(id);
   inventarioStore.actualizarModalPDF(valor);

@@ -6,6 +6,8 @@ import { useAuthStore } from "../stores/auth_store";
 
 const ValePrestamo = async () => {
   try {
+    //--------------------------------------------------------------------------//
+
     let img = new Image();
 
     img.src = require("../assets/IEEN300.png");
@@ -84,7 +86,8 @@ const ValePrestamo = async () => {
     doc.text("Tepic", 155, 85);
     doc.text("Tepic", 155, 75);
 
-    //----------------------------------------------------------------------------------------//
+    //--------------------------------------------------------------------------//
+
     var rows = [
       [
         "EY-06-0108",
@@ -104,6 +107,8 @@ const ValePrestamo = async () => {
       ],
     ];
 
+    //--------------------------------------------------------------------------//
+
     var newRow = [
       {
         content: "RELACIÓN DE MOBILIARIO Y EQUIPO DE COMPUTO",
@@ -116,6 +121,8 @@ const ValePrestamo = async () => {
       },
     ];
 
+    //--------------------------------------------------------------------------//
+
     var header = [
       newRow,
       [
@@ -127,6 +134,8 @@ const ValePrestamo = async () => {
         { content: "Color" },
       ],
     ];
+
+    //--------------------------------------------------------------------------//
 
     jsPDF.autoTableSetDefaults({
       headStyles: { fillColor: [84, 37, 131], halign: "center" },
@@ -147,7 +156,10 @@ const ValePrestamo = async () => {
       bodyStyles: { fontSize: 10, textColor: [0, 0, 0] },
       tableLineColor: [0, 0, 0],
     });
+
+    //--------------------------------------------------------------------------//
     //Codigo numeracion de paginas
+
     var footer = function () {
       var pageCount = doc.internal.getNumberOfPages();
       for (var i = 0; i < pageCount; i++) {
@@ -163,40 +175,75 @@ const ValePrestamo = async () => {
         );
 
         if (i === pageCount - 1) {
-          //----------------------------------------------------------------------------------------//
+          if (doc.lastAutoTable && doc.lastAutoTable.finalY) {
+            var maxY = 230;
+            var currentY = doc.lastAutoTable.finalY;
 
-          doc.line(70, 180, 150, 180);
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(10);
-          doc.text("Empleado responsable", 90, 185);
+            if (currentY > maxY) {
+              doc.addPage();
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(10);
+              doc.text("_____________________________", 80, 230);
+              doc.text("Empleado responsable", 90, 235);
 
-          //----------------------------------------------------------------------------------------//
+              doc.rect(10, 240, 194, 17);
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(10);
 
-          doc.rect(10, 200, 194, 15);
-          doc.setFont("helvetica", "bold");
-          doc.setFontSize(10);
+              doc.text("NOTA:", 12, 245);
 
-          doc.text("NOTA:", 12, 205);
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(10);
 
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(10);
-
-          doc.text(
-            "Resguardo temporal para prestamo de Bien Mueble del Instituto Estatal Electoral de Nayarit, cualquier daño, \n " +
-              "perdida o extravio del bien es responsabilidad del usuario responsable. Este resguardo se cancela al momento \n " +
-              "de la entrega del bien del usuario responsable a la Unidad Técnica de Informática y Estadistica",
-            24,
-            205
-          );
+              doc.text(
+                "Resguardo temporal para prestamo de Bien Mueble del Instituto Estatal Electoral de Nayarit, cualquier daño, \n " +
+                  "perdida o extravio del bien es responsabilidad del usuario responsable. Este resguardo se cancela al momento \n " +
+                  "de la entrega del bien del usuario responsable a la Unidad Técnica de Informática y Estadistica",
+                24,
+                245
+              );
+            } else {
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(10);
+              doc.text(
+                "_____________________________",
+                80,
+                doc.lastAutoTable.finalY + 10
+              );
+              doc.text(
+                "Empleado responsable",
+                90,
+                doc.lastAutoTable.finalY + 15
+              );
+              doc.rect(10, doc.lastAutoTable.finalY + 20, 194, 17);
+              doc.setFont("helvetica", "bold");
+              doc.setFontSize(10);
+              doc.text("NOTA:", 12, doc.lastAutoTable.finalY + 25);
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(10);
+              doc.text(
+                "Resguardo temporal para prestamo de Bien Mueble del Instituto Estatal Electoral de Nayarit, cualquier daño, \n " +
+                  "perdida o extravio del bien es responsabilidad del usuario responsable. Este resguardo se cancela al momento \n " +
+                  "de la entrega del bien del usuario responsable a la Unidad Técnica de Informática y Estadistica",
+                24,
+                doc.lastAutoTable.finalY + 25
+              );
+            }
+          }
         }
       }
     };
+
+    //--------------------------------------------------------------------------//
+
     footer();
     doc.save("ValePrestamo" + ".pdf");
     return {
       success: true,
       msj: "Recibo generado con éxito",
     };
+
+    //--------------------------------------------------------------------------//
   } catch (error) {
     return {
       success: false,
