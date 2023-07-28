@@ -1079,7 +1079,7 @@ const {
   listaNumeroSerie_b,
   listaNumeroSerie_c,
 } = storeToRefs(inventarioStore);
-const { listCatalogo } = storeToRefs(catalogoStore);
+const { listCatalogo, catalogos } = storeToRefs(catalogoStore);
 const { listBodega } = storeToRefs(bodegaStore);
 const { listMarca } = storeToRefs(marcaStore);
 const { listModelo } = storeToRefs(modeloStore);
@@ -1163,7 +1163,7 @@ const setTabSelected = (tab, status) => {
 
 onBeforeMount(() => {
   bodegaStore.loadBodegasList();
-  //catalogoStore.loadCatalogoList();
+  catalogoStore.loadCatalogoListNormal();
   marcaStore.loadMarcaList();
 });
 

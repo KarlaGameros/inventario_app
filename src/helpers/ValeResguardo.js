@@ -7,16 +7,12 @@ import { useAsignacionStore } from "src/stores/asignacion_store";
 
 const Reporte = async () => {
   const asignacionStore = useAsignacionStore();
-  const { asignacion, listInventario } = storeToRefs(asignacionStore);
-  console.log("asi", asignacion);
-  console.log("lis vale", listInventario);
-  // for (let i of asignacion) {
-  //   console.log("i", i);
-  //   for (let detalle in i) {
-  //     console.log("detalle", detalle);
-  //   }
-  // }
+  const { asignacion } = storeToRefs(asignacionStore);
+
   try {
+    let id = asignacion.value.id;
+    let respDetalle = await api.get(`/DetalleAsignaciones/BySolicitud/${id}`);
+    let detalle = respDetalle.data.data;
     //--------------------------------------------------------------------------//
 
     let img = new Image();
@@ -110,7 +106,7 @@ const Reporte = async () => {
     var newRow = [
       {
         content: "RELACIÓN DE MOBILIARIO Y EQUIPO DE COMPUTO",
-        colSpan: 6,
+        colSpan: 7,
         styles: {
           halign: "center",
           fillColor: [84, 37, 131],
@@ -135,7 +131,6 @@ const Reporte = async () => {
     ];
 
     //--------------------------------------------------------------------------//
-
     jsPDF.autoTableSetDefaults({
       headStyles: { fillColor: [84, 37, 131], halign: "center" },
       styles: {
@@ -146,12 +141,20 @@ const Reporte = async () => {
         lineWidth: 0.3,
       },
     });
+
     autoTable(doc, {
       theme: "grid",
       startY: 90,
       margin: { left: 10, rigth: 10 },
       head: header,
-      body: [...rows],
+      body: detalle.map((item, index) => [
+        item.inventario.clave,
+        item.inventario.numero_Serie,
+        item.inventario.descripcion,
+        item.inventario.marca,
+        item.inventario.modelo,
+        item.inventario.color,
+      ]),
       bodyStyles: { fontSize: 10, textColor: [0, 0, 0] },
       tableLineColor: [0, 0, 0],
     });

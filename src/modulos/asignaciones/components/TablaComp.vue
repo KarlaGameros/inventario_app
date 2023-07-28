@@ -28,7 +28,6 @@
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'id'">
                 <q-btn
-                  v-if="modulo.leer"
                   flat
                   round
                   color="purple-ieen"
@@ -246,6 +245,8 @@ const cancelar = async (id) => {
 const visualizar = async (id) => {
   $q.loading.show();
   await asignacionStore.loadAsignacion(id);
+  await asignacionStore.detalleAsignacion(id);
+  asignacionStore.updateEditar(true);
   asignacionStore.actualizarModal(true);
   $q.loading.hide();
 };
@@ -254,7 +255,6 @@ const GenerarVale = async (id) => {
   let resp = null;
   $q.loading.show();
   resp = await asignacionStore.loadAsignacion(id);
-  console.log("resp", resp);
   if (resp.success === true) {
     ValeResguardo();
   }

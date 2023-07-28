@@ -47,6 +47,39 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
     },
 
     //-----------------------------------------------------------
+
+    async loadCatalogoListNormal() {
+      try {
+        this.listCatalogo = [];
+        let resp = await api.get("/Catalagos");
+        let { data } = resp.data;
+
+        let listCatalogo = data.map((catalogo) => {
+          return {
+            label: `${catalogo.clave} - ${catalogo.nombre}`,
+            value: catalogo.id,
+          };
+        });
+        // Encontrar el índice del elemento con label "consumible"
+        const indexConsumible = listCatalogo.findIndex(
+          (element) => element.label === "EY-99 - Consumibles"
+        );
+
+        if (indexConsumible !== -1) {
+          // Eliminar la lista "consumible" si se encontró en la lista
+          listCatalogo.splice(indexConsumible, 1);
+        }
+
+        this.listCatalogo = listCatalogo;
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
     async loadCatalago(id) {
       try {
         let resp = null;
@@ -73,9 +106,10 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
 
     async loadCatalogoList(especial) {
       try {
+        this.listCatalogo = [];
         let resp = await api.get("/Catalagos");
         let { data } = resp.data;
-        this.listCatalogo = [];
+
         let listCatalogo = data.map((catalogo) => {
           return {
             label: `${catalogo.clave} - ${catalogo.nombre}`,
@@ -100,7 +134,6 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
         }
 
         this.listCatalogosTodos = listCatalogo;
-        this.listCatalogo = listCatalogo;
       } catch (error) {
         return {
           success: false,

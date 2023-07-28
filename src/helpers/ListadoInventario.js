@@ -14,8 +14,6 @@ onBeforeMount(() => {
 
 const ReporteListadoInventario = async () => {
   try {
-    //let resp = await api.get("/Inventarios");
-    console.log("list", listInventario.value);
     let detalleData = listInventario.value;
     let img = new Image();
     img.src = require("../assets/IEEN300.png");

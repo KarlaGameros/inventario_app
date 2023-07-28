@@ -99,7 +99,7 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
-import { onBeforeMount, onMounted, ref, watch } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useInventarioStore } from "../../../stores/inventario_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
@@ -217,17 +217,17 @@ const columns = [
     sortable: true,
   },
   {
-    name: "numero_Serie",
-    align: "center",
-    label: "Número de serie",
-    field: "numero_Serie",
-    sortable: true,
-  },
-  {
     name: "modelo",
     align: "center",
     label: "Modelo",
     field: "modelo",
+    sortable: true,
+  },
+  {
+    name: "numero_Serie",
+    align: "center",
+    label: "Número de serie",
+    field: "numero_Serie",
     sortable: true,
   },
   {

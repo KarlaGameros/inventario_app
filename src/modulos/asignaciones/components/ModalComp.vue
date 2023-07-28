@@ -23,17 +23,12 @@
       <q-form @submit="registrar">
         <q-card-section>
           <div class="row q-col-gutter-xs">
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-              <q-input
-                v-if="isEditar"
-                readonly
-                v-model="asignacion.estatus"
-                label="Estatus"
-              >
+            <div v-if="isEditar" class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-input readonly v-model="asignacion.estatus" label="Estatus">
               </q-input>
             </div>
 
-            <div v-if="isEditar" class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
               <q-input
                 v-model="asignacion.fecha_Asignacion"
                 label="Fecha de asignación"
@@ -62,6 +57,7 @@
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
+                v-if="isEditar == false"
                 label="Área"
                 v-model="area_Id"
                 :options="areas"
@@ -72,7 +68,17 @@
               </q-select>
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <q-input
+                v-if="isEditar"
+                readonly
+                v-model="asignacion.area"
+                label="Área"
+              >
+              </q-input>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
+                v-if="isEditar == false"
                 label="Empleado"
                 v-model="empleadoId"
                 :options="listEmpleados"
@@ -84,6 +90,16 @@
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-input
+                v-if="isEditar"
+                readonly
+                v-model="asignacion.empleado"
+                label="Empleado"
+              >
+              </q-input>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <q-input
+                v-if="isEditar == false"
                 readonly
                 label="Puesto"
                 v-model="puesto_Id"
@@ -92,8 +108,19 @@
               </q-input>
             </div>
 
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <q-input
+                v-if="isEditar"
+                readonly
+                v-model="asignacion.puesto"
+                label="Puesto"
+              >
+              </q-input>
+            </div>
+
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
+                v-if="isEditar == false"
                 v-model="catalogoId"
                 :options="listCatalogo"
                 label="Catálogo perteneciente del inventario"
@@ -106,6 +133,7 @@
 
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
               <q-select
+                v-if="isEditar == false"
                 v-model="inventarioId"
                 :options="opcionesInventario"
                 use-input
@@ -121,6 +149,7 @@
             <div class="col-12 justify-end">
               <div class="text-right q-gutter-xs">
                 <q-btn
+                  v-if="!isEditar"
                   icon-right="add"
                   label="Agregar"
                   color="positive"
@@ -146,6 +175,7 @@
                 @click="actualizarModal(false)"
               />
               <q-btn
+                v-if="!isEditar"
                 :disable="habilitarButton"
                 label="Guardar"
                 type="submit"
@@ -180,8 +210,9 @@ const catalogoStore = useCatalogoProductoStore();
 const inventarioStore = useInventarioStore();
 
 const { estatus } = storeToRefs(estatusStore);
-const { inventarios, listInventario } = storeToRefs(inventarioStore);
-const { listCatalogo } = storeToRefs(catalogoStore);
+const { inventarios } = storeToRefs(inventarioStore);
+const { catalogos, listCatalogo } = storeToRefs(catalogoStore);
+const { listMarca } = storeToRefs();
 const {
   modal,
   asignacion,
@@ -198,7 +229,7 @@ const puesto_Id = ref(null);
 const inventarioId = ref(null);
 const empleadoId = ref(null);
 const catalogoId = ref(null);
-const opcionesInventario = ref([...listInventario.value]);
+const opcionesInventario = ref([...inventarios.value]);
 const habilitarButton = ref(null);
 //-----------------------------------------------------------
 //Get fecha actual
@@ -213,10 +244,10 @@ const date = ref(`${year}/${month}/${day}`);
 
 onBeforeMount(() => {
   inventarioStore.loadListInventario(0);
-  inventarioStore.loadInformacionInventarios();
+  //inventarioStore.loadInformacionInventarios();
   estatusStore.loadInformacionEstatus();
   asignacionStore.loadAreasList();
-  catalogoStore.loadCatalogoList(true);
+  catalogoStore.loadCatalogoListNormal();
   catalogoId.value = { value: 0, label: "Todos" };
 });
 
@@ -271,34 +302,34 @@ const cargarArea = async (val) => {
 
 const cargarPuestos = async (val) => {
   if (puesto_Id.value == null) {
-    let puestoFiltrado = puestos.id.find((x) => x.value == `${val.puesto_Id}`);
+    let puestoFiltrado = puestos.value.find(
+      (x) => x.value == `${val.puesto_Id}`
+    );
     puesto_Id.value = puestoFiltrado;
   }
-};
-
-const actualizarModal = (valor) => {
-  asignacionStore.actualizarModal(valor);
-  asignacionStore.initAsignacion();
-  catalogoId.value = { value: 0, label: "Todos" };
 };
 
 // const limpiarRegistro = () => {
 //   inventarioId.value = null;
 // };
-
+const actualizarModal = (valor) => {
+  asignacionStore.actualizarModal(valor);
+  asignacionStore.initAsignacion();
+  area_Id.value = null;
+  catalogoId.value = { value: 0, label: "Todos" };
+};
 //-----------------------------------------------------------
 
 const filterInventario = (val, update) => {
-  console.log("filterInventario");
   if (val === "") {
     update(() => {
-      opcionesInventario.value = listInventario.value;
+      opcionesInventario.value = inventarios.value;
     });
     return;
   }
   update(() => {
     const needle = val.toLowerCase();
-    opcionesInventario.value = listInventario.value.filter(
+    opcionesInventario.value = inventarios.value.filter(
       (v) => v.label.toLowerCase().indexOf(needle) > -1
     );
   });
@@ -331,17 +362,14 @@ const agregarProducto = async () => {
 const registrar = async () => {
   let resp = null;
   $q.loading.show();
-  console.log("area", empleadoId.value);
   asignacion.value.area_Id = area_Id.value.value;
   asignacion.value.empleado_Id = empleadoId.value.value;
   asignacion.value.puesto_Id = empleadoId.value.puesto_Id;
   asignacion.value.eliminado = false;
   asignacion.value.fecha_Asignacion = date.value;
   asignacion.value.detalle = listaAsignacionInventario.value;
-  console.log("list invnetario", listaAsignacionInventario.value);
   if (isEditar == true) {
   } else {
-    console.log("entro", asignacion);
     resp = await asignacionStore.createAsignacion(asignacion.value);
   }
 

@@ -41,6 +41,11 @@ const routes = [
         component: () =>
           import("../modulos/movimientos_inventarios/pages/IndexPage"),
       },
+      {
+        path: "/mi_inventario",
+        name: "mi_inventario",
+        component: () => import("../modulos/mi_inventario/pages/IndexPage"),
+      },
     ],
   },
 

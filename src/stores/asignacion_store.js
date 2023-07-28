@@ -18,6 +18,7 @@ export const useAsignacionStore = defineStore("asignacion", {
       area_Id: null,
       empleado_Id: null,
       puesto_Id: null,
+      puesto: null,
       eliminado: null,
       fecha_Asignacion: null,
       folio: null,
@@ -33,6 +34,10 @@ export const useAsignacionStore = defineStore("asignacion", {
       this.modalVale = valor;
     },
 
+    updateEditar(valor) {
+      this.isEditar = valor;
+    },
+
     initAsignacion() {
       this.asignacion.id = null;
       this.asignacion.area_Id = null;
@@ -41,6 +46,7 @@ export const useAsignacionStore = defineStore("asignacion", {
       this.asignacion.estatus_Id = null;
       this.asignacion.fecha_Asignacion = null;
       this.asignacion.fecha_Registro = null;
+      this.isEditar = false;
       this.listaAsignacionInventario = [];
     },
 
@@ -211,10 +217,8 @@ export const useAsignacionStore = defineStore("asignacion", {
     //-----------------------------------------------------------
 
     async cancelarAsignacion(id) {
-      console.log("id", id);
       try {
         const resp = await api.get(`/AsignacionesInventarios/Cancelar/${id}`);
-        console.log("resp", resp);
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success === true) {
@@ -260,26 +264,25 @@ export const useAsignacionStore = defineStore("asignacion", {
     //-----------------------------------------------------------
 
     async loadAsignacion(id) {
-      this.asignacion = [];
+      //this.asignacion = [];
       try {
         let resp = await api.get(`/AsignacionesInventarios/${id}`);
-        console.log("load", resp);
         if (resp.status == 200) {
           const { success, data } = resp.data;
-          if (success === true) {
+          if (success == true) {
             this.asignacion.id = data.id;
             this.asignacion.area_Id = data.area_Id;
+            this.asignacion.area = data.area;
+            this.asignacion.estatus = data.estatus;
             this.asignacion.empleado_Id = data.empleado_Id;
-            this.asignacion.puesto_Id = data.puesto_Id;
+            this.asignacion.empleado = data.empleado;
             this.asignacion.fecha_Asignacion = data.fecha_Asignacion;
             this.asignacion.fecha_Registro = data.fecha_Registro;
-            this.asignacion.empleado = data.empleado;
-            this.asignacion.area = data.area;
-            this.asignacion.puesto = data.puesto;
             this.asignacion.folio = data.folio;
-            //this.detalleAsignacion(data.id);
-            console.log("asignacion", this.asignacion);
-            return { success, data };
+            this.asignacion.puesto = data.puesto;
+            this.asignacion.puesto_Id = data.puesto_Id;
+
+            return { success };
           }
         }
       } catch (error) {
@@ -295,13 +298,14 @@ export const useAsignacionStore = defineStore("asignacion", {
     async detalleAsignacion(id) {
       try {
         let resp = await api.get(`/DetalleAsignaciones/BySolicitud/${id}`);
-        console.log("resp detalle", resp);
-        if (resp.status == 200) {
-          const { success, data } = resp.data;
-          if (success === true) {
-            this.asignacion.detalle = data;
-          }
-        }
+        let { data } = resp.data;
+        this.listaAsignacionInventario = data.map((asignacion) => {
+          return {
+            clave: asignacion.inventario.clave,
+            descripcion: asignacion.inventario.descripcion,
+            inventario_Id: asignacion.inventario.id,
+          };
+        });
       } catch (error) {}
     },
   },

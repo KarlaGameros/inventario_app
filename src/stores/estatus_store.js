@@ -82,7 +82,6 @@ export const useEstatusStore = defineStore("estatus", {
           };
         }
       } catch (error) {
-        console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
@@ -129,7 +128,6 @@ export const useEstatusStore = defineStore("estatus", {
           }
         }
       } catch (error) {
-        console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",

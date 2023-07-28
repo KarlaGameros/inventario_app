@@ -28,6 +28,18 @@
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'inventario_Id'">
                 <q-btn
+                  v-if="isEditar"
+                  disable
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="cancel"
+                  @click="eliminar(col.value)"
+                >
+                  <q-tooltip>Eliminar inventario</q-tooltip>
+                </q-btn>
+                <q-btn
+                  v-else
                   flat
                   round
                   color="purple-ieen"
@@ -57,7 +69,7 @@ import { ref } from "vue";
 
 const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
-const { listaAsignacionInventario } = storeToRefs(asignacionStore);
+const { listaAsignacionInventario, isEditar } = storeToRefs(asignacionStore);
 
 //-----------------------------------------------------------
 

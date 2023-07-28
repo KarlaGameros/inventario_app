@@ -9,6 +9,7 @@ export const useInventarioStore = defineStore("inventario", {
     isEditar: false,
     cantidad: null,
     listInventario: [],
+    listInventarioAsignacion: [],
     inventarios: [],
     listaNumeroSerie: [
       {
@@ -145,12 +146,12 @@ export const useInventarioStore = defineStore("inventario", {
             clave: inventario.clave,
             numero_Serie: inventario.numero_Serie,
             empleado: inventario.empleado,
+            importe: `$ ${inventario.importe}`,
           };
         });
         this.inventarios = listInventario;
         this.listInventario = listInventario;
       } catch (error) {
-        console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
@@ -215,7 +216,6 @@ export const useInventarioStore = defineStore("inventario", {
           };
         }
       } catch (error) {
-        console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
@@ -267,23 +267,30 @@ export const useInventarioStore = defineStore("inventario", {
         let resp = await api.get("/Inventarios");
         let { data } = resp.data;
         let ListaFiltro = [];
-
         if (id == 0) {
           ListaFiltro = data;
         } else {
           ListaFiltro = data.filter((x) => x.catalago_Id == id);
         }
-
         let listInvenatrio = ListaFiltro.map((inventario) => {
           return {
             value: inventario.id,
             label: `${inventario.clave} - ${inventario.nombre_Corto}`,
             descripcion: inventario.descripcion,
             clave: inventario.clave,
+            estatus: inventario.estatus,
           };
         });
-        this.listInventario = listInvenatrio;
-      } catch (error) {}
+        listInvenatrio = listInvenatrio.filter(
+          (item) => item.estatus != "Asignado"
+        );
+        this.inventarios = listInvenatrio;
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
     },
 
     //-----------------------------------------------------------
@@ -408,6 +415,7 @@ export const useInventarioStore = defineStore("inventario", {
     //-----------------------------------------------------------
 
     async inventarioByCatalogo1(id, estatus) {
+      console.log("entroooo");
       try {
         const resp = await api.get(`/Inventarios/ByCatalogo/${id}`);
         if (resp.status == 200) {

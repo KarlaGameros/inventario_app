@@ -33,7 +33,5 @@ export const useEmpleadosStore = defineStore("empleados", {
         };
       }
     },
-
-    //-----------------------------------------------------------
   },
 });

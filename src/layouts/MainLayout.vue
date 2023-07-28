@@ -125,7 +125,7 @@
             :to="{ name: 'asignaciones' }"
           >
             <q-item-section avatar>
-              <q-icon name="add_box" color="purple-ieen" />
+              <q-icon name="edit_square" color="purple-ieen" />
             </q-item-section>
             <q-item-section>
               <q-item-label class="text-purple-ieen label-title text-bold">
@@ -141,11 +141,27 @@
             :to="{ name: 'movimiento_inventario' }"
           >
             <q-item-section avatar>
-              <q-icon name="add_box" color="purple-ieen" />
+              <q-icon name="list_alt" color="purple-ieen" />
             </q-item-section>
             <q-item-section>
               <q-item-label class="text-purple-ieen label-title text-bold">
                 Movimiento Inventario
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            v-if="CatalogosConList.some((element) => element == 'SI-MI-INV')"
+            :content-inset-level="2"
+            :header-inset-level="2"
+            :to="{ name: 'mi_inventario' }"
+          >
+            <q-item-section avatar>
+              <q-icon name="inventory_2" color="purple-ieen" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-purple-ieen label-title text-bold">
+                Mi Inventario
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -252,7 +268,6 @@ export default defineComponent({
       await authStore.loadSistemas();
       await authStore.loadModulos();
       await authStore.loadPerfil();
-      console.log("modulos", modulos);
       modulos.value.forEach((element) => {
         switch (element.siglas_Modulo) {
           case "SI-CAT-BOD":
@@ -278,6 +293,9 @@ export default defineComponent({
             break;
           case "SI-CAT-MOD":
             CatalogosConList.value.push("SI-CAT-MOD");
+            break;
+          case "SI-MI-INV":
+            CatalogosConList.value.push("SI-MI-INV");
             break;
         }
       });
