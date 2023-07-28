@@ -245,6 +245,7 @@ const cancelar = async (id) => {
 };
 const visualizar = async (id) => {
   $q.loading.show();
+  await asignacionStore.loadAsignacion(id);
   asignacionStore.actualizarModal(true);
   $q.loading.hide();
 };
