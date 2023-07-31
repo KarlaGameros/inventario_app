@@ -11,7 +11,7 @@
           @click="toggleLeftDrawer"
         />
         <q-toolbar-title> Sistema inventario </q-toolbar-title>
-        <q-btn flat round dense icon="apps" />
+        <q-btn flat round dense icon="apps" @click="show"/>
       </q-toolbar>
     </q-header>
 

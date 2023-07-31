@@ -17,6 +17,9 @@ export const useMiInventarioStore = defineStore("mi_inventario", {
       color: null,
       empleado: null,
       importe: null,
+      area: null,
+      nombre_completo: null,
+      area: null
     },
   }),
   actions: {
@@ -58,7 +61,8 @@ export const useMiInventarioStore = defineStore("mi_inventario", {
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success == true) {
-            this.nombre_completo = data.nombre_Completo;
+            this.miInventario.nombre_completo = data.nombre_Completo;
+            this.miInventario.area = data.area
           }
         }
       } catch (error) {

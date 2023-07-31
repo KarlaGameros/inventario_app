@@ -6,9 +6,9 @@
     </q-card-section>
 
     <q-card-section class="q-pt-none">
-      <div class="text-h7">{{ nombre_completo }}</div>
-      <div class="text-h7"></div>
-      <div class="text-h7"></div>
+      <div class="text-h7">{{ miInventario.nombre_completo }}</div>
+      <br>
+      <div class="text-h7">{{ miInventario.area }}</div>
     </q-card-section>
   </q-card>
   <br />
@@ -54,7 +54,7 @@ const $q = useQuasar();
 const authStore = useAuthStore();
 const miInventarioStore = useMiInventarioStore();
 const { modulo } = storeToRefs(authStore);
-const { listMiInventario, nombre_completo } = storeToRefs(miInventarioStore);
+const { listMiInventario, miInventario } = storeToRefs(miInventarioStore);
 
 onBeforeMount(() => {
   miInventarioStore.loadMiInventario();

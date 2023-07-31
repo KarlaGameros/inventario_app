@@ -30,7 +30,7 @@
 
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
               <q-input
-                v-model="asignacion.fecha_Asignacion"
+                v-model="date"
                 label="Fecha de asignación"
               >
                 <template v-slot:append>
@@ -193,7 +193,6 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
-import { useAuthStore } from "src/stores/auth_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useEstatusStore } from "src/stores/estatus_store";
 import { useInventarioStore } from "src/stores/inventario_store";
@@ -231,24 +230,20 @@ const empleadoId = ref(null);
 const catalogoId = ref(null);
 const opcionesInventario = ref([...inventarios.value]);
 const habilitarButton = ref(null);
-//-----------------------------------------------------------
-//Get fecha actual
-
 const dateActual = new Date();
-const year = dateActual.getFullYear();
-const month = String(dateActual.getMonth() + 1).padStart(2, "0");
-const day = String(dateActual.getDate()).padStart(2, "0");
-const date = ref(`${year}/${month}/${day}`);
-
+  const year = dateActual.getFullYear();
+  const month = String(dateActual.getMonth() + 1).padStart(2, "0");
+  const day = String(dateActual.getDate()).padStart(2, "0");
+  const date = ref(`${year}/${month}/${day}`);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
   inventarioStore.loadListInventario(0);
-  //inventarioStore.loadInformacionInventarios();
   estatusStore.loadInformacionEstatus();
   asignacionStore.loadAreasList();
   catalogoStore.loadCatalogoListNormal();
   catalogoId.value = { value: 0, label: "Todos" };
+  getDateActual()
 });
 
 //-----------------------------------------------------------
@@ -258,11 +253,14 @@ watch(asignacion.value, (val) => {
     cargarEstatus(val);
     cargarArea(val);
     cargarPuestos(val);
+    cargarFecha(val)
   }
 });
 
 watch(catalogoId, (val) => {
-  inventarioStore.loadListInventario(catalogoId.value.value);
+  if (val != null) {
+    inventarioStore.loadListInventario(catalogoId.value.value);
+  }
 });
 
 watch(area_Id, (val) => {
@@ -272,7 +270,9 @@ watch(area_Id, (val) => {
 });
 
 watch(empleadoId, (val) => {
-  puesto_Id.value = empleadoId.value.puesto;
+  if (val != null) {
+    puesto_Id.value = empleadoId.value.puesto;
+  }
 });
 
 watchEffect(() => {
@@ -282,6 +282,7 @@ watchEffect(() => {
     habilitarButton.value = true;
   }
 });
+
 //-----------------------------------------------------------
 
 const cargarEstatus = async (val) => {
@@ -309,14 +310,35 @@ const cargarPuestos = async (val) => {
   }
 };
 
-// const limpiarRegistro = () => {
-//   inventarioId.value = null;
-// };
+const cargarFecha = async (val) => {
+  const fechaOriginal = asignacion.value.fecha_Asignacion;
+  const dateActual = fechaOriginal.split(/[/ ]/);
+  const day = dateActual[0];
+  const month = dateActual[1];
+  const year = dateActual[2];
+  date.value = `${year}/${month}/${day}`;
+}
+
+const getDateActual = async () => {
+  const dateActual = new Date();
+  const year = dateActual.getFullYear();
+  const month = String(dateActual.getMonth() + 1).padStart(2, "0");
+  const day = String(dateActual.getDate()).padStart(2, "0");
+  date.value = ref(`${year}/${month}/${day}`);
+}
+
 const actualizarModal = (valor) => {
+  area_Id.value = null;
+  empleadoId.value = null;
+  puesto_Id.value = null;
+  catalogoId.value = null;
+  inventarioId.value = null;
+  opcionesInventario.value = null;
+  getDateActual()
+  catalogoId.value = { value: 0, label: "Todos" };
   asignacionStore.actualizarModal(valor);
   asignacionStore.initAsignacion();
-  area_Id.value = null;
-  catalogoId.value = { value: 0, label: "Todos" };
+
 };
 //-----------------------------------------------------------
 
@@ -378,14 +400,15 @@ const registrar = async () => {
       type: "positive",
       message: resp.data,
     });
-    actualizarModal(false);
+    //actualizarModal(false);
+    asignacionStore.loadInformacionAsignaciones()
   } else {
     $q.notify({
       type: "negative",
       message: resp.data,
     });
-    //loading.value = false;
   }
+
   $q.loading.hide();
 };
 </script>
