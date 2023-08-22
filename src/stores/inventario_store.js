@@ -128,7 +128,6 @@ export const useInventarioStore = defineStore("inventario", {
       try {
         let resp = await api.get("/Inventarios");
         let { data } = resp.data;
-        console.log('data', data)
         let listInventario = data.map((inventario) => {
           return {
             id: inventario.id,
@@ -416,7 +415,6 @@ export const useInventarioStore = defineStore("inventario", {
     //-----------------------------------------------------------
 
     async inventarioByCatalogo1(id, estatus) {
-      console.log("entroooo");
       try {
         const resp = await api.get(`/Inventarios/ByCatalogo/${id}`);
         if (resp.status == 200) {

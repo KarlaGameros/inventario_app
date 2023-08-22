@@ -72,6 +72,7 @@ const inventarioStore = useInventarioStore();
 
 const { modalFotos, inventario } = storeToRefs(inventarioStore);
 const slide = ref(1);
+
 //-----------------------------------------------------------
 
 const actualizarModalFotos = (valor) => {

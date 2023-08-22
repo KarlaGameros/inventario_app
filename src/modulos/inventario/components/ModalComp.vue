@@ -1242,8 +1242,6 @@ const actualizarModal = (valor) => {
   inventarioStore.initInventario();
 };
 
-//-----------------------------------------------------------
-
 const onSubmit = async () => {
   let inventarioFormData = new FormData();
   let inventarioPaqueteFormData = new FormData();

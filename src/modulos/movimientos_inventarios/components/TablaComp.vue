@@ -61,11 +61,13 @@ import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
+
 //-----------------------------------------------------------
 
 const $q = useQuasar();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
+
 //-----------------------------------------------------------
 
 const columns = [

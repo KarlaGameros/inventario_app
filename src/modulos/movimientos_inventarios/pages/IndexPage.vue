@@ -42,15 +42,21 @@ import ModalComp from "../components/ModalComp.vue";
 import { useMovimientoInventario } from "src/stores/movimiento_inventario";
 import { onBeforeMount } from "vue";
 
+//-----------------------------------------------------------
+
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const $q = useQuasar();
 const movimientoInventarioStore = useMovimientoInventario();
 const siglas = "SI-MOV-INV";
 
+//-----------------------------------------------------------
+
 onBeforeMount(() => {
   leerPermisos();
 });
+
+//-----------------------------------------------------------
 
 const leerPermisos = async () => {
   $q.loading.show();
