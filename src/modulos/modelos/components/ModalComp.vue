@@ -74,7 +74,6 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
-import { onMounted, ref } from "vue";
 import { useModeloStore } from "../../../stores/modelo_store";
 import TablaModelo from "./TablaComp.vue";
 
@@ -90,8 +89,6 @@ const actualizarModal = (valor) => {
   modeloStore.actualizarModal(valor);
   modeloStore.initModelo();
 };
-
-//-----------------------------------------------------------
 
 const onSubmit = async () => {
   let resp = null;

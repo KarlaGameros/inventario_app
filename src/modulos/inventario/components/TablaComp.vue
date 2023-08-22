@@ -106,6 +106,7 @@ import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useEstatusStore } from "src/stores/estatus_store";
 import ModalFotos from "../components/ModalViewFotos.vue";
 import ModalPDF from "../components/ModalPDF.vue";
+
 //-----------------------------------------------------------
 
 const $q = useQuasar();
@@ -119,6 +120,7 @@ const { listCatalogosTodos } = storeToRefs(catalogoStore);
 const { estatus } = storeToRefs(estatusStore);
 const catalogoId = ref(null);
 const estatusId = ref(null);
+
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -130,6 +132,8 @@ onBeforeMount(() => {
   estatusId.value = { value: 0, label: "Todos" };
   catalogoId.value = { value: 0, label: "Todos" };
 });
+
+//-----------------------------------------------------------
 
 watch(catalogoId, (val) => {
   if (catalogoId.value.value != 0 && estatusId.value.value != 0) {
@@ -159,10 +163,6 @@ watch(estatusId, (val) => {
     cargarInventarios();
   }
 });
-
-const cargarInventarios = () => {
-  inventarioStore.loadInformacionInventarios();
-};
 
 //-----------------------------------------------------------
 
@@ -274,8 +274,6 @@ const columns = [
   },
 ];
 
-//-----------------------------------------------------------
-
 const pagination = ref({
   //********** */
   page: 1,
@@ -296,21 +294,19 @@ const editar = async (id) => {
   $q.loading.hide();
 };
 
-//-----------------------------------------------------------
+const cargarInventarios = () => {
+  inventarioStore.loadInformacionInventarios();
+};
 
 const loadFotos = (id, valor) => {
   inventarioStore.loadInventario(id);
   inventarioStore.actualizarModalFotos(valor);
 };
 
-//-----------------------------------------------------------
-
 const mostrarPDF = async (valor, id) => {
   await inventarioStore.generarPDF(id);
   inventarioStore.actualizarModalPDF(valor);
 };
-
-//-----------------------------------------------------------
 
 const eliminar = async (id) => {
   $q.dialog({

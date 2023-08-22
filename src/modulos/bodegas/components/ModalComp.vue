@@ -90,18 +90,20 @@ onBeforeMount(() => {
 
 //-----------------------------------------------------------
 
+watch(bodega.value, (val) => {
+  if (val.id != null) {
+    cargarArea(val);
+  }
+});
+
+//-----------------------------------------------------------
+
 const actualizarModal = (valor) => {
   bodegaStore.actualizarModal(valor);
   bodegaStore.updateEditar(valor);
   bodegaStore.initBodega();
   area_Id.value = null;
 };
-
-watch(bodega.value, (val) => {
-  if (val.id != null) {
-    cargarArea(val);
-  }
-});
 
 const cargarArea = async (val) => {
   if (area_Id.value == null) {

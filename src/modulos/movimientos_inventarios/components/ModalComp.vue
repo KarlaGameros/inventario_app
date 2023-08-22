@@ -162,6 +162,7 @@ import { useInventarioStore } from "src/stores/inventario_store";
 import { onBeforeMount, ref, watch } from "vue";
 import { useMovimientoInventario } from "../../../stores/movimiento_inventario";
 import TablaMovimientoInventario from "../components/TablaMovimientoInventario.vue";
+
 //-----------------------------------------------------------
 
 const $q = useQuasar();
@@ -180,9 +181,9 @@ const catalogoId = ref(null);
 const bodegaId = ref(null);
 const inventarioId = ref(null);
 const opcionesInventario = ref([...listInventario.value]);
+
 //-----------------------------------------------------------
 //Get fecha actual
-
 const dateActual = new Date();
 const year = dateActual.getFullYear();
 const month = String(dateActual.getMonth() + 1).padStart(2, "0");
@@ -199,9 +200,12 @@ onBeforeMount(() => {
   catalogoId.value = { value: 0, label: "Todos" };
 });
 
+//-----------------------------------------------------------
+
 watch(catalogoId, (val) => {
   inventarioStore.loadListInventario(catalogoId.value.value);
 });
+
 //-----------------------------------------------------------
 
 const actualizarModal = (valor) => {
@@ -213,7 +217,7 @@ const actualizarModal = (valor) => {
 const limpiarRegistro = () => {
   inventarioId.value = null;
 };
-//-----------------------------------------------------------
+
 const filterInventario = (val, update) => {
   if (val === "") {
     update(() => {
@@ -229,7 +233,6 @@ const filterInventario = (val, update) => {
   });
 };
 
-//-----------------------------------------------------------
 const agregarProducto = async () => {
   if (listaMovimientoInventario.value.length == 0) {
     await movimientoInventarioStore.addMovimiento(inventarioId.value);

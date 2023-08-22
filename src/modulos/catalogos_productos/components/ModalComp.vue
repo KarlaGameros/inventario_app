@@ -76,17 +76,18 @@
   </q-dialog>
 </template>
 <script setup>
-import { onBeforeMount, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
-import { useAuthStore } from "../../../stores/auth_store";
 import { useCatalogoProductoStore } from "../../../stores/catalogos_producto_store";
+
+//-----------------------------------------------------------
 
 const $q = useQuasar();
 const catalagoStore = useCatalogoProductoStore();
-const authStore = useAuthStore();
-
 const { catalogo, modal, isEditar } = storeToRefs(catalagoStore);
+
+//-----------------------------------------------------------
+
 const actualizarModal = (valor) => {
   catalagoStore.actualizarModal(valor);
   catalagoStore.updateEditar(valor);

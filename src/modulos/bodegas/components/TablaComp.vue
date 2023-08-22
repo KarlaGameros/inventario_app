@@ -63,15 +63,21 @@ import { onBeforeMount, ref } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useBodegaStore } from "../../../stores/bodega_store";
 
+//-----------------------------------------------------------
+
 const $q = useQuasar();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const bodegaStore = useBodegaStore();
 const { bodegas } = storeToRefs(bodegaStore);
 
+//-----------------------------------------------------------
+
 onBeforeMount(() => {
   bodegaStore.loadInformacionBodega();
 });
+
+//-----------------------------------------------------------
 
 const columns = [
   {
@@ -106,6 +112,8 @@ const pagination = ref({
 });
 
 const filter = ref("");
+
+//-----------------------------------------------------------
 
 const editar = async (id) => {
   $q.loading.show();

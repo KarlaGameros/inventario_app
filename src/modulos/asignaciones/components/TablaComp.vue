@@ -84,7 +84,6 @@ import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useAsignacionStore } from "src/stores/asignacion_store";
-import { useInventarioStore } from "../../../stores/inventario_store";
 import { onBeforeMount, ref } from "vue";
 import ValeResguardo from "../../../helpers/ValeResguardo";
 
@@ -92,10 +91,8 @@ import ValeResguardo from "../../../helpers/ValeResguardo";
 
 const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
-const inventarioStore = useInventarioStore();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
-const { inventarios } = storeToRefs(inventarioStore);
 const { asignaciones } = storeToRefs(asignacionStore);
 
 //-----------------------------------------------------------
@@ -204,8 +201,6 @@ const afectar = async (id) => {
     }
   });
 };
-
-//-----------------------------------------------------------
 
 const cancelar = async (id) => {
   $q.dialog({

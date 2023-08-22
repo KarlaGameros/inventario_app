@@ -47,9 +47,13 @@ const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const siglas = "SI-CAT-EST";
 
+//-----------------------------------------------------------
+
 onBeforeMount(() => {
   leerPermisos();
 });
+
+//-----------------------------------------------------------
 
 const leerPermisos = async () => {
   $q.loading.show();
@@ -57,15 +61,11 @@ const leerPermisos = async () => {
   $q.loading.hide();
 };
 
-//-----------------------------------------------------------
-
 const actualizarModal = (valor) => {
   $q.loading.show();
   estatusStore.actualizarModal(valor);
   $q.loading.hide();
 };
-
-//-----------------------------------------------------------
 </script>
 
 <style></style>

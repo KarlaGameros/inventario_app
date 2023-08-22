@@ -37,15 +37,21 @@ import { useAuthStore } from "../../../stores/auth_store";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 
+//-----------------------------------------------------------
+
 const $q = useQuasar();
 const modeloStore = useModeloStore();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const siglas = "SI-CAT-EST";
 
+//-----------------------------------------------------------
+
 onBeforeMount(() => {
   leerPermisos();
 });
+
+//-----------------------------------------------------------
 
 const leerPermisos = async () => {
   $q.loading.show();

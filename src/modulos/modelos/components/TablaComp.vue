@@ -111,8 +111,6 @@ const editar = async (id) => {
   $q.loading.hide();
 };
 
-//-----------------------------------------------------------
-
 const eliminar = async (id) => {
   $q.dialog({
     title: "Eliminar marca",

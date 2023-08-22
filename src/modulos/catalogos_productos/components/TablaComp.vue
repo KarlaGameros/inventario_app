@@ -63,15 +63,21 @@ import { onBeforeMount, ref } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useCatalogoProductoStore } from "../../../stores/catalogos_producto_store";
 
+//-----------------------------------------------------------
+
 const $q = useQuasar();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const catalagoStore = useCatalogoProductoStore();
 const { catalogos } = storeToRefs(catalagoStore);
 
+//-----------------------------------------------------------
+
 onBeforeMount(() => {
   catalagoStore.loadInformacionCatalago();
 });
+
+//-----------------------------------------------------------
 
 const columns = [
   {
@@ -113,6 +119,8 @@ const pagination = ref({
 });
 
 const filter = ref("");
+
+//-----------------------------------------------------------
 
 const editar = async (id) => {
   $q.loading.show();

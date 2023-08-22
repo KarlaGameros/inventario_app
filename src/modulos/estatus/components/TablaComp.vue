@@ -71,6 +71,7 @@ const estatusStore = useEstatusStore();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const { estatus } = storeToRefs(estatusStore);
+
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -115,8 +116,6 @@ const editar = async (id) => {
   estatusStore.updateEditar(true);
   $q.loading.hide();
 };
-
-//-----------------------------------------------------------
 
 const eliminar = async (id) => {
   $q.dialog({

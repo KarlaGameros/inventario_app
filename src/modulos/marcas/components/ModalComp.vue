@@ -71,13 +71,14 @@
 import { useQuasar } from "quasar";
 import { storeToRefs } from "pinia";
 import { useMarcaStore } from "src/stores/marcas_store";
-import { useAuthStore } from "../../../stores/auth_store";
+
+//-----------------------------------------------------------
 
 const $q = useQuasar();
 const marcaStore = useMarcaStore();
-const authStore = useAuthStore();
-
 const { marca, modal, isEditar } = storeToRefs(marcaStore);
+
+//-----------------------------------------------------------
 
 const actualizarModal = (valor) => {
   marcaStore.actualizarModal(valor);

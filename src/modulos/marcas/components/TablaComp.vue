@@ -77,6 +77,7 @@ import { useMarcaStore } from "../../../stores/marcas_store";
 import { useModeloStore } from "../../../stores/modelo_store";
 import ModalModeloComp from "../../modelos/components/ModalComp.vue";
 import { useAuthStore } from "../../../stores/auth_store";
+
 //-----------------------------------------------------------
 
 const $q = useQuasar();
@@ -138,8 +139,6 @@ const editar = async (id) => {
   $q.loading.hide();
 };
 
-//-----------------------------------------------------------
-
 const eliminar = async (id) => {
   $q.dialog({
     title: "Eliminar marca",
@@ -175,8 +174,6 @@ const eliminar = async (id) => {
     }
   });
 };
-
-//-----------------------------------------------------------
 
 const addModelo = (valor, props) => {
   $q.loading.show();

@@ -29,10 +29,7 @@
             </div>
 
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-              <q-input
-                v-model="date"
-                label="Fecha de asignación"
-              >
+              <q-input v-model="date" label="Fecha de asignación">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy
@@ -231,10 +228,11 @@ const catalogoId = ref(null);
 const opcionesInventario = ref([...inventarios.value]);
 const habilitarButton = ref(null);
 const dateActual = new Date();
-  const year = dateActual.getFullYear();
-  const month = String(dateActual.getMonth() + 1).padStart(2, "0");
-  const day = String(dateActual.getDate()).padStart(2, "0");
-  const date = ref(`${year}/${month}/${day}`);
+const year = dateActual.getFullYear();
+const month = String(dateActual.getMonth() + 1).padStart(2, "0");
+const day = String(dateActual.getDate()).padStart(2, "0");
+const date = ref(`${year}/${month}/${day}`);
+
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -243,7 +241,7 @@ onBeforeMount(() => {
   asignacionStore.loadAreasList();
   catalogoStore.loadCatalogoListNormal();
   catalogoId.value = { value: 0, label: "Todos" };
-  getDateActual()
+  getDateActual();
 });
 
 //-----------------------------------------------------------
@@ -253,7 +251,7 @@ watch(asignacion.value, (val) => {
     cargarEstatus(val);
     cargarArea(val);
     cargarPuestos(val);
-    cargarFecha(val)
+    cargarFecha(val);
   }
 });
 
@@ -317,7 +315,7 @@ const cargarFecha = async (val) => {
   const month = dateActual[1];
   const year = dateActual[2];
   date.value = `${year}/${month}/${day}`;
-}
+};
 
 const getDateActual = async () => {
   const dateActual = new Date();
@@ -325,7 +323,7 @@ const getDateActual = async () => {
   const month = String(dateActual.getMonth() + 1).padStart(2, "0");
   const day = String(dateActual.getDate()).padStart(2, "0");
   date.value = ref(`${year}/${month}/${day}`);
-}
+};
 
 const actualizarModal = (valor) => {
   area_Id.value = null;
@@ -334,11 +332,10 @@ const actualizarModal = (valor) => {
   catalogoId.value = null;
   inventarioId.value = null;
   opcionesInventario.value = null;
-  getDateActual()
+  getDateActual();
   catalogoId.value = { value: 0, label: "Todos" };
   asignacionStore.actualizarModal(valor);
   asignacionStore.initAsignacion();
-
 };
 //-----------------------------------------------------------
 
@@ -359,13 +356,13 @@ const filterInventario = (val, update) => {
 
 const agregarProducto = async () => {
   if (listaAsignacionInventario.value.length == 0) {
-    let resp = await asignacionStore.addInventario(inventarioId.value);
+    await asignacionStore.addInventario(inventarioId.value);
   } else {
     let filtro = listaAsignacionInventario.value.find(
       (x) => x.inventario_Id == inventarioId.value.value
     );
     if (filtro == undefined) {
-      let resp = await asignacionStore.addInventario(inventarioId.value);
+      await asignacionStore.addInventario(inventarioId.value);
     } else {
       $q.dialog({
         title: "Atención",
@@ -401,7 +398,7 @@ const registrar = async () => {
       message: resp.data,
     });
     //actualizarModal(false);
-    asignacionStore.loadInformacionAsignaciones()
+    asignacionStore.loadInformacionAsignaciones();
   } else {
     $q.notify({
       type: "negative",

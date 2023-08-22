@@ -38,8 +38,6 @@ import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 import { useAsignacionStore } from "src/stores/asignacion_store";
 import { onBeforeMount } from "vue";
-import ValeResguardo from "../../../helpers/ValeResguardo";
-import ValePrestamo from "../../../helpers/ValePrestamo";
 
 //-----------------------------------------------------------
 
@@ -68,14 +66,6 @@ const actualizarModal = (valor) => {
   asignacionStore.actualizarModal(valor);
   asignacionStore.initAsignacion();
   $q.loading.hide();
-};
-
-const generarVale = async () => {
-  ValeResguardo();
-};
-
-const generarValePrestamo = async () => {
-  ValePrestamo();
 };
 
 //-----------------------------------------------------------

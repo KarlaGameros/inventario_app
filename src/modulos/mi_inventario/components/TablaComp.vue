@@ -7,7 +7,7 @@
 
     <q-card-section class="q-pt-none">
       <div class="text-h7">{{ miInventario.nombre_completo }}</div>
-      <br>
+      <br />
       <div class="text-h7">{{ miInventario.area }}</div>
     </q-card-section>
   </q-card>
@@ -56,10 +56,13 @@ const miInventarioStore = useMiInventarioStore();
 const { modulo } = storeToRefs(authStore);
 const { listMiInventario, miInventario } = storeToRefs(miInventarioStore);
 
+//-----------------------------------------------------------
+
 onBeforeMount(() => {
   miInventarioStore.loadMiInventario();
   miInventarioStore.loadUser();
 });
+
 //-----------------------------------------------------------
 
 const columns = [

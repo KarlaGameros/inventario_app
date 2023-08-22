@@ -46,6 +46,7 @@ const inventarioStore = useInventarioStore();
 const { modalPDF, inventario } = storeToRefs(inventarioStore);
 const pdfUrl =
   "https://www.turnerlibros.com/wp-content/uploads/2021/02/ejemplo.pdf";
+
 //-----------------------------------------------------------
 
 const mostrarPDF = (valor) => {

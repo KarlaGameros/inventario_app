@@ -46,11 +46,14 @@ const marcaStore = useMarcaStore();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const siglas = "SI-CAT-MAR";
+
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
   leerPermisos();
 });
+
+//-----------------------------------------------------------
 
 const leerPermisos = async () => {
   $q.loading.show();

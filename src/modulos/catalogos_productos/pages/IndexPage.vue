@@ -41,15 +41,21 @@ import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 
+//-----------------------------------------------------------
+
 const $q = useQuasar();
 const authStore = useAuthStore();
 const catalagoStore = useCatalogoProductoStore();
 const { modulo } = storeToRefs(authStore);
 const siglas = "SI-CAT-CAT";
 
+//-----------------------------------------------------------
+
 onBeforeMount(() => {
   leerPermisos();
 });
+
+//-----------------------------------------------------------
 
 const leerPermisos = async () => {
   $q.loading.show();

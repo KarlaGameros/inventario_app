@@ -61,6 +61,8 @@ import { useQuasar } from "quasar";
 import { storeToRefs } from "pinia";
 import { useEstatusStore } from "src/stores/estatus_store";
 
+//-----------------------------------------------------------
+
 const $q = useQuasar();
 const estatusStore = useEstatusStore();
 const { estatu, modal, isEditar } = storeToRefs(estatusStore);
@@ -72,8 +74,6 @@ const actualizarModal = (valor) => {
   estatusStore.updateEditar(valor);
   estatusStore.initEstatus();
 };
-
-//-----------------------------------------------------------
 
 const onSubmit = async () => {
   let resp = null;
