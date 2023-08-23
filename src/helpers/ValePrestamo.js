@@ -1,8 +1,5 @@
-import { api } from "src/boot/axios";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import { storeToRefs } from "pinia";
-import { useAuthStore } from "../stores/auth_store";
 
 const ValePrestamo = async () => {
   try {
