@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="listInventario"
+        :rows="listFiltroInventario"
         :columns="columns"
         :filter="filter"
         :pagination="pagination"
@@ -99,7 +99,7 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
-import { onBeforeMount, ref, watch } from "vue";
+import { onBeforeMount, ref, watchEffect } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useInventarioStore } from "../../../stores/inventario_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
@@ -115,7 +115,8 @@ const { modulo } = storeToRefs(authStore);
 const inventarioStore = useInventarioStore();
 const catalogoStore = useCatalogoProductoStore();
 const estatusStore = useEstatusStore();
-const { listInventario } = storeToRefs(inventarioStore);
+const { listFiltroInventario, listInventario } = storeToRefs(inventarioStore);
+const listInventarioFiltro = ref(listFiltroInventario.value);
 const { listCatalogosTodos } = storeToRefs(catalogoStore);
 const { estatus } = storeToRefs(estatusStore);
 const catalogoId = ref(null);
@@ -134,34 +135,32 @@ onBeforeMount(() => {
 });
 
 //-----------------------------------------------------------
-
-watch(catalogoId, (val) => {
-  if (catalogoId.value.value != 0 && estatusId.value.value != 0) {
-    inventarioStore.inventarioByCatalogo1(
-      catalogoId.value.value,
-      estatusId.value.label
-    );
-  } else if (catalogoId.value.value != 0 && estatusId.value.value == 0) {
-    inventarioStore.inventarioByCatalogo1(
-      catalogoId.value.value,
-      estatusId.value.label
-    );
-  } else {
-    cargarInventarios();
-  }
-});
-
-watch(estatusId, (val) => {
-  if (estatusId.value.value != 0 && catalogoId.value.value != 0) {
-    inventarioStore.inventarioByCatalogo1(
-      catalogoId.value.value,
-      estatusId.value.label
-    );
-  } else if (estatusId.value.value != 0 && catalogoId.value.value == 0) {
-    inventarioStore.inventarioByCatalogo(estatusId.value.label);
-  } else {
-    cargarInventarios();
-  }
+//FILTRAR
+const filtrar = (listInventario, filtro) => {
+  listFiltroInventario.value = listInventario.filter((item) => {
+    let cumple = true;
+    if (filtro.catalogo !== undefined) {
+      if (filtro.catalogo == 0) {
+        cumple = cumple && item.catalogo_id === item.catalogo_id;
+      } else {
+        cumple = cumple && item.catalogo_id === filtro.catalogo;
+      }
+    }
+    if (filtro.estatus !== undefined) {
+      if (filtro.estatus == "Todos") {
+        cumple = cumple && item.estatus === item.estatus;
+      } else {
+        cumple = cumple && item.estatus === filtro.estatus;
+      }
+    }
+    return cumple;
+  });
+};
+watchEffect(() => {
+  const filtro = {};
+  if (catalogoId.value != null) filtro.catalogo = catalogoId.value.value;
+  if (estatusId.value != null) filtro.estatus = estatusId.value.label;
+  filtrar(listInventario.value, filtro);
 });
 
 //-----------------------------------------------------------

@@ -9,6 +9,7 @@ export const useInventarioStore = defineStore("inventario", {
     isEditar: false,
     cantidad: null,
     listInventario: [],
+    listFiltroInventario: [],
     listInventarioAsignacion: [],
     inventarios: [],
     listaNumeroSerie: [
@@ -131,7 +132,7 @@ export const useInventarioStore = defineStore("inventario", {
         let listInventario = data.map((inventario) => {
           return {
             id: inventario.id,
-            catalogo_id: inventario.catalogo_id,
+            catalogo_id: inventario.catalago_Id,
             catalogo: inventario.catalago,
             bodega_id: inventario.bodega_id,
             bodega: inventario.bodega,

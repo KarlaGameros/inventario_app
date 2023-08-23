@@ -87,7 +87,7 @@
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
                 v-model="catalogoId"
-                :options="listCatalogo"
+                :options="listCatalogosTodos"
                 label="Catálogo perteneciente del inventario"
                 hint="Selecciona una catalogo"
                 :lazy-rules="true"
@@ -174,13 +174,13 @@ const inventarioStore = useInventarioStore();
 const { modal, listaMovimientoInventario } = storeToRefs(
   movimientoInventarioStore
 );
-const { listCatalogo } = storeToRefs(catalogoStore);
+const { listCatalogosTodos } = storeToRefs(catalogoStore);
 const { listBodega } = storeToRefs(bodegaStore);
-const { listInventario } = storeToRefs(inventarioStore);
+const { inventarios } = storeToRefs(inventarioStore);
 const catalogoId = ref(null);
 const bodegaId = ref(null);
 const inventarioId = ref(null);
-const opcionesInventario = ref([...listInventario.value]);
+const opcionesInventario = ref([...inventarios.value]);
 
 //-----------------------------------------------------------
 //Get fecha actual
@@ -195,7 +195,7 @@ const date = ref(`${year}/${month}/${day}`);
 onBeforeMount(() => {
   inventarioStore.loadListInventario(0);
   inventarioStore.loadInformacionInventarios();
-  catalogoStore.loadCatalogoList(true);
+  catalogoStore.loadCatalogoList();
   bodegaStore.loadBodegasList();
   catalogoId.value = { value: 0, label: "Todos" };
 });
@@ -203,7 +203,9 @@ onBeforeMount(() => {
 //-----------------------------------------------------------
 
 watch(catalogoId, (val) => {
-  inventarioStore.loadListInventario(catalogoId.value.value);
+  if (val != null) {
+    inventarioStore.loadListInventario(catalogoId.value.value);
+  }
 });
 
 //-----------------------------------------------------------

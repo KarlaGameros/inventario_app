@@ -26,21 +26,14 @@
           <!----------------------------------------------------------------------------->
 
           <div
-            v-if="radio == 'paquete'"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-          >
-            <q-radio
-              v-model="radio"
-              size="md"
-              val="individual"
-              label="Individual"
-            />
-            <q-radio v-model="radio" size="md" val="agranel" label="Agranel" />
-            <q-radio v-model="radio" size="md" val="paquete" label="Paquete" />
-          </div>
-          <div
-            v-if="radio != 'paquete' && isEditar == false"
-            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+            v-if="isEditar == false"
+            :class="
+              radio == 'paquete'
+                ? 'col-lg-6 col-md-6 col-sm-12 col-xs-12'
+                : radio != 'paquete'
+                ? 'col-lg-12 col-md-12 col-sm-12 col-xs-12'
+                : 'col-12'
+            "
           >
             <q-radio
               v-model="radio"
@@ -1050,7 +1043,6 @@
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { computed, onBeforeMount, ref, watch } from "vue";
-import { useAuthStore } from "../../../stores/auth_store";
 import { useInventarioStore } from "../../../stores/inventario_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useBodegaStore } from "src/stores/bodega_store";
@@ -1159,6 +1151,7 @@ const setTabSelected = (tab, status) => {
     }
   }
 };
+
 //-----------------------------------------------------------
 
 onBeforeMount(() => {

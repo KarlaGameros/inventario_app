@@ -1,16 +1,18 @@
 <template>
   <br />
-  <q-card bordered class="my-card">
-    <q-card-section>
-      <div class="text-h6">MI INVENTARIO</div>
-    </q-card-section>
+  <q-banner
+    inline-actions
+    class="text-justify bg-grey-2"
+    style="border-radius: 20px"
+  >
+    <template v-slot:avatar>
+      <q-btn icon="inventory_2" flat color="purple-ieen"></q-btn>
+    </template>
+    <div class="text-h6 text-purple-ieen text-bold q-pb-xs">MI INVENTARIO</div>
+    <div class="text-body2">{{ miInventario.nombre_completo }}</div>
 
-    <q-card-section class="q-pt-none">
-      <div class="text-h7">{{ miInventario.nombre_completo }}</div>
-      <br />
-      <div class="text-h7">{{ miInventario.area }}</div>
-    </q-card-section>
-  </q-card>
+    <div class="text-body2">{{ miInventario.area }}</div>
+  </q-banner>
   <br />
   <div class="row">
     <div class="col">
