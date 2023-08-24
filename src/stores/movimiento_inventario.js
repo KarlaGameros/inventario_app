@@ -6,6 +6,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
     modal: false,
     listaMovimientoInventario: [],
     listTipoMovimientos: [],
+    listConceptoMovimiento: [],
     movimientos: [],
     movimiento: {
       id: null,
@@ -72,6 +73,28 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       }
     },
 
+    //-----------------------------------------------------------
+    async loadConceptoMovimientoListFiltro(filtro) {
+      try {
+        let resp = await api.get("/ConceptosMovimientosInventarios");
+        let { data } = resp.data;
+        let listData = data.filter(
+          (x) => x.tipo_Movimiento_Inventario == filtro
+        );
+        this.listConceptoMovimiento = listData.map((concepto) => {
+          return {
+            label: concepto.concepto,
+            value: concepto.id,
+          };
+        });
+      } catch (error) {
+        console.error(error);
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
     //-----------------------------------------------------------
     actualizarModal(valor) {
       this.modal = valor;

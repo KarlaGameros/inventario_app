@@ -34,7 +34,7 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-select
               label="Empleado"
-              v-model="empleadoId"
+              v-model="empleado_Id"
               :options="listEmpleados"
               hint="Selecciona una empleado"
               :lazy-rules="true"
@@ -102,23 +102,36 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useEntregaRecepcionStore } from "src/stores/entrega-recepcion-store";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import TablaInventarios from "../components/TablaInventarioComp.vue";
 //-----------------------------------------------------------
 
 const entregaRecepcionStore = useEntregaRecepcionStore();
-const { modal } = storeToRefs(entregaRecepcionStore);
+const { modal, areas, listEmpleados } = storeToRefs(entregaRecepcionStore);
 const dateActual = new Date();
 const year = dateActual.getFullYear();
 const month = String(dateActual.getMonth() + 1).padStart(2, "0");
 const day = String(dateActual.getDate()).padStart(2, "0");
 const date = ref(`${year}/${month}/${day}`);
+const area_Id = ref(null);
+const empleado_Id = ref(null);
 
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
   getDateActual();
+  entregaRecepcionStore.loadAreasList();
 });
+
+//-----------------------------------------------------------
+
+watch(area_Id, (val) => {
+  if (val != null) {
+    entregaRecepcionStore.loadEmpleadosByArea(area_Id.value.value);
+  }
+});
+
+//-----------------------------------------------------------
 
 const actualizarModal = (valor) => {
   entregaRecepcionStore.actualizarModal(valor);

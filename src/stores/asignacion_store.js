@@ -85,13 +85,12 @@ export const useAsignacionStore = defineStore("asignacion", {
       try {
         let resp = await api.get("/Areas/GetLista");
         let { data } = resp.data;
-        let listaArea = data.map((area) => {
+        this.areas = data.map((area) => {
           return {
             label: area.label,
             value: area.value,
           };
         });
-        this.areas = listaArea;
       } catch (error) {
         return {
           success: false,
@@ -106,13 +105,12 @@ export const useAsignacionStore = defineStore("asignacion", {
       try {
         let resp = await api.get("/Puestos/GetLista");
         let { data } = resp.data;
-        let listaPuesto = data.map((puesto) => {
+        this.puestos = data.map((puesto) => {
           return {
             label: puesto.label,
             value: puesto.value,
           };
         });
-        this.puestos = listaPuesto;
       } catch (error) {
         return {
           success: false,

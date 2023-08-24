@@ -37,6 +37,18 @@
               </q-select>
             </div>
 
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+              <q-select
+                v-model="conceptoMovimiento"
+                :options="listConceptoMovimiento"
+                label="Concepto de movimiento"
+                hint="Selecciona un concepto"
+                :lazy-rules="true"
+                :rules="[(val) => !!val || 'El concepto es requerido']"
+              >
+              </q-select>
+            </div>
+
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-input v-model="date" label="Fecha de asignación">
                 <template v-slot:append>
@@ -63,6 +75,20 @@
             </div>
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-input
+                label="Estatus"
+                hint="Ingrese estatus"
+                autogrow
+                lazy-rules
+                :rules="[(val) => !!val || 'El estatus es requerido']"
+              >
+              </q-input>
+            </div>
+
+            <div
+              v-if="inputSalida == 'Salida'"
+              class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+            >
               <q-select
                 v-model="bodega_origen"
                 :options="listBodega"
@@ -74,7 +100,13 @@
               </q-select>
             </div>
 
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div
+              :class="
+                inputSalida == 'Salida'
+                  ? 'col-lg-6 col-md-6 col-sm-12 col-xs-12'
+                  : 'col-lg-12 col-md-12 col-sm-12 col-xs-12'
+              "
+            >
               <q-select
                 v-model="bodega_destino"
                 :options="listBodega"
@@ -173,9 +205,12 @@ const catalogoStore = useCatalogoProductoStore();
 const bodegaStore = useBodegaStore();
 const inventarioStore = useInventarioStore();
 
-const { modal, listaMovimientoInventario, listTipoMovimientos } = storeToRefs(
-  movimientoInventarioStore
-);
+const {
+  modal,
+  listaMovimientoInventario,
+  listTipoMovimientos,
+  listConceptoMovimiento,
+} = storeToRefs(movimientoInventarioStore);
 const { listCatalogo } = storeToRefs(catalogoStore);
 const { listBodega } = storeToRefs(bodegaStore);
 const { inventarios } = storeToRefs(inventarioStore);
@@ -185,6 +220,8 @@ const bodega_destino = ref(null);
 const tipoMovimiento = ref(null);
 const inventarioId = ref(null);
 const opcionesInventario = ref([...inventarios.value]);
+const conceptoMovimiento = ref(null);
+const inputSalida = ref(null);
 
 //-----------------------------------------------------------
 //Get fecha actual
@@ -212,6 +249,16 @@ watch(catalogoId, (val) => {
   }
 });
 
+watch(tipoMovimiento, (val) => {
+  if (val != null) {
+    conceptoMovimiento.value = null;
+    movimientoInventarioStore.loadConceptoMovimientoListFiltro(val.label);
+  } else {
+    conceptoId.value = null;
+    listConceptoMovimiento.value = [];
+  }
+  inputSalida.value = val.label;
+});
 //-----------------------------------------------------------
 
 const actualizarModal = (valor) => {

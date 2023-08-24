@@ -109,7 +109,6 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
         this.listCatalogo = [];
         let resp = await api.get("/Catalagos");
         let { data } = resp.data;
-        console.log("data", data);
         let listCatalogo = data.map((catalogo) => {
           return {
             label: `${catalogo.clave} - ${catalogo.nombre}`,
@@ -134,7 +133,6 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
         }
 
         this.listCatalogosTodos = listCatalogo;
-        console.log("listCatalogosTodos", this.listCatalogosTodos);
       } catch (error) {
         return {
           success: false,

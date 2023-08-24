@@ -1108,7 +1108,17 @@ const foto1_c = ref();
 const foto2_c = ref();
 const foto3_c = ref();
 const foto4_c = ref();
+
 //-----------------------------------------------------------
+
+onBeforeMount(() => {
+  bodegaStore.loadBodegasList();
+  catalogoStore.loadCatalogoListNormal();
+  marcaStore.loadMarcaList();
+});
+
+//-----------------------------------------------------------
+
 const tabsDefinition = [
   { name: "extencion_a", label: "Extención A" },
   { name: "extencion_b", label: "Extención B" },
@@ -1154,14 +1164,6 @@ const setTabSelected = (tab, status) => {
 
 //-----------------------------------------------------------
 
-onBeforeMount(() => {
-  bodegaStore.loadBodegasList();
-  catalogoStore.loadCatalogoListNormal();
-  marcaStore.loadMarcaList();
-});
-
-//-----------------------------------------------------------
-
 watch(marcaId, (val) => {
   if (val != null) {
     modeloStore.modeloByMarca(marcaId.value.value).then(() => {
@@ -1192,7 +1194,6 @@ watch(inventario.value, (val) => {
 });
 
 watch(cantidad, (val) => {
-  console.log(val);
   if (val != null) {
     inventarioStore.addCantidad(cantidad.value, catalogoId);
   }

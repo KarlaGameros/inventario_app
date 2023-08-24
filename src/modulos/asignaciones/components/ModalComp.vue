@@ -28,7 +28,7 @@
               </q-input>
             </div>
 
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-input v-model="date" label="Fecha de asignación">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
@@ -52,6 +52,7 @@
                 </template>
               </q-input>
             </div>
+
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
                 v-if="isEditar == false"
@@ -227,12 +228,13 @@ const empleadoId = ref(null);
 const catalogoId = ref(null);
 const opcionesInventario = ref([...inventarios.value]);
 const habilitarButton = ref(null);
+//-----------------------------------------------------------
+//Get fecha actual
 const dateActual = new Date();
 const year = dateActual.getFullYear();
 const month = String(dateActual.getMonth() + 1).padStart(2, "0");
 const day = String(dateActual.getDate()).padStart(2, "0");
 const date = ref(`${year}/${month}/${day}`);
-
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -241,7 +243,7 @@ onBeforeMount(() => {
   asignacionStore.loadAreasList();
   catalogoStore.loadCatalogoListNormal();
   catalogoId.value = { value: 0, label: "Todos" };
-  getDateActual();
+  //getDateActual();
 });
 
 //-----------------------------------------------------------
@@ -257,7 +259,8 @@ watch(asignacion.value, (val) => {
 
 watch(catalogoId, (val) => {
   if (val != null) {
-    inventarioStore.loadListInventario(catalogoId.value.value);
+    inventarioId.value = null;
+    inventarioStore.loadListInventario(val.value);
   }
 });
 
@@ -317,13 +320,13 @@ const cargarFecha = async () => {
   date.value = `${year}/${month}/${day}`;
 };
 
-const getDateActual = async () => {
-  const dateActual = new Date();
-  const year = dateActual.getFullYear();
-  const month = String(dateActual.getMonth() + 1).padStart(2, "0");
-  const day = String(dateActual.getDate()).padStart(2, "0");
-  date.value = ref(`${year}/${month}/${day}`);
-};
+// const getDateActual = async () => {
+//   const dateActual = new Date();
+//   const year = dateActual.getFullYear();
+//   const month = String(dateActual.getMonth() + 1).padStart(2, "0");
+//   const day = String(dateActual.getDate()).padStart(2, "0");
+//   date.value = ref(`${year}/${month}/${day}`);
+// };
 
 const actualizarModal = (valor) => {
   area_Id.value = null;
@@ -332,7 +335,7 @@ const actualizarModal = (valor) => {
   catalogoId.value = null;
   inventarioId.value = null;
   opcionesInventario.value = null;
-  getDateActual();
+  //getDateActual();
   catalogoId.value = { value: 0, label: "Todos" };
   asignacionStore.actualizarModal(valor);
   asignacionStore.initAsignacion();
