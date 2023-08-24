@@ -25,6 +25,8 @@
           <div class="row q-col-gutter-xs">
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
               <q-select
+                v-model="tipoMovimiento"
+                :options="listTipoMovimientos"
                 label="Tipo de movimiento"
                 hint="Selecciona un tipo de movimiento"
                 :lazy-rules="true"
@@ -62,7 +64,7 @@
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
-                v-model="bodegaId"
+                v-model="bodega_origen"
                 :options="listBodega"
                 label="Bodega origen"
                 hint="Selecciona bodega origen"
@@ -74,7 +76,7 @@
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
-                v-model="bodegaId"
+                v-model="bodega_destino"
                 :options="listBodega"
                 label="Bodega destino"
                 hint="Selecciona bodega destino"
@@ -87,7 +89,7 @@
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
                 v-model="catalogoId"
-                :options="listCatalogosTodos"
+                :options="listCatalogo"
                 label="Catálogo perteneciente del inventario"
                 hint="Selecciona una catalogo"
                 :lazy-rules="true"
@@ -171,14 +173,16 @@ const catalogoStore = useCatalogoProductoStore();
 const bodegaStore = useBodegaStore();
 const inventarioStore = useInventarioStore();
 
-const { modal, listaMovimientoInventario } = storeToRefs(
+const { modal, listaMovimientoInventario, listTipoMovimientos } = storeToRefs(
   movimientoInventarioStore
 );
-const { listCatalogosTodos } = storeToRefs(catalogoStore);
+const { listCatalogo } = storeToRefs(catalogoStore);
 const { listBodega } = storeToRefs(bodegaStore);
 const { inventarios } = storeToRefs(inventarioStore);
 const catalogoId = ref(null);
-const bodegaId = ref(null);
+const bodega_origen = ref(null);
+const bodega_destino = ref(null);
+const tipoMovimiento = ref(null);
 const inventarioId = ref(null);
 const opcionesInventario = ref([...inventarios.value]);
 
@@ -194,9 +198,9 @@ const date = ref(`${year}/${month}/${day}`);
 
 onBeforeMount(() => {
   inventarioStore.loadListInventario(0);
-  inventarioStore.loadInformacionInventarios();
-  catalogoStore.loadCatalogoList();
+  catalogoStore.loadCatalogoListNormal();
   bodegaStore.loadBodegasList();
+  movimientoInventarioStore.loadTipoMovimientos();
   catalogoId.value = { value: 0, label: "Todos" };
 });
 
@@ -204,7 +208,7 @@ onBeforeMount(() => {
 
 watch(catalogoId, (val) => {
   if (val != null) {
-    inventarioStore.loadListInventario(catalogoId.value.value);
+    inventarioStore.loadListInventario(val.value);
   }
 });
 
@@ -223,13 +227,13 @@ const limpiarRegistro = () => {
 const filterInventario = (val, update) => {
   if (val === "") {
     update(() => {
-      opcionesInventario.value = listInventario.value;
+      opcionesInventario.value = inventarios.value;
     });
     return;
   }
   update(() => {
     const needle = val.toLowerCase();
-    opcionesInventario.value = listInventario.value.filter(
+    opcionesInventario.value = inventarios.value.filter(
       (v) => v.label.toLowerCase().indexOf(needle) > -1
     );
   });
@@ -238,14 +242,14 @@ const filterInventario = (val, update) => {
 const agregarProducto = async () => {
   if (listaMovimientoInventario.value.length == 0) {
     await movimientoInventarioStore.addMovimiento(inventarioId.value);
-    limpiarRegistro();
+    //limpiarRegistro();
   } else {
     let filtro = listaMovimientoInventario.value.find(
       (x) => x.inventario_Id == inventarioId.value.value
     );
     if (filtro == undefined) {
       await movimientoInventarioStore.addMovimiento(inventarioId.value);
-      limpiarRegistro();
+      //limpiarRegistro();
     } else {
       $q.dialog({
         title: "Atención",

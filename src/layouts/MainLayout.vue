@@ -11,7 +11,7 @@
           @click="toggleLeftDrawer"
         />
         <q-toolbar-title> Sistema inventario </q-toolbar-title>
-        <q-btn flat round dense icon="apps" @click="show"/>
+        <q-btn flat round dense icon="apps" @click="show" />
       </q-toolbar>
     </q-header>
 
@@ -141,11 +141,27 @@
             :to="{ name: 'movimiento_inventario' }"
           >
             <q-item-section avatar>
-              <q-icon name="list_alt" color="purple-ieen" />
+              <q-icon name="exit_to_app" color="purple-ieen" />
             </q-item-section>
             <q-item-section>
               <q-item-label class="text-purple-ieen label-title text-bold">
                 Movimiento Inventario
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            v-if="CatalogosConList.some((element) => element == 'SI-ENT-REC')"
+            :content-inset-level="2"
+            :header-inset-level="2"
+            :to="{ name: 'entrega_recepcion' }"
+          >
+            <q-item-section avatar>
+              <q-icon name="receipt_long" color="purple-ieen" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-purple-ieen label-title text-bold">
+                Entrega recepcion
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -157,7 +173,7 @@
             :to="{ name: 'mi_inventario' }"
           >
             <q-item-section avatar>
-              <q-icon name="inventory_2" color="purple-ieen" />
+              <q-icon name="content_paste_search " color="purple-ieen" />
             </q-item-section>
             <q-item-section>
               <q-item-label class="text-purple-ieen label-title text-bold">
@@ -297,6 +313,9 @@ export default defineComponent({
           case "SI-MI-INV":
             CatalogosConList.value.push("SI-MI-INV");
             break;
+          case "SI-ENT-REC":
+            CatalogosConList.value.push("SI-ENT-REC");
+            break;
         }
       });
       $q.loading.hide();
@@ -308,7 +327,6 @@ export default defineComponent({
       ConsumiblesList,
       SolicitudesList,
       usuario,
-      //PruebaReporte,
       show,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;

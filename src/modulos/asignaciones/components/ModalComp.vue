@@ -157,7 +157,7 @@
             </div>
           </div>
         </q-card-section>
-        <q-separator></q-separator>
+        <q-separator />
         <q-card-section>
           <TablaAsignacionInventario />
         </q-card-section>
@@ -308,7 +308,7 @@ const cargarPuestos = async (val) => {
   }
 };
 
-const cargarFecha = async (val) => {
+const cargarFecha = async () => {
   const fechaOriginal = asignacion.value.fecha_Asignacion;
   const dateActual = fechaOriginal.split(/[/ ]/);
   const day = dateActual[0];

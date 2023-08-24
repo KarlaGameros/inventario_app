@@ -104,7 +104,7 @@ onBeforeMount(() => {
 
 const columns = [
   {
-    name: "empleado_",
+    name: "empleado",
     align: "center",
     label: "Empleado asignación",
     field: "empleado",

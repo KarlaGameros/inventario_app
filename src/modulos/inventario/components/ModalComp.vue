@@ -1192,7 +1192,10 @@ watch(inventario.value, (val) => {
 });
 
 watch(cantidad, (val) => {
-  inventarioStore.addCantidad(cantidad.value, catalogoId);
+  console.log(val);
+  if (val != null) {
+    inventarioStore.addCantidad(cantidad.value, catalogoId);
+  }
 });
 //-----------------------------------------------------------
 

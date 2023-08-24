@@ -5,7 +5,10 @@
         <div class="q-pa-md q-gutter-sm">
           <q-breadcrumbs>
             <q-breadcrumbs-el icon="home" to="/" />
-            <q-breadcrumbs-el label="Asignaciones" icon="library_books" />
+            <q-breadcrumbs-el
+              label="Entrega a recepción"
+              icon="library_books"
+            />
           </q-breadcrumbs>
         </div>
       </div>
@@ -32,11 +35,10 @@
 
 <script setup>
 import { onBeforeMount } from "vue";
-import { useQuasar } from "quasar";
 import { useAuthStore } from "../../../stores/auth_store";
 import { storeToRefs } from "pinia";
-import { useAsignacionStore } from "src/stores/asignacion_store";
-
+import { useQuasar } from "quasar";
+import { useEntregaRecepcionStore } from "src/stores/entrega-recepcion-store";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 
@@ -44,7 +46,7 @@ import ModalComp from "../components/ModalComp.vue";
 
 const $q = useQuasar();
 const authStore = useAuthStore();
-const asignacionStore = useAsignacionStore();
+const entregaRecepcionStore = useEntregaRecepcionStore();
 const { modulo } = storeToRefs(authStore);
 const siglas = "SI-CAT-ASI";
 
@@ -64,10 +66,11 @@ const leerPermisos = async () => {
 
 const actualizarModal = (valor) => {
   $q.loading.show();
-  asignacionStore.actualizarModal(valor);
-  asignacionStore.initAsignacion();
+  entregaRecepcionStore.actualizarModal(valor);
   $q.loading.hide();
 };
 
 //-----------------------------------------------------------
 </script>
+
+<style></style>

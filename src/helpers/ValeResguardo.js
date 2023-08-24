@@ -1,9 +1,8 @@
 import { api } from "src/boot/axios";
 import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
 import { storeToRefs } from "pinia";
-import { useAuthStore } from "../stores/auth_store";
 import { useAsignacionStore } from "src/stores/asignacion_store";
+import autoTable from "jspdf-autotable";
 
 const Reporte = async () => {
   const asignacionStore = useAsignacionStore();
