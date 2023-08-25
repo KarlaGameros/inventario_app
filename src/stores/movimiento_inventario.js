@@ -10,11 +10,15 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
     movimientos: [],
     movimiento: {
       id: null,
+      tipo_movimiento: null,
+      concepto_movimiento: null,
     },
   }),
   actions: {
     initMovimiento() {
       this.movimiento.id = null;
+      this.tipo_movimiento = null;
+      this.concepto_movimiento = null;
     },
     //-----------------------------------------------------------
 

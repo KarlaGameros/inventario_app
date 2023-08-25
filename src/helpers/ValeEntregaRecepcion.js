@@ -51,7 +51,7 @@ const EntregaRecepcion = async () => {
     //--------------------------------------------------------------------------//
 
     doc.setFillColor(84, 37, 131);
-    doc.rect(10, 50, 191.8, 10, "FD");
+    doc.rect(10, 50, 191.8, 8, "FD");
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
@@ -59,14 +59,14 @@ const EntregaRecepcion = async () => {
 
     doc.setTextColor(0, 0, 0);
 
-    doc.rect(10, 60, 191.8, 10, "FD");
+    doc.rect(10, 58, 191.8, 10, "FD");
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.text("Responsable: ", 15, 65);
     doc.setFont("helvetica", "normal");
     doc.text("Karla Gameros", 40, 65);
 
-    doc.rect(10, 70, 191.8, 10);
+    doc.rect(10, 68, 191.8, 10);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.text("Cargo:", 15, 75);
@@ -75,7 +75,7 @@ const EntregaRecepcion = async () => {
     doc.setFont("helvetica", "bold");
     doc.text("Municipio:", 150, 75, null, null, "right");
 
-    doc.rect(10, 80, 191.8, 10);
+    doc.rect(10, 78, 191.8, 10);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.text("Área:", 15, 85);
@@ -85,22 +85,6 @@ const EntregaRecepcion = async () => {
     doc.text("Centro de capacitación del IEE", 28, 85);
     doc.text("Tepic", 155, 85);
     doc.text("Tepic", 155, 75);
-
-    //--------------------------------------------------------------------------//
-    var footer = function () {
-      var pageCount = doc.internal.getNumberOfPages();
-      for (var i = 0; i < pageCount; i++) {
-        doc.setPage(i + 1);
-        doc.text(
-          "Página " + (i + 1) + " de " + pageCount,
-          340,
-          205,
-          null,
-          null,
-          "right"
-        );
-      }
-    };
 
     //--------------------------------------------------------------------------//
     var rows = [
@@ -145,13 +129,29 @@ const EntregaRecepcion = async () => {
 
     autoTable(doc, {
       theme: "grid",
-      startY: 90,
+      startY: 88,
       margin: { left: 10, rigth: 10 },
       head: header,
       body: [...rows],
       bodyStyles: { fontSize: 10, textColor: [0, 0, 0] },
       tableLineColor: [0, 0, 0],
     });
+
+    //--------------------------------------------------------------------------//
+    var footer = function () {
+      var pageCount = doc.internal.getNumberOfPages();
+      for (var i = 0; i < pageCount; i++) {
+        doc.setPage(i + 1);
+        doc.text(
+          "Página " + (i + 1) + " de " + pageCount,
+          340,
+          205,
+          null,
+          null,
+          "right"
+        );
+      }
+    };
     footer();
 
     doc.save("ValeEntregaRecepcion" + ".pdf");

@@ -11,6 +11,7 @@
           @click="toggleLeftDrawer"
         />
         <q-toolbar-title> Sistema inventario </q-toolbar-title>
+        <q-badge rounded color="green" />
         <q-btn flat round dense icon="apps" @click="show" />
       </q-toolbar>
     </q-header>

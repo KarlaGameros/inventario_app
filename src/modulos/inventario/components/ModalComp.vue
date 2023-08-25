@@ -26,7 +26,7 @@
           <!----------------------------------------------------------------------------->
 
           <div
-            v-if="isEditar == false"
+            v-if="!isEditar"
             :class="
               radio == 'paquete'
                 ? 'col-lg-6 col-md-6 col-sm-12 col-xs-12'

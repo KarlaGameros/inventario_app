@@ -55,7 +55,7 @@
 
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
-                v-if="isEditar == false"
+                v-if="!isEditar"
                 label="Área"
                 v-model="area_Id"
                 :options="areas"
@@ -64,19 +64,12 @@
                 :rules="[(val) => !!val || 'El área es requerida']"
               >
               </q-select>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-              <q-input
-                v-if="isEditar"
-                readonly
-                v-model="asignacion.area"
-                label="Área"
-              >
+              <q-input v-else readonly v-model="asignacion.area" label="Área">
               </q-input>
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
-                v-if="isEditar == false"
+                v-if="!isEditar"
                 label="Empleado"
                 v-model="empleadoId"
                 :options="listEmpleados"
@@ -85,10 +78,8 @@
                 :rules="[(val) => !!val || 'El empleado es requerido']"
               >
               </q-select>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-input
-                v-if="isEditar"
+                v-else
                 readonly
                 v-model="asignacion.empleado"
                 label="Empleado"
@@ -97,18 +88,15 @@
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-input
-                v-if="isEditar == false"
+                v-if="!isEditar"
                 readonly
                 label="Puesto"
                 v-model="puesto_Id"
                 hint="Puesto"
               >
               </q-input>
-            </div>
-
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-input
-                v-if="isEditar"
+                v-else
                 readonly
                 v-model="asignacion.puesto"
                 label="Puesto"
@@ -118,7 +106,7 @@
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
-                v-if="isEditar == false"
+                v-if="!isEditar"
                 v-model="catalogoId"
                 :options="listCatalogo"
                 label="Catálogo perteneciente del inventario"
@@ -131,7 +119,7 @@
 
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
               <q-select
-                v-if="isEditar == false"
+                v-if="!isEditar"
                 v-model="inventarioId"
                 :options="opcionesInventario"
                 use-input
