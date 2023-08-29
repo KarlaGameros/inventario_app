@@ -49,7 +49,40 @@
               </q-select>
             </div>
 
+            <div
+              v-if="inputSalida == 'Salida'"
+              class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+            >
+              <q-select
+                v-model="bodega_origen"
+                :options="listBodega"
+                label="Bodega origen"
+                hint="Selecciona bodega origen"
+                :lazy-rules="true"
+                :rules="[(val) => !!val || 'La bodega origen es requerida']"
+              >
+              </q-select>
+            </div>
+
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-select
+                v-model="bodega_destino"
+                :options="listBodega"
+                label="Bodega destino"
+                hint="Selecciona bodega destino"
+                :lazy-rules="true"
+                :rules="[(val) => !!val || 'La bodega destino es requerida']"
+              >
+              </q-select>
+            </div>
+
+            <div
+              :class="
+                inputSalida == 'Salida'
+                  ? 'col-lg-12 col-md-12 col-sm-12 col-xs-12'
+                  : 'col-lg-6 col-md-6 col-sm-12 col-xs-12'
+              "
+            >
               <q-input v-model="date" label="Fecha de asignación">
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
@@ -74,8 +107,52 @@
               </q-input>
             </div>
 
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div
+              v-if="compra == 3"
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+            >
+              <q-select
+                v-model="provedor"
+                :options="proveedores"
+                label="Provedor"
+                hint="Selecciona un provedor"
+                :lazy-rules="true"
+                :rules="[(val) => !!val || 'El provedor es requerido']"
+              >
+                <template v-slot:after>
+                  <q-btn round dense flat icon="add" @click="addProveedor" />
+                </template>
+              </q-select>
+            </div>
+
+            <div
+              v-if="compra == 3"
+              class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+            >
               <q-input
+                label="UUID"
+                autogrow
+                lazy-rules
+                :rules="[(val) => !!val || 'El UUID es requerido']"
+              >
+              </q-input>
+            </div>
+
+            <div
+              v-if="compra == 3"
+              class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+            >
+              <q-input
+                label="Número de factura"
+                autogrow
+                lazy-rules
+                :rules="[(val) => !!val || 'El número de factura es requerido']"
+              >
+              </q-input>
+            </div>
+
+            <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-input autofocus
                 label="Estatus"
                 hint="Ingrese estatus"
                 autogrow
@@ -83,40 +160,7 @@
                 :rules="[(val) => !!val || 'El estatus es requerido']"
               >
               </q-input>
-            </div>
-
-            <div
-              v-if="inputSalida == 'Salida'"
-              class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-            >
-              <q-select
-                v-model="bodega_origen"
-                :options="listBodega"
-                label="Bodega origen"
-                hint="Selecciona bodega origen"
-                :lazy-rules="true"
-                :rules="[(val) => !!val || 'La bodega origen es requerida']"
-              >
-              </q-select>
-            </div>
-
-            <div
-              :class="
-                inputSalida == 'Salida'
-                  ? 'col-lg-6 col-md-6 col-sm-12 col-xs-12'
-                  : 'col-lg-12 col-md-12 col-sm-12 col-xs-12'
-              "
-            >
-              <q-select
-                v-model="bodega_destino"
-                :options="listBodega"
-                label="Bodega destino"
-                hint="Selecciona bodega destino"
-                :lazy-rules="true"
-                :rules="[(val) => !!val || 'La bodega destino es requerida']"
-              >
-              </q-select>
-            </div>
+            </div> -->
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
@@ -143,6 +187,78 @@
               >
               </q-select>
             </div>
+
+            <div
+              v-if="compra == 3"
+              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
+            >
+              <q-input
+                v-model="cantidad"
+                label="Cantidad"
+                type="number"
+                min="1"
+              >
+              </q-input>
+            </div>
+            <div
+              v-if="compra == 3"
+              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
+            >
+              <q-input
+                v-model="precio_Unitario"
+                label="Precio unitario del producto"
+                prefix="$"
+              >
+              </q-input>
+            </div>
+            <div
+              v-if="compra == 3"
+              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
+            >
+              <q-input
+                v-model="importe"
+                label="Importe total de la transición"
+                prefix="$"
+              >
+              </q-input>
+            </div>
+
+            <div
+              v-if="compra == 3"
+              class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
+            >
+              <q-file filled bottom-slots v-model="model" label="PDF" counter>
+                <template v-slot:prepend>
+                  <q-icon name="cloud_upload" @click.stop.prevent />
+                </template>
+                <template v-slot:append>
+                  <q-icon
+                    name="close"
+                    @click.stop.prevent="model = null"
+                    class="cursor-pointer"
+                  />
+                </template>
+              </q-file>
+            </div>
+
+            <div
+              v-if="compra == 3"
+              class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
+            >
+              <q-file filled bottom-slots v-model="model" label="XML" counter>
+                <template v-slot:prepend>
+                  <q-icon name="cloud_upload" @click.stop.prevent />
+                </template>
+                <template v-slot:append>
+                  <q-icon
+                    name="close"
+                    @click.stop.prevent="model = null"
+                    class="cursor-pointer"
+                  />
+                </template>
+              </q-file>
+            </div>
+
             <q-space />
             <div class="col-12 justify-end">
               <div class="text-right q-gutter-xs">
@@ -193,6 +309,7 @@ import { useQuasar } from "quasar";
 import { useBodegaStore } from "src/stores/bodega_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useInventarioStore } from "src/stores/inventario_store";
+import { useProvedores } from "src/stores/provedores_store";
 import { onBeforeMount, ref, watch } from "vue";
 import { useMovimientoInventario } from "../../../stores/movimiento_inventario";
 import TablaMovimientoInventario from "../components/TablaMovimientoInventario.vue";
@@ -201,6 +318,7 @@ import TablaMovimientoInventario from "../components/TablaMovimientoInventario.v
 
 const $q = useQuasar();
 const movimientoInventarioStore = useMovimientoInventario();
+const proveedorStore = useProvedores();
 const catalogoStore = useCatalogoProductoStore();
 const bodegaStore = useBodegaStore();
 const inventarioStore = useInventarioStore();
@@ -210,7 +328,10 @@ const {
   listaMovimientoInventario,
   listTipoMovimientos,
   listConceptoMovimiento,
+  isEditar,
+  movimiento,
 } = storeToRefs(movimientoInventarioStore);
+const { proveedores } = storeToRefs(proveedorStore);
 const { listCatalogo } = storeToRefs(catalogoStore);
 const { listBodega } = storeToRefs(bodegaStore);
 const { inventarios } = storeToRefs(inventarioStore);
@@ -222,7 +343,10 @@ const inventarioId = ref(null);
 const opcionesInventario = ref([...inventarios.value]);
 const conceptoMovimiento = ref(null);
 const inputSalida = ref(null);
-
+const compra = ref(null);
+const cantidad = ref(null);
+const precio_Unitario = ref(null);
+const importe = ref(null);
 //-----------------------------------------------------------
 //Get fecha actual
 const dateActual = new Date();
@@ -238,6 +362,7 @@ onBeforeMount(() => {
   catalogoStore.loadCatalogoListNormal();
   bodegaStore.loadBodegasList();
   movimientoInventarioStore.loadTipoMovimientos();
+  proveedorStore.loadInformacionProvedores();
   catalogoId.value = { value: 0, label: "Todos" };
 });
 
@@ -251,20 +376,64 @@ watch(catalogoId, (val) => {
 
 watch(tipoMovimiento, (val) => {
   if (val != null) {
-    conceptoMovimiento.value = null;
+    inputSalida.value = val.label;
     movimientoInventarioStore.loadConceptoMovimientoListFiltro(val.label);
   } else {
-    conceptoId.value = null;
-    listConceptoMovimiento.value = [];
+    //conceptoId.value = null;
+    //listConceptoMovimiento.value = [];
   }
-  inputSalida.value = val.label;
 });
+
+watch(conceptoMovimiento, (val) => {
+  if (val != null) {
+    compra.value = val.value;
+  }
+});
+
+watch(movimiento.value, (val) => {
+  if (val.id != null) {
+    cargarTipoMovimiento(val);
+    cargarBodegaDestino(val);
+  }
+});
+
 //-----------------------------------------------------------
+
+const cargarTipoMovimiento = async (val) => {
+  if (tipoMovimiento.value == null) {
+    let tipoFiltrado = listTipoMovimientos.value.find(
+      (x) => x.value == `${val.tipo_Movimiento_Id}`
+    );
+    tipoMovimiento.value = tipoFiltrado;
+  }
+};
+
+const cargarBodegaDestino = async (val) => {
+  if (bodega_destino.value == null) {
+    let bodegaDestinoFiltrado = listBodega.value.find(
+      (x) => (x.value = `${val.bodega_Destino_Id}`)
+    );
+    bodega_destino.value = bodegaDestinoFiltrado;
+  }
+};
 
 const actualizarModal = (valor) => {
   movimientoInventarioStore.actualizarModal(valor);
   movimientoInventarioStore.initMovimiento();
+  isEditar.value = false;
+  bodega_origen.value = null;
+  bodega_destino.value = null;
+  tipoMovimiento.value = null;
+  conceptoMovimiento.value = null;
+  opcionesInventario.value = null;
+  catalogoId.value = null;
   catalogoId.value = { value: 0, label: "Todos" };
+};
+
+const addProveedor = () => {
+  $q.loading.show();
+  proveedorStore.actualizarModal(true);
+  $q.loading.hide();
 };
 
 const limpiarRegistro = () => {
@@ -288,7 +457,12 @@ const filterInventario = (val, update) => {
 
 const agregarProducto = async () => {
   if (listaMovimientoInventario.value.length == 0) {
-    await movimientoInventarioStore.addMovimiento(inventarioId.value);
+    await movimientoInventarioStore.addMovimiento(
+      inventarioId.value,
+      cantidad.value,
+      precio_Unitario.value,
+      importe.value
+    );
     //limpiarRegistro();
   } else {
     let filtro = listaMovimientoInventario.value.find(
@@ -308,6 +482,53 @@ const agregarProducto = async () => {
       });
     }
   }
+};
+
+const onSubmit = async () => {
+  let movimientosFormData = new FormData();
+  console.log("lista", listaMovimientoInventario);
+  let resp = null;
+  $q.loading.show();
+  if (isEditar == true) {
+  } else {
+    // movimientosFormData.append(
+    //   "Tipo_Movimiento_Id",
+    //   tipoMovimiento.value.value
+    // );
+    // movimientosFormData.append("Fecha_Movimiento", date.value);
+    // movimientosFormData.append("Bodega_Origen_Id", bodega_origen.value.value);
+    // movimientosFormData.append("Bodega_Destino_Id", bodega_destino.value.value);
+    // listaMovimientoInventario.value.forEach((row) => {
+    //   movimientosFormData.append("Detalle[]", row.id);
+    // });
+    // movimientosFormData.forEach((value, index) => {
+    //   console.log("value", value);
+    //   console.log("index", index);
+    // });
+  }
+
+  if (isEditar.value == true) {
+    console.log("editar");
+  } else {
+    // resp = await movimientoInventarioStore.createMovimiento(
+    //   movimientosFormData
+    // );
+  }
+  if (resp.success) {
+    $q.notify({
+      type: "positive",
+      message: resp.data,
+    });
+    actualizarModal(false);
+    movimientoInventarioStore.initMovimiento();
+    movimientoInventarioStore.loadInformacionMovimientos();
+  } else {
+    $q.notify({
+      type: "negative",
+      message: resp.data,
+    });
+  }
+  $q.loading.hide();
 };
 </script>
 

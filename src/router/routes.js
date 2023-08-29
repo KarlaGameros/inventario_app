@@ -31,6 +31,11 @@ const routes = [
         component: () => import("../modulos/asignaciones/pages/IndexPage"),
       },
       {
+        path: "/proveedores",
+        name: "proveedores",
+        component: () => import("../modulos/proveedores/pages/IndexPage"),
+      },
+      {
         path: "/estatus",
         name: "estatus",
         component: () => import("../modulos/estatus/pages/IndexPage"),

@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="listaMovimientoInventario"
+        :rows="proveedores"
         :columns="columns"
         :filter="filter"
         :pagination="pagination"
@@ -26,15 +26,26 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              <div v-if="col.name === 'inventario_Id'">
+              <div v-if="col.name === 'id'">
                 <q-btn
+                  v-if="modulo.actualizar"
                   flat
                   round
                   color="purple-ieen"
-                  icon="cancel"
+                  icon="edit"
+                  @click="editar(col.value)"
+                >
+                  <q-tooltip>Editar asignación</q-tooltip>
+                </q-btn>
+                <q-btn
+                  v-if="modulo.eliminar"
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="delete"
                   @click="eliminar(col.value)"
                 >
-                  <q-tooltip>Eliminar inventario</q-tooltip>
+                  <q-tooltip>Eliminar asignación</q-tooltip>
                 </q-btn>
               </div>
               <label v-else>{{ col.value }}</label>
@@ -49,58 +60,74 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
-import { useMovimientoInventario } from "src/stores/movimiento_inventario";
-import { ref } from "vue";
+import { onBeforeMount, ref } from "vue";
+import { useAuthStore } from "../../../stores/auth_store";
+import { useProvedores } from "../../../stores/provedores_store";
 
 //-----------------------------------------------------------
 
 const $q = useQuasar();
-const movimientoStore = useMovimientoInventario();
-const { listaMovimientoInventario } = storeToRefs(movimientoStore);
+const authStore = useAuthStore();
+const proveedoresStore = useProvedores();
+const { proveedores } = storeToRefs(proveedoresStore);
+const { modulo } = storeToRefs(authStore);
+
+//-----------------------------------------------------------
+
+onBeforeMount(() => {
+  proveedoresStore.loadInformacionProvedores();
+});
 
 //-----------------------------------------------------------
 
 const columns = [
   {
-    name: "clave",
+    name: "nombre",
     align: "center",
-    label: "Clave",
-    field: "clave",
+    label: "Nombre",
+    field: "nombre",
     sortable: true,
   },
   {
-    name: "descripcion",
+    name: "razon_Social",
     align: "center",
-    label: "Descripción",
-    field: "descripcion",
+    label: "Razón social",
+    field: "razon_Social",
     sortable: true,
   },
   {
-    name: "cantidad",
+    name: "rfc",
     align: "center",
-    label: "Cantidad",
-    field: "cantidad",
+    label: "RFC",
+    field: "rfc",
     sortable: true,
   },
   {
-    name: "precio_Unitario",
+    name: "telefono",
     align: "center",
-    label: "Precio unitario",
-    field: "precio_Unitario",
+    label: "Teléfono",
+    field: "telefono",
     sortable: true,
   },
   {
-    name: "importe",
+    name: "eMail",
     align: "center",
-    label: "Importe",
-    field: "importe",
+    label: "Email",
+    field: "eMail",
     sortable: true,
   },
   {
-    name: "inventario_Id",
+    name: "direccion",
+    align: "center",
+    label: "Dirección",
+    field: "direccion",
+    sortable: true,
+  },
+  {
+    name: "id",
     align: "center",
     label: "Acciones",
-    field: "inventario_Id",
+    field: "id",
     sortable: false,
   },
 ];
@@ -117,10 +144,18 @@ const filter = ref("");
 
 //-----------------------------------------------------------
 
+const editar = async (id) => {
+  $q.loading.show();
+  await proveedoresStore.loadProveedor(id);
+  proveedoresStore.actualizarModal(true);
+  proveedoresStore.updateEditar(true);
+  $q.loading.hide();
+};
+
 const eliminar = async (id) => {
   $q.dialog({
-    title: "Eliminar producto",
-    message: "¿Está seguro de eliminar el producto del listado?",
+    title: "Eliminar bodega",
+    message: "¿Está seguro de eliminar el estatus?",
     icon: "Warning",
     persistent: true,
     transitionShow: "scale",
@@ -135,16 +170,14 @@ const eliminar = async (id) => {
     },
   }).onOk(async () => {
     $q.loading.show();
-    let resp = null;
-    resp = await movimientoStore.deleteProducto(id);
-    $q.loading.hide();
-
+    const resp = await proveedoresStore.deleteProveedor(id);
     if (resp.success) {
       $q.loading.hide();
       $q.notify({
         type: "positive",
         message: resp.data,
       });
+      proveedoresStore.loadInformacionProvedores();
     } else {
       $q.loading.hide();
       $q.notify({

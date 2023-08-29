@@ -87,6 +87,22 @@
             </q-item>
 
             <q-item
+              v-if="CatalogosConList.some((element) => element == 'SI-CAT-PRO')"
+              :content-inset-level="2"
+              :header-inset-level="2"
+              :to="{ name: 'proveedores' }"
+            >
+              <q-item-section avatar>
+                <q-icon name="groups" color="purple-ieen" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-purple-ieen label-title text-bold">
+                  Proveedores
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-item
               v-if="CatalogosConList.some((element) => element == 'SI-CAT-EST')"
               :content-inset-level="2"
               :header-inset-level="2"
@@ -316,6 +332,9 @@ export default defineComponent({
             break;
           case "SI-ENT-REC":
             CatalogosConList.value.push("SI-ENT-REC");
+            break;
+          case "SI-CAT-PRO":
+            CatalogosConList.value.push("SI-CAT-PRO");
             break;
         }
       });

@@ -30,26 +30,25 @@
     </div>
     <TablaComp />
     <ModalComp />
-    <ModalProveedores />
   </q-page>
 </template>
 
 <script setup>
+import { onBeforeMount } from "vue";
 import { useQuasar } from "quasar";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "../../../stores/auth_store";
-import { useMovimientoInventario } from "src/stores/movimiento_inventario";
-import { onBeforeMount } from "vue";
-import TablaComp from "../components/TablaComp.vue";
+import { useProvedores } from "src/stores/provedores_store";
 import ModalComp from "../components/ModalComp.vue";
-import ModalProveedores from "../../proveedores/components/ModalComp.vue";
+import TablaComp from "../components/TablaComp.vue";
+
 //-----------------------------------------------------------
 
 const authStore = useAuthStore();
+const proveedoresStore = useProvedores();
 const { modulo } = storeToRefs(authStore);
 const $q = useQuasar();
-const movimientoInventarioStore = useMovimientoInventario();
-const siglas = "SI-MOV-INV";
+const siglas = "SI-CAT-PRO";
 
 //-----------------------------------------------------------
 
@@ -67,7 +66,9 @@ const leerPermisos = async () => {
 
 const actualizarModal = (valor) => {
   $q.loading.show();
-  movimientoInventarioStore.actualizarModal(valor);
+  proveedoresStore.actualizarModal(valor);
+  proveedoresStore.updateEditar(false);
+  proveedoresStore.initProvedor();
   $q.loading.hide();
 };
 </script>

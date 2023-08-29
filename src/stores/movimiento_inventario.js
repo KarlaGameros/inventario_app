@@ -4,32 +4,166 @@ import { api } from "src/boot/axios";
 export const useMovimientoInventario = defineStore("movimiento_inventario", {
   state: () => ({
     modal: false,
-    listaMovimientoInventario: [],
+    isEditar: false,
+    listaMovimientoInventario: [
+      {
+        inventario_Id: null,
+        cantidad: null,
+        precio_Unitario: null,
+        importe: null,
+      },
+    ],
     listTipoMovimientos: [],
     listConceptoMovimiento: [],
     movimientos: [],
     movimiento: {
       id: null,
-      tipo_movimiento: null,
-      concepto_movimiento: null,
+      tipo_Movimiento_Id: null,
+      tipo_Movimiento: null,
+      concepto_Movimiento: null,
+      fecha_Movimiento: null,
+      estatus: null,
+      bodega_Origen_Id: null,
+      bodega_Origen: null,
+      bodega_Destino_Id: null,
+      bodega_Destino: null,
+      provedor_Id: null,
+      empleado_Registra_Id: null,
+      empleado_Registra: null,
+      provedor: null,
+      pdf_Url: null,
+      xml_Url: null,
+      uuid: null,
+      no_factura: null,
+      area_Empleado_Registra_Id: null,
+      area_Empleado_Registra: null,
     },
   }),
   actions: {
     initMovimiento() {
       this.movimiento.id = null;
-      this.tipo_movimiento = null;
-      this.concepto_movimiento = null;
+      this.movimiento.tipo_Movimiento = null;
+      this.movimiento.tipo_Movimiento_Id = null;
+      this.concepto_Movimiento = null;
+      this.movimiento.fecha_Movimiento = null;
+      this.movimiento.estatus = null;
+      this.movimiento.bodega_Origen_Id = null;
+      this.movimiento.bodega_Origen = null;
+      this.movimiento.bodega_Destino_Id = null;
+      this.movimiento.bodega_Destino = null;
+      this.movimiento.provedor_Id = null;
+      this.movimiento.empleado_Registra = null;
+      this.movimiento.empleado_Registra_Id = null;
+      this.movimiento.provedor = null;
+      this.movimiento.provedor_Id = null;
+      this.listaMovimientoInventario = [];
     },
     //-----------------------------------------------------------
+    async loadInformacionMovimientos() {
+      try {
+        let resp = await api.get("/MovimientosInventarios");
+        let { data } = resp.data;
+        let listaMovimientos = data.map((movimiento) => {
+          return {
+            id: movimiento.id,
+            tipo_Movimiento_Id: movimiento.tipo_Movimiento_Id,
+            tipo_Movimiento: movimiento.tipo_Movimiento,
+            concepto_Movimiento: movimiento.concepto_Movimiento,
+            fecha_Movimiento: movimiento.fecha_Movimiento,
+            estatus: movimiento.estatus,
+            bodega_Destino: movimiento.bodega_Destino,
+            bodega_Destino_Id: movimiento.bodega_Destino_Id,
+            bodega_Origen: movimiento.bodega_Origen,
+            bodega_Origen_Id: movimiento.bodega_Origen_Id,
+            provedor: movimiento.provedor_Id,
+            provedor_Id: movimiento.provedor_Id,
+            empleado_Registra: movimiento.empleado_Registra,
+            empleado_Registra_Id: movimiento.empleado_Registra_Id,
+          };
+        });
+        this.movimientos = listaMovimientos;
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
 
-    async addMovimiento(id) {
+    //-----------------------------------------------------------
+
+    async loadMovimiento(id) {
+      try {
+        const resp = await api.get(`/MovimientosInventarios/${id}`);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success == true) {
+            this.movimiento.id = data.id;
+            this.movimiento.tipo_Movimiento_Id = data.tipo_Movimiento_Id;
+            this.movimiento.bodega_Origen_Id = data.bodega_Origen_Id;
+            this.movimiento.bodega_Destino_Id = data.bodega_Destino_Id;
+            this.movimiento.provedor_Id = data.provedor_Id;
+            this.movimiento.fecha_Movimiento = data.fecha_Movimiento;
+            this.movimiento.estatus = data.estatus;
+          }
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
+    async createMovimiento(movimientoInventario) {
+      try {
+        const resp = await api.post(
+          "/MovimientosInventarios",
+          movimientoInventario,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log("resp", resp);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
+    async addMovimiento(id, cantidad, precio_Unitario, importe) {
       try {
         this.listaMovimientoInventario.push({
           inventario_Id: id.value,
           nombre_producto: id.label,
           descripcion: id.descripcion,
           clave: id.clave,
+          cantidad: cantidad,
+          precio_Unitario: precio_Unitario,
+          importe: importe,
         });
+        console.log(this.listaMovimientoInventario);
       } catch (error) {
         return {
           success: false,
@@ -99,9 +233,13 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
         };
       }
     },
+
     //-----------------------------------------------------------
     actualizarModal(valor) {
       this.modal = valor;
+    },
+    updateEditar(valor) {
+      this.isEditar = valor;
     },
   },
 });
