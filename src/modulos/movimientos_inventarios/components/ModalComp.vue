@@ -489,6 +489,7 @@ const agregarProducto = async () => {
       proveedor.value == null
     ) {
       $q.notify({
+        position: "top-right",
         type: "negative",
         message: "Ingrese datos completos",
       });
@@ -525,6 +526,7 @@ const agregarProducto = async () => {
       bodega_destino.value == null
     ) {
       $q.notify({
+        position: "top-right",
         type: "negative",
         message: "Ingrese datos completos",
       });
@@ -580,15 +582,14 @@ const onSubmit = async () => {
   }
 
   if (isEditar.value == true) {
-    console.log("editar");
   } else {
     resp = await movimientoInventarioStore.createMovimiento(
       movimientosFormData
     );
-    console.log("resp", resp);
   }
   if (resp.success) {
     $q.notify({
+      position: "top-right",
       type: "positive",
       message: resp.data,
     });
@@ -597,6 +598,7 @@ const onSubmit = async () => {
     movimientoInventarioStore.loadInformacionMovimientos();
   } else {
     $q.notify({
+      position: "top-right",
       type: "negative",
       message: resp.data,
     });

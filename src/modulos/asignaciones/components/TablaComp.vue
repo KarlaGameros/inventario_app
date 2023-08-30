@@ -188,6 +188,7 @@ const afectar = async (id) => {
     if (resp.success) {
       $q.loading.hide();
       $q.notify({
+        position: "top-right",
         type: "positive",
         message: resp.data,
       });
@@ -195,6 +196,7 @@ const afectar = async (id) => {
     } else {
       $q.loading.hide();
       $q.notify({
+        position: "top-right",
         type: "negative",
         message: resp.data,
       });
@@ -224,6 +226,7 @@ const cancelar = async (id) => {
     if (resp.success) {
       $q.loading.hide();
       $q.notify({
+        position: "top-right",
         type: "positive",
         message: resp.data,
       });
@@ -231,6 +234,7 @@ const cancelar = async (id) => {
     } else {
       $q.loading.hide();
       $q.notify({
+        position: "top-right",
         type: "negative",
         message: resp.data,
       });

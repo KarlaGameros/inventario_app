@@ -385,6 +385,7 @@ const registrar = async () => {
 
   if (resp.success) {
     $q.notify({
+      position: "top-right",
       type: "positive",
       message: resp.data,
     });
@@ -392,6 +393,7 @@ const registrar = async () => {
     asignacionStore.loadInformacionAsignaciones();
   } else {
     $q.notify({
+      position: "top-right",
       type: "negative",
       message: resp.data,
     });

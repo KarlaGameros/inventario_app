@@ -139,6 +139,7 @@ const eliminar = async (id) => {
     if (resp.success) {
       $q.loading.hide();
       $q.notify({
+        position: "top-right",
         type: "positive",
         message: resp.data,
       });
@@ -146,6 +147,7 @@ const eliminar = async (id) => {
     } else {
       $q.loading.hide();
       $q.notify({
+        position: "top-right",
         type: "negative",
         message: resp.data,
       });

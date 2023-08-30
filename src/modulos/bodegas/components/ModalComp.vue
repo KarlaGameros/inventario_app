@@ -125,6 +125,7 @@ const onSubmit = async () => {
 
   if (resp.success) {
     $q.notify({
+      position: "top-right",
       type: "positive",
       message: resp.data,
     });
@@ -132,6 +133,7 @@ const onSubmit = async () => {
     actualizarModal(false);
   } else {
     $q.notify({
+      position: "top-right",
       type: "negative",
       message: resp.data,
     });
