@@ -20,7 +20,7 @@
           v-close-popup
         />
       </q-card-section>
-      <q-form @submit="onSubmit">
+      <q-form @submit="onSubmit" ref="RegistroMovimiento">
         <q-card-section>
           <div class="row q-col-gutter-xs">
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -267,7 +267,9 @@
                   label="Agregar"
                   color="positive"
                   class="q-ml-sm"
-                  @click="agregarProducto()"
+                  @click="
+                    $refs.RegistroMovimiento.validate(), agregarProducto()
+                  "
                 />
               </div>
             </div>
@@ -455,6 +457,7 @@ const filterInventario = (val, update) => {
   });
 };
 
+const validarProducto = async () => {};
 const agregarProducto = async () => {
   if (listaMovimientoInventario.value.length == 0) {
     await movimientoInventarioStore.addMovimiento(

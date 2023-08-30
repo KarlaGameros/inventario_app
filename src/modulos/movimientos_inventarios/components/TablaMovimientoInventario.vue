@@ -58,6 +58,7 @@ const $q = useQuasar();
 const movimientoStore = useMovimientoInventario();
 const { listaMovimientoInventario } = storeToRefs(movimientoStore);
 
+console.log("listaMovimientoInventario", listaMovimientoInventario);
 //-----------------------------------------------------------
 
 const columns = [
