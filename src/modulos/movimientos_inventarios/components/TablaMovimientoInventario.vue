@@ -3,7 +3,7 @@
     <div class="col">
       <q-table
         :rows="listaMovimientoInventario"
-        :columns="columns"
+        :columns="isCompra ? columnsIsCompra : columns"
         :filter="filter"
         :pagination="pagination"
         row-key="id"
@@ -56,24 +56,16 @@ import { ref } from "vue";
 
 const $q = useQuasar();
 const movimientoStore = useMovimientoInventario();
-const { listaMovimientoInventario } = storeToRefs(movimientoStore);
+const { listaMovimientoInventario, isCompra } = storeToRefs(movimientoStore);
 
-console.log("listaMovimientoInventario", listaMovimientoInventario);
 //-----------------------------------------------------------
 
-const columns = [
+const columnsIsCompra = [
   {
-    name: "clave",
+    name: "nombre_producto",
     align: "center",
-    label: "Clave",
-    field: "clave",
-    sortable: true,
-  },
-  {
-    name: "descripcion",
-    align: "center",
-    label: "Descripción",
-    field: "descripcion",
+    label: "Nombre del producto",
+    field: "nombre_producto",
     sortable: true,
   },
   {
@@ -105,7 +97,22 @@ const columns = [
     sortable: false,
   },
 ];
-
+const columns = [
+  {
+    name: "nombre_producto",
+    align: "center",
+    label: "Nombre del producto",
+    field: "nombre_producto",
+    sortable: true,
+  },
+  {
+    name: "inventario_Id",
+    align: "center",
+    label: "Acciones",
+    field: "inventario_Id",
+    sortable: false,
+  },
+];
 const pagination = ref({
   //********** */
   page: 1,

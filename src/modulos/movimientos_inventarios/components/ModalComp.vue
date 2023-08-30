@@ -108,11 +108,11 @@
             </div>
 
             <div
-              v-if="compra == 3"
+              v-if="isCompra == true"
               class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
             >
               <q-select
-                v-model="provedor"
+                v-model="proveedor"
                 :options="proveedores"
                 label="Provedor"
                 hint="Selecciona un provedor"
@@ -126,10 +126,11 @@
             </div>
 
             <div
-              v-if="compra == 3"
+              v-if="isCompra == true"
               class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
             >
               <q-input
+                v-model="movimiento.uuid"
                 label="UUID"
                 autogrow
                 lazy-rules
@@ -139,10 +140,11 @@
             </div>
 
             <div
-              v-if="compra == 3"
+              v-if="isCompra == true"
               class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
             >
               <q-input
+                v-model="movimiento.no_factura"
                 label="Número de factura"
                 autogrow
                 lazy-rules
@@ -189,7 +191,7 @@
             </div>
 
             <div
-              v-if="compra == 3"
+              v-if="isCompra == true"
               class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
             >
               <q-input
@@ -201,7 +203,7 @@
               </q-input>
             </div>
             <div
-              v-if="compra == 3"
+              v-if="isCompra == true"
               class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
             >
               <q-input
@@ -212,7 +214,7 @@
               </q-input>
             </div>
             <div
-              v-if="compra == 3"
+              v-if="isCompra == true"
               class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
             >
               <q-input
@@ -224,7 +226,7 @@
             </div>
 
             <div
-              v-if="compra == 3"
+              v-if="isCompra == true"
               class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
             >
               <q-file filled bottom-slots v-model="model" label="PDF" counter>
@@ -242,7 +244,7 @@
             </div>
 
             <div
-              v-if="compra == 3"
+              v-if="isCompra == true"
               class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
             >
               <q-file filled bottom-slots v-model="model" label="XML" counter>
@@ -332,6 +334,7 @@ const {
   listConceptoMovimiento,
   isEditar,
   movimiento,
+  isCompra,
 } = storeToRefs(movimientoInventarioStore);
 const { proveedores } = storeToRefs(proveedorStore);
 const { listCatalogo } = storeToRefs(catalogoStore);
@@ -342,10 +345,10 @@ const bodega_origen = ref(null);
 const bodega_destino = ref(null);
 const tipoMovimiento = ref(null);
 const inventarioId = ref(null);
+const proveedor = ref(null);
 const opcionesInventario = ref([...inventarios.value]);
 const conceptoMovimiento = ref(null);
 const inputSalida = ref(null);
-const compra = ref(null);
 const cantidad = ref(null);
 const precio_Unitario = ref(null);
 const importe = ref(null);
@@ -378,17 +381,28 @@ watch(catalogoId, (val) => {
 
 watch(tipoMovimiento, (val) => {
   if (val != null) {
-    inputSalida.value = val.label;
-    movimientoInventarioStore.loadConceptoMovimientoListFiltro(val.label);
-  } else {
-    //conceptoId.value = null;
-    //listConceptoMovimiento.value = [];
+    if (val.label == "Salida") {
+      inputSalida.value = val.label;
+      conceptoMovimiento.value = null;
+      movimientoInventarioStore.loadConceptoMovimientoListFiltro(val.label);
+      movimientoInventarioStore.updateCompra(false);
+    } else {
+      inputSalida.value = val.label;
+      conceptoMovimiento.value = null;
+      movimientoInventarioStore.loadConceptoMovimientoListFiltro(val.label);
+    }
   }
 });
 
 watch(conceptoMovimiento, (val) => {
   if (val != null) {
-    compra.value = val.value;
+    if (val.label == "Entrada por compra") {
+      movimientoInventarioStore.updateCompra(true);
+      movimientoInventarioStore.initMovimiento();
+    } else {
+      movimientoInventarioStore.updateCompra(false);
+      movimientoInventarioStore.initMovimiento();
+    }
   }
 });
 
@@ -421,14 +435,10 @@ const cargarBodegaDestino = async (val) => {
 
 const actualizarModal = (valor) => {
   movimientoInventarioStore.actualizarModal(valor);
-  movimientoInventarioStore.initMovimiento();
+  movimientoInventarioStore.updateCompra(valor);
+  proveedorStore.actualizarModal(false);
+  limpiarRegistro();
   isEditar.value = false;
-  bodega_origen.value = null;
-  bodega_destino.value = null;
-  tipoMovimiento.value = null;
-  conceptoMovimiento.value = null;
-  opcionesInventario.value = null;
-  catalogoId.value = null;
   catalogoId.value = { value: 0, label: "Todos" };
 };
 
@@ -440,6 +450,16 @@ const addProveedor = () => {
 
 const limpiarRegistro = () => {
   inventarioId.value = null;
+  cantidad.value = null;
+  precio_Unitario.value = null;
+  importe.value = null;
+  bodega_origen.value = null;
+  bodega_destino.value = null;
+  tipoMovimiento.value = null;
+  conceptoMovimiento.value = null;
+  opcionesInventario.value = null;
+  catalogoId.value = null;
+  movimientoInventarioStore.initMovimiento();
 };
 
 const filterInventario = (val, update) => {
@@ -457,65 +477,115 @@ const filterInventario = (val, update) => {
   });
 };
 
-const validarProducto = async () => {};
 const agregarProducto = async () => {
-  if (listaMovimientoInventario.value.length == 0) {
-    await movimientoInventarioStore.addMovimiento(
-      inventarioId.value,
-      cantidad.value,
-      precio_Unitario.value,
-      importe.value
-    );
-    //limpiarRegistro();
-  } else {
-    let filtro = listaMovimientoInventario.value.find(
-      (x) => x.inventario_Id == inventarioId.value.value
-    );
-    if (filtro == undefined) {
-      await movimientoInventarioStore.addMovimiento(inventarioId.value);
-      //limpiarRegistro();
-    } else {
-      $q.dialog({
-        title: "Atención",
-        message: "El producto ya se agrego",
-        icon: "Warning",
-        persistent: true,
-        transitionShow: "scale",
-        transitionHide: "scale",
+  if (isCompra.value == true) {
+    if (
+      cantidad.value == null ||
+      precio_Unitario.value == null ||
+      importe.value == null ||
+      tipoMovimiento.value == null ||
+      conceptoMovimiento.value == null ||
+      bodega_destino.value == null ||
+      proveedor.value == null
+    ) {
+      $q.notify({
+        type: "negative",
+        message: "Ingrese datos completos",
       });
+    } else {
+      if (listaMovimientoInventario.value.length == 0) {
+        await movimientoInventarioStore.addMovimiento(
+          inventarioId.value,
+          cantidad.value,
+          precio_Unitario.value,
+          importe.value
+        );
+      } else {
+        let filtro = listaMovimientoInventario.value.find(
+          (x) => x.inventario_Id == inventarioId.value.value
+        );
+        if (filtro == undefined) {
+          await movimientoInventarioStore.addMovimiento(inventarioId.value);
+        } else {
+          $q.dialog({
+            title: "Atención",
+            message: "El producto ya se agrego",
+            icon: "Warning",
+            persistent: true,
+            transitionShow: "scale",
+            transitionHide: "scale",
+          });
+        }
+      }
+    }
+  } else {
+    if (
+      tipoMovimiento.value == null ||
+      conceptoMovimiento.value == null ||
+      bodega_destino.value == null
+    ) {
+      $q.notify({
+        type: "negative",
+        message: "Ingrese datos completos",
+      });
+    } else {
+      if (listaMovimientoInventario.value.length == 0) {
+        await movimientoInventarioStore.addMovimiento(
+          inventarioId.value,
+          cantidad.value,
+          precio_Unitario.value,
+          importe.value
+        );
+      } else {
+        let filtro = listaMovimientoInventario.value.find(
+          (x) => x.inventario_Id == inventarioId.value.value
+        );
+        if (filtro == undefined) {
+          await movimientoInventarioStore.addMovimiento(inventarioId.value);
+        } else {
+          $q.dialog({
+            title: "Atención",
+            message: "El producto ya se agrego",
+            icon: "Warning",
+            persistent: true,
+            transitionShow: "scale",
+            transitionHide: "scale",
+          });
+        }
+      }
     }
   }
 };
 
 const onSubmit = async () => {
   let movimientosFormData = new FormData();
-  console.log("lista", listaMovimientoInventario);
   let resp = null;
   $q.loading.show();
   if (isEditar == true) {
   } else {
-    // movimientosFormData.append(
-    //   "Tipo_Movimiento_Id",
-    //   tipoMovimiento.value.value
-    // );
-    // movimientosFormData.append("Fecha_Movimiento", date.value);
-    // movimientosFormData.append("Bodega_Origen_Id", bodega_origen.value.value);
-    // movimientosFormData.append("Bodega_Destino_Id", bodega_destino.value.value);
-    // listaMovimientoInventario.value.forEach((row) => {
-    //   movimientosFormData.append("Detalle[]", row.id);
-    // });
-    // movimientosFormData.forEach((value, index) => {
-    //   console.log("value", value);
-    //   console.log("index", index);
-    // });
+    movimientosFormData.append(
+      "Tipo_Movimiento_Id",
+      tipoMovimiento.value.value
+    );
+    movimientosFormData.append(
+      "Concepto_Movimiento_Id",
+      conceptoMovimiento.value.value
+    );
+    movimientosFormData.append("Fecha_Movimiento", date.value);
+    movimientosFormData.append("Bodega_Destino_Id", bodega_destino.value.value);
+    listaMovimientoInventario.value.forEach((row) => {
+      movimientosFormData.append("Detalle[]", row.id);
+      console.log("row", row);
+    });
   }
 
   if (isEditar.value == true) {
     console.log("editar");
   } else {
-    // resp = await movimientoInventarioStore.createMovimiento(
-    //   movimientosFormData
-    // );
+    resp = await movimientoInventarioStore.createMovimiento(
+      movimientosFormData
+    );
+    console.log("resp", resp);
   }
   if (resp.success) {
     $q.notify({

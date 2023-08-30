@@ -5,14 +5,8 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
   state: () => ({
     modal: false,
     isEditar: false,
-    listaMovimientoInventario: [
-      {
-        inventario_Id: null,
-        cantidad: null,
-        precio_Unitario: null,
-        importe: null,
-      },
-    ],
+    isCompra: false,
+    listaMovimientoInventario: [],
     listTipoMovimientos: [],
     listConceptoMovimiento: [],
     movimientos: [],
@@ -37,6 +31,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       no_factura: null,
       area_Empleado_Registra_Id: null,
       area_Empleado_Registra: null,
+      detalle: [],
     },
   }),
   actions: {
@@ -58,6 +53,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       this.movimiento.provedor_Id = null;
       this.listaMovimientoInventario = [];
     },
+
     //-----------------------------------------------------------
     async loadInformacionMovimientos() {
       try {
@@ -119,6 +115,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
 
     async createMovimiento(movimientoInventario) {
       try {
+        console.log("movimientoInventario", movimientoInventario);
         const resp = await api.post(
           "/MovimientosInventarios",
           movimientoInventario,
@@ -128,7 +125,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             },
           }
         );
-        console.log("resp", resp);
+        console.log("resp store", resp);
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success === true) {
@@ -163,7 +160,6 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
           precio_Unitario: precio_Unitario,
           importe: importe,
         });
-        console.log(this.listaMovimientoInventario);
       } catch (error) {
         return {
           success: false,
@@ -240,6 +236,9 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
     },
     updateEditar(valor) {
       this.isEditar = valor;
+    },
+    updateCompra(valor) {
+      this.isCompra = valor;
     },
   },
 });
