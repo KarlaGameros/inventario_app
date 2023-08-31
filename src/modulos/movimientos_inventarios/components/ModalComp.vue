@@ -130,12 +130,14 @@
               class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
             >
               <q-input
-                v-model="movimiento.uuid"
+                v-model="uuid"
                 label="UUID"
                 autogrow
                 lazy-rules
                 :rules="[(val) => !!val || 'El UUID es requerido']"
               >
+                <q-icon v-show="validarUuid" name="done" color="green" />
+                <q-icon v-show="!validarUuid" name="close" color="red" />
               </q-input>
             </div>
 
@@ -229,7 +231,7 @@
               v-if="isCompra == true"
               class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
             >
-              <q-file filled bottom-slots v-model="model" label="PDF" counter>
+              <!-- <q-file filled bottom-slots v-model="model" label="PDF" counter>
                 <template v-slot:prepend>
                   <q-icon name="cloud_upload" @click.stop.prevent />
                 </template>
@@ -240,14 +242,14 @@
                     class="cursor-pointer"
                   />
                 </template>
-              </q-file>
+              </q-file> -->
             </div>
 
             <div
               v-if="isCompra == true"
               class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
             >
-              <q-file filled bottom-slots v-model="model" label="XML" counter>
+              <!-- <q-file filled bottom-slots v-model="model" label="XML" counter>
                 <template v-slot:prepend>
                   <q-icon name="cloud_upload" @click.stop.prevent />
                 </template>
@@ -258,7 +260,7 @@
                     class="cursor-pointer"
                   />
                 </template>
-              </q-file>
+              </q-file> -->
             </div>
 
             <q-space />
@@ -352,6 +354,8 @@ const inputSalida = ref(null);
 const cantidad = ref(null);
 const precio_Unitario = ref(null);
 const importe = ref(null);
+const uuid = ref(null);
+const validarUuid = ref(false);
 //-----------------------------------------------------------
 //Get fecha actual
 const dateActual = new Date();
@@ -413,6 +417,15 @@ watch(movimiento.value, (val) => {
   }
 });
 
+watch(uuid, (val) => {
+  if (val != null) {
+    if (val.length == 36) {
+      validarUuid.value = true;
+    } else {
+      validarUuid.value = false;
+    }
+  }
+});
 //-----------------------------------------------------------
 
 const cargarTipoMovimiento = async (val) => {
@@ -477,7 +490,7 @@ const filterInventario = (val, update) => {
   });
 };
 
-const agregarProducto = async () => {
+const validarForm = async () => {
   if (isCompra.value == true) {
     if (
       cantidad.value == null ||
@@ -493,31 +506,14 @@ const agregarProducto = async () => {
         type: "negative",
         message: "Ingrese datos completos",
       });
+    } else if (validarUuid.value == false) {
+      $q.notify({
+        position: "top-right",
+        type: "negative",
+        message: "UUI incorrecto",
+      });
     } else {
-      if (listaMovimientoInventario.value.length == 0) {
-        await movimientoInventarioStore.addMovimiento(
-          inventarioId.value,
-          cantidad.value,
-          precio_Unitario.value,
-          importe.value
-        );
-      } else {
-        let filtro = listaMovimientoInventario.value.find(
-          (x) => x.inventario_Id == inventarioId.value.value
-        );
-        if (filtro == undefined) {
-          await movimientoInventarioStore.addMovimiento(inventarioId.value);
-        } else {
-          $q.dialog({
-            title: "Atención",
-            message: "El producto ya se agrego",
-            icon: "Warning",
-            persistent: true,
-            transitionShow: "scale",
-            transitionHide: "scale",
-          });
-        }
-      }
+      return true;
     }
   } else {
     if (
@@ -531,29 +527,64 @@ const agregarProducto = async () => {
         message: "Ingrese datos completos",
       });
     } else {
-      if (listaMovimientoInventario.value.length == 0) {
-        await movimientoInventarioStore.addMovimiento(
-          inventarioId.value,
-          cantidad.value,
-          precio_Unitario.value,
-          importe.value
-        );
+      return true;
+    }
+  }
+};
+
+const validarProducto = async (inventario) => {
+  let filtro = listaMovimientoInventario.value.find(
+    (x) => x.inventario_Id == inventario
+  );
+  return filtro;
+};
+
+const agregarProducto = async () => {
+  let resp = await validarForm();
+  if (resp == true && isCompra.value == true) {
+    if (listaMovimientoInventario.value.length == 0) {
+      await movimientoInventarioStore.addMovimiento(
+        inventarioId.value,
+        cantidad.value,
+        precio_Unitario.value,
+        importe.value
+      );
+    } else {
+      let respValidarProducto = await validarProducto(inventarioId.value.value);
+      if (respValidarProducto == undefined) {
+        await movimientoInventarioStore.addMovimiento(inventarioId.value);
       } else {
-        let filtro = listaMovimientoInventario.value.find(
-          (x) => x.inventario_Id == inventarioId.value.value
-        );
-        if (filtro == undefined) {
-          await movimientoInventarioStore.addMovimiento(inventarioId.value);
-        } else {
-          $q.dialog({
-            title: "Atención",
-            message: "El producto ya se agrego",
-            icon: "Warning",
-            persistent: true,
-            transitionShow: "scale",
-            transitionHide: "scale",
-          });
-        }
+        $q.dialog({
+          title: "Atención",
+          message: "El producto ya se agrego",
+          icon: "Warning",
+          persistent: true,
+          transitionShow: "scale",
+          transitionHide: "scale",
+        });
+      }
+    }
+  } else if (resp == true && isCompra.value == false) {
+    if (listaMovimientoInventario.value.length == 0) {
+      await movimientoInventarioStore.addMovimiento(
+        inventarioId.value,
+        cantidad.value,
+        precio_Unitario.value,
+        importe.value
+      );
+    } else {
+      let respValidarProducto = await validarProducto(inventarioId.value.value);
+      if (respValidarProducto == undefined) {
+        await movimientoInventarioStore.addMovimiento(inventarioId.value);
+      } else {
+        $q.dialog({
+          title: "Atención",
+          message: "El producto ya se agrego",
+          icon: "Warning",
+          persistent: true,
+          transitionShow: "scale",
+          transitionHide: "scale",
+        });
       }
     }
   }
@@ -575,34 +606,37 @@ const onSubmit = async () => {
     );
     movimientosFormData.append("Fecha_Movimiento", date.value);
     movimientosFormData.append("Bodega_Destino_Id", bodega_destino.value.value);
-    listaMovimientoInventario.value.forEach((row) => {
-      movimientosFormData.append("Detalle[]", row.id);
-      console.log("row", row);
-    });
+    // listaMovimientoInventario.value.forEach((row) => {
+    //   movimientosFormData.append("Detalle[]", row.id);
+    //   console.log("row", row);
+    // });
   }
 
   if (isEditar.value == true) {
   } else {
-    resp = await movimientoInventarioStore.createMovimiento(
-      movimientosFormData
-    );
+    let respValidar = await validarForm();
+    if (respValidar == true) {
+      resp = await movimientoInventarioStore.createMovimiento(
+        movimientosFormData
+      );
+    }
   }
-  if (resp.success) {
-    $q.notify({
-      position: "top-right",
-      type: "positive",
-      message: resp.data,
-    });
-    actualizarModal(false);
-    movimientoInventarioStore.initMovimiento();
-    movimientoInventarioStore.loadInformacionMovimientos();
-  } else {
-    $q.notify({
-      position: "top-right",
-      type: "negative",
-      message: resp.data,
-    });
-  }
+  // if (resp.success) {
+  //   $q.notify({
+  //     position: "top-right",
+  //     type: "positive",
+  //     message: resp.data,
+  //   });
+  //   actualizarModal(false);
+  //   movimientoInventarioStore.initMovimiento();
+  //   movimientoInventarioStore.loadInformacionMovimientos();
+  // } else {
+  //   $q.notify({
+  //     position: "top-right",
+  //     type: "negative",
+  //     message: resp.data,
+  //   });
+  // }
   $q.loading.hide();
 };
 </script>
