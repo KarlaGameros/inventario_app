@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="listaAsignacionInventario"
+        :rows="entrega"
         :columns="columns"
         :filter="filter"
         :pagination="pagination"
@@ -25,7 +25,68 @@
         </template>
         <template v-slot:body="props">
           <q-tr :props="props">
-            <q-td v-for="col in props.cols" :key="col.name" :props="props">
+            <q-td key="asignar" :props="props">
+              <q-radio
+                v-model="asignar"
+                checked-icon="task_alt"
+                unchecked-icon="panorama_fish_eye"
+                val="bodega"
+                label="Bodega"
+              />
+              <q-radio
+                v-model="asignar"
+                checked-icon="task_alt"
+                unchecked-icon="panorama_fish_eye"
+                val="empleado"
+                label="Empleado"
+              />
+            </q-td>
+
+            <q-td key="asignar_a" :props="props">
+              <q-select
+                v-if="asignar == 'bodega'"
+                label="Bodega"
+                v-model="props.row.asignar"
+                :options="listEmpleados"
+                hint="Selecciona una bodega"
+                :lazy-rules="true"
+                :rules="[(val) => !!val || 'La bodega es requerida']"
+              >
+              </q-select>
+              <q-select
+                v-else
+                label="Personal"
+                v-model="props.row.asignar"
+                :options="listEmpleados"
+                hint="Selecciona personal"
+                :lazy-rules="true"
+                :rules="[(val) => !!val || 'El personal es requerido']"
+              >
+              </q-select>
+            </q-td>
+
+            <q-td key="inventario_Id" :props="props">
+              <q-btn
+                flat
+                round
+                color="purple-ieen"
+                icon="visibility"
+                @click="actualizarModalVer(true)"
+              >
+                <q-tooltip>Ver inventario</q-tooltip>
+              </q-btn>
+              <TablaVerInventario />
+              <q-btn
+                flat
+                round
+                color="purple-ieen"
+                icon="cancel"
+                @click="eliminar(col.value)"
+              >
+                <q-tooltip>Eliminar inventario</q-tooltip>
+              </q-btn>
+            </q-td>
+            <!-- <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'inventario_Id'">
                 <q-btn
                   disable
@@ -39,7 +100,7 @@
                 </q-btn>
               </div>
               <label v-else>{{ col.value }}</label>
-            </q-td>
+            </q-td> -->
           </q-tr>
         </template>
       </q-table>
@@ -48,52 +109,40 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useEntregaRecepcionStore } from "src/stores/entrega-recepcion-store";
+import { ref, watch } from "vue";
+import TablaVerInventario from "../components/ModalVerInventario.vue";
 
 //-----------------------------------------------------------
+const entregaRecepcionStore = useEntregaRecepcionStore();
+const { modalVerInventario } = storeToRefs(entregaRecepcionStore);
 
+const entrega = [
+  {
+    descripcion: "Producto1",
+    inventario_Id: 1,
+  },
+  {
+    descripcion: "Producto2",
+    inventario_Id: 2,
+  },
+];
+const asignar = ref("bodega");
 const columns = [
   {
-    name: "clave",
+    name: "asignar",
     align: "center",
-    label: "Clave",
-    field: "clave",
-    sortable: true,
+    label: "Asignar a ",
+    field: "asignar",
+    sortable: false,
   },
   {
-    name: "numero_serie",
+    name: "asignar_a",
     align: "center",
-    label: "No. Serie",
-    field: "numero_serie",
-    sortable: true,
-  },
-  {
-    name: "descripcion",
-    align: "center",
-    label: "Descripción",
-    field: "descripcion",
-    sortable: true,
-  },
-  {
-    name: "marca",
-    align: "center",
-    label: "Marca",
-    field: "marca",
-    sortable: true,
-  },
-  {
-    name: "modelo",
-    align: "center",
-    label: "Modelo",
-    field: "modelo",
-    sortable: true,
-  },
-  {
-    name: "color",
-    align: "center",
-    label: "Color",
-    field: "color",
-    sortable: true,
+    label: "Asignar a",
+    field: "asignar_a",
+    sortable: false,
   },
   {
     name: "inventario_Id",
@@ -115,6 +164,14 @@ const pagination = ref({
 const filter = ref("");
 
 //-----------------------------------------------------------
+watch(asignar, (val) => {
+  console.log(val);
+  asignar.value = val;
+});
+
+const actualizarModalVer = (valor) => {
+  entregaRecepcionStore.actualizarModalVerInventario(valor);
+};
 </script>
 
 <style></style>
