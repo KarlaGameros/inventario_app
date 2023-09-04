@@ -15,6 +15,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       tipo_Movimiento_Id: null,
       tipo_Movimiento: null,
       concepto_Movimiento: null,
+      concepto_Movimiento_Id: null,
       fecha_Movimiento: null,
       estatus: null,
       bodega_Origen_Id: null,
@@ -39,7 +40,8 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       this.movimiento.id = null;
       this.movimiento.tipo_Movimiento = null;
       this.movimiento.tipo_Movimiento_Id = null;
-      this.concepto_Movimiento = null;
+      this.movimiento.concepto_Movimiento = null;
+      this.movimiento.concepto_Movimiento_Id = null;
       this.movimiento.fecha_Movimiento = null;
       this.movimiento.estatus = null;
       this.movimiento.bodega_Origen_Id = null;
@@ -59,12 +61,14 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       try {
         let resp = await api.get("/MovimientosInventarios");
         let { data } = resp.data;
+        console.log(data);
         let listaMovimientos = data.map((movimiento) => {
           return {
             id: movimiento.id,
             tipo_Movimiento_Id: movimiento.tipo_Movimiento_Id,
             tipo_Movimiento: movimiento.tipo_Movimiento,
             concepto_Movimiento: movimiento.concepto_Movimiento,
+            concepto_Movimiento_Id: movimiento.concepto_Movimiento_Id,
             fecha_Movimiento: movimiento.fecha_Movimiento,
             estatus: movimiento.estatus,
             bodega_Destino: movimiento.bodega_Destino,
@@ -101,8 +105,11 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             this.movimiento.provedor_Id = data.provedor_Id;
             this.movimiento.fecha_Movimiento = data.fecha_Movimiento;
             this.movimiento.estatus = data.estatus;
+            this.movimiento.concepto_Movimiento_Id =
+              data.concepto_Movimiento_Id;
           }
         }
+        console.log("---", this.movimiento);
       } catch (error) {
         return {
           success: false,
@@ -213,14 +220,16 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
         let resp = await api.get("/ConceptosMovimientosInventarios");
         let { data } = resp.data;
         let listData = data.filter(
-          (x) => x.tipo_Movimiento_Inventario == filtro
+          (x) => x.tipo_Movimiento_Inventario_Id == filtro
         );
+        console.log(listData);
         this.listConceptoMovimiento = listData.map((concepto) => {
           return {
             label: concepto.concepto,
             value: concepto.id,
           };
         });
+        console.log("listConceptoMovimiento", this.listConceptoMovimiento);
       } catch (error) {
         console.error(error);
         return {
@@ -228,6 +237,12 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
         };
       }
+    },
+
+    //-----------------------------------------------------------
+    async deleteMovimiento(id) {
+      try {
+      } catch (error) {}
     },
 
     //-----------------------------------------------------------

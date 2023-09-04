@@ -387,13 +387,13 @@ watch(tipoMovimiento, (val) => {
   if (val != null) {
     if (val.label == "Salida") {
       inputSalida.value = val.label;
-      conceptoMovimiento.value = null;
-      movimientoInventarioStore.loadConceptoMovimientoListFiltro(val.label);
+      //conceptoMovimiento.value = null;
+      movimientoInventarioStore.loadConceptoMovimientoListFiltro(val.value);
       movimientoInventarioStore.updateCompra(false);
     } else {
       inputSalida.value = val.label;
-      conceptoMovimiento.value = null;
-      movimientoInventarioStore.loadConceptoMovimientoListFiltro(val.label);
+      //conceptoMovimiento.value = null;
+      movimientoInventarioStore.loadConceptoMovimientoListFiltro(val.value);
     }
   }
 });
@@ -414,6 +414,7 @@ watch(movimiento.value, (val) => {
   if (val.id != null) {
     cargarTipoMovimiento(val);
     cargarBodegaDestino(val);
+    cargarConceptoMovimiento(val);
   }
 });
 
@@ -437,10 +438,19 @@ const cargarTipoMovimiento = async (val) => {
   }
 };
 
+const cargarConceptoMovimiento = async (val) => {
+  if (conceptoMovimiento.value == null) {
+    let conceptoFiltrado = listConceptoMovimiento.value.find(
+      (x) => x.value == `${val.concepto_Movimiento_Id}`
+    );
+    conceptoMovimiento.value = conceptoFiltrado;
+  }
+};
+
 const cargarBodegaDestino = async (val) => {
   if (bodega_destino.value == null) {
     let bodegaDestinoFiltrado = listBodega.value.find(
-      (x) => (x.value = `${val.bodega_Destino_Id}`)
+      (x) => x.value == `${val.bodega_Destino_Id}`
     );
     bodega_destino.value = bodegaDestinoFiltrado;
   }
@@ -606,10 +616,10 @@ const onSubmit = async () => {
     );
     movimientosFormData.append("Fecha_Movimiento", date.value);
     movimientosFormData.append("Bodega_Destino_Id", bodega_destino.value.value);
-    // listaMovimientoInventario.value.forEach((row) => {
-    //   movimientosFormData.append("Detalle[]", row.id);
-    //   console.log("row", row);
-    // });
+    listaMovimientoInventario.value.forEach((row) => {
+      movimientosFormData.append("Detalle[]", row.id);
+      console.log("row", row);
+    });
   }
 
   if (isEditar.value == true) {
