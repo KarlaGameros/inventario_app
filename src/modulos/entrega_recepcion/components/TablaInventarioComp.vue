@@ -123,10 +123,6 @@ const entrega = [
     descripcion: "Producto1",
     inventario_Id: 1,
   },
-  {
-    descripcion: "Producto2",
-    inventario_Id: 2,
-  },
 ];
 const asignar = ref("bodega");
 const columns = [

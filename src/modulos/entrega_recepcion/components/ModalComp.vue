@@ -43,7 +43,7 @@
             </q-select>
           </div>
           <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-            <q-input v-model="date" label="Fecha de asignación">
+            <q-input v-model="date" label="Fecha de entrega a recepción">
               <template v-slot:append>
                 <q-icon name="event" class="cursor-pointer">
                   <q-popup-proxy
