@@ -66,11 +66,13 @@
             <q-input
               v-model.trim="proveedor.telefono"
               label="Teléfono"
-              hint="Ingrese número de teléfono"
-              autogrow
               lazy-rules
               :rules="[(val) => !!val || 'El teléfono es requerido']"
+              counter
+              clearable
+              maxlength="10"
             >
+              <template v-slot:hint>Ingrese teléfono</template>
             </q-input>
           </div>
 
