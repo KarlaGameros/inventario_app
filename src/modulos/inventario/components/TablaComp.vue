@@ -1,6 +1,7 @@
 <template>
   <div class="row">
-    <div class="col">
+    <div v-if="isLoading" color="purple" label="Show Loading"></div>
+    <div v-else class="col">
       <q-table
         :rows="listFiltroInventario"
         :columns="columns"
@@ -115,18 +116,26 @@ const { modulo } = storeToRefs(authStore);
 const inventarioStore = useInventarioStore();
 const catalogoStore = useCatalogoProductoStore();
 const estatusStore = useEstatusStore();
-const { listFiltroInventario, listInventario } = storeToRefs(inventarioStore);
+const { listFiltroInventario, listInventario, inventario } =
+  storeToRefs(inventarioStore);
 const listInventarioFiltro = ref(listFiltroInventario.value);
 const { listCatalogosTodos } = storeToRefs(catalogoStore);
 const { estatus } = storeToRefs(estatusStore);
 const catalogoId = ref(null);
 const estatusId = ref(null);
-
+const isLoading = ref(false);
+let timer;
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
   if (catalogoId.value == null && estatusId.value == null) {
+    $q.loading.show({
+      message: "Cargando...",
+    });
     cargarInventarios();
+    setTimeout(() => {
+      $q.loading.hide();
+    }, 2000);
   }
   estatusStore.loadEstatusList(true);
   catalogoStore.loadCatalogoList(true);
@@ -293,8 +302,8 @@ const editar = async (id) => {
   $q.loading.hide();
 };
 
-const cargarInventarios = () => {
-  inventarioStore.loadInformacionInventarios();
+const cargarInventarios = async () => {
+  await inventarioStore.loadInformacionInventarios();
 };
 
 const loadFotos = (id, valor) => {
@@ -303,8 +312,15 @@ const loadFotos = (id, valor) => {
 };
 
 const mostrarPDF = async (valor, id) => {
-  await inventarioStore.generarPDF(id);
-  inventarioStore.actualizarModalPDF(valor);
+  $q.loading.show();
+  await inventarioStore.loadInventario(id);
+  if (inventario.value.ruta_PDF != null) {
+    inventarioStore.actualizarModalPDF(valor);
+  } else if (inventario.value.ruta_PDF == null) {
+    await inventarioStore.generarPDF(id);
+    inventarioStore.actualizarModalPDF(valor);
+  }
+  $q.loading.hide();
 };
 
 const eliminar = async (id) => {
@@ -346,11 +362,4 @@ const eliminar = async (id) => {
 };
 </script>
 
-<style>
-.pdf-dialog-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80vh;
-}
-</style>
+<style></style>

@@ -25,6 +25,7 @@
           <div class="row q-col-gutter-xs">
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
               <q-select
+                v-if="!isEditar"
                 v-model="tipoMovimiento"
                 :options="listTipoMovimientos"
                 label="Tipo de movimiento"
@@ -35,10 +36,17 @@
                 ]"
               >
               </q-select>
+              <q-input
+                v-else
+                readonly
+                v-model="movimiento.tipo_Movimiento"
+                label="Tipo de movimiento"
+              ></q-input>
             </div>
 
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
               <q-select
+                v-if="!isEditar"
                 v-model="conceptoMovimiento"
                 :options="listConceptoMovimiento"
                 label="Concepto de movimiento"
@@ -47,6 +55,12 @@
                 :rules="[(val) => !!val || 'El concepto es requerido']"
               >
               </q-select>
+              <q-input
+                v-else
+                readonly
+                v-model="movimiento.concepto_Movimiento"
+                label="Concepto de movimiento"
+              ></q-input>
             </div>
 
             <div
@@ -54,6 +68,7 @@
               class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
             >
               <q-select
+                v-if="!isEditar"
                 v-model="bodega_origen"
                 :options="listBodega"
                 label="Bodega origen"
@@ -62,10 +77,17 @@
                 :rules="[(val) => !!val || 'La bodega origen es requerida']"
               >
               </q-select>
+              <q-input
+                v-else
+                readonly
+                v-model="movimiento.bodega_Origen"
+                label="Concepto de movimiento"
+              ></q-input>
             </div>
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
+                v-if="!isEditar"
                 v-model="bodega_destino"
                 :options="listBodega"
                 label="Bodega destino"
@@ -74,6 +96,12 @@
                 :rules="[(val) => !!val || 'La bodega destino es requerida']"
               >
               </q-select>
+              <q-input
+                v-else
+                readonly
+                v-model="movimiento.bodega_Destino"
+                label="Concepto de movimiento"
+              ></q-input>
             </div>
 
             <div
@@ -83,7 +111,11 @@
                   : 'col-lg-6 col-md-6 col-sm-12 col-xs-12'
               "
             >
-              <q-input v-model="date" label="Fecha de asignación">
+              <q-input
+                v-if="!isEditar"
+                v-model="date"
+                label="Fecha de movimiento"
+              >
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy
@@ -105,6 +137,12 @@
                   </q-icon>
                 </template>
               </q-input>
+              <q-input
+                v-else
+                readonly
+                v-model="movimiento.fecha_Movimiento"
+                label="Fecha de movimiento"
+              ></q-input>
             </div>
 
             <div
@@ -112,6 +150,7 @@
               class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
             >
               <q-select
+                v-if="!isEditar"
                 v-model="proveedor"
                 :options="proveedores"
                 label="Provedor"
@@ -123,6 +162,12 @@
                   <q-btn round dense flat icon="add" @click="addProveedor" />
                 </template>
               </q-select>
+              <q-input
+                v-else
+                readonly
+                v-model="movimiento.provedor"
+                label="Proveedor"
+              ></q-input>
             </div>
 
             <div
@@ -130,6 +175,7 @@
               class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
             >
               <q-input
+                v-if="!isEditar"
                 v-model="uuid"
                 label="UUID"
                 autogrow
@@ -139,6 +185,12 @@
                 <q-icon v-show="validarUuid" name="done" color="green" />
                 <q-icon v-show="!validarUuid" name="close" color="red" />
               </q-input>
+              <q-input
+                v-else
+                readonly
+                v-model="movimiento.uuid"
+                label="UUID"
+              ></q-input>
             </div>
 
             <div
@@ -146,6 +198,7 @@
               class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
             >
               <q-input
+                v-if="!isEditar"
                 v-model="movimiento.no_factura"
                 label="Número de factura"
                 autogrow
@@ -153,20 +206,15 @@
                 :rules="[(val) => !!val || 'El número de factura es requerido']"
               >
               </q-input>
+              <q-input
+                v-else
+                readonly
+                v-model="movimiento.no_Factura"
+                label="Número de factura"
+              ></q-input>
             </div>
 
-            <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-              <q-input autofocus
-                label="Estatus"
-                hint="Ingrese estatus"
-                autogrow
-                lazy-rules
-                :rules="[(val) => !!val || 'El estatus es requerido']"
-              >
-              </q-input>
-            </div> -->
-
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div v-if="!isEditar" class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
                 v-model="catalogoId"
                 :options="listCatalogo"
@@ -178,7 +226,7 @@
               </q-select>
             </div>
 
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div v-if="isEditar" class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
               <q-select
                 v-model="inventarioId"
                 :options="opcionesInventario"
@@ -197,34 +245,56 @@
               class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
             >
               <q-input
+                v-if="!isEditar"
                 v-model="cantidad"
                 label="Cantidad"
                 type="number"
                 min="1"
               >
               </q-input>
+              <q-input
+                v-else
+                readonly
+                v-model="movimiento.cantidad"
+                label="Cantidad"
+              ></q-input>
             </div>
             <div
               v-if="isCompra == true"
               class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
             >
               <q-input
+                v-if="!isEditar"
                 v-model="precio_Unitario"
                 label="Precio unitario del producto"
                 prefix="$"
               >
               </q-input>
+              <q-input
+                v-else
+                readonly
+                v-model="movimiento.precio_Unitario"
+                label="Precio Unitario"
+              ></q-input>
             </div>
             <div
               v-if="isCompra == true"
               class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
             >
               <q-input
+                v-if="!isEditar"
                 v-model="importe"
                 label="Importe total de la transición"
                 prefix="$"
               >
               </q-input>
+              <q-input
+                v-else
+                readonly
+                v-model="movimiento.precio_Unitario"
+                label="Importe total de la transición"
+                prefix="$"
+              ></q-input>
             </div>
 
             <div

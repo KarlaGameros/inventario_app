@@ -223,10 +223,6 @@ const filter = ref("");
 const actualizarModalVer = (valor) => {
   entregaRecepcionStore.actualizarModalVerInventario(valor);
 };
-
-const radio = (id) => {
-  console.log(id);
-};
 </script>
 
 <style></style>

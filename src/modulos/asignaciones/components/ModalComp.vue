@@ -131,6 +131,16 @@
               >
               </q-select>
             </div>
+            <!-- <div
+              v-if="isSmallScreen"
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+            >
+              <q-file color="teal" filled v-model="qrLector" label="Label">
+                <template v-slot:prepend>
+                  <q-icon name="cloud_upload" />
+                </template>
+              </q-file>
+            </div> -->
             <q-space />
             <div class="col-12 justify-end">
               <div class="text-right q-gutter-xs">
@@ -216,6 +226,7 @@ const empleadoId = ref(null);
 const catalogoId = ref(null);
 const opcionesInventario = ref([...inventarios.value]);
 const habilitarButton = ref(null);
+const qrLector = ref("");
 //-----------------------------------------------------------
 //Get fecha actual
 const dateActual = new Date();
@@ -223,6 +234,8 @@ const year = dateActual.getFullYear();
 const month = String(dateActual.getMonth() + 1).padStart(2, "0");
 const day = String(dateActual.getDate()).padStart(2, "0");
 const date = ref(`${year}/${month}/${day}`);
+
+const isSmallScreen = ref(window.matchMedia("(max-width: 768px)").matches);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -235,6 +248,12 @@ onBeforeMount(() => {
 });
 
 //-----------------------------------------------------------
+watch(
+  () => window.innerWidth,
+  (width) => {
+    isSmallScreen.value = width <= 768;
+  }
+);
 
 watch(asignacion.value, (val) => {
   if (val.id != null) {
@@ -272,6 +291,9 @@ watchEffect(() => {
   }
 });
 
+watch(qrLector, (val) => {
+  console.log(val);
+});
 //-----------------------------------------------------------
 
 const cargarEstatus = async (val) => {

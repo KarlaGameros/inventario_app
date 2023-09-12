@@ -117,7 +117,6 @@ const onSubmit = async () => {
       type: "negative",
       message: resp.data,
     });
-    //loading.value = false;
   }
   $q.loading.hide();
 };

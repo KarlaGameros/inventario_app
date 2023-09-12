@@ -13,24 +13,38 @@
     <div class="row">
       <div class="col">
         <div class="text-right q-pa-md items-start q-gutter-md">
-          <q-btn
+          <q-avatar
             v-if="modulo == null ? false : modulo.registrar"
             type="button"
             class="q-ma-sm"
             color="purple-ieen"
-            icon-right="add_circle_outline"
             label="Nuevo"
             @click="actualizarModal(true)"
-          />
+            text-color="white"
+            icon="add_circle_outline"
+          >
+            <q-tooltip>Nuevo</q-tooltip>
+          </q-avatar>
 
-          <q-btn
-            type="button"
-            class="q-ma-sm"
+          <q-avatar
             color="purple-ieen"
-            icon-right="print"
-            label="Listado de inventario"
+            text-color="white"
+            icon="print"
+            class="q-ma-sm"
             @click="generar()"
-          />
+          >
+            <q-tooltip>Imprimir listado de inventario</q-tooltip>
+          </q-avatar>
+
+          <q-avatar
+            color="purple-ieen"
+            text-color="white"
+            icon="qr_code_2"
+            class="q-ma-sm"
+            @click="generarQR()"
+          >
+            <q-tooltip>Generar QR nuevos</q-tooltip>
+          </q-avatar>
         </div>
       </div>
     </div>
@@ -46,7 +60,7 @@ import { useAuthStore } from "../../../stores/auth_store";
 import { useInventarioStore } from "src/stores/inventario_store";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
-import { onBeforeMount } from "vue";
+import { onBeforeMount, ref } from "vue";
 import ReporteListadoInventario from "../../../helpers/ListadoInventario";
 
 const $q = useQuasar();
@@ -72,7 +86,13 @@ const actualizarModal = (valor) => {
 };
 
 const generar = async () => {
-  ReporteListadoInventario();
+  $q.loading.show({
+    message: "Cargando...",
+  });
+  setTimeout(() => {
+    $q.loading.hide();
+    ReporteListadoInventario();
+  }, 1000);
 };
 </script>
 

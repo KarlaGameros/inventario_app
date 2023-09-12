@@ -23,13 +23,14 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       bodega_Destino_Id: null,
       bodega_Destino: null,
       provedor_Id: null,
+      proveedor: null,
       empleado_Registra_Id: null,
       empleado_Registra: null,
       provedor: null,
       pdf_Url: null,
       xml_Url: null,
       uuid: null,
-      no_factura: null,
+      no_Factura: null,
       area_Empleado_Registra_Id: null,
       area_Empleado_Registra: null,
       detalle: [],
@@ -53,6 +54,9 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       this.movimiento.empleado_Registra_Id = null;
       this.movimiento.provedor = null;
       this.movimiento.provedor_Id = null;
+      this.movimiento.proveedor = null;
+      this.movimiento.uuid = null;
+      this.movimiento.no_Factura = null;
       this.listaMovimientoInventario = [];
     },
 
@@ -75,10 +79,12 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             bodega_Destino_Id: movimiento.bodega_Destino_Id,
             bodega_Origen: movimiento.bodega_Origen,
             bodega_Origen_Id: movimiento.bodega_Origen_Id,
-            provedor: movimiento.provedor_Id,
+            proveedor: movimiento.proveedor,
             provedor_Id: movimiento.provedor_Id,
             empleado_Registra: movimiento.empleado_Registra,
             empleado_Registra_Id: movimiento.empleado_Registra_Id,
+            uuid: movimiento.uuid,
+            no_Factura: movimiento.no_Factura,
           };
         });
         this.movimientos = listaMovimientos;
@@ -100,16 +106,22 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
           if (success == true) {
             this.movimiento.id = data.id;
             this.movimiento.tipo_Movimiento_Id = data.tipo_Movimiento_Id;
+            this.movimiento.tipo_Movimiento = data.tipo_Movimiento;
             this.movimiento.bodega_Origen_Id = data.bodega_Origen_Id;
+            this.movimiento.bodega_Origen = data.bodega_Origen;
             this.movimiento.bodega_Destino_Id = data.bodega_Destino_Id;
+            this.movimiento.bodega_Destino = data.bodega_Destino;
             this.movimiento.provedor_Id = data.provedor_Id;
+            this.movimiento.proveedor = data.proveedor;
             this.movimiento.fecha_Movimiento = data.fecha_Movimiento;
             this.movimiento.estatus = data.estatus;
             this.movimiento.concepto_Movimiento_Id =
               data.concepto_Movimiento_Id;
+            this.movimiento.concepto_Movimiento = data.concepto_Movimiento;
+            this.movimiento.uuid = data.uuid;
+            this.movimiento.no_Factura = data.no_Factura;
           }
         }
-        console.log("---", this.movimiento);
       } catch (error) {
         return {
           success: false,

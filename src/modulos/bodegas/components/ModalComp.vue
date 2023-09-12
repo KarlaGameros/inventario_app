@@ -77,8 +77,6 @@ import { useBodegaStore } from "../../../stores/bodega_store";
 
 const $q = useQuasar();
 const bodegaStore = useBodegaStore();
-const authStore = useAuthStore();
-
 const { bodega, modal, areas, isEditar } = storeToRefs(bodegaStore);
 const area_Id = ref(null);
 
@@ -137,7 +135,6 @@ const onSubmit = async () => {
       type: "negative",
       message: resp.data,
     });
-    //loading.value = false;
   }
   $q.loading.hide();
 };

@@ -147,6 +147,7 @@ export const useInventarioStore = defineStore("inventario", {
             clave: inventario.clave,
             numero_Serie: inventario.numero_Serie,
             empleado: inventario.empleado,
+            ruta_PDF: inventario.PDf_url,
             importe: `$ ${inventario.importe}`,
           };
         });
@@ -252,6 +253,7 @@ export const useInventarioStore = defineStore("inventario", {
             this.inventario.color = data.color;
             this.inventario.cantidad = data.cantidad;
             this.inventario.numero_Serie = data.numero_Serie;
+            this.inventario.ruta_PDF = data.pdF_URL;
           }
         }
       } catch (error) {
