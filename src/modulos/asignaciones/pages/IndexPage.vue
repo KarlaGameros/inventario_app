@@ -67,6 +67,8 @@ const actualizarModal = (valor) => {
   asignacionStore.actualizarModal(valor);
   asignacionStore.updateVisualizar(false);
   asignacionStore.initAsignacion();
+  asignacionStore.loadAreasList(false);
+  asignacionStore.loadEmpleadosByArea(0, false);
   $q.loading.hide();
 };
 

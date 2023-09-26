@@ -22,7 +22,6 @@
                 v-slot="scope"
               >
                 <q-input
-                  type="number"
                   v-model.number="scope.value"
                   dense
                   autofocus

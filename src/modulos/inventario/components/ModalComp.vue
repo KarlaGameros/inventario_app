@@ -296,7 +296,6 @@
                             v-slot="scope"
                           >
                             <q-input
-                              type="text"
                               v-model="scope.value"
                               dense
                               autofocus
@@ -969,7 +968,7 @@
             <q-file
               accept="image/png, image/jpeg"
               color="purple-12"
-              v-model="inventario.foto_2"
+              v-model="foto2"
               label="Foto 2"
             >
               <template v-slot:prepend>
@@ -986,7 +985,7 @@
             <q-file
               accept="image/png, image/jpeg"
               color="purple-12"
-              v-model="inventario.foto_3"
+              v-model="foto3"
               label="Foto 3"
             >
               <template v-slot:prepend>
@@ -1003,7 +1002,7 @@
             <q-file
               accept="image/png, image/jpeg"
               color="purple-12"
-              v-model="inventario.foto_4"
+              v-model="foto4"
               label="Foto 4"
             >
               <template v-slot:prepend>
@@ -1041,7 +1040,7 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { useQuasar } from "quasar";
+import { is, useQuasar } from "quasar";
 import { computed, onBeforeMount, ref, watch } from "vue";
 import { useInventarioStore } from "../../../stores/inventario_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
@@ -1244,7 +1243,7 @@ const onSubmit = async () => {
   let inventarioPaqueteFormData = new FormData();
   let editarInventarioFormData = new FormData();
 
-  if (isEditar == true) {
+  if (isEditar.value == true) {
     editarInventarioFormData.append("Catalago_Id", catalogoId.value.value);
     editarInventarioFormData.append("Estatus_Id", 2);
     editarInventarioFormData.append("Bodega_Id", bodegaId.value.value);
@@ -1258,6 +1257,7 @@ const onSubmit = async () => {
       "Nombre_Corto",
       inventario.value.nombre_corto
     );
+
     editarInventarioFormData.append(
       "Numero_Serie",
       inventario.value.numero_Serie
@@ -1430,7 +1430,7 @@ const onSubmit = async () => {
       inventario,
       editarInventarioFormData
     );
-    inventarioStore.initInventario();
+    //inventarioStore.initInventario();
   } else {
     if (cantidad.value == null) {
       //individual

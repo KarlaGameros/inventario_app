@@ -78,7 +78,7 @@
 
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input
-              v-model.trim="proveedor.eMail"
+              v-model.trim="email"
               label="Email"
               hint="Ingrese correo electronico"
               autogrow
@@ -127,42 +127,75 @@
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { useProvedores } from "src/stores/provedores_store";
+import { ref, watch } from "vue";
 
 //-----------------------------------------------------------
 
 const $q = useQuasar();
 const proveedoresStore = useProvedores();
 const { modal, proveedor, isEditar } = storeToRefs(proveedoresStore);
+const email = ref(null);
 
 //-----------------------------------------------------------
+
+watch(proveedor.value, (val) => {
+  if (val.id != null) {
+    cargarEmail(val);
+  }
+});
+
+//-----------------------------------------------------------
+const cargarEmail = async (val) => {
+  if (email.value == null) {
+    email.value = val.eMail;
+  }
+};
 
 const actualizarModal = (valor) => {
   proveedoresStore.actualizarModal(valor);
   proveedoresStore.initProvedor();
+  email.value = null;
+};
+
+const validarEmail = async (email) => {
+  const regex = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/;
+  const resultado = regex.test(email);
+  return resultado;
 };
 
 const onSubmit = async () => {
   let resp = null;
+  let respEmail = null;
   $q.loading.show();
-  if (isEditar.value == true) {
-    resp = await proveedoresStore.updateProveedor(proveedor.value);
-  } else {
-    resp = await proveedoresStore.createProveedor(proveedor.value);
-  }
+  respEmail = await validarEmail(email.value);
+  proveedor.value.eMail = email.value;
+  if (respEmail == true) {
+    if (isEditar.value == true) {
+      resp = await proveedoresStore.updateProveedor(proveedor.value);
+    } else {
+      resp = await proveedoresStore.createProveedor(proveedor.value);
+    }
 
-  if (resp.success) {
-    $q.notify({
-      position: "top-right",
-      type: "positive",
-      message: resp.data,
-    });
-    proveedoresStore.loadInformacionProvedores();
-    actualizarModal(false);
+    if (resp.success) {
+      $q.notify({
+        position: "top-right",
+        type: "positive",
+        message: resp.data,
+      });
+      proveedoresStore.loadInformacionProvedores();
+      actualizarModal(false);
+    } else {
+      $q.notify({
+        position: "top-right",
+        type: "negative",
+        message: resp.data,
+      });
+    }
   } else {
     $q.notify({
       position: "top-right",
       type: "negative",
-      message: resp.data,
+      message: "El email no es valido",
     });
   }
   $q.loading.hide();

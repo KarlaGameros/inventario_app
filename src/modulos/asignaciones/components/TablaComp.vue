@@ -13,7 +13,7 @@
         <template v-slot:top-left>
           <q-select
             label="Área"
-            v-model="area_Id"
+            v-model="areaId"
             :options="areas"
             hint="Selecciona una área"
             style="width: 260px"
@@ -65,7 +65,7 @@
                   icon="search"
                   @click="visualizar(col.value)"
                 >
-                  <q-tooltip>Editar asignación</q-tooltip>
+                  <q-tooltip>Ver asignación</q-tooltip>
                 </q-btn>
 
                 <q-btn
@@ -126,29 +126,24 @@ const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const { asignaciones, areas, listEmpleados, listFiltroAsignaciones } =
   storeToRefs(asignacionStore);
-const listAsignacionesFiltro = ref(listFiltroAsignaciones.value);
-const area_Id = ref(null);
+const areaId = ref(null);
 const empleado_Id = ref(null);
 
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
   asignacionStore.loadInformacionAsignaciones();
-  asignacionStore.loadAreasList();
+  asignacionStore.loadAreasList(true);
+  areaId.value = { label: "Todos", value: 0 };
+  empleado_Id.value = { value: 0, label: "Todos" };
 });
 
 //-----------------------------------------------------------
 
-watch(area_Id, (val) => {
+watch(areaId, (val) => {
   if (val != null) {
-    asignacionStore.loadEmpleadosByArea(area_Id.value.value);
-    empleado_Id.value = null;
-  }
-});
-
-watch(empleado_Id, (val) => {
-  if (val != null) {
-    asignacionStore.asignacionByEmpleado(val.value);
+    asignacionStore.loadEmpleadosByArea(areaId.value.value, true);
+    //empleado_Id.value = null;
   }
 });
 
@@ -158,10 +153,17 @@ const filtrar = (asignaciones, filtro) => {
   listFiltroAsignaciones.value = asignaciones.filter((item) => {
     let cumple = true;
     if (filtro.area !== undefined) {
-      if (filtro.area == 0) {
-        cumple = cumple && item.area_Id === item.area_Id;
+      if (filtro.area == "Todos") {
+        cumple = cumple && item.area === item.area;
       } else {
-        cumple = cumple && item.area_Id === filtro.area;
+        cumple = cumple && item.area === filtro.area;
+      }
+    }
+    if (filtro.empleado !== undefined) {
+      if (filtro.empleado == "Todos") {
+        cumple = cumple && item.empleado === item.empleado;
+      } else {
+        cumple = cumple && item.empleado === filtro.empleado;
       }
     }
     return cumple;
@@ -170,7 +172,7 @@ const filtrar = (asignaciones, filtro) => {
 
 watchEffect(() => {
   const filtro = {};
-  if (area_Id.value != null) filtro.area = area_Id.value.value;
+  if (areaId.value != null) filtro.area = areaId.value.label;
   if (empleado_Id.value != null) filtro.empleado = empleado_Id.value.label;
   filtrar(asignaciones.value, filtro);
 });
@@ -329,6 +331,7 @@ const editar = async (id) => {
   await asignacionStore.loadAsignacion(id);
   await asignacionStore.detalleAsignacion(id);
   asignacionStore.updateEditar(true);
+  asignacionStore.updateVisualizar(false);
   asignacionStore.actualizarModal(true);
   $q.loading.hide();
 };

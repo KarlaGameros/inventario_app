@@ -118,7 +118,6 @@ const catalogoStore = useCatalogoProductoStore();
 const estatusStore = useEstatusStore();
 const { listFiltroInventario, listInventario, inventario } =
   storeToRefs(inventarioStore);
-const listInventarioFiltro = ref(listFiltroInventario.value);
 const { listCatalogosTodos } = storeToRefs(catalogoStore);
 const { estatus } = storeToRefs(estatusStore);
 const catalogoId = ref(null);

@@ -129,7 +129,6 @@ export const useInventarioStore = defineStore("inventario", {
       try {
         let resp = await api.get("/Inventarios");
         let { data } = resp.data;
-        console.log(data);
         let listInventario = data.map((inventario) => {
           return {
             id: inventario.id,
@@ -152,8 +151,10 @@ export const useInventarioStore = defineStore("inventario", {
             importe: `$ ${inventario.importe}`,
           };
         });
+
         this.inventarios = listInventario;
         this.listInventario = listInventario;
+        console.log(this.inventarios);
       } catch (error) {
         return {
           success: false,

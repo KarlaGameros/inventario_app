@@ -209,6 +209,7 @@ const {
   listEmpleados,
   isEditar,
   isShow,
+  detalleAsignacion,
 } = storeToRefs(asignacionStore);
 
 const estatus_Id = ref(null);
@@ -233,7 +234,6 @@ const isSmallScreen = ref(window.matchMedia("(max-width: 768px)").matches);
 onBeforeMount(() => {
   inventarioStore.loadListInventario(0);
   estatusStore.loadInformacionEstatus();
-  asignacionStore.loadAreasList();
   catalogoStore.loadCatalogoListNormal();
   catalogoId.value = { value: 0, label: "Todos" };
   //getDateActual();
@@ -267,7 +267,7 @@ watch(catalogoId, (val) => {
 
 watch(area_Id, (val) => {
   if (val != null) {
-    asignacionStore.loadEmpleadosByArea(area_Id.value.value);
+    asignacionStore.loadEmpleadosByArea(area_Id.value.value, false);
     empleadoId.value = null;
   }
 });
@@ -314,12 +314,14 @@ const cargarPuestos = async (val) => {
 };
 
 const cargarEmpleado = async (val) => {
-  if (empleadoId.value == null) {
-    let empleadoFiltrado = listEmpleados.value.find(
-      (x) => x.value == `${val.empleado}`
-    );
-    empleadoId.value = empleadoFiltrado;
-  }
+  // console.log("listEmpleados", val, listEmpleados);
+  // if (empleadoId.value == null) {
+  //   let empleadoFiltrado = listEmpleados.value.find(
+  //     (x) => x.label == `${val.empleado}`
+  //   );
+  //   empleadoId.value = empleadoFiltrado;
+  //   console.log("empleadoFiltrado", empleadoFiltrado, empleadoId.value);
+  // }
 };
 
 const cargarFecha = async () => {
@@ -371,13 +373,15 @@ const filterInventario = (val, update) => {
 const agregarProducto = async () => {
   if (listaAsignacionInventario.value.length == 0) {
     await asignacionStore.addInventario(inventarioId.value);
-    inventarioId.value = null;
+    await asignacionStore.createDetalleAsignacion(inventarioId.value);
+    //inventarioId.value = null;
   } else {
     let filtro = listaAsignacionInventario.value.find(
       (x) => x.inventario_Id == inventarioId.value.value
     );
     if (filtro == undefined) {
       await asignacionStore.addInventario(inventarioId.value);
+      await asignacionStore.createDetalleAsignacion(inventarioId.value);
     } else {
       $q.dialog({
         title: "Atención",
@@ -402,11 +406,10 @@ const registrar = async () => {
   asignacion.value.eliminado = false;
   asignacion.value.fecha_Asignacion = date.value;
   asignacion.value.detalle = listaAsignacionInventario.value;
-  if (isEditar == true) {
+  if (isEditar.value == true) {
     resp = await asignacionStore.updateAsignacion(asignacion.value);
   } else {
     resp = await asignacionStore.createAsignacion(asignacion.value);
-    console.log("resp", resp);
   }
   if (resp.success) {
     $q.notify({

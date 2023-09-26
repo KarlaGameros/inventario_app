@@ -26,7 +26,7 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              <div v-if="col.name === 'inventario_Id'">
+              <div v-if="col.name === 'asignacion_Id'">
                 <q-btn
                   :disable="isShow == true"
                   flat
@@ -77,11 +77,11 @@ const columns = [
     sortable: true,
   },
   {
-    name: "inventario_Id",
+    name: "asignacion_Id",
     align: "center",
-    label: "Acciones",
-    field: "inventario_Id",
-    sortable: false,
+    label: "Asignación",
+    field: "asignacion_Id",
+    sortable: true,
   },
 ];
 const pagination = ref({
@@ -116,6 +116,7 @@ const eliminar = async (id) => {
     $q.loading.show();
     let resp = null;
     resp = await asignacionStore.deleteProducto(id);
+    asignacionStore.detalleAsignacion();
     $q.loading.hide();
 
     if (resp.success) {

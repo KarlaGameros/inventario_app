@@ -82,6 +82,8 @@ const leerPermisos = async () => {
 const actualizarModal = (valor) => {
   $q.loading.show();
   inventarioStore.actualizarModal(valor);
+  inventarioStore.updateEditar(false);
+  inventarioStore.initInventario();
   $q.loading.hide();
 };
 
