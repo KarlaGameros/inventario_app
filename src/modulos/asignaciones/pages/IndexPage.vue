@@ -65,6 +65,7 @@ const leerPermisos = async () => {
 const actualizarModal = (valor) => {
   $q.loading.show();
   asignacionStore.actualizarModal(valor);
+  asignacionStore.updateVisualizar(false);
   asignacionStore.initAsignacion();
   $q.loading.hide();
 };

@@ -8,7 +8,13 @@
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
         <div class="text-h6">
-          {{ !isEditar ? "Registrar de asignación" : "Editar asignación" }}
+          {{
+            !isEditar && !isShow
+              ? "Registrar de asignación"
+              : isEditar
+              ? "Editar asignación"
+              : "Ver asignación"
+          }}
         </div>
         <q-space />
         <q-btn
@@ -55,7 +61,7 @@
 
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
-                v-if="!isEditar"
+                v-if="!isShow"
                 label="Área"
                 v-model="area_Id"
                 :options="areas"
@@ -69,13 +75,11 @@
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
-                v-if="!isEditar"
+                v-if="!isShow"
                 label="Empleado"
                 v-model="empleadoId"
                 :options="listEmpleados"
                 hint="Selecciona una empleado"
-                :lazy-rules="true"
-                :rules="[(val) => !!val || 'El empleado es requerido']"
               >
               </q-select>
               <q-input
@@ -88,7 +92,7 @@
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-input
-                v-if="!isEditar"
+                v-if="!isShow"
                 readonly
                 label="Puesto"
                 v-model="puesto_Id"
@@ -106,7 +110,7 @@
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
-                v-if="!isEditar"
+                v-show="!isShow"
                 v-model="catalogoId"
                 :options="listCatalogo"
                 label="Catálogo perteneciente del inventario"
@@ -119,33 +123,21 @@
 
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
               <q-select
-                v-if="!isEditar"
+                v-show="!isShow"
                 v-model="inventarioId"
                 :options="opcionesInventario"
                 use-input
                 @filter="filterInventario"
                 label="Productos"
                 hint="Selecciona un producto"
-                :lazy-rules="true"
-                :rules="[(val) => !!val || 'El inventario es requerido']"
               >
               </q-select>
             </div>
-            <!-- <div
-              v-if="isSmallScreen"
-              class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
-            >
-              <q-file color="teal" filled v-model="qrLector" label="Label">
-                <template v-slot:prepend>
-                  <q-icon name="cloud_upload" />
-                </template>
-              </q-file>
-            </div> -->
             <q-space />
             <div class="col-12 justify-end">
               <div class="text-right q-gutter-xs">
                 <q-btn
-                  v-if="!isEditar"
+                  v-if="!isShow"
                   icon-right="add"
                   label="Agregar"
                   color="positive"
@@ -171,7 +163,7 @@
                 @click="actualizarModal(false)"
               />
               <q-btn
-                v-if="!isEditar"
+                v-if="!isShow"
                 :disable="habilitarButton"
                 label="Guardar"
                 type="submit"
@@ -216,6 +208,7 @@ const {
   listaAsignacionInventario,
   listEmpleados,
   isEditar,
+  isShow,
 } = storeToRefs(asignacionStore);
 
 const estatus_Id = ref(null);
@@ -226,7 +219,6 @@ const empleadoId = ref(null);
 const catalogoId = ref(null);
 const opcionesInventario = ref([...inventarios.value]);
 const habilitarButton = ref(null);
-const qrLector = ref("");
 //-----------------------------------------------------------
 //Get fecha actual
 const dateActual = new Date();
@@ -261,6 +253,8 @@ watch(asignacion.value, (val) => {
     cargarArea(val);
     cargarPuestos(val);
     cargarFecha(val);
+    cargarEmpleado(val);
+    puesto_Id.value = val.puesto;
   }
 });
 
@@ -274,6 +268,7 @@ watch(catalogoId, (val) => {
 watch(area_Id, (val) => {
   if (val != null) {
     asignacionStore.loadEmpleadosByArea(area_Id.value.value);
+    empleadoId.value = null;
   }
 });
 
@@ -291,9 +286,6 @@ watchEffect(() => {
   }
 });
 
-watch(qrLector, (val) => {
-  console.log(val);
-});
 //-----------------------------------------------------------
 
 const cargarEstatus = async (val) => {
@@ -318,6 +310,15 @@ const cargarPuestos = async (val) => {
       (x) => x.value == `${val.puesto_Id}`
     );
     puesto_Id.value = puestoFiltrado;
+  }
+};
+
+const cargarEmpleado = async (val) => {
+  if (empleadoId.value == null) {
+    let empleadoFiltrado = listEmpleados.value.find(
+      (x) => x.value == `${val.empleado}`
+    );
+    empleadoId.value = empleadoFiltrado;
   }
 };
 
@@ -370,6 +371,7 @@ const filterInventario = (val, update) => {
 const agregarProducto = async () => {
   if (listaAsignacionInventario.value.length == 0) {
     await asignacionStore.addInventario(inventarioId.value);
+    inventarioId.value = null;
   } else {
     let filtro = listaAsignacionInventario.value.find(
       (x) => x.inventario_Id == inventarioId.value.value
@@ -401,17 +403,18 @@ const registrar = async () => {
   asignacion.value.fecha_Asignacion = date.value;
   asignacion.value.detalle = listaAsignacionInventario.value;
   if (isEditar == true) {
+    resp = await asignacionStore.updateAsignacion(asignacion.value);
   } else {
     resp = await asignacionStore.createAsignacion(asignacion.value);
+    console.log("resp", resp);
   }
-
   if (resp.success) {
     $q.notify({
       position: "top-right",
       type: "positive",
       message: resp.data,
     });
-    //actualizarModal(false);
+    actualizarModal(false);
     asignacionStore.loadInformacionAsignaciones();
   } else {
     $q.notify({

@@ -157,7 +157,6 @@ export const useProvedores = defineStore("provedores", {
     //-----------------------------------------------------------
 
     actualizarModal(valor) {
-      console.log(valor);
       this.modal = valor;
     },
     updateEditar(valor) {

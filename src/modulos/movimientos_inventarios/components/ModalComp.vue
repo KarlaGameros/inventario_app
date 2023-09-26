@@ -226,7 +226,7 @@
               </q-select>
             </div>
 
-            <div v-if="isEditar" class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div v-if="!isEditar" class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
               <q-select
                 v-model="inventarioId"
                 :options="opcionesInventario"
@@ -457,12 +457,12 @@ watch(tipoMovimiento, (val) => {
   if (val != null) {
     if (val.label == "Salida") {
       inputSalida.value = val.label;
-      //conceptoMovimiento.value = null;
+      conceptoMovimiento.value = null;
       movimientoInventarioStore.loadConceptoMovimientoListFiltro(val.value);
       movimientoInventarioStore.updateCompra(false);
     } else {
       inputSalida.value = val.label;
-      //conceptoMovimiento.value = null;
+      conceptoMovimiento.value = null;
       movimientoInventarioStore.loadConceptoMovimientoListFiltro(val.value);
     }
   }
@@ -688,7 +688,6 @@ const onSubmit = async () => {
     movimientosFormData.append("Bodega_Destino_Id", bodega_destino.value.value);
     listaMovimientoInventario.value.forEach((row) => {
       movimientosFormData.append("Detalle[]", row.id);
-      console.log("row", row);
     });
   }
 

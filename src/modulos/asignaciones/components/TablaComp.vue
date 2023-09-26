@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="asignaciones"
+        :rows="listFiltroAsignaciones"
         :columns="columns"
         :filter="filter"
         :pagination="pagination"
@@ -10,6 +10,25 @@
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
       >
+        <template v-slot:top-left>
+          <q-select
+            label="Área"
+            v-model="area_Id"
+            :options="areas"
+            hint="Selecciona una área"
+            style="width: 260px"
+            class="q-pr-md"
+          >
+          </q-select>
+          <q-select
+            label="Empleado"
+            v-model="empleado_Id"
+            :options="listEmpleados"
+            hint="Selecciona una empleado"
+            style="width: 260px"
+          >
+          </q-select>
+        </template>
         <template v-slot:top-right>
           <q-input
             borderless
@@ -28,6 +47,18 @@
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'id'">
                 <q-btn
+                  v-show="props.row.estatus == 'Pendiente'"
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="edit"
+                  @click="editar(col.value)"
+                >
+                  <q-tooltip>Editar asignación</q-tooltip>
+                </q-btn>
+
+                <q-btn
+                  v-show="props.row.estatus != 'Pendiente'"
                   flat
                   round
                   color="purple-ieen"
@@ -38,7 +69,7 @@
                 </q-btn>
 
                 <q-btn
-                  v-if="modulo.actualizar && props.row.estatus == 'Pendiente'"
+                  v-show="modulo.actualizar && props.row.estatus == 'Pendiente'"
                   flat
                   round
                   color="purple-ieen"
@@ -49,18 +80,18 @@
                 </q-btn>
 
                 <q-btn
-                  v-if="modulo.actualizar && props.row.estatus == 'Afectado'"
+                  v-show="modulo.actualizar && props.row.estatus == 'Afectado'"
                   flat
                   round
                   color="purple-ieen"
                   icon="print"
                   @click="GenerarVale(col.value)"
                 >
-                  <q-tooltip>Afectar asignación</q-tooltip>
+                  <q-tooltip>General vale</q-tooltip>
                 </q-btn>
 
                 <q-btn
-                  v-if="modulo.actualizar && props.row.estatus == 'Pendiente'"
+                  v-show="modulo.actualizar && props.row.estatus == 'Pendiente'"
                   flat
                   round
                   color="purple-ieen"
@@ -84,7 +115,7 @@ import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useAsignacionStore } from "src/stores/asignacion_store";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch, watchEffect } from "vue";
 import ValeResguardo from "../../../helpers/ValeResguardo";
 
 //-----------------------------------------------------------
@@ -93,12 +124,55 @@ const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
-const { asignaciones } = storeToRefs(asignacionStore);
+const { asignaciones, areas, listEmpleados, listFiltroAsignaciones } =
+  storeToRefs(asignacionStore);
+const listAsignacionesFiltro = ref(listFiltroAsignaciones.value);
+const area_Id = ref(null);
+const empleado_Id = ref(null);
 
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
   asignacionStore.loadInformacionAsignaciones();
+  asignacionStore.loadAreasList();
+});
+
+//-----------------------------------------------------------
+
+watch(area_Id, (val) => {
+  if (val != null) {
+    asignacionStore.loadEmpleadosByArea(area_Id.value.value);
+    empleado_Id.value = null;
+  }
+});
+
+watch(empleado_Id, (val) => {
+  if (val != null) {
+    asignacionStore.asignacionByEmpleado(val.value);
+  }
+});
+
+//-----------------------------------------------------------
+
+const filtrar = (asignaciones, filtro) => {
+  listFiltroAsignaciones.value = asignaciones.filter((item) => {
+    let cumple = true;
+    if (filtro.area !== undefined) {
+      if (filtro.area == 0) {
+        cumple = cumple && item.area_Id === item.area_Id;
+      } else {
+        cumple = cumple && item.area_Id === filtro.area;
+      }
+    }
+    return cumple;
+  });
+};
+
+watchEffect(() => {
+  const filtro = {};
+  if (area_Id.value != null) filtro.area = area_Id.value.value;
+  if (empleado_Id.value != null) filtro.empleado = empleado_Id.value.label;
+  filtrar(asignaciones.value, filtro);
 });
 //-----------------------------------------------------------
 
@@ -245,6 +319,15 @@ const visualizar = async (id) => {
   $q.loading.show();
   await asignacionStore.loadAsignacion(id);
   await asignacionStore.detalleAsignacion(id);
+  asignacionStore.updateVisualizar(true);
+  asignacionStore.actualizarModal(true);
+  $q.loading.hide();
+};
+
+const editar = async (id) => {
+  $q.loading.show();
+  await asignacionStore.loadAsignacion(id);
+  await asignacionStore.detalleAsignacion(id);
   asignacionStore.updateEditar(true);
   asignacionStore.actualizarModal(true);
   $q.loading.hide();
@@ -257,7 +340,6 @@ const GenerarVale = async (id) => {
   if (resp.success === true) {
     ValeResguardo();
   }
-
   $q.loading.hide();
 };
 </script>

@@ -65,7 +65,6 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       try {
         let resp = await api.get("/MovimientosInventarios");
         let { data } = resp.data;
-        console.log(data);
         let listaMovimientos = data.map((movimiento) => {
           return {
             id: movimiento.id,
@@ -134,7 +133,6 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
 
     async createMovimiento(movimientoInventario) {
       try {
-        console.log("movimientoInventario", movimientoInventario);
         const resp = await api.post(
           "/MovimientosInventarios",
           movimientoInventario,
@@ -144,7 +142,6 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             },
           }
         );
-        console.log("resp store", resp);
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success === true) {
@@ -234,16 +231,13 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
         let listData = data.filter(
           (x) => x.tipo_Movimiento_Inventario_Id == filtro
         );
-        console.log(listData);
         this.listConceptoMovimiento = listData.map((concepto) => {
           return {
             label: concepto.concepto,
             value: concepto.id,
           };
         });
-        console.log("listConceptoMovimiento", this.listConceptoMovimiento);
       } catch (error) {
-        console.error(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",

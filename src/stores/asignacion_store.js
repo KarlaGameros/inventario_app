@@ -6,10 +6,12 @@ export const useAsignacionStore = defineStore("asignacion", {
     modal: false,
     modalVale: false,
     isEditar: false,
+    isShow: false,
     rutaVale: null,
     asignaciones: [],
     listaAsignacionInventario: [],
     listEmpleados: [],
+    listFiltroAsignaciones: [],
     areas: [],
     puestos: [],
     empleado_Id: null,
@@ -38,6 +40,10 @@ export const useAsignacionStore = defineStore("asignacion", {
       this.isEditar = valor;
     },
 
+    updateVisualizar(valor) {
+      this.isShow = valor;
+    },
+
     initAsignacion() {
       this.asignacion.id = null;
       this.asignacion.area_Id = null;
@@ -56,7 +62,6 @@ export const useAsignacionStore = defineStore("asignacion", {
       try {
         let resp = await api.get("/AsignacionesInventarios");
         let { data } = resp.data;
-
         let listaAsignacionInventario = data.map((asignacion) => {
           return {
             id: asignacion.id,
@@ -124,11 +129,10 @@ export const useAsignacionStore = defineStore("asignacion", {
     async loadEmpleadosByArea(id) {
       try {
         let detalle = await api.get(`/Empleados/ByArea/${id}`);
-
         this.listEmpleados = detalle.data.data.map((detalle) => {
           return {
             puesto_Id: detalle.puesto_Id,
-            label: detalle.nombre_Completo,
+            label: `${detalle.nombres} ${detalle.apellido_Paterno} ${detalle.apellido_Materno}`,
             value: detalle.id,
             puesto: detalle.puesto,
           };
@@ -204,7 +208,6 @@ export const useAsignacionStore = defineStore("asignacion", {
           };
         }
       } catch (error) {
-        console.error(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
@@ -262,7 +265,7 @@ export const useAsignacionStore = defineStore("asignacion", {
     //-----------------------------------------------------------
 
     async loadAsignacion(id) {
-      //this.asignacion = [];
+      this.asignacion = [];
       try {
         let resp = await api.get(`/AsignacionesInventarios/${id}`);
         if (resp.status == 200) {
@@ -304,7 +307,63 @@ export const useAsignacionStore = defineStore("asignacion", {
             inventario_Id: asignacion.inventario.id,
           };
         });
-      } catch (error) {}
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+    async updateAsignacion(id) {
+      try {
+        const resp = await api.put(`/AsignacionesInventarios/${id}`);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+    async asignacionByEmpleado(id) {
+      try {
+        const resp = await api.get(
+          `/AsignacionesInventarios/GetByEmpleado/${id}`
+        );
+        let { data } = resp.data;
+        console.log(data);
+        this.listaAsignacionInventario = data.map((asignacion) => {
+          return {
+            empleado: asignacion.empleado,
+            puesto: asignacion.puesto,
+            estatus: asignacion.estatus,
+            fecha_Asignacion: asignacion.fecha_Asignacion,
+            fecha_Registro: asignacion.fecha_Registro,
+          };
+        });
+        console.log(this.listaAsignacionInventario);
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
     },
   },
 });

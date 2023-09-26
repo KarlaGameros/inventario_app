@@ -129,6 +129,7 @@ export const useInventarioStore = defineStore("inventario", {
       try {
         let resp = await api.get("/Inventarios");
         let { data } = resp.data;
+        console.log(data);
         let listInventario = data.map((inventario) => {
           return {
             id: inventario.id,
@@ -267,7 +268,7 @@ export const useInventarioStore = defineStore("inventario", {
     //-----------------------------------------------------------
     async loadListInventario(id) {
       try {
-        let resp = await api.get("/Inventarios");
+        let resp = await api.get("/Inventarios/GetDisponibles");
         let { data } = resp.data;
         let ListaFiltro = [];
         if (id == 0) {
@@ -284,9 +285,6 @@ export const useInventarioStore = defineStore("inventario", {
             estatus: inventario.estatus,
           };
         });
-        listInvenatrio = listInvenatrio.filter(
-          (item) => item.estatus != "Asignado"
-        );
         this.inventarios = listInvenatrio;
       } catch (error) {
         return {
@@ -295,7 +293,6 @@ export const useInventarioStore = defineStore("inventario", {
         };
       }
     },
-
     //-----------------------------------------------------------
 
     async updateInventario(inventario, editarInventarioFormData) {

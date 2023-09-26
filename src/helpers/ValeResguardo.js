@@ -11,7 +11,8 @@ const Reporte = async () => {
   try {
     let id = asignacion.value.id;
     let respDetalle = await api.get(`/DetalleAsignaciones/BySolicitud/${id}`);
-    let detalle = respDetalle.data.data;
+    let { data } = respDetalle.data;
+    console.log("data", data);
     //--------------------------------------------------------------------------//
 
     let img = new Image();
@@ -146,13 +147,14 @@ const Reporte = async () => {
       startY: 90,
       margin: { left: 10, rigth: 10 },
       head: header,
-      body: detalle.map((item, index) => [
+      body: data.map((item, index) => [
         item.inventario.clave,
         item.inventario.numero_Serie,
         item.inventario.descripcion,
         item.inventario.marca,
         item.inventario.modelo,
         item.inventario.color,
+        `$${item.inventario.importe}`,
       ]),
       bodyStyles: { fontSize: 10, textColor: [0, 0, 0] },
       tableLineColor: [0, 0, 0],

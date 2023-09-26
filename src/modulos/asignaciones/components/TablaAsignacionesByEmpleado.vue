@@ -57,30 +57,60 @@ import { onBeforeMount, ref, watch } from "vue";
 
 const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
-const { listaAsignacionInventario, isEditar, isShow } =
+const { listaAsignacionInventario, isEditar, isShow, areas, listEmpleados } =
   storeToRefs(asignacionStore);
+const area_Id = ref(null);
+const empleado_Id = ref(null);
+
+//-----------------------------------------------------------
+
+onBeforeMount(() => {
+  asignacionStore.loadAreasList();
+});
+
+//-----------------------------------------------------------
+
+watch(area_Id, (val) => {
+  if (val != null) {
+    asignacionStore.loadEmpleadosByArea(area_Id.value.value);
+    empleado_Id.value = null;
+  }
+});
+
+watch(empleado_Id, (val) => {
+  if (val != null) {
+    asignacionStore.asignacionByEmpleado(val.value);
+  }
+});
 
 //-----------------------------------------------------------
 const columns = [
   {
-    name: "clave",
+    name: "empleado",
     align: "center",
-    label: "Clave",
-    field: "clave",
+    label: "Empleado",
+    field: "empleado",
     sortable: true,
   },
   {
-    name: "descripcion",
+    name: "estatus",
     align: "center",
-    label: "Descripción",
-    field: "descripcion",
-    sortable: true,
+    label: "Estatus",
+    field: "estatus",
+    sortable: false,
   },
   {
-    name: "inventario_Id",
+    name: "fecha_Asignacion",
     align: "center",
-    label: "Acciones",
-    field: "inventario_Id",
+    label: "Fecha de asignación",
+    field: "fecha_Asignacion",
+    sortable: false,
+  },
+  {
+    name: "fecha_Registro",
+    align: "center",
+    label: "Fecha de registro",
+    field: "fecha_Registro",
     sortable: false,
   },
 ];
@@ -93,48 +123,6 @@ const pagination = ref({
 });
 
 const filter = ref("");
-
-//-----------------------------------------------------------
-
-const eliminar = async (id) => {
-  $q.dialog({
-    title: "Eliminar producto",
-    message: "¿Está seguro de eliminar el producto del listado?",
-    icon: "Warning",
-    persistent: true,
-    transitionShow: "scale",
-    transitionHide: "scale",
-    ok: {
-      color: "positive",
-      label: "¡Sí!, eliminar",
-    },
-    cancel: {
-      color: "negative",
-      label: " No Cancelar",
-    },
-  }).onOk(async () => {
-    $q.loading.show();
-    let resp = null;
-    resp = await asignacionStore.deleteProducto(id);
-    $q.loading.hide();
-
-    if (resp.success) {
-      $q.loading.hide();
-      $q.notify({
-        position: "top-right",
-        type: "positive",
-        message: resp.data,
-      });
-    } else {
-      $q.loading.hide();
-      $q.notify({
-        position: "top-right",
-        type: "negative",
-        message: resp.data,
-      });
-    }
-  });
-};
 
 //-----------------------------------------------------------
 </script>
