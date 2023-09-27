@@ -75,7 +75,7 @@
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
-                v-if="!isShow"
+                v-if="habilitar === true"
                 label="Empleado"
                 v-model="empleadoId"
                 :options="listEmpleados"
@@ -83,10 +83,10 @@
               >
               </q-select>
               <q-input
-                v-else
-                readonly
+                v-if="isShow || (isEditar && habilitar == false)"
                 v-model="asignacion.empleado"
                 label="Empleado"
+                @click="cambiar"
               >
               </q-input>
             </div>
@@ -220,6 +220,7 @@ const empleadoId = ref(null);
 const catalogoId = ref(null);
 const opcionesInventario = ref([...inventarios.value]);
 const habilitarButton = ref(null);
+const habilitar = ref(false);
 //-----------------------------------------------------------
 //Get fecha actual
 const dateActual = new Date();
@@ -253,7 +254,6 @@ watch(asignacion.value, (val) => {
     cargarArea(val);
     cargarPuestos(val);
     cargarFecha(val);
-    cargarEmpleado(val);
     puesto_Id.value = val.puesto;
   }
 });
@@ -269,6 +269,7 @@ watch(area_Id, (val) => {
   if (val != null) {
     asignacionStore.loadEmpleadosByArea(area_Id.value.value, false);
     empleadoId.value = null;
+    cargarEmpleado(empleadoId);
   }
 });
 
@@ -287,7 +288,9 @@ watchEffect(() => {
 });
 
 //-----------------------------------------------------------
-
+const cambiar = () => {
+  habilitar.value = true;
+};
 const cargarEstatus = async (val) => {
   if (estatus_Id.value == null) {
     let estatusFiltrado = estatus.value.find(
@@ -314,14 +317,12 @@ const cargarPuestos = async (val) => {
 };
 
 const cargarEmpleado = async (val) => {
-  // console.log("listEmpleados", val, listEmpleados);
-  // if (empleadoId.value == null) {
-  //   let empleadoFiltrado = listEmpleados.value.find(
-  //     (x) => x.label == `${val.empleado}`
-  //   );
-  //   empleadoId.value = empleadoFiltrado;
-  //   console.log("empleadoFiltrado", empleadoFiltrado, empleadoId.value);
-  // }
+  if (empleadoId.value == null) {
+    let empleadoFiltrado = listEmpleados.value.find(
+      (x) => x.value == `${val.empleado_Id}`
+    );
+    empleadoId.value = empleadoFiltrado;
+  }
 };
 
 const cargarFecha = async () => {
@@ -348,6 +349,7 @@ const actualizarModal = (valor) => {
   catalogoId.value = null;
   inventarioId.value = null;
   opcionesInventario.value = null;
+  habilitar.value = false;
   //getDateActual();
   catalogoId.value = { value: 0, label: "Todos" };
   asignacionStore.actualizarModal(valor);

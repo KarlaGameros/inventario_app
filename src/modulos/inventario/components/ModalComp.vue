@@ -177,8 +177,6 @@
                     v-model.trim="inventario.color"
                     label="Color"
                     autogrow
-                    lazy-rules
-                    :rules="[(val) => !!val || 'El color es requerido']"
                   >
                   </q-input>
                 </div>
@@ -300,7 +298,11 @@
                               dense
                               autofocus
                               @keyup.enter="scope.set"
-                              :rules="[required]"
+                              lazy-rules
+                              :rules="[
+                                (val) => !!val || 'Este campo es obligatorio',
+                              ]"
+                              hint="Ingrese un número de serie"
                             />
                           </q-popup-edit>
                         </q-td>
@@ -377,8 +379,6 @@
                     v-model.trim="inventario.color_a"
                     label="Color"
                     autogrow
-                    lazy-rules
-                    :rules="[(val) => !!val || 'El color es requerido']"
                   >
                   </q-input>
                 </div>
@@ -544,8 +544,6 @@
                     v-model.trim="inventario.color_b"
                     label="Color"
                     autogrow
-                    lazy-rules
-                    :rules="[(val) => !!val || 'El color es requerido']"
                   >
                   </q-input>
                 </div>
@@ -711,8 +709,6 @@
                     v-model.trim="inventario.color_c"
                     label="Color"
                     autogrow
-                    lazy-rules
-                    :rules="[(val) => !!val || 'El color es requerido']"
                   >
                   </q-input>
                 </div>
@@ -907,8 +903,6 @@
               label="Color"
               name="color"
               autogrow
-              lazy-rules
-              :rules="[(val) => !!val || 'El color es requerido']"
             >
             </q-input>
           </div>
@@ -922,8 +916,6 @@
               label="Color"
               name="color"
               autogrow
-              lazy-rules
-              :rules="[(val) => !!val || 'El color es requerido']"
             >
             </q-input>
           </div>
