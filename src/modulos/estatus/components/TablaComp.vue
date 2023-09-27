@@ -98,7 +98,6 @@ const columns = [
 ];
 
 const pagination = ref({
-  //********** */
   page: 1,
   rowsPerPage: 25,
   sortBy: "name",

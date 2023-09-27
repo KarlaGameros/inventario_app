@@ -70,7 +70,6 @@
 import { onBeforeMount, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
-import { useAuthStore } from "../../../stores/auth_store";
 import { useBodegaStore } from "../../../stores/bodega_store";
 
 //-----------------------------------------------------------

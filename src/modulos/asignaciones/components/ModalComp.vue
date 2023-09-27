@@ -75,7 +75,7 @@
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
-                v-if="habilitar === true"
+                v-if="habilitar === true || (!isEditar && !isShow)"
                 label="Empleado"
                 v-model="empleadoId"
                 :options="listEmpleados"
@@ -83,24 +83,31 @@
               >
               </q-select>
               <q-input
-                v-if="isShow || (isEditar && habilitar == false)"
+                v-if="isEditar && habilitar == false"
                 v-model="asignacion.empleado"
                 label="Empleado"
                 @click="cambiar"
               >
               </q-input>
+              <q-input
+                v-if="isShow"
+                readonly
+                v-model="asignacion.empleado"
+                label="Empleado"
+              >
+              </q-input>
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-input
-                v-if="!isShow"
+                v-if="habilitar === true || (!isEditar && !isShow)"
                 readonly
                 label="Puesto"
-                v-model="puesto_Id"
+                v-model="puesto"
                 hint="Puesto"
               >
               </q-input>
               <q-input
-                v-else
+                v-if="(isEditar && habilitar == false) || isShow"
                 readonly
                 v-model="asignacion.puesto"
                 label="Puesto"
@@ -198,8 +205,7 @@ const inventarioStore = useInventarioStore();
 
 const { estatus } = storeToRefs(estatusStore);
 const { inventarios } = storeToRefs(inventarioStore);
-const { catalogos, listCatalogo } = storeToRefs(catalogoStore);
-const { listMarca } = storeToRefs();
+const { listCatalogo } = storeToRefs(catalogoStore);
 const {
   modal,
   asignacion,
@@ -209,12 +215,12 @@ const {
   listEmpleados,
   isEditar,
   isShow,
-  detalleAsignacion,
 } = storeToRefs(asignacionStore);
 
 const estatus_Id = ref(null);
 const area_Id = ref(null);
 const puesto_Id = ref(null);
+const puesto = ref(null);
 const inventarioId = ref(null);
 const empleadoId = ref(null);
 const catalogoId = ref(null);
@@ -227,9 +233,13 @@ const dateActual = new Date();
 const year = dateActual.getFullYear();
 const month = String(dateActual.getMonth() + 1).padStart(2, "0");
 const day = String(dateActual.getDate()).padStart(2, "0");
-const date = ref(`${year}/${month}/${day}`);
+const hours = String(dateActual.getHours());
+const minutes = String(dateActual.getMinutes());
+const seconds = String(dateActual.getSeconds());
+const date = ref(`${year}/${month}/${day} ${hours}:${minutes}:${seconds}`);
 
 const isSmallScreen = ref(window.matchMedia("(max-width: 768px)").matches);
+const editar = ref(false);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -254,7 +264,9 @@ watch(asignacion.value, (val) => {
     cargarArea(val);
     cargarPuestos(val);
     cargarFecha(val);
-    puesto_Id.value = val.puesto;
+    empleadoId.value = val.empleado_Id;
+    puesto_Id.value = val.puesto_Id;
+    editar.value = true;
   }
 });
 
@@ -275,7 +287,8 @@ watch(area_Id, (val) => {
 
 watch(empleadoId, (val) => {
   if (val != null) {
-    puesto_Id.value = empleadoId.value.puesto;
+    puesto.value = empleadoId.value.puesto;
+    puesto_Id.value = val.puesto_Id;
   }
 });
 
@@ -350,6 +363,7 @@ const actualizarModal = (valor) => {
   inventarioId.value = null;
   opcionesInventario.value = null;
   habilitar.value = false;
+  editar.value = false;
   //getDateActual();
   catalogoId.value = { value: 0, label: "Todos" };
   asignacionStore.actualizarModal(valor);
@@ -374,16 +388,26 @@ const filterInventario = (val, update) => {
 
 const agregarProducto = async () => {
   if (listaAsignacionInventario.value.length == 0) {
-    await asignacionStore.addInventario(inventarioId.value);
-    await asignacionStore.createDetalleAsignacion(inventarioId.value);
-    //inventarioId.value = null;
+    if (editar.value == true) {
+      await asignacionStore.createDetalleAsignacion(inventarioId.value);
+      await asignacionStore.addInventario(inventarioId.value);
+    } else {
+      await asignacionStore.addInventario(inventarioId.value);
+    }
+
+    inventarioId.value = null;
   } else {
     let filtro = listaAsignacionInventario.value.find(
       (x) => x.inventario_Id == inventarioId.value.value
     );
     if (filtro == undefined) {
-      await asignacionStore.addInventario(inventarioId.value);
-      await asignacionStore.createDetalleAsignacion(inventarioId.value);
+      if (editar.value == true) {
+        await asignacionStore.createDetalleAsignacion(inventarioId.value);
+        await asignacionStore.addInventario(inventarioId.value);
+      } else {
+        await asignacionStore.addInventario(inventarioId.value);
+      }
+      inventarioId.value = null;
     } else {
       $q.dialog({
         title: "Atención",
@@ -403,8 +427,13 @@ const registrar = async () => {
   let resp = null;
   $q.loading.show();
   asignacion.value.area_Id = area_Id.value.value;
-  asignacion.value.empleado_Id = empleadoId.value.value;
-  asignacion.value.puesto_Id = empleadoId.value.puesto_Id;
+  if (empleadoId.value == undefined) {
+    asignacion.value.empleado_Id = asignacion.value.empleado_Id;
+    asignacion.value.puesto_Id = asignacion.value.puesto_Id;
+  } else {
+    asignacion.value.empleado_Id = empleadoId.value.value;
+    asignacion.value.puesto_Id = puesto_Id.value;
+  }
   asignacion.value.eliminado = false;
   asignacion.value.fecha_Asignacion = date.value;
   asignacion.value.detalle = listaAsignacionInventario.value;
@@ -412,6 +441,7 @@ const registrar = async () => {
     resp = await asignacionStore.updateAsignacion(asignacion.value);
   } else {
     resp = await asignacionStore.createAsignacion(asignacion.value);
+    editar.value = false;
   }
   if (resp.success) {
     $q.notify({

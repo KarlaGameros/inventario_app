@@ -13,6 +13,7 @@
       >
         <template v-slot:top-left>
           <q-select
+            class="q-pr-xs"
             v-model="catalogoId"
             :options="listCatalogosTodos"
             label="Selecciona un catalogo"
@@ -36,7 +37,7 @@
             dense
             debounce="300"
             v-model="filter"
-            placeholder="Buscar.."
+            placeholder="Buscar..."
           >
             <template v-slot:append>
               <q-icon name="search" />
@@ -123,7 +124,7 @@ const { estatus } = storeToRefs(estatusStore);
 const catalogoId = ref(null);
 const estatusId = ref(null);
 const isLoading = ref(false);
-let timer;
+
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -282,7 +283,6 @@ const columns = [
 ];
 
 const pagination = ref({
-  //********** */
   page: 1,
   rowsPerPage: 25,
   sortBy: "name",

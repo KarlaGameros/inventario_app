@@ -12,7 +12,6 @@ const Reporte = async () => {
     let id = asignacion.value.id;
     let respDetalle = await api.get(`/DetalleAsignaciones/BySolicitud/${id}`);
     let { data } = respDetalle.data;
-    console.log("data", data);
     //--------------------------------------------------------------------------//
 
     let img = new Image();
@@ -94,7 +93,7 @@ const Reporte = async () => {
     doc.text("Localidad:", 150, 85, null, null, "right");
 
     doc.setFont("helvetica", "normal");
-    doc.text("Centro de capacitación del IEE", 28, 85);
+    doc.text(asignacion.value.area, 28, 85);
     doc.text("Tepic", 155, 85);
     doc.text("Tepic", 155, 75);
 
@@ -105,7 +104,7 @@ const Reporte = async () => {
 
     var newRow = [
       {
-        content: "RELACIÓN DE MOBILIARIO Y EQUIPO DE COMPUTO",
+        content: "RELACIÓN DE BIENES",
         colSpan: 7,
         styles: {
           halign: "center",
@@ -136,7 +135,7 @@ const Reporte = async () => {
       styles: {
         halign: "center",
         valign: "middle",
-        fontSize: 10,
+        fontSize: 8,
         lineColor: [0, 0, 0],
         lineWidth: 0.3,
       },
@@ -147,16 +146,16 @@ const Reporte = async () => {
       startY: 90,
       margin: { left: 10, rigth: 10 },
       head: header,
-      body: data.map((item, index) => [
-        item.inventario.clave,
-        item.inventario.numero_Serie,
-        item.inventario.descripcion,
-        item.inventario.marca,
-        item.inventario.modelo,
-        item.inventario.color,
-        `$${item.inventario.importe}`,
+      body: data.map((item) => [
+        item.inventario,
+        item.numero_Serie == null ? "S/N" : item.numero_Serie,
+        item.descripcion,
+        item.marca,
+        item.modelo,
+        item.color == null ? "SIN COLOR" : item.color,
+        item.importe == undefined ? "SIN IMPORTE" : `$${item.importe}`,
       ]),
-      bodyStyles: { fontSize: 10, textColor: [0, 0, 0] },
+      bodyStyles: { fontSize: 8, textColor: [0, 0, 0] },
       tableLineColor: [0, 0, 0],
     });
 
@@ -179,21 +178,36 @@ const Reporte = async () => {
 
         if (i === pageCount - 1) {
           if (doc.lastAutoTable && doc.lastAutoTable.finalY) {
-            var maxY = 230;
+            var maxY = 200;
             var currentY = doc.lastAutoTable.finalY;
 
             if (currentY > maxY) {
               doc.addPage();
               doc.setFont("helvetica", "bold");
               doc.setFontSize(10);
-              doc.text("_____________________________", 80, 230);
-              doc.text("Empleado responsable", 90, 235);
+              doc.text(
+                "________________________________________",
+                110,
+                80,
+                null,
+                null,
+                "center"
+              );
+              doc.text(
+                asignacion.value.empleado,
+                110,
+                85,
+                null,
+                null,
+                "center"
+              );
+              doc.text("Personal responsable", 110, 90, null, null, "center");
 
-              doc.rect(10, 240, 194, 17);
+              doc.rect(10, 100, 194, 17);
               doc.setFont("helvetica", "bold");
               doc.setFontSize(10);
 
-              doc.text("NOTA:", 12, 245);
+              doc.text("NOTA:", 12, 105);
 
               doc.setFont("helvetica", "normal");
               doc.setFontSize(10);
@@ -203,25 +217,39 @@ const Reporte = async () => {
                   "perdida o extravio del bien es responsabilidad del usuario responsable. Este resguardo se cancela al momento \n " +
                   "de la entrega del bien del usuario responsable a la Unidad Técnica de Informática y Estadistica",
                 24,
-                245
+                105
               );
             } else {
               doc.setFont("helvetica", "bold");
               doc.setFontSize(10);
               doc.text(
-                "_____________________________",
-                80,
-                doc.lastAutoTable.finalY + 10
+                "________________________________________",
+                110,
+                doc.lastAutoTable.finalY + 65,
+                null,
+                null,
+                "center"
               );
               doc.text(
-                "Empleado responsable",
-                90,
-                doc.lastAutoTable.finalY + 15
+                asignacion.value.empleado,
+                110,
+                doc.lastAutoTable.finalY + 70,
+                null,
+                null,
+                "center"
               );
-              doc.rect(10, doc.lastAutoTable.finalY + 20, 194, 17);
+              doc.text(
+                "Personal responsable",
+                110,
+                doc.lastAutoTable.finalY + 75,
+                null,
+                null,
+                "center"
+              );
+              doc.rect(10, doc.lastAutoTable.finalY + 85, 194, 17);
               doc.setFont("helvetica", "bold");
               doc.setFontSize(10);
-              doc.text("NOTA:", 12, doc.lastAutoTable.finalY + 25);
+              doc.text("NOTA:", 12, doc.lastAutoTable.finalY + 90);
               doc.setFont("helvetica", "normal");
               doc.setFontSize(10);
               doc.text(
@@ -229,7 +257,7 @@ const Reporte = async () => {
                   "perdida o extravio del bien es responsabilidad del usuario responsable. Este resguardo se cancela al momento \n " +
                   "de la entrega del bien del usuario responsable a la Unidad Técnica de Informática y Estadistica",
                 24,
-                doc.lastAutoTable.finalY + 25
+                doc.lastAutoTable.finalY + 90
               );
             }
           }

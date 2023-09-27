@@ -104,7 +104,6 @@ const columns = [
 ];
 
 const pagination = ref({
-  //********** */
   page: 1,
   rowsPerPage: 25,
   sortBy: "name",
@@ -122,6 +121,7 @@ const editar = async (id) => {
   bodegaStore.actualizarModal(true);
   $q.loading.hide();
 };
+
 const eliminar = async (id) => {
   $q.dialog({
     title: "Eliminar bodega",

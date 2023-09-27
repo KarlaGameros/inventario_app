@@ -107,7 +107,6 @@ const editar = async (id) => {
   $q.loading.show();
   await modeloStore.loadModelo(id);
   modeloStore.updateEditar(true);
-  //modeloStore.actualizarModal(true);
   $q.loading.hide();
 };
 

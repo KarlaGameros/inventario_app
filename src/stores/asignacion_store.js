@@ -77,10 +77,10 @@ export const useAsignacionStore = defineStore("asignacion", {
             estatus: asignacion.estatus,
             fecha_Registro: asignacion.fecha_Registro,
             fecha_Asignacion: asignacion.fecha_Asignacion,
+            folio: asignacion.folio,
           };
         });
         this.asignaciones = listaAsignacionInventario;
-        console.log(this.asignaciones);
       } catch (error) {
         return {
           success: false,

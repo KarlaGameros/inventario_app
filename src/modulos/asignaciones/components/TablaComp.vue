@@ -21,6 +21,7 @@
           >
           </q-select>
           <q-select
+            v-if="hidden == false"
             label="Empleado"
             v-model="empleado_Id"
             :options="listEmpleados"
@@ -47,7 +48,7 @@
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'id'">
                 <q-btn
-                  v-show="props.row.estatus == 'Pendiente'"
+                  v-show="modulo.actualizar && props.row.estatus == 'Pendiente'"
                   flat
                   round
                   color="purple-ieen"
@@ -58,7 +59,7 @@
                 </q-btn>
 
                 <q-btn
-                  v-show="props.row.estatus != 'Pendiente'"
+                  v-show="modulo.leer && props.row.estatus != 'Pendiente'"
                   flat
                   round
                   color="purple-ieen"
@@ -128,7 +129,7 @@ const { asignaciones, areas, listEmpleados, listFiltroAsignaciones } =
   storeToRefs(asignacionStore);
 const areaId = ref(null);
 const empleado_Id = ref(null);
-
+const hidden = ref(false);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -141,9 +142,11 @@ onBeforeMount(() => {
 //-----------------------------------------------------------
 
 watch(areaId, (val) => {
-  if (val != null) {
+  if (val.value != 0) {
     asignacionStore.loadEmpleadosByArea(areaId.value.value, true);
-    //empleado_Id.value = null;
+    hidden.value = false;
+  } else {
+    hidden.value = true;
   }
 });
 
@@ -180,6 +183,13 @@ watchEffect(() => {
 
 const columns = [
   {
+    name: "folio",
+    align: "center",
+    label: "Número de resguardo",
+    field: "folio",
+    sortable: true,
+  },
+  {
     name: "empleado",
     align: "center",
     label: "Empleado asignación",
@@ -189,7 +199,7 @@ const columns = [
   {
     name: "area",
     align: "center",
-    label: "Area",
+    label: "Área",
     field: "area",
     sortable: true,
   },

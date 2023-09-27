@@ -32,14 +32,14 @@
               <div v-if="col.name === 'asignar'">
                 <q-radio
                   checked-icon="task_alt"
-                  v-model="asignar"
+                  v-model="props.row.asignar"
                   unchecked-icon="panorama_fish_eye"
                   val="bodega"
                   label="Bodega"
                 />
                 <q-radio
                   checked-icon="task_alt"
-                  v-model="asignar"
+                  v-model="props.row.asignar"
                   unchecked-icon="panorama_fish_eye"
                   val="personal"
                   label="Personal"
@@ -47,7 +47,7 @@
               </div>
               <div v-if="col.name === 'asignar_a'">
                 <q-select
-                  v-if="asignar == 'bodega'"
+                  v-if="props.row.asignar == 'bodega'"
                   label="Bodega"
                   :options="listEmpleados"
                   hint="Selecciona una bodega"

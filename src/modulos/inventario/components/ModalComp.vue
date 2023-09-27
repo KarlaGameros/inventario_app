@@ -24,7 +24,6 @@
       <q-card-section>
         <q-form @submit="onSubmit" class="row q-col-gutter-xs">
           <!----------------------------------------------------------------------------->
-
           <div
             v-if="!isEditar"
             :class="

@@ -45,17 +45,12 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { useQuasar } from "quasar";
 import { onBeforeMount, ref } from "vue";
-import { useAuthStore } from "../../../stores/auth_store";
 import { useMiInventarioStore } from "../../../stores/mi_inventario";
 
 //-----------------------------------------------------------
 
-const $q = useQuasar();
-const authStore = useAuthStore();
 const miInventarioStore = useMiInventarioStore();
-const { modulo } = storeToRefs(authStore);
 const { listMiInventario, miInventario } = storeToRefs(miInventarioStore);
 
 //-----------------------------------------------------------
@@ -134,7 +129,6 @@ const columns = [
 ];
 
 const pagination = ref({
-  //********** */
   page: 1,
   rowsPerPage: 25,
   sortBy: "name",

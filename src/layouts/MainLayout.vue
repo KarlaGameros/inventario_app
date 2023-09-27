@@ -151,7 +151,7 @@
             </q-item-section>
           </q-item>
 
-          <q-item
+          <!-- <q-item
             v-if="CatalogosConList.some((element) => element == 'SI-MOV-INV')"
             :content-inset-level="2"
             :header-inset-level="2"
@@ -165,7 +165,7 @@
                 Movimiento Inventario
               </q-item-label>
             </q-item-section>
-          </q-item>
+          </q-item> -->
 
           <q-item
             v-if="CatalogosConList.some((element) => element == 'SI-ENT-REC')"

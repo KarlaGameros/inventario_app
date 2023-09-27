@@ -154,7 +154,6 @@ export const useInventarioStore = defineStore("inventario", {
 
         this.inventarios = listInventario;
         this.listInventario = listInventario;
-        console.log(this.inventarios);
       } catch (error) {
         return {
           success: false,

@@ -6,6 +6,7 @@
         :columns="columns"
         :filter="filter"
         :pagination="pagination"
+        :visible-columns="columnasVisibles"
         row-key="id"
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
@@ -59,8 +60,14 @@ const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
 const { listaAsignacionInventario, isEditar, isShow } =
   storeToRefs(asignacionStore);
+let columnasVisibles = [];
 
 //-----------------------------------------------------------
+
+onBeforeMount(() => {
+  cargarColumnas();
+});
+
 const columns = [
   {
     name: "clave",
@@ -94,6 +101,13 @@ const pagination = ref({
 
 const filter = ref("");
 
+const cargarColumnas = async () => {
+  if (isShow.value == true) {
+    columnasVisibles = ["clave", "descripcion"];
+  } else {
+    columnasVisibles = ["clave", "descripcion", "asignacion_Id"];
+  }
+};
 //-----------------------------------------------------------
 
 const eliminar = async (id) => {
