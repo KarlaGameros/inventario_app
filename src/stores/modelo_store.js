@@ -160,7 +160,6 @@ export const useModeloStore = defineStore("modelos", {
           };
         }
       } catch (error) {
-        console.group(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",

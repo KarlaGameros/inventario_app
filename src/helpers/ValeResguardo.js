@@ -12,7 +12,6 @@ const Reporte = async () => {
     let id = asignacion.value.id;
     let respDetalle = await api.get(`/DetalleAsignaciones/BySolicitud/${id}`);
     let { data } = respDetalle.data;
-    console.log("---", asignacion);
     //--------------------------------------------------------------------------//
 
     let img = new Image();
@@ -95,7 +94,7 @@ const Reporte = async () => {
     doc.rect(10, 58, 191.8, 7);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    doc.text("Cargo:", 15, 62);
+    doc.text("Cargo:", 15, 63);
     doc.setFont("helvetica", "normal");
     doc.text(asignacion.value.puesto, 30, 63);
     doc.setFont("helvetica", "bold");
@@ -103,8 +102,8 @@ const Reporte = async () => {
     doc.rect(10, 65, 191.8, 7);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
-    doc.text("Área:", 15, 69);
-    doc.text("Municipio:", 150, 69, null, null, "right");
+    doc.text("Área:", 15, 70);
+    doc.text("Municipio:", 150, 70, null, null, "right");
 
     doc.setFont("helvetica", "normal");
     doc.text(asignacion.value.area, 28, 70);
@@ -178,7 +177,7 @@ const Reporte = async () => {
     for (var i = 0; i < pageCount; i++) {
       if (i === pageCount - 1) {
         if (doc.lastAutoTable && doc.lastAutoTable.finalY) {
-          var maxY = 220;
+          var maxY = 222;
           var currentY = doc.lastAutoTable.finalY;
           if (currentY > maxY) {
             doc.addPage();
@@ -187,13 +186,13 @@ const Reporte = async () => {
             doc.text(
               "________________________________________",
               110,
-              80,
+              87,
               null,
               null,
               "center"
             );
-            doc.text(asignacion.value.empleado, 110, 85, null, null, "center");
-            doc.text("Personal responsable", 110, 90, null, null, "center");
+            doc.text(asignacion.value.empleado, 110, 92, null, null, "center");
+            doc.text("Personal responsable", 110, 97, null, null, "center");
 
             doc.rect(10, 100, 194, 17);
             doc.setFont("helvetica", "bold");
@@ -217,13 +216,13 @@ const Reporte = async () => {
             doc.text(
               "________________________________________",
               110,
-              230,
+              232,
               null,
               null,
               "center"
             );
-            doc.text(asignacion.value.empleado, 110, 235, null, null, "center");
-            doc.text("Personal responsable", 110, 240, null, null, "center");
+            doc.text(asignacion.value.empleado, 110, 237, null, null, "center");
+            doc.text("Personal responsable", 110, 242, null, null, "center");
             doc.rect(10, 245, 194, 15);
             doc.setFont("helvetica", "bold");
             doc.setFontSize(10);

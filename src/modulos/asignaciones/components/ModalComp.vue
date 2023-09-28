@@ -347,24 +347,21 @@ const cargarFecha = async () => {
   date.value = `${year}/${month}/${day}`;
 };
 
-// const getDateActual = async () => {
-//   const dateActual = new Date();
-//   const year = dateActual.getFullYear();
-//   const month = String(dateActual.getMonth() + 1).padStart(2, "0");
-//   const day = String(dateActual.getDate()).padStart(2, "0");
-//   date.value = ref(`${year}/${month}/${day}`);
-// };
-
-const actualizarModal = (valor) => {
+const limpiarCampos = () => {
   area_Id.value = null;
   empleadoId.value = null;
   puesto_Id.value = null;
   catalogoId.value = null;
   inventarioId.value = null;
   opcionesInventario.value = null;
+  puesto.value = null;
+  puesto_Id.value = null;
   habilitar.value = false;
   editar.value = false;
-  //getDateActual();
+};
+
+const actualizarModal = (valor) => {
+  limpiarCampos();
   catalogoId.value = { value: 0, label: "Todos" };
   asignacionStore.actualizarModal(valor);
   asignacionStore.initAsignacion();
@@ -450,6 +447,8 @@ const registrar = async () => {
       message: resp.data,
     });
     actualizarModal(false);
+    limpiarCampos();
+    asignacionStore.initAsignacion();
     asignacionStore.loadInformacionAsignaciones();
   } else {
     $q.notify({

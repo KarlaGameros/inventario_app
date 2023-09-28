@@ -410,28 +410,5 @@ export const useAsignacionStore = defineStore("asignacion", {
         };
       }
     },
-    //-----------------------------------------------------------
-    async asignacionByEmpleado(id) {
-      try {
-        const resp = await api.get(
-          `/AsignacionesInventarios/GetByEmpleado/${id}`
-        );
-        let { data } = resp.data;
-        console.this.asignaciones = data.map((asignacion) => {
-          return {
-            empleado: asignacion.empleado,
-            puesto: asignacion.puesto,
-            estatus: asignacion.estatus,
-            fecha_Asignacion: asignacion.fecha_Asignacion,
-            fecha_Registro: asignacion.fecha_Registro,
-          };
-        });
-      } catch (error) {
-        return {
-          success: false,
-          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
-        };
-      }
-    },
   },
 });
