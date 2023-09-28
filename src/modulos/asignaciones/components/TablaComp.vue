@@ -7,6 +7,7 @@
         :filter="filter"
         :pagination="pagination"
         row-key="id"
+        sort-method="asc"
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
       >
