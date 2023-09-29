@@ -13,7 +13,7 @@
               ? "Registrar de asignación"
               : isEditar
               ? "Editar asignación"
-              : "Ver asignación"
+              : `Ver asignación ${asignacion.folio}`
           }}
         </div>
         <q-space />
@@ -106,12 +106,13 @@
                 hint="Puesto"
               >
               </q-input>
-              <q-input
-                v-if="(isEditar && habilitar == false) || isShow"
-                readonly
-                v-model="asignacion.puesto"
-                label="Puesto"
-              >
+            </div>
+
+            <div
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+              v-show="tipoAsignacion == 'bodega'"
+            >
+              <q-input readonly v-model="empleado.puesto" label="Puesto">
               </q-input>
             </div>
 
@@ -119,7 +120,7 @@
               <q-select
                 v-show="!isShow"
                 v-model="catalogoId"
-                :options="listCatalogo"
+                :options="listCatalogosTodos"
                 label="Catálogo perteneciente del inventario"
                 hint="Selecciona una catalogo"
                 :lazy-rules="true"
@@ -193,6 +194,8 @@ import { useEstatusStore } from "src/stores/estatus_store";
 import { useInventarioStore } from "src/stores/inventario_store";
 import { onBeforeMount, ref, watch, watchEffect } from "vue";
 import { useAsignacionStore } from "../../../stores/asignacion_store";
+import { useEmpleadosStore } from "src/stores/empleados_store";
+import { useBodegaStore } from "src/stores/bodega_store";
 import TablaAsignacionInventario from "./TablaAsignacionInventario.vue";
 
 //-----------------------------------------------------------
@@ -202,10 +205,12 @@ const asignacionStore = useAsignacionStore();
 const estatusStore = useEstatusStore();
 const catalogoStore = useCatalogoProductoStore();
 const inventarioStore = useInventarioStore();
+const empleadoStore = useEmpleadosStore();
 
 const { estatus } = storeToRefs(estatusStore);
 const { inventarios } = storeToRefs(inventarioStore);
-const { listCatalogo } = storeToRefs(catalogoStore);
+const { listCatalogosTodos } = storeToRefs(catalogoStore);
+const bodegaStore = useBodegaStore();
 const {
   modal,
   asignacion,
@@ -216,6 +221,7 @@ const {
   isEditar,
   isShow,
 } = storeToRefs(asignacionStore);
+const { empleado } = storeToRefs(empleadoStore);
 
 const estatus_Id = ref(null);
 const area_Id = ref(null);
@@ -240,14 +246,15 @@ const date = ref(`${year}/${month}/${day} ${hours}:${minutes}:${seconds}`);
 
 const isSmallScreen = ref(window.matchMedia("(max-width: 768px)").matches);
 const editar = ref(false);
+const tipoAsignacion = ref("personal");
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
   inventarioStore.loadListInventario(0);
   estatusStore.loadInformacionEstatus();
-  catalogoStore.loadCatalogoListNormal();
+  catalogoStore.loadCatalogoList(true);
+  bodegaStore.loadBodegasList();
   catalogoId.value = { value: 0, label: "Todos" };
-  //getDateActual();
 });
 
 //-----------------------------------------------------------
@@ -279,9 +286,22 @@ watch(catalogoId, (val) => {
 
 watch(area_Id, (val) => {
   if (val != null) {
-    asignacionStore.loadEmpleadosByArea(area_Id.value.value, false);
-    empleadoId.value = null;
-    cargarEmpleado(empleadoId);
+    if (tipoAsignacion.value == "bodega") {
+      empleadoStore.loadResponsableByArea(area_Id.value.value);
+    } else {
+      asignacionStore.loadEmpleadosByArea(area_Id.value.value, false);
+      empleadoId.value = null;
+      puesto_Id.value = null;
+      puesto.value = null;
+      cargarEmpleado(empleadoId);
+    }
+  }
+});
+
+watch(tipoAsignacion, (val) => {
+  console.log(val);
+  if (val == "bodega") {
+    //empleadoStore.loadResponsableByArea(9);
   }
 });
 
@@ -358,6 +378,8 @@ const limpiarCampos = () => {
   puesto_Id.value = null;
   habilitar.value = false;
   editar.value = false;
+  tipoAsignacion.value = "personal";
+  empleadoStore.initInventario();
 };
 
 const actualizarModal = (valor) => {
@@ -423,7 +445,7 @@ const agregarProducto = async () => {
 const registrar = async () => {
   let resp = null;
   $q.loading.show();
-  asignacion.value.area_Id = area_Id.value.value;
+
   if (empleadoId.value == undefined) {
     asignacion.value.empleado_Id = asignacion.value.empleado_Id;
     asignacion.value.puesto_Id = asignacion.value.puesto_Id;
@@ -431,6 +453,8 @@ const registrar = async () => {
     asignacion.value.empleado_Id = empleadoId.value.value;
     asignacion.value.puesto_Id = puesto_Id.value;
   }
+
+  asignacion.value.area_Id = area_Id.value.value;
   asignacion.value.eliminado = false;
   asignacion.value.fecha_Asignacion = date.value;
   asignacion.value.detalle = listaAsignacionInventario.value;

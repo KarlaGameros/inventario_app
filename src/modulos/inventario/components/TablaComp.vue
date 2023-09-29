@@ -176,6 +176,13 @@ watchEffect(() => {
 
 const columns = [
   {
+    name: "id",
+    align: "center",
+    label: "Acciones",
+    field: "id",
+    sortable: true,
+  },
+  {
     name: "catalogo",
     align: "center",
     label: "Catálogo perteneciente",
@@ -192,8 +199,15 @@ const columns = [
   {
     name: "bodega",
     align: "center",
-    label: "Bodega perteneciente",
+    label: "Bodega",
     field: "bodega",
+    sortable: true,
+  },
+  {
+    name: "empleado",
+    align: "center",
+    label: "Empleado",
+    field: "empleado",
     sortable: true,
   },
   {
@@ -246,13 +260,6 @@ const columns = [
     sortable: true,
   },
   {
-    name: "emplado",
-    align: "center",
-    label: "Empleado",
-    field: "empleado",
-    sortable: true,
-  },
-  {
     name: "fecha_compra",
     align: "center",
     label: "Fecha de Compra",
@@ -271,13 +278,6 @@ const columns = [
     align: "center",
     label: "Importe",
     field: "importe",
-    sortable: true,
-  },
-  {
-    name: "id",
-    align: "center",
-    label: "Acciones",
-    field: "id",
     sortable: true,
   },
 ];

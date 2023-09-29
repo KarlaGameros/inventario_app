@@ -17,7 +17,6 @@ const Reporte = async () => {
     let img = new Image();
 
     img.src = require("../assets/IEEN300.png");
-    let totalPagesExp = "{total_pages_count_string}";
     const doc = new jsPDF({ orientation: "portrait", format: "letter" });
 
     function createHeader() {

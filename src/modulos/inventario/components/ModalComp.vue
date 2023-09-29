@@ -136,13 +136,11 @@
                   </q-input>
                 </div>
 
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pb-md">
                   <q-input
                     v-model.trim="inventario.nombre_corto"
                     label="Nombre corto"
                     autogrow
-                    lazy-rules
-                    :rules="[(val) => !!val || 'La nombre corto es requerido']"
                   >
                   </q-input>
                 </div>
@@ -171,7 +169,7 @@
                   </q-select>
                 </div>
 
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
                   <q-input
                     v-model.trim="inventario.color"
                     label="Color"
@@ -313,8 +311,8 @@
 
               <!---------------------------------------------------------------->
 
-              <q-tab-panel name="extencion_a">
-                <div class="text-h6">Extención A</div>
+              <q-tab-panel name="extension_a">
+                <div class="text-h6">Extensión A</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     v-if="isEditar"
@@ -373,7 +371,7 @@
                   </q-select>
                 </div>
 
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
                   <q-input
                     v-model.trim="inventario.color_a"
                     label="Color"
@@ -381,7 +379,6 @@
                   >
                   </q-input>
                 </div>
-
                 <!-------------------------------------------------------------------------->
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
@@ -478,8 +475,8 @@
 
               <!---------------------------------------------------------------->
 
-              <q-tab-panel name="extencion_b">
-                <div class="text-h6">Extención B</div>
+              <q-tab-panel name="extension_b">
+                <div class="text-h6">Extensión B</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     v-if="isEditar"
@@ -538,7 +535,7 @@
                   </q-select>
                 </div>
 
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
                   <q-input
                     v-model.trim="inventario.color_b"
                     label="Color"
@@ -643,8 +640,8 @@
 
               <!---------------------------------------------------------------->
 
-              <q-tab-panel name="extencion_c">
-                <div class="text-h6">Extención C</div>
+              <q-tab-panel name="extension_c">
+                <div class="text-h6">Extensión C</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     v-if="isEditar"
@@ -703,7 +700,7 @@
                   </q-select>
                 </div>
 
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
                   <q-input
                     v-model.trim="inventario.color_c"
                     label="Color"
@@ -895,7 +892,7 @@
 
           <div
             v-if="radio == 'individual'"
-            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+            class="col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pb-md"
           >
             <q-input
               v-model.trim="inventario.color"
@@ -908,7 +905,7 @@
 
           <div
             v-if="radio == 'agranel'"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
           >
             <q-input
               v-model.trim="inventario.color"
@@ -1031,7 +1028,7 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { is, useQuasar } from "quasar";
+import { useQuasar } from "quasar";
 import { computed, onBeforeMount, ref, watch } from "vue";
 import { useInventarioStore } from "../../../stores/inventario_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
@@ -1041,11 +1038,14 @@ import { useModeloStore } from "src/stores/modelo_store";
 import TablaNumerosSeriesA from "./TablaNumeroSerieA.vue";
 import TablaNumerosSeriesB from "./TablaNumeroSerieB.vue";
 import TablaNumerosSeriesC from "./TablaNumeroSerieC.vue";
+import { useEmpleadosStore } from "src/stores/empleados_store";
+
 //-----------------------------------------------------------
 
 const $q = useQuasar();
 const inventarioStore = useInventarioStore();
 const catalogoStore = useCatalogoProductoStore();
+const empleadoStore = useEmpleadosStore();
 const bodegaStore = useBodegaStore();
 const marcaStore = useMarcaStore();
 const modeloStore = useModeloStore();
@@ -1065,7 +1065,7 @@ const { listCatalogo, catalogos } = storeToRefs(catalogoStore);
 const { listBodega } = storeToRefs(bodegaStore);
 const { listMarca } = storeToRefs(marcaStore);
 const { listModelo } = storeToRefs(modeloStore);
-
+const { empleado } = storeToRefs(empleadoStore);
 const catalogoId = ref(null);
 const bodegaId = ref(null);
 const marcaId = ref(null);
@@ -1106,13 +1106,12 @@ onBeforeMount(() => {
   catalogoStore.loadCatalogoListNormal();
   marcaStore.loadMarcaList();
 });
-
 //-----------------------------------------------------------
 
 const tabsDefinition = [
-  { name: "extencion_a", label: "Extención A" },
-  { name: "extencion_b", label: "Extención B" },
-  { name: "extencion_c", label: "Extención C" },
+  { name: "extension_a", label: "Extensión A" },
+  { name: "extension_b", label: "Extensión B" },
+  { name: "extension_c", label: "Extensión C" },
 ];
 const tabs = ref(tabsDefinition.slice(0, 0));
 const tab = ref("general");
@@ -1188,6 +1187,12 @@ watch(cantidad, (val) => {
     inventarioStore.addCantidad(cantidad.value, catalogoId);
   }
 });
+
+watch(bodegaId, (val) => {
+  if (val != null) {
+    empleadoStore.loadResponsableByArea(val.area_Id);
+  }
+});
 //-----------------------------------------------------------
 
 const cargarBodega = async (val) => {
@@ -1261,7 +1266,7 @@ const onSubmit = async () => {
   } else {
     if (radio.value != "paquete") {
       inventarioFormData.append("Catalago_Id", catalogoId.value.value);
-      inventarioFormData.append("Estatus_Id", 2);
+      inventarioFormData.append("Estatus_Id", 1);
       inventarioFormData.append("Bodega_Id", bodegaId.value.value);
       inventarioFormData.append("Marca_Id", marcaId.value.value);
       inventarioFormData.append("Modelo_Id", modeloId.value.value);
@@ -1273,6 +1278,7 @@ const onSubmit = async () => {
       inventarioFormData.append("Foto_3", foto3.value);
       inventarioFormData.append("Foto_4", foto4.value);
       inventarioFormData.append("Cantidad", cantidad.value);
+      inventarioFormData.append("Empleado_Id", empleado.value.id);
     } else if (radio.value == "paquete") {
       //-----------------------------------------------------------
       //General
@@ -1303,7 +1309,7 @@ const onSubmit = async () => {
       inventarioPaqueteFormData.append("General.Foto_2", foto2.value);
       inventarioPaqueteFormData.append("General.Foto_3", foto3.value);
       inventarioPaqueteFormData.append("General.Foto_4", foto4.value);
-
+      inventarioPaqueteFormData.append("Empleado_Id", empleado.value.id);
       //-----------------------------------------------------------
       //Extencion A
       if (marcaId_A.value) {

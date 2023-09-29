@@ -81,7 +81,7 @@ import TablaModelo from "./TablaComp.vue";
 
 const $q = useQuasar();
 const modeloStore = useModeloStore();
-const { modal, modelo, isEditar, marca, marca_id } = storeToRefs(modeloStore);
+const { modal, modelo, isEditar, marca_id } = storeToRefs(modeloStore);
 
 //-----------------------------------------------------------
 

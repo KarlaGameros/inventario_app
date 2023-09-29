@@ -13,6 +13,16 @@
     <div class="row">
       <div class="col">
         <div class="text-right q-pa-md items-start q-gutter-md">
+          <q-avatar
+            color="purple-ieen"
+            text-color="white"
+            icon="receipt_long"
+            class="q-ma-sm"
+            @click="generarResguardoBodega()"
+          >
+            <q-tooltip>Generar resguardo por bodega</q-tooltip>
+          </q-avatar>
+
           <q-btn
             v-if="modulo == null ? false : modulo.registrar"
             type="button"
@@ -27,6 +37,7 @@
     </div>
     <TablaComp />
     <ModalComp />
+    <ModalValeBodega />
   </q-page>
 </template>
 
@@ -36,7 +47,7 @@ import { useQuasar } from "quasar";
 import { useAuthStore } from "../../../stores/auth_store";
 import { storeToRefs } from "pinia";
 import { useAsignacionStore } from "src/stores/asignacion_store";
-
+import ModalValeBodega from "../components/ModalValeBodega.vue";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 
@@ -72,5 +83,8 @@ const actualizarModal = (valor) => {
   $q.loading.hide();
 };
 
+const generarResguardoBodega = async () => {
+  asignacionStore.actualizarModalValeBodega(true);
+};
 //-----------------------------------------------------------
 </script>

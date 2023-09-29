@@ -92,15 +92,15 @@ export const useBodegaStore = defineStore("bodega", {
     //-----------------------------------------------------------
     async loadBodegasList() {
       try {
-        let resp = await api.get("/Bodegas/GetLista");
+        let resp = await api.get("/Bodegas");
         let { data } = resp.data;
-        let listaBodega = data.map((bodega) => {
+        this.listBodega = data.map((bodega) => {
           return {
-            label: bodega.text,
-            value: bodega.value,
+            label: bodega.nombre,
+            value: bodega.id,
+            area_Id: bodega.area_Id,
           };
         });
-        this.listBodega = listaBodega;
       } catch (error) {
         return {
           success: false,

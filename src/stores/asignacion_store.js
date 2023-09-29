@@ -5,6 +5,7 @@ export const useAsignacionStore = defineStore("asignacion", {
   state: () => ({
     modal: false,
     modalVale: false,
+    modalValeBodega: false,
     isEditar: false,
     isShow: false,
     rutaVale: null,
@@ -48,6 +49,9 @@ export const useAsignacionStore = defineStore("asignacion", {
       this.isShow = valor;
     },
 
+    actualizarModalValeBodega(valor) {
+      this.modalValeBodega = valor;
+    },
     initAsignacion() {
       this.asignacion.id = null;
       this.asignacion.area_Id = null;
@@ -186,6 +190,7 @@ export const useAsignacionStore = defineStore("asignacion", {
     //-----------------------------------------------------------
 
     async createAsignacion(asignacion) {
+      console.log("recibo asignacion", asignacion);
       try {
         const resp = await api.post("/AsignacionesInventarios", asignacion);
         if (resp.status == 200) {

@@ -58,10 +58,10 @@ import { useQuasar } from "quasar";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useInventarioStore } from "src/stores/inventario_store";
-import TablaComp from "../components/TablaComp.vue";
-import ModalComp from "../components/ModalComp.vue";
 import { onBeforeMount, ref } from "vue";
 import ReporteListadoInventario from "../../../helpers/ListadoInventario";
+import TablaComp from "../components/TablaComp.vue";
+import ModalComp from "../components/ModalComp.vue";
 
 const $q = useQuasar();
 const authStore = useAuthStore();

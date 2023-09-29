@@ -6,10 +6,12 @@ export const useInventarioStore = defineStore("inventario", {
     modal: false,
     modalFotos: false,
     modalPDF: false,
+    modalValeBodega: false,
     isEditar: false,
     cantidad: null,
     listInventario: [],
     listFiltroInventario: [],
+    listInventarioByBodega: [],
     listInventarioAsignacion: [],
     inventarios: [],
     listaNumeroSerie: [
@@ -40,6 +42,8 @@ export const useInventarioStore = defineStore("inventario", {
       estatus: null,
       bodega_id: null,
       bodega: null,
+      responsable_Id: null,
+      responsable: null,
       descripcion: null,
       nombre_corto: null,
       marca_id: null,
@@ -94,6 +98,8 @@ export const useInventarioStore = defineStore("inventario", {
       this.inventario.bodega_id = null;
       this.inventario.bodega = null;
       this.inventario.clave = null;
+      this.inventario.responsable_Id = null;
+      this.inventario.responsable = null;
 
       this.inventario.descripcion = null;
       this.inventario.descripcion_a = null;
@@ -127,6 +133,7 @@ export const useInventarioStore = defineStore("inventario", {
     //-----------------------------------------------------------
     async loadInformacionInventarios() {
       try {
+        let responsable = null;
         let resp = await api.get("/Inventarios");
         let { data } = resp.data;
         let listInventario = data.map((inventario) => {
@@ -154,6 +161,7 @@ export const useInventarioStore = defineStore("inventario", {
 
         this.inventarios = listInventario;
         this.listInventario = listInventario;
+        console.log(this.inventarios);
       } catch (error) {
         return {
           success: false,
@@ -165,6 +173,7 @@ export const useInventarioStore = defineStore("inventario", {
     //-----------------------------------------------------------
 
     async createInventario(inventarioFormData) {
+      console.log("inventarioFormData", inventarioFormData);
       try {
         const resp = await api.post("/Inventarios", inventarioFormData, {
           headers: {
@@ -173,6 +182,7 @@ export const useInventarioStore = defineStore("inventario", {
         });
         if (resp.status == 200) {
           const { success, data } = resp.data;
+          console.log("---", data);
           if (success === true) {
             return { success, data };
           } else {
@@ -233,6 +243,7 @@ export const useInventarioStore = defineStore("inventario", {
         let resp = await api.get(`/Inventarios/${id}`);
         if (resp.status == 200) {
           const { success, data } = resp.data;
+          console.log("------------", data);
           if (success == true) {
             this.inventario.id = data.id;
             this.inventario.foto_1 = data.foto_1_URL;
@@ -510,6 +521,39 @@ export const useInventarioStore = defineStore("inventario", {
             (item) => item.estatus === estatus
           );
           this.listInventario = listInventario;
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
+    async inventarioByBodega(id) {
+      try {
+        const resp = await api.get(`/Inventarios/ByBodega/${id}`);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            this.listInventarioByBodega = data.map((inventario) => {
+              return {
+                value: inventario.id,
+                label: inventario.nombre_Corto,
+              };
+            });
+            console.log("ttt", this.listInventarioByBodega);
+            return { success, data };
+          } else {
+            return { success, data };
+          }
         } else {
           return {
             success: false,
