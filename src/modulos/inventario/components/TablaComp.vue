@@ -199,7 +199,7 @@ const columns = [
   {
     name: "bodega",
     align: "center",
-    label: "Bodega",
+    label: "Bodega origen",
     field: "bodega",
     sortable: true,
   },

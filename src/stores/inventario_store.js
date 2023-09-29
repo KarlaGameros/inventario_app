@@ -133,7 +133,6 @@ export const useInventarioStore = defineStore("inventario", {
     //-----------------------------------------------------------
     async loadInformacionInventarios() {
       try {
-        let responsable = null;
         let resp = await api.get("/Inventarios");
         let { data } = resp.data;
         let listInventario = data.map((inventario) => {
@@ -155,7 +154,8 @@ export const useInventarioStore = defineStore("inventario", {
             numero_Serie: inventario.numero_Serie,
             empleado: inventario.empleado,
             ruta_PDF: inventario.PDf_url,
-            importe: `$ ${inventario.importe}`,
+            importe:
+              inventario.importe == null ? "" : `$ ${inventario.importe}`,
           };
         });
 
@@ -243,7 +243,6 @@ export const useInventarioStore = defineStore("inventario", {
         let resp = await api.get(`/Inventarios/${id}`);
         if (resp.status == 200) {
           const { success, data } = resp.data;
-          console.log("------------", data);
           if (success == true) {
             this.inventario.id = data.id;
             this.inventario.foto_1 = data.foto_1_URL;
@@ -545,11 +544,15 @@ export const useInventarioStore = defineStore("inventario", {
           if (success === true) {
             this.listInventarioByBodega = data.map((inventario) => {
               return {
-                value: inventario.id,
-                label: inventario.nombre_Corto,
+                clave: inventario.clave,
+                descripcion: inventario.descripcion,
+                numero_Serie: inventario.numero_Serie,
+                marca: inventario.marca,
+                modelo: inventario.modelo,
+                color: inventario.color,
+                importe: inventario.importe,
               };
             });
-            console.log("ttt", this.listInventarioByBodega);
             return { success, data };
           } else {
             return { success, data };

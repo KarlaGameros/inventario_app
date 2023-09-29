@@ -60,6 +60,7 @@ export const useEmpleadosStore = defineStore("empleados", {
             this.empleado.area_Id = data.area_Id;
             this.empleado.area = data.area;
           }
+          console.log("----", this.empleado);
         }
       } catch (error) {
         return {

@@ -5,16 +5,14 @@ import { useAsignacionStore } from "src/stores/asignacion_store";
 import autoTable from "jspdf-autotable";
 import { useInventarioStore } from "src/stores/inventario_store";
 
-const Reporte = async () => {
-  const asignacionStore = useAsignacionStore();
+const ReporteBodega = async () => {
   const inventarioStore = useInventarioStore();
+  const asignacionStore = useAsignacionStore();
   const { listInventarioByBodega } = storeToRefs(inventarioStore);
   const { asignacion } = storeToRefs(asignacionStore);
-
+  console.log("listInventarioByBodega", listInventarioByBodega.value);
+  console.log("asignacion", asignacion);
   try {
-    let id = asignacion.value.id;
-    let respDetalle = await api.get(`/DetalleAsignaciones/BySolicitud/${id}`);
-    let { data } = respDetalle.data;
     //--------------------------------------------------------------------------//
 
     let img = new Image();
@@ -57,7 +55,7 @@ const Reporte = async () => {
       doc.setTextColor(0, 0, 0);
 
       doc.rect(50, 30, 50, 5);
-      doc.text(asignacion.value.folio, 60, 34);
+      //doc.text(asignacion.value.folio, 60, 34);
 
       doc.rect(50, 35, 50, 5);
       doc.text(asignacion.value.fecha_Asignacion, 60, 39);
@@ -108,8 +106,8 @@ const Reporte = async () => {
     doc.text("Tipo:", 150, 70, null, null, "right");
 
     doc.setFont("helvetica", "normal");
-    doc.text(asignacion.value.area, 28, 70);
-    doc.text("Personal", 155, 70);
+    //doc.text(asignacion.value.area, 28, 70);
+    doc.text("Bodega", 155, 70);
 
     //--------------------------------------------------------------------------//
 
@@ -157,10 +155,10 @@ const Reporte = async () => {
       startY: 72,
       margin: { left: 9.6, rigth: 10, top: 45 },
       head: header,
-      body: data.map((item) => [
-        item.inventario,
-        item.numero_Serie == null ? "S/N" : item.numero_Serie,
+      body: listInventarioByBodega.value.map((item) => [
+        item.clave,
         item.descripcion,
+        item.numero_Serie == null ? "S/N" : item.numero_Serie,
         item.marca,
         item.modelo,
         item.color == null ? "SIN COLOR" : item.color,
@@ -235,43 +233,6 @@ const Reporte = async () => {
               24,
               250
             );
-            // doc.text(
-            //   "________________________________________",
-            //   110,
-            //   doc.lastAutoTable.finalY + 20,
-            //   null,
-            //   null,
-            //   "center"
-            // );
-            // doc.text(
-            //   asignacion.value.empleado,
-            //   110,
-            //   doc.lastAutoTable.finalY + 25,
-            //   null,
-            //   null,
-            //   "center"
-            // );
-            // doc.text(
-            //   "Personal responsable prueba",
-            //   110,
-            //   doc.lastAutoTable.finalY + 30,
-            //   null,
-            //   null,
-            //   "center"
-            // );
-            // doc.rect(10, doc.lastAutoTable.finalY + 35, 194, 15);
-            // doc.setFont("helvetica", "bold");
-            // doc.setFontSize(10);
-            // doc.text("NOTA:", 12, doc.lastAutoTable.finalY + 40);
-            // doc.setFont("helvetica", "normal");
-            // doc.setFontSize(9);
-            // doc.text(
-            //   "Resguardo temporal para prestamo de Bien Mueble del Instituto Estatal Electoral de Nayarit, cualquier daño, \n " +
-            //     "perdida o extravio del bien es responsabilidad del usuario responsable. Este resguardo se cancela al momento \n " +
-            //     "de la entrega del bien del usuario responsable a la Unidad Técnica de Informática y Estadistica",
-            //   24,
-            //   doc.lastAutoTable.finalY + 40
-            // );
           }
         }
       }
@@ -299,4 +260,4 @@ const Reporte = async () => {
   }
 };
 
-export default Reporte;
+export default ReporteBodega;

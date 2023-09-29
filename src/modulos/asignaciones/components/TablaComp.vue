@@ -184,6 +184,13 @@ watchEffect(() => {
 
 const columns = [
   {
+    name: "id",
+    align: "center",
+    label: "Acciones",
+    field: "id",
+    sortable: false,
+  },
+  {
     name: "folio",
     align: "center",
     label: "Número de resguardo",
@@ -231,13 +238,6 @@ const columns = [
     label: "Fecha de asignación",
     field: "fecha_Asignacion",
     sortable: true,
-  },
-  {
-    name: "id",
-    align: "center",
-    label: "Acciones",
-    field: "id",
-    sortable: false,
   },
 ];
 

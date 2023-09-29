@@ -11,6 +11,7 @@ export const useAsignacionStore = defineStore("asignacion", {
     rutaVale: null,
     asignaciones: [],
     listaAsignacionInventario: [],
+    listInventarioByBodega: [],
     listEmpleados: [],
     listFiltroAsignaciones: [],
     areas: [],
@@ -22,7 +23,9 @@ export const useAsignacionStore = defineStore("asignacion", {
     asignacion: {
       id: null,
       area_Id: null,
+      area: null,
       empleado_Id: null,
+      empleado: null,
       puesto_Id: null,
       puesto: null,
       eliminado: null,
@@ -190,7 +193,6 @@ export const useAsignacionStore = defineStore("asignacion", {
     //-----------------------------------------------------------
 
     async createAsignacion(asignacion) {
-      console.log("recibo asignacion", asignacion);
       try {
         const resp = await api.post("/AsignacionesInventarios", asignacion);
         if (resp.status == 200) {
@@ -361,6 +363,7 @@ export const useAsignacionStore = defineStore("asignacion", {
     },
 
     //-----------------------------------------------------------
+
     async updateAsignacion(asignacion) {
       try {
         const resp = await api.put(
@@ -388,6 +391,8 @@ export const useAsignacionStore = defineStore("asignacion", {
       }
     },
 
+    //-----------------------------------------------------------
+
     async createDetalleAsignacion(detalle) {
       this.detalleAsignaciones.inventario_Id = detalle.value;
       try {
@@ -406,6 +411,43 @@ export const useAsignacionStore = defineStore("asignacion", {
           return {
             success: false,
             data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
+    async valeByBodega(id) {
+      try {
+        let resp = api.get(`/Inventarios/Imprimir/${id}`);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            this.listInventarioByBodega = data.map((inventario) => {
+              return {
+                clave: inventario.clave,
+                descripcion: inventario.descripcion,
+                numero_Serie: inventario.numero_Serie,
+                marca: inventario.marca,
+                modelo: inventario.modelo,
+                color: inventario.color,
+                importe: inventario.importe,
+              };
+            });
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
           };
         }
       } catch (error) {

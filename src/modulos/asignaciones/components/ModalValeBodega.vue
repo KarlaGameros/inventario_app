@@ -62,6 +62,7 @@ import { useInventarioStore } from "src/stores/inventario_store";
 import { onBeforeMount, ref, watch } from "vue";
 import { useEmpleadosStore } from "src/stores/empleados_store";
 import ValeResguardo from "../../../helpers/ValeResguardo";
+import ValeByBodega from "../../../helpers/ValeByBodega";
 //-----------------------------------------------------------
 
 const $q = useQuasar();
@@ -92,7 +93,7 @@ onBeforeMount(() => {
 watch(bodega_Id, (val) => {
   console.log(val);
   empleadoStore.loadResponsableByArea(val.area_Id);
-  inventarioStore.inventarioByBodega(val.value);
+  asignacionStore.valeByBodega(val.value);
   asignacion.value.area_Id = val.area_Id;
 });
 //-----------------------------------------------------------
@@ -102,8 +103,6 @@ const actualizarModal = (valor) => {
 };
 
 const onSubmit = async () => {
-  console.log("bode", bodega_Id.value.value);
-  console.log("empleado", empleado);
   let resp = null;
   $q.loading.show();
   if (bodega_Id.value != null) {
@@ -111,10 +110,13 @@ const onSubmit = async () => {
     asignacion.value.fecha_Asignacion = date.value;
     asignacion.value.puesto_Id = empleado.value.puesto_Id;
     asignacion.value.area_Id = empleado.value.area_Id;
+    asignacion.value.area = empleado.value.area;
+    asignacion.value.empleado = empleado.value.nombres;
+    asignacion.value.puesto = empleado.value.puesto;
     resp = await asignacionStore.createAsignacion(asignacion.value);
   }
   if (resp.success) {
-    //ValeResguardo();
+    //ValeByBodega(asignacion);
     asignacionStore.actualizarModalValeBodega(false);
   } else {
     $q.notify({
