@@ -64,11 +64,7 @@
                 </q-btn>
 
                 <q-btn
-                  v-show="
-                    modulo.leer &&
-                    (props.row.estatus != 'Pendiente' ||
-                      props.row.tipo == 'Bodega')
-                  "
+                  v-show="modulo.leer && props.row.estatus != 'Pendiente'"
                   flat
                   round
                   color="purple-ieen"
@@ -76,6 +72,17 @@
                   @click="visualizar(col.value)"
                 >
                   <q-tooltip>Ver asignación</q-tooltip>
+                </q-btn>
+
+                <q-btn
+                  v-show="modulo.leer && props.row.tipo == 'Bodega'"
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="search"
+                  @click="visualizarByBodega(col.value)"
+                >
+                  <q-tooltip>Ver asignación por bodega</q-tooltip>
                 </q-btn>
 
                 <q-btn
@@ -370,6 +377,14 @@ const visualizar = async (id) => {
   $q.loading.show();
   await asignacionStore.loadAsignacion(id);
   await asignacionStore.detalleAsignacion(id);
+  asignacionStore.updateVisualizar(true);
+  asignacionStore.actualizarModal(true);
+  $q.loading.hide();
+};
+
+const visualizarByBodega = async (id) => {
+  $q.loading.show();
+  await asignacionStore.loadAsignacion(id);
   asignacionStore.updateVisualizar(true);
   asignacionStore.actualizarModal(true);
   $q.loading.hide();

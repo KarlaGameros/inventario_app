@@ -61,7 +61,6 @@ const asignacionStore = useAsignacionStore();
 const { listaAsignacionInventario, isEditar, isShow } =
   storeToRefs(asignacionStore);
 let columnasVisibles = [];
-
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -130,7 +129,6 @@ const eliminar = async (id) => {
     $q.loading.show();
     let resp = null;
     resp = await asignacionStore.deleteProducto(id);
-    asignacionStore.detalleAsignacion();
     $q.loading.hide();
 
     if (resp.success) {

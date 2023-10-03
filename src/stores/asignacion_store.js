@@ -274,20 +274,30 @@ export const useAsignacionStore = defineStore("asignacion", {
     //-----------------------------------------------------------
 
     async deleteProducto(id) {
+      console.log("id", id);
       try {
-        let resp = await api.delete(`/DetalleAsignaciones/${id}`);
-        if (resp.status == 200) {
-          let { success, data } = resp.data;
-          if (success === true) {
-            return { success, data };
-          } else {
-            return { success, data };
-          }
+        if (id == null) {
+          console.log("entrooooo");
+          let nIndex = this.listaAsignacionInventario.findIndex(
+            (x) => x.inventario_Id == id
+          );
+          this.listaAsignacionInventario.splice(nIndex, 1);
+          return { success: true, data: "Se elimino de la lista" };
         } else {
-          return {
-            success: false,
-            data: "Ocurrio un error, intentelo de nuevo",
-          };
+          let resp = await api.delete(`/DetalleAsignaciones/${id}`);
+          if (resp.status == 200) {
+            let { success, data } = resp.data;
+            if (success === true) {
+              return { success, data };
+            } else {
+              return { success, data };
+            }
+          } else {
+            return {
+              success: false,
+              data: "Ocurrio un error, intentelo de nuevo",
+            };
+          }
         }
       } catch (error) {
         return {

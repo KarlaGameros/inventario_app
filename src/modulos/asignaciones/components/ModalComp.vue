@@ -108,11 +108,8 @@
               </q-input>
             </div>
 
-            <div
-              class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
-              v-show="tipoAsignacion == 'bodega'"
-            >
-              <q-input readonly v-model="empleado.puesto" label="Puesto">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <q-input readonly v-model="asignacion.puesto" label="Puesto">
               </q-input>
             </div>
 
