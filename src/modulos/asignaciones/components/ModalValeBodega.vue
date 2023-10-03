@@ -116,7 +116,10 @@ const onSubmit = async () => {
     asignacion.value.puesto = empleado.value.puesto;
     asignacion.value.tipo = "Bodega";
     resp = await asignacionStore.createAsignacion(asignacion.value);
-    await asignacionStore.valeByBodega(bodega_Id.value.value, "2023-10-02");
+    await asignacionStore.valeByBodega(
+      bodega_Id.value.value,
+      "2023-10-02 11:00:00"
+    );
     ReporteBodega();
   }
   if (resp.success) {
