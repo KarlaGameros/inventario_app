@@ -49,7 +49,11 @@
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'id'">
                 <q-btn
-                  v-show="modulo.actualizar && props.row.estatus == 'Pendiente'"
+                  v-show="
+                    modulo.actualizar &&
+                    props.row.estatus == 'Pendiente' &&
+                    props.row.tipo != 'Bodega'
+                  "
                   flat
                   round
                   color="purple-ieen"
@@ -60,7 +64,11 @@
                 </q-btn>
 
                 <q-btn
-                  v-show="modulo.leer && props.row.estatus != 'Pendiente'"
+                  v-show="
+                    modulo.leer &&
+                    (props.row.estatus != 'Pendiente' ||
+                      props.row.tipo == 'Bodega')
+                  "
                   flat
                   round
                   color="purple-ieen"
@@ -71,7 +79,11 @@
                 </q-btn>
 
                 <q-btn
-                  v-show="modulo.actualizar && props.row.estatus == 'Pendiente'"
+                  v-show="
+                    modulo.actualizar &&
+                    props.row.estatus == 'Pendiente' &&
+                    props.row.tipo != 'Bodega'
+                  "
                   flat
                   round
                   color="purple-ieen"
@@ -82,7 +94,11 @@
                 </q-btn>
 
                 <q-btn
-                  v-show="modulo.actualizar && props.row.estatus == 'Afectado'"
+                  v-show="
+                    modulo.actualizar &&
+                    props.row.estatus == 'Afectado' &&
+                    props.row.tipo == 'Personal'
+                  "
                   flat
                   round
                   color="purple-ieen"
@@ -93,7 +109,22 @@
                 </q-btn>
 
                 <q-btn
-                  v-show="modulo.actualizar && props.row.estatus == 'Pendiente'"
+                  v-show="modulo.actualizar && props.row.tipo == 'Bodega'"
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="print"
+                  @click="GenerarValeBodega(col.value)"
+                >
+                  <q-tooltip>General vale bodega</q-tooltip>
+                </q-btn>
+
+                <q-btn
+                  v-show="
+                    modulo.actualizar &&
+                    props.row.estatus == 'Pendiente' &&
+                    props.row.tipo != 'Bodega'
+                  "
                   flat
                   round
                   color="purple-ieen"
@@ -119,7 +150,7 @@ import { useAuthStore } from "../../../stores/auth_store";
 import { useAsignacionStore } from "src/stores/asignacion_store";
 import { onBeforeMount, ref, watch, watchEffect } from "vue";
 import ValeResguardo from "../../../helpers/ValeResguardo";
-
+import ValeByBodega from "../../../helpers/ValeByBodega";
 //-----------------------------------------------------------
 
 const $q = useQuasar();
@@ -188,6 +219,13 @@ const columns = [
     align: "center",
     label: "Acciones",
     field: "id",
+    sortable: false,
+  },
+  {
+    name: "tipo",
+    align: "center",
+    label: "Tipo",
+    field: "tipo",
     sortable: false,
   },
   {
@@ -353,6 +391,16 @@ const GenerarVale = async (id) => {
   resp = await asignacionStore.loadAsignacion(id);
   if (resp.success === true) {
     ValeResguardo();
+  }
+  $q.loading.hide();
+};
+
+const GenerarValeBodega = async (id) => {
+  let resp = null;
+  $q.loading.show();
+  //resp = await asignacionStore.loadAsignacion(id);
+  if (resp.success === true) {
+    ValeByBodega();
   }
   $q.loading.hide();
 };

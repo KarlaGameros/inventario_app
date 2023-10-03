@@ -62,7 +62,7 @@ import { useInventarioStore } from "src/stores/inventario_store";
 import { onBeforeMount, ref, watch } from "vue";
 import { useEmpleadosStore } from "src/stores/empleados_store";
 import ValeResguardo from "../../../helpers/ValeResguardo";
-import ValeByBodega from "../../../helpers/ValeByBodega";
+import ReporteBodega from "../../../helpers/ValeByBodega";
 //-----------------------------------------------------------
 
 const $q = useQuasar();
@@ -92,8 +92,9 @@ onBeforeMount(() => {
 
 watch(bodega_Id, (val) => {
   console.log(val);
+  console.log("val", val.value);
+
   empleadoStore.loadResponsableByArea(val.area_Id);
-  asignacionStore.valeByBodega(val.value);
   asignacion.value.area_Id = val.area_Id;
 });
 //-----------------------------------------------------------
@@ -113,11 +114,15 @@ const onSubmit = async () => {
     asignacion.value.area = empleado.value.area;
     asignacion.value.empleado = empleado.value.nombres;
     asignacion.value.puesto = empleado.value.puesto;
+    asignacion.value.tipo = "Bodega";
     resp = await asignacionStore.createAsignacion(asignacion.value);
+    await asignacionStore.valeByBodega(bodega_Id.value.value, "2023-10-02");
+    ReporteBodega();
   }
   if (resp.success) {
-    //ValeByBodega(asignacion);
     asignacionStore.actualizarModalValeBodega(false);
+    asignacionStore.loadInformacionAsignaciones();
+    //ReporteBodega();
   } else {
     $q.notify({
       position: "top-right",

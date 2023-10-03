@@ -6,12 +6,10 @@ import autoTable from "jspdf-autotable";
 import { useInventarioStore } from "src/stores/inventario_store";
 
 const ReporteBodega = async () => {
-  const inventarioStore = useInventarioStore();
   const asignacionStore = useAsignacionStore();
-  const { listInventarioByBodega } = storeToRefs(inventarioStore);
+  const { listInventarioByBodega } = storeToRefs(asignacionStore);
   const { asignacion } = storeToRefs(asignacionStore);
-  console.log("listInventarioByBodega", listInventarioByBodega.value);
-  console.log("asignacion", asignacion);
+
   try {
     //--------------------------------------------------------------------------//
 
@@ -158,11 +156,6 @@ const ReporteBodega = async () => {
       body: listInventarioByBodega.value.map((item) => [
         item.clave,
         item.descripcion,
-        item.numero_Serie == null ? "S/N" : item.numero_Serie,
-        item.marca,
-        item.modelo,
-        item.color == null ? "SIN COLOR" : item.color,
-        item.importe == undefined ? "SIN IMPORTE" : `$${item.importe}`,
       ]),
       bodyStyles: { fontSize: 8, textColor: [0, 0, 0] },
       tableLineColor: [0, 0, 0],

@@ -457,6 +457,7 @@ const registrar = async () => {
   asignacion.value.area_Id = area_Id.value.value;
   asignacion.value.eliminado = false;
   asignacion.value.fecha_Asignacion = date.value;
+  asignacion.value.tipo = "Personal";
   asignacion.value.detalle = listaAsignacionInventario.value;
   if (isEditar.value == true) {
     resp = await asignacionStore.updateAsignacion(asignacion.value);

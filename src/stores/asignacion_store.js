@@ -32,6 +32,7 @@ export const useAsignacionStore = defineStore("asignacion", {
       fecha_Asignacion: null,
       folio: null,
       asignacion_Id: null,
+      tipo: null,
       detalle: [],
     },
   }),
@@ -64,6 +65,7 @@ export const useAsignacionStore = defineStore("asignacion", {
       this.asignacion.fecha_Asignacion = null;
       this.asignacion.fecha_Registro = null;
       this.isEditar = false;
+      this.tipo = null;
       this.listaAsignacionInventario = [];
     },
 
@@ -85,6 +87,7 @@ export const useAsignacionStore = defineStore("asignacion", {
             fecha_Registro: asignacion.fecha_Registro,
             fecha_Asignacion: asignacion.fecha_Asignacion,
             folio: asignacion.folio,
+            tipo: asignacion.tipo,
           };
         });
         this.asignaciones = listaAsignacionInventario;
@@ -423,9 +426,9 @@ export const useAsignacionStore = defineStore("asignacion", {
 
     //-----------------------------------------------------------
 
-    async valeByBodega(id) {
+    async valeByBodega(id, fecha) {
       try {
-        let resp = api.get(`/Inventarios/Imprimir/${id}`);
+        let resp = await api.get(`/Inventarios/Imprimir/${id}/${fecha}`);
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success === true) {
@@ -438,11 +441,10 @@ export const useAsignacionStore = defineStore("asignacion", {
                 modelo: inventario.modelo,
                 color: inventario.color,
                 importe: inventario.importe,
+                impreso: inventario.impreso,
+                fecha_Registro: inventario.fecha_Registro,
               };
             });
-            return { success, data };
-          } else {
-            return { success, data };
           }
         } else {
           return {
@@ -457,5 +459,7 @@ export const useAsignacionStore = defineStore("asignacion", {
         };
       }
     },
+
+    //-----------------------------------------------------------
   },
 });
