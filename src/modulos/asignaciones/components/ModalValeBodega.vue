@@ -80,9 +80,9 @@ const dateActual = new Date();
 const year = dateActual.getFullYear();
 const month = String(dateActual.getMonth() + 1).padStart(2, "0");
 const day = String(dateActual.getDate()).padStart(2, "0");
-const hours = String(dateActual.getHours());
-const minutes = String(dateActual.getMinutes());
-const seconds = String(dateActual.getSeconds());
+const hours = String(dateActual.getHours()).padStart(2, "0");
+const minutes = String(dateActual.getMinutes()).padStart(2, "0");
+const seconds = String(dateActual.getSeconds()).padStart(2, "0");
 const date = ref(`${year}/${month}/${day} ${hours}:${minutes}:${seconds}`);
 //-----------------------------------------------------------
 
@@ -91,9 +91,6 @@ onBeforeMount(() => {
 });
 
 watch(bodega_Id, (val) => {
-  console.log(val);
-  console.log("val", val.value);
-
   empleadoStore.loadResponsableByArea(val.area_Id);
   asignacion.value.area_Id = val.area_Id;
 });
@@ -105,6 +102,8 @@ const actualizarModal = (valor) => {
 
 const onSubmit = async () => {
   let resp = null;
+  let respByBodega = null;
+  let respVale = null;
   $q.loading.show();
   if (bodega_Id.value != null) {
     asignacion.value.empleado_Id = empleado.value.id;
@@ -116,16 +115,20 @@ const onSubmit = async () => {
     asignacion.value.puesto = empleado.value.puesto;
     asignacion.value.tipo = "Bodega";
     resp = await asignacionStore.createAsignacion(asignacion.value);
-    await asignacionStore.valeByBodega(
+    respByBodega = await asignacionStore.valeByBodega(
       bodega_Id.value.value,
-      "2023-10-02 11:00:00"
+      resp.fecha
     );
-    ReporteBodega();
+    asignacionStore.loadAsignacion(resp.id);
   }
-  if (resp.success) {
-    asignacionStore.actualizarModalValeBodega(false);
-    asignacionStore.loadInformacionAsignaciones();
-    //ReporteBodega();
+  if (resp.success === true) {
+    console.log("reso fecha", resp.fecha);
+    respVale = await asignacionStore.inventariosByFecha(resp.fecha);
+    if (respVale.success === true) {
+      asignacionStore.actualizarModalValeBodega(false);
+      asignacionStore.loadInformacionAsignaciones();
+      ReporteBodega();
+    }
   } else {
     $q.notify({
       position: "top-right",

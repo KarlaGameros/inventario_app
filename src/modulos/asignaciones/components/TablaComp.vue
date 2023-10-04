@@ -80,7 +80,9 @@
                   round
                   color="purple-ieen"
                   icon="search"
-                  @click="visualizarByBodega(col.value)"
+                  @click="
+                    visualizarByBodega(props.row.fecha_Registro, col.value)
+                  "
                 >
                   <q-tooltip>Ver asignación por bodega</q-tooltip>
                 </q-btn>
@@ -121,7 +123,9 @@
                   round
                   color="purple-ieen"
                   icon="print"
-                  @click="GenerarValeBodega(col.value)"
+                  @click="
+                    GenerarValeBodega(props.row.fecha_Registro, col.value)
+                  "
                 >
                   <q-tooltip>General vale bodega</q-tooltip>
                 </q-btn>
@@ -379,14 +383,22 @@ const visualizar = async (id) => {
   await asignacionStore.detalleAsignacion(id);
   asignacionStore.updateVisualizar(true);
   asignacionStore.actualizarModal(true);
+  asignacionStore.updateIsBodega(false);
   $q.loading.hide();
 };
 
-const visualizarByBodega = async (id) => {
+const visualizarByBodega = async (fechaAsignacion, id) => {
   $q.loading.show();
+  var [fechaParte, horaParte] = fechaAsignacion.split(" ");
+  var [mes, dia, año] = fechaParte.split("/");
+  var [hora, minutos, segundos] = horaParte.split(":");
+  var fecha = `${mes}-${dia}-${año} ${hora}:${minutos}:${segundos}`;
+  console.log("fecha", fecha);
   await asignacionStore.loadAsignacion(id);
+  await asignacionStore.inventariosByFecha(fechaAsignacion);
   asignacionStore.updateVisualizar(true);
   asignacionStore.actualizarModal(true);
+  asignacionStore.updateIsBodega(true);
   $q.loading.hide();
 };
 
@@ -410,11 +422,17 @@ const GenerarVale = async (id) => {
   $q.loading.hide();
 };
 
-const GenerarValeBodega = async (id) => {
+const GenerarValeBodega = async (fecha, id) => {
   let resp = null;
+  let respAsignacion = null;
+  // var [fechaParte, horaParte] = fecha1.split(" ");
+  // var [mes, dia, año] = fechaParte.split("/");
+  // var [hora, minutos, segundos] = horaParte.split(":");
+  // var fecha = `${mes}-${dia}-${año} ${hora}:${minutos}:${segundos}`;
   $q.loading.show();
-  //resp = await asignacionStore.loadAsignacion(id);
-  if (resp.success === true) {
+  resp = await asignacionStore.inventariosByFecha(fecha);
+  respAsignacion = await asignacionStore.loadAsignacion(id);
+  if (resp.success === true && respAsignacion.success === true) {
     ValeByBodega();
   }
   $q.loading.hide();

@@ -3,13 +3,17 @@ import { jsPDF } from "jspdf";
 import { storeToRefs } from "pinia";
 import { useAsignacionStore } from "src/stores/asignacion_store";
 import autoTable from "jspdf-autotable";
-import { useInventarioStore } from "src/stores/inventario_store";
 
 const ReporteBodega = async () => {
   const asignacionStore = useAsignacionStore();
   const { listInventarioByBodega } = storeToRefs(asignacionStore);
   const { asignacion } = storeToRefs(asignacionStore);
-
+  console.log("listInventarioByBodega", listInventarioByBodega);
+  console.log("asignacion", asignacion.value.folio);
+  console.log("asignacion", asignacion.value.area);
+  console.log("asignacion", asignacion.value.empleado);
+  console.log("asignacion", asignacion.value.puesto);
+  console.log("asignacion", asignacion.value.fecha_Asignacion);
   try {
     //--------------------------------------------------------------------------//
 
@@ -53,7 +57,7 @@ const ReporteBodega = async () => {
       doc.setTextColor(0, 0, 0);
 
       doc.rect(50, 30, 50, 5);
-      //doc.text(asignacion.value.folio, 60, 34);
+      doc.text(asignacion.value.folio, 60, 34);
 
       doc.rect(50, 35, 50, 5);
       doc.text(asignacion.value.fecha_Asignacion, 60, 39);
@@ -104,7 +108,7 @@ const ReporteBodega = async () => {
     doc.text("Tipo:", 150, 70, null, null, "right");
 
     doc.setFont("helvetica", "normal");
-    //doc.text(asignacion.value.area, 28, 70);
+    doc.text(asignacion.value.area, 28, 70);
     doc.text("Bodega", 155, 70);
 
     //--------------------------------------------------------------------------//
@@ -155,7 +159,12 @@ const ReporteBodega = async () => {
       head: header,
       body: listInventarioByBodega.value.map((item) => [
         item.clave,
+        item.numero_Serie == null ? "S/N" : item.numero_Serie,
         item.descripcion,
+        item.marca,
+        item.modelo,
+        item.color,
+        item.importe == null ? "SIN IMPORTE" : `$${item.importe}`,
       ]),
       bodyStyles: { fontSize: 8, textColor: [0, 0, 0] },
       tableLineColor: [0, 0, 0],

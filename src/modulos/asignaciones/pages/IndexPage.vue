@@ -14,6 +14,7 @@
       <div class="col">
         <div class="text-right q-pa-md items-start q-gutter-md">
           <q-avatar
+            v-if="modulo == null ? false : modulo.registrar"
             color="purple-ieen"
             text-color="white"
             icon="receipt_long"
@@ -78,7 +79,6 @@ const actualizarModal = (valor) => {
   asignacionStore.actualizarModal(valor);
   asignacionStore.updateVisualizar(false);
   asignacionStore.initAsignacion();
-  asignacionStore.loadAreasList(false);
   asignacionStore.loadEmpleadosByArea(0, false);
   $q.loading.hide();
 };

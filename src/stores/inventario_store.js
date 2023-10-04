@@ -161,7 +161,6 @@ export const useInventarioStore = defineStore("inventario", {
 
         this.inventarios = listInventario;
         this.listInventario = listInventario;
-        console.log(this.inventarios);
       } catch (error) {
         return {
           success: false,
@@ -173,7 +172,6 @@ export const useInventarioStore = defineStore("inventario", {
     //-----------------------------------------------------------
 
     async createInventario(inventarioFormData) {
-      console.log("inventarioFormData", inventarioFormData);
       try {
         const resp = await api.post("/Inventarios", inventarioFormData, {
           headers: {
@@ -182,7 +180,6 @@ export const useInventarioStore = defineStore("inventario", {
         });
         if (resp.status == 200) {
           const { success, data } = resp.data;
-          console.log("---", data);
           if (success === true) {
             return { success, data };
           } else {

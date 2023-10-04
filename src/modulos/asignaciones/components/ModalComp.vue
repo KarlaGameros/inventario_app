@@ -35,7 +35,11 @@
             </div>
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-              <q-input v-model="date" label="Fecha de asignación">
+              <q-input
+                v-if="!isByBodega"
+                v-model="date"
+                label="Fecha de asignación"
+              >
                 <template v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy
@@ -56,6 +60,13 @@
                     </q-popup-proxy>
                   </q-icon>
                 </template>
+              </q-input>
+              <q-input
+                v-else
+                readonly
+                v-model="asignacion.fecha_Registro"
+                label="Fecha"
+              >
               </q-input>
             </div>
 
@@ -108,10 +119,10 @@
               </q-input>
             </div>
 
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <!-- <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-input readonly v-model="asignacion.puesto" label="Puesto">
               </q-input>
-            </div>
+            </div> -->
 
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
@@ -155,7 +166,8 @@
         </q-card-section>
         <q-separator />
         <q-card-section>
-          <TablaAsignacionInventario />
+          <TablaAsignacionInventario v-show="!isByBodega" />
+          <TablaInventarioByBodegaVue v-show="isByBodega" />
         </q-card-section>
         <q-card-section>
           <q-space />
@@ -194,7 +206,7 @@ import { useAsignacionStore } from "../../../stores/asignacion_store";
 import { useEmpleadosStore } from "src/stores/empleados_store";
 import { useBodegaStore } from "src/stores/bodega_store";
 import TablaAsignacionInventario from "./TablaAsignacionInventario.vue";
-
+import TablaInventarioByBodegaVue from "./TablaInventarioByBodega.vue";
 //-----------------------------------------------------------
 
 const $q = useQuasar();
@@ -217,6 +229,7 @@ const {
   listEmpleados,
   isEditar,
   isShow,
+  isByBodega,
 } = storeToRefs(asignacionStore);
 const { empleado } = storeToRefs(empleadoStore);
 
@@ -251,6 +264,7 @@ onBeforeMount(() => {
   estatusStore.loadInformacionEstatus();
   catalogoStore.loadCatalogoList(true);
   bodegaStore.loadBodegasList();
+  asignacionStore.loadAreasList(false);
   catalogoId.value = { value: 0, label: "Todos" };
 });
 
@@ -271,6 +285,7 @@ watch(asignacion.value, (val) => {
     empleadoId.value = val.empleado_Id;
     puesto_Id.value = val.puesto_Id;
     editar.value = true;
+    catalogoId.value = { value: 0, label: "Todos" };
   }
 });
 
@@ -296,7 +311,6 @@ watch(area_Id, (val) => {
 });
 
 watch(tipoAsignacion, (val) => {
-  console.log(val);
   if (val == "bodega") {
     //empleadoStore.loadResponsableByArea(9);
   }
@@ -384,6 +398,7 @@ const actualizarModal = (valor) => {
   catalogoId.value = { value: 0, label: "Todos" };
   asignacionStore.actualizarModal(valor);
   asignacionStore.initAsignacion();
+  asignacionStore.updateIsBodega(false);
 };
 //-----------------------------------------------------------
 

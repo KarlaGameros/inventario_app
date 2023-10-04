@@ -6,6 +6,7 @@ export const useAsignacionStore = defineStore("asignacion", {
     modal: false,
     modalVale: false,
     modalValeBodega: false,
+    isByBodega: false,
     isEditar: false,
     isShow: false,
     rutaVale: null,
@@ -51,6 +52,10 @@ export const useAsignacionStore = defineStore("asignacion", {
 
     updateVisualizar(valor) {
       this.isShow = valor;
+    },
+
+    updateIsBodega(valor) {
+      this.isByBodega = valor;
     },
 
     actualizarModalValeBodega(valor) {
@@ -199,9 +204,9 @@ export const useAsignacionStore = defineStore("asignacion", {
       try {
         const resp = await api.post("/AsignacionesInventarios", asignacion);
         if (resp.status == 200) {
-          const { data, success } = resp.data;
+          const { data, success, fecha, id } = resp.data;
           if (success === true) {
-            return { success, data };
+            return { success, data, fecha, id };
           } else {
             return { success, data };
           }
@@ -274,10 +279,8 @@ export const useAsignacionStore = defineStore("asignacion", {
     //-----------------------------------------------------------
 
     async deleteProducto(id) {
-      console.log("id", id);
       try {
         if (id == null) {
-          console.log("entrooooo");
           let nIndex = this.listaAsignacionInventario.findIndex(
             (x) => x.inventario_Id == id
           );
@@ -455,6 +458,42 @@ export const useAsignacionStore = defineStore("asignacion", {
                 fecha_Registro: inventario.fecha_Registro,
               };
             });
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
+    async inventariosByFecha(fecha) {
+      try {
+        let resp = await api.get(`/Inventarios/GetByFecha/${fecha}`);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            this.listInventarioByBodega = data.map((inventario) => {
+              return {
+                id: inventario.id,
+                clave: inventario.clave,
+                descripcion: inventario.descripcion,
+                numero_Serie: inventario.numero_Serie,
+                marca: inventario.marca,
+                modelo: inventario.modelo,
+                color: inventario.color,
+                importe: inventario.importe,
+              };
+            });
+            return { success };
           }
         } else {
           return {

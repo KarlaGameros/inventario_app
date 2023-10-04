@@ -107,7 +107,6 @@ export const useModeloStore = defineStore("modelos", {
             value: detalle.id,
           };
         });
-        console.log("modelo", detalle);
       } catch (error) {
         return {
           success: false,
