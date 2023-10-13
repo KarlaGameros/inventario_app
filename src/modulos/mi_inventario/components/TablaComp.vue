@@ -1,19 +1,48 @@
 <template>
-  <br />
-  <q-banner
-    inline-actions
-    class="text-justify bg-grey-2"
-    style="border-radius: 20px"
-  >
-    <template v-slot:avatar>
-      <q-btn icon="inventory_2" flat color="purple-ieen"></q-btn>
-    </template>
-    <div class="text-h6 text-purple-ieen text-bold q-pb-xs">MI INVENTARIO</div>
-    <div class="text-body2">{{ miInventario.nombre_completo }}</div>
+  <div class="q-pb-md">
+    <q-banner
+      inline-actions
+      class="text-justify bg-grey-2"
+      style="border-radius: 20px"
+    >
+      <template v-slot:avatar>
+        <q-btn icon="inventory_2" flat color="purple-ieen"></q-btn>
+      </template>
+      <div class="text-h6 text-purple-ieen text-bold q-pb-xs">
+        MI INVENTARIO
+      </div>
+      <div class="text-body2">{{ miInventario.nombre_completo }}</div>
 
-    <div class="text-body2">{{ miInventario.area }}</div>
-  </q-banner>
-  <br />
+      <div class="text-body2">{{ miInventario.area }}</div>
+    </q-banner>
+  </div>
+
+  <div class="q-pb-md">
+    <q-banner
+      inline-actions
+      class="text-justify bg-grey-2"
+      v-show="visible_banner"
+      style="border-radius: 20px"
+    >
+      <div class="text-h6 text-purple-ieen text-bold q-pb-xs">Nota</div>
+      <div class="text-body2 text-justify">
+        Resguardo temporal de préstamo de Bien Mueble del Instituto Estatal
+        Electoral de Nayarit. Cualquier daño, perdida o extravío del bien es
+        responsabilidad del usuario su reposición. Los importes asentados son
+        conforme al valor de la adquisición, sin embargo, en caso de pérdida o
+        menoscabo en los bienes bajo resguardo, el valor que en ese momento
+        tengan los bienes será calculado tomando en cuenta la depreciación que
+        sufran con motivo del deterioro físico por el uso o desgaste de los
+        mismo conforme a su naturaleza. Este resguardo se cancela al momento de
+        la entrega del bien del usuario responsable al área correspondiente.
+      </div>
+      <template v-slot:action>
+        <q-btn icon="close" flat @click="visible_banner = false"
+          ><q-tooltip>Ocultar</q-tooltip></q-btn
+        >
+      </template>
+    </q-banner>
+  </div>
   <div class="row">
     <div class="col">
       <q-table
@@ -59,7 +88,7 @@ onBeforeMount(() => {
   miInventarioStore.loadMiInventario();
   miInventarioStore.loadUser();
 });
-
+const visible_banner = ref(true);
 //-----------------------------------------------------------
 
 const columns = [

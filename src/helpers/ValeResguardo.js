@@ -15,6 +15,7 @@ const Reporte = async () => {
     let id = asignacion.value.id;
     let respDetalle = await api.get(`/DetalleAsignaciones/BySolicitud/${id}`);
     let { data } = respDetalle.data;
+    console.log("data", data);
     //--------------------------------------------------------------------------//
 
     let img = new Image();
@@ -220,21 +221,22 @@ const Reporte = async () => {
               null,
               "center"
             );
+            var text1 =
+              "Resguardo temporal de préstamo de Bien Mueble del Instituto Estatal Electoral de Nayarit. Cualquier daño, perdida o extravío del bien es responsabilidad del usuario su reposición. Los importes asentados son conforme al valor de la adquisición, sin embargo, en caso de pérdida o menoscabo en los bienes bajo resguardo, el valor que en ese momento tengan los bienes será calculado tomando en cuenta la depreciación que sufran con motivo del deterioro físico por el uso o desgaste de los mismo conforme a su naturaleza. Este resguardo se cancela al momento de la entrega del bien del usuario responsable al área correspondiente.";
+            var maxWidth = 194;
             doc.text(asignacion.value.empleado, 110, 237, null, null, "center");
             doc.text("Personal responsable", 110, 242, null, null, "center");
-            doc.rect(10, 245, 194, 15);
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(10);
-            doc.text("NOTA:", 12, 250);
+            doc.rect(8, 247, 197, 20);
             doc.setFont("helvetica", "normal");
-            doc.setFontSize(9);
-            doc.text(
-              "Resguardo temporal para prestamo de Bien Mueble del Instituto Estatal Electoral de Nayarit, cualquier daño, \n " +
-                "perdida o extravio del bien es responsabilidad del usuario responsable. Este resguardo se cancela al momento \n " +
-                "de la entrega del bien del usuario responsable a la Unidad Técnica de Informática y Estadistica",
-              24,
-              250
-            );
+            doc.setFontSize(8);
+            var lines = doc.splitTextToSize(text1, maxWidth);
+            var y = 250;
+            for (var i = 0; i < lines.length; i++) {
+              doc.text(10, y, lines[i], {
+                align: "justify",
+              });
+              y = y + 4;
+            }
             // doc.text(
             //   "________________________________________",
             //   110,

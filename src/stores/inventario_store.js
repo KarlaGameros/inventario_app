@@ -135,6 +135,7 @@ export const useInventarioStore = defineStore("inventario", {
       try {
         let resp = await api.get("/Inventarios");
         let { data } = resp.data;
+        console.log(data);
         let listInventario = data.map((inventario) => {
           return {
             id: inventario.id,
@@ -154,6 +155,8 @@ export const useInventarioStore = defineStore("inventario", {
             numero_Serie: inventario.numero_Serie,
             empleado: inventario.empleado,
             ruta_PDF: inventario.PDf_url,
+            fecha_compra: inventario.fecha_Compra,
+            factura: inventario.factura,
             importe:
               inventario.importe == null ? "" : `$ ${inventario.importe}`,
           };
@@ -279,9 +282,11 @@ export const useInventarioStore = defineStore("inventario", {
         let { data } = resp.data;
         let ListaFiltro = [];
         if (id == 0) {
-          ListaFiltro = data;
+          ListaFiltro = data.filter((x) => x.estatus == "Activo");
         } else {
-          ListaFiltro = data.filter((x) => x.catalago_Id == id);
+          ListaFiltro = data.filter(
+            (x) => x.catalago_Id == id && x.estatus == "Activo"
+          );
         }
         let listInvenatrio = ListaFiltro.map((inventario) => {
           return {

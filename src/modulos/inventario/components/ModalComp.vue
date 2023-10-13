@@ -1155,9 +1155,7 @@ const setTabSelected = (tab, status) => {
 
 watch(marcaId, (val) => {
   if (val != null) {
-    modeloStore.modeloByMarca(marcaId.value.value).then(() => {
-      modeloId.value = listModelo.value[0];
-    });
+    modeloStore.modeloByMarca(marcaId.value.value);
   }
 });
 
@@ -1219,6 +1217,7 @@ const cargarMarca = async (val) => {
       (x) => x.value == `${val.marca_id}`
     );
     marcaId.value = marcaFiltrado;
+    modeloId.value = val.modelo;
   }
 };
 

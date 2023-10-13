@@ -58,7 +58,7 @@ import { onBeforeMount, ref, watch } from "vue";
 
 const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
-const { listaAsignacionInventario, isEditar, isShow } =
+const { listaAsignacionInventario, isEditar, isShow, asignacion } =
   storeToRefs(asignacionStore);
 let columnasVisibles = [];
 //-----------------------------------------------------------
@@ -68,6 +68,13 @@ onBeforeMount(() => {
 });
 
 const columns = [
+  {
+    name: "asignacion_Id",
+    align: "center",
+    label: "Asignación",
+    field: "asignacion_Id",
+    sortable: true,
+  },
   {
     name: "clave",
     align: "center",
@@ -80,13 +87,6 @@ const columns = [
     align: "center",
     label: "Descripción",
     field: "descripcion",
-    sortable: true,
-  },
-  {
-    name: "asignacion_Id",
-    align: "center",
-    label: "Asignación",
-    field: "asignacion_Id",
     sortable: true,
   },
 ];
@@ -138,6 +138,7 @@ const eliminar = async (id) => {
         type: "positive",
         message: resp.data,
       });
+      asignacionStore.detalleAsignacion(asignacion.value.id);
     } else {
       $q.loading.hide();
       $q.notify({

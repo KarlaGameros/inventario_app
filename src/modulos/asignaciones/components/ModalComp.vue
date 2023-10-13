@@ -281,7 +281,7 @@ watch(asignacion.value, (val) => {
     cargarEstatus(val);
     cargarArea(val);
     cargarPuestos(val);
-    cargarFecha(val);
+    date.value = val.fecha_Asignacion;
     empleadoId.value = val.empleado_Id;
     puesto_Id.value = val.puesto_Id;
     editar.value = true;
@@ -307,12 +307,6 @@ watch(area_Id, (val) => {
       puesto.value = null;
       cargarEmpleado(empleadoId);
     }
-  }
-});
-
-watch(tipoAsignacion, (val) => {
-  if (val == "bodega") {
-    //empleadoStore.loadResponsableByArea(9);
   }
 });
 
@@ -367,15 +361,6 @@ const cargarEmpleado = async (val) => {
     );
     empleadoId.value = empleadoFiltrado;
   }
-};
-
-const cargarFecha = async () => {
-  const fechaOriginal = asignacion.value.fecha_Asignacion;
-  const dateActual = fechaOriginal.split(/[/ ]/);
-  const day = dateActual[0];
-  const month = dateActual[1];
-  const year = dateActual[2];
-  date.value = `${year}/${month}/${day}`;
 };
 
 const limpiarCampos = () => {
@@ -470,10 +455,11 @@ const registrar = async () => {
   asignacion.value.eliminado = false;
   asignacion.value.fecha_Asignacion = date.value;
   asignacion.value.tipo = "Personal";
-  asignacion.value.detalle = listaAsignacionInventario.value;
+
   if (isEditar.value == true) {
     resp = await asignacionStore.updateAsignacion(asignacion.value);
   } else {
+    asignacion.value.detalle = listaAsignacionInventario.value;
     resp = await asignacionStore.createAsignacion(asignacion.value);
     editar.value = false;
   }
