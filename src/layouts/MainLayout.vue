@@ -167,7 +167,7 @@
             </q-item-section>
           </q-item> -->
 
-          <!-- <q-item
+          <q-item
             v-if="CatalogosConList.some((element) => element == 'SI-ENT-REC')"
             :content-inset-level="2"
             :header-inset-level="2"
@@ -181,7 +181,7 @@
                 Entrega recepcion
               </q-item-label>
             </q-item-section>
-          </q-item> -->
+          </q-item>
 
           <q-item
             v-if="CatalogosConList.some((element) => element == 'SI-MI-INV')"
@@ -283,9 +283,9 @@ export default defineComponent({
       }).onOk((action) => {
         if (action.label == "Cerrar sesión") {
           localStorage.clear();
-          window.location = "http://sistema.ieenayarit.org:9271?return=false";
+          window.location = "http://ieen.ieenayarit.org:9271?return=false";
         } else if (action.label == "Ir a universo") {
-          window.location = "http://sistema.ieenayarit.org:9271?return=true";
+          window.location = "http://ieen.ieenayarit.org:9271?return=true";
         } else {
           window.location =
             action.url +

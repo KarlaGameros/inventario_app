@@ -20,12 +20,13 @@
                 persistent
                 auto-save
                 v-slot="scope"
+                ref="poputEdit"
               >
                 <q-input
                   v-model.number="scope.value"
                   dense
                   autofocus
-                  @keyup.enter="scope.set"
+                  @keyup.enter="nextPopupEdit(scope, props.index)"
                 />
               </q-popup-edit>
             </q-td>
@@ -46,6 +47,8 @@ const inventarioStore = useInventarioStore();
 const { listaNumeroSerie_a } = storeToRefs(inventarioStore);
 
 //-----------------------------------------------------------
+
+const nextPopupEdit = (index) => {};
 
 const columns = [
   {

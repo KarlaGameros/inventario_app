@@ -36,6 +36,10 @@ export const useAsignacionStore = defineStore("asignacion", {
       tipo: null,
       detalle: [],
     },
+    inventario: {
+      id: null,
+      estatus: null,
+    },
   }),
   actions: {
     actualizarModal(valor) {
@@ -360,8 +364,19 @@ export const useAsignacionStore = defineStore("asignacion", {
             };
           });
         } else {
+          let id1 = null;
           let resp = await api.get(`/DetalleAsignaciones/BySolicitud/${id}`);
           let { data } = resp.data;
+
+          data.forEach(async (element) => {
+            id1 = element.id;
+            let resp = await api.get(`/Inventarios/${element.inventario_Id}`);
+            let { data } = resp.data;
+            if (data.estatus == "Asignado" && this.isEditar == true) {
+              this.deleteDetalle(id1, id);
+            }
+          });
+
           this.listaAsignacionInventario = data.map((asignacion) => {
             return {
               asignacion_Id: asignacion.id,
@@ -379,6 +394,41 @@ export const useAsignacionStore = defineStore("asignacion", {
       }
     },
 
+    async deleteDetalle(id, idasignacion) {
+      try {
+        let resp = await api.delete(`/DetalleAsignaciones/${id}`);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            let resp = await api.get(
+              `/DetalleAsignaciones/BySolicitud/${idasignacion}`
+            );
+            let { data } = resp.data;
+            this.listaAsignacionInventario = data.map((asignacion) => {
+              return {
+                asignacion_Id: asignacion.id,
+                clave: asignacion.inventario,
+                descripcion: asignacion.descripcion,
+                inventario_Id: asignacion.inventario_Id,
+              };
+            });
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
     //-----------------------------------------------------------
 
     async updateAsignacion(asignacion) {

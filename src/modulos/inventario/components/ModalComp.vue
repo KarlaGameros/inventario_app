@@ -141,6 +141,8 @@
                     v-model.trim="inventario.nombre_corto"
                     label="Nombre corto"
                     autogrow
+                    counter
+                    maxlength="25"
                   >
                   </q-input>
                 </div>
@@ -148,10 +150,12 @@
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
                     v-model="marcaId"
-                    :options="listMarca"
+                    :options="opcionesMarca"
                     label="Marca"
                     hint="Selecciona una marca"
                     lazy-rules
+                    use-input
+                    @filter="buscarMarca"
                     :rules="[(val) => !!val || 'La marca es requerida']"
                   >
                   </q-select>
@@ -160,10 +164,12 @@
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
                     v-model="modeloId"
-                    :options="listModelo"
+                    :options="opcionesModelo"
                     label="Modelo"
                     hint="Selecciona modelo"
+                    use-input
                     lazy-rules
+                    @filter="buscarModelo"
                     :rules="[(val) => !!val || 'El modelo es requerida']"
                   >
                   </q-select>
@@ -194,7 +200,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto1 = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -216,7 +222,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto2 = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -238,7 +244,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto3 = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -260,7 +266,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto4 = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -342,6 +348,8 @@
                     label="Nombre corto"
                     autogrow
                     lazy-rules
+                    counter
+                    maxlength="25"
                     :rules="[(val) => !!val || 'La nombre corto es requerido']"
                   >
                   </q-input>
@@ -350,10 +358,12 @@
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
                     v-model="marcaId_A"
-                    :options="listMarca"
+                    :options="opcionesMarca"
                     label="Marca"
                     hint="Selecciona una marca"
                     lazy-rules
+                    use-input
+                    @filter="buscarMarca"
                     :rules="[(val) => !!val || 'La marca es requerida']"
                   >
                   </q-select>
@@ -362,10 +372,12 @@
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
                     v-model="modeloId_A"
-                    :options="listModelo"
+                    :options="opcionesModelo"
                     label="Modelo"
                     hint="Selecciona modelo"
                     lazy-rules
+                    use-input
+                    @filter="buscarModelo"
                     :rules="[(val) => !!val || 'El modelo es requerida']"
                   >
                   </q-select>
@@ -395,7 +407,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto1_a = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -417,7 +429,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto2_a = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -439,7 +451,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto3_a = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -461,7 +473,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto4_a = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -505,6 +517,8 @@
                     v-model.trim="inventario.nombre_corto_b"
                     label="Nombre corto"
                     autogrow
+                    counter
+                    maxlength="25"
                     lazy-rules
                     :rules="[(val) => !!val || 'La nombre corto es requerido']"
                   >
@@ -514,10 +528,12 @@
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
                     v-model="marcaId_B"
-                    :options="listMarca"
+                    :options="opcionesMarca"
                     label="Marca"
                     hint="Selecciona una marca"
                     lazy-rules
+                    use-input
+                    @filter="buscarMarca"
                     :rules="[(val) => !!val || 'La marca es requerida']"
                   >
                   </q-select>
@@ -526,10 +542,12 @@
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
                     v-model="modeloId_B"
-                    :options="listModelo"
+                    :options="opcionesModelo"
                     label="Modelo"
                     hint="Selecciona modelo"
                     lazy-rules
+                    use-input
+                    @filter="buscarModelo"
                     :rules="[(val) => !!val || 'El modelo es requerida']"
                   >
                   </q-select>
@@ -560,7 +578,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto1_b = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -582,7 +600,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto2_b = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -604,7 +622,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto3_b = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -626,7 +644,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto4_b = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -671,6 +689,8 @@
                     label="Nombre corto"
                     autogrow
                     lazy-rules
+                    counter
+                    maxlength="25"
                     :rules="[(val) => !!val || 'La nombre corto es requerido']"
                   >
                   </q-input>
@@ -679,10 +699,12 @@
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
                     v-model="marcaId_C"
-                    :options="listMarca"
+                    :options="opcionesMarca"
                     label="Marca"
                     hint="Selecciona una marca"
                     lazy-rules
+                    use-input
+                    @filter="buscarMarca"
                     :rules="[(val) => !!val || 'La marca es requerida']"
                   >
                   </q-select>
@@ -691,10 +713,12 @@
                 <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-select
                     v-model="modeloId_C"
-                    :options="listModelo"
+                    :options="opcionesModelo"
                     label="Modelo"
                     hint="Selecciona modelo"
                     lazy-rules
+                    use-input
+                    @filter="buscarModelo"
                     :rules="[(val) => !!val || 'El modelo es requerida']"
                   >
                   </q-select>
@@ -725,7 +749,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto1_c = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -747,7 +771,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto2_c = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -769,7 +793,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto3_c = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -791,7 +815,7 @@
                     <template v-slot:append>
                       <q-icon
                         name="close"
-                        @click.stop.prevent="files = null"
+                        @click.stop.prevent="foto4_c = null"
                         class="cursor-pointer"
                       />
                     </template>
@@ -855,6 +879,8 @@
               name="nombre_corto"
               autogrow
               lazy-rules
+              counter
+              maxlength="25"
               :rules="[(val) => !!val || 'La nombre corto es requerido']"
             >
             </q-input>
@@ -866,10 +892,12 @@
           >
             <q-select
               v-model="marcaId"
-              :options="listMarca"
+              :options="opcionesMarca"
               label="Marca"
               hint="Selecciona una marca"
               lazy-rules
+              use-input
+              @filter="buscarMarca"
               :rules="[(val) => !!val || 'La marca es requerida']"
             >
             </q-select>
@@ -881,10 +909,12 @@
           >
             <q-select
               v-model="modeloId"
-              :options="listModelo"
+              :options="opcionesModelo"
               label="Modelo"
               hint="Selecciona modelo"
               lazy-rules
+              use-input
+              @filter="buscarModelo"
               :rules="[(val) => !!val || 'El modelo es requerida']"
             >
             </q-select>
@@ -1066,6 +1096,8 @@ const { listBodega } = storeToRefs(bodegaStore);
 const { listMarca } = storeToRefs(marcaStore);
 const { listModelo } = storeToRefs(modeloStore);
 const { empleado } = storeToRefs(empleadoStore);
+const opcionesMarca = ref([...listMarca.value]);
+const opcionesModelo = ref([...listModelo.value]);
 const catalogoId = ref(null);
 const bodegaId = ref(null);
 const marcaId = ref(null);
@@ -1192,6 +1224,36 @@ watch(bodegaId, (val) => {
   }
 });
 //-----------------------------------------------------------
+
+const buscarMarca = (val, update) => {
+  if (val === "") {
+    update(() => {
+      opcionesMarca.value = listMarca.value;
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    opcionesMarca.value = listMarca.value.filter(
+      (x) => x.label.toLowerCase().indexOf(needle) > -1
+    );
+  });
+};
+
+const buscarModelo = (val, update) => {
+  if (val === "") {
+    update(() => {
+      opcionesModelo.value = listModelo.value;
+    });
+    return;
+  }
+  update(() => {
+    const needle = val.toLowerCase();
+    opcionesModelo.value = listModelo.value.filter(
+      (x) => x.label.toLowerCase().indexOf(needle) > -1
+    );
+  });
+};
 
 const cargarBodega = async (val) => {
   if (bodegaId.value == null) {

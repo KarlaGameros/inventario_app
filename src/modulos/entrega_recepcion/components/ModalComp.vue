@@ -135,6 +135,7 @@ watch(area_Id, (val) => {
 
 const actualizarModal = (valor) => {
   entregaRecepcionStore.actualizarModal(valor);
+  limpiarCampos();
   getDateActual();
 };
 
@@ -144,6 +145,11 @@ const getDateActual = async () => {
   const month = String(dateActual.getMonth() + 1).padStart(2, "0");
   const day = String(dateActual.getDate()).padStart(2, "0");
   date.value = ref(`${year}/${month}/${day}`);
+};
+
+const limpiarCampos = () => {
+  area_Id.value = null;
+  empleado_Id.value = null;
 };
 </script>
 
