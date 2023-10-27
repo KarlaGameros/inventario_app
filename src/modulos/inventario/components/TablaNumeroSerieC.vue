@@ -1,12 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="col">
-      <q-table
-        :rows="listaNumeroSerie_c"
-        :columns="columns"
-        row-key="name"
-        :rows-per-page-options="[]"
-      >
+      <q-table :rows="listaNumeroSerie_c" :columns="columns" row-key="name">
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td key="id" :props="props">

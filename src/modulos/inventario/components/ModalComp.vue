@@ -280,7 +280,6 @@
                     :rows="listaNumeroSerie"
                     :columns="columns"
                     row-key="name"
-                    :rows-per-page-options="[]"
                   >
                     <template v-slot:body="props">
                       <q-tr :props="props">
@@ -297,10 +296,10 @@
                             v-slot="scope"
                           >
                             <q-input
+                              @keyup.enter="scope.updatePosition"
                               v-model="scope.value"
                               dense
                               autofocus
-                              @keyup.enter="scope.set"
                               lazy-rules
                               :rules="[
                                 (val) => !!val || 'Este campo es obligatorio',
@@ -1131,6 +1130,7 @@ const foto2_c = ref();
 const foto3_c = ref();
 const foto4_c = ref();
 
+const focusedField = ref(0);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -1183,6 +1183,10 @@ const setTabSelected = (tab, status) => {
   }
 };
 
+// Handle the logic to move to the next cell
+function goToNextCell(event) {
+  console.log(event);
+}
 //-----------------------------------------------------------
 
 watch(marcaId, (val) => {
