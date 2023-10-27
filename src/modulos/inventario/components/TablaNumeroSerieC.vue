@@ -1,32 +1,23 @@
 <template>
   <div class="q-pa-md">
     <div class="col">
-      <q-table :rows="listaNumeroSerie_c" :columns="columns" row-key="name">
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td key="id" :props="props">
-              {{ props.row.id }}
-            </q-td>
-            <q-td key="numero_serie" :props="props">
-              {{ props.row.numero_serie }}
-              <q-popup-edit
-                v-model.number="props.row.numero_serie"
-                buttons
-                persistent
-                auto-save
-                v-slot="scope"
-              >
-                <q-input
-                  v-model.number="scope.value"
-                  dense
-                  autofocus
-                  @keyup.enter="scope.set"
-                />
-              </q-popup-edit>
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table>
+      <table
+        class="default"
+        v-for="(list, index) in listaNumeroSerie_c"
+        :key="list"
+      >
+        <tr>
+          <td>{{ list.id }}</td>
+
+          <td>
+            <q-input
+              :name="`myText${index}`"
+              v-model="list.numero_serie"
+              @keydown.enter.prevent="getFocus(index)"
+            />
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </template>
@@ -41,6 +32,11 @@ const inventarioStore = useInventarioStore();
 const { listaNumeroSerie_c } = storeToRefs(inventarioStore);
 
 //-----------------------------------------------------------
+
+function getFocus(index) {
+  let docu = document.getElementsByName(`myText${index + 1}`);
+  docu[0].focus();
+}
 
 const columns = [
   {

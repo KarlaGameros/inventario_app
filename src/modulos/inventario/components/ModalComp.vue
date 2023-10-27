@@ -276,41 +276,23 @@
                 <!-------------------------------------------------------------------------->
 
                 <div v-if="cantidad >= 1" class="col">
-                  <q-table
-                    :rows="listaNumeroSerie"
-                    :columns="columns"
-                    row-key="name"
+                  <table
+                    class="default"
+                    v-for="(list, index) in listaNumeroSerie"
+                    :key="list"
                   >
-                    <template v-slot:body="props">
-                      <q-tr :props="props">
-                        <q-td key="id" :props="props">
-                          {{ props.row.id }}
-                        </q-td>
-                        <q-td key="numero_serie" :props="props">
-                          {{ props.row.numero_serie }}
-                          <q-popup-edit
-                            v-model="props.row.numero_serie"
-                            buttons
-                            persistent
-                            auto-save
-                            v-slot="scope"
-                          >
-                            <q-input
-                              @keyup.enter="scope.updatePosition"
-                              v-model="scope.value"
-                              dense
-                              autofocus
-                              lazy-rules
-                              :rules="[
-                                (val) => !!val || 'Este campo es obligatorio',
-                              ]"
-                              hint="Ingrese un número de serie"
-                            />
-                          </q-popup-edit>
-                        </q-td>
-                      </q-tr>
-                    </template>
-                  </q-table>
+                    <tr>
+                      <td>{{ list.id }}</td>
+
+                      <td>
+                        <q-input
+                          :name="`myText${index}`"
+                          v-model="list.numero_serie"
+                          @keydown.enter.prevent="getFocus(index)"
+                        />
+                      </td>
+                    </tr>
+                  </table>
                 </div>
               </q-tab-panel>
 
@@ -1057,7 +1039,7 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { useQuasar } from "quasar";
+import { event, useQuasar } from "quasar";
 import { computed, onBeforeMount, ref, watch } from "vue";
 import { useInventarioStore } from "../../../stores/inventario_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
@@ -1130,7 +1112,7 @@ const foto2_c = ref();
 const foto3_c = ref();
 const foto4_c = ref();
 
-const focusedField = ref(0);
+const position = ref(0);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -1183,15 +1165,34 @@ const setTabSelected = (tab, status) => {
   }
 };
 
-// Handle the logic to move to the next cell
-function goToNextCell(event) {
-  console.log(event);
+function getFocus(index) {
+  let docu = document.getElementsByName(`myText${index + 1}`);
+  docu[0].focus();
 }
+
 //-----------------------------------------------------------
 
 watch(marcaId, (val) => {
   if (val != null) {
     modeloStore.modeloByMarca(marcaId.value.value);
+  }
+});
+
+watch(marcaId_A, (val) => {
+  if (val != null) {
+    modeloStore.modeloByMarca(marcaId_A.value.value);
+  }
+});
+
+watch(marcaId_B, (val) => {
+  if (val != null) {
+    modeloStore.modeloByMarca(marcaId_B.value.value);
+  }
+});
+
+watch(marcaId_C, (val) => {
+  if (val != null) {
+    modeloStore.modeloByMarca(marcaId_C.value.value);
   }
 });
 
@@ -1581,4 +1582,17 @@ const onSubmit = async () => {
 };
 </script>
 
-<style></style>
+<style scoped>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 8px;
+}
+</style>

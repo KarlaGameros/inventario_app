@@ -1,33 +1,23 @@
 <template>
   <div class="q-pa-md">
     <div class="col">
-      <q-table :rows="listaNumeroSerie_a" :columns="columns" row-key="name">
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td key="id" :props="props">
-              {{ props.row.id }}
-            </q-td>
-            <q-td key="numero_serie" :props="props" @click="presionar()">
-              {{ props.row.numero_serie }}
+      <table
+        class="default"
+        v-for="(list, index) in listaNumeroSerie_a"
+        :key="list"
+      >
+        <tr>
+          <td>{{ list.id }}</td>
 
-              <q-popup-edit
-                v-model.number="props.row.numero_serie"
-                buttons
-                persistent
-                auto-save
-                v-slot="scope"
-                ref="poputEdit"
-              >
-                <q-input
-                  v-model.number="scope.value"
-                  dense
-                  @keydown.enter="handleEnterKey(props, scope)"
-                />
-              </q-popup-edit>
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table>
+          <td>
+            <q-input
+              :name="`myText${index}`"
+              v-model="list.numero_serie"
+              @keydown.enter.prevent="getFocus(index)"
+            />
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </template>
@@ -44,22 +34,10 @@ const { listaNumeroSerie_a } = storeToRefs(inventarioStore);
 const poputEdit = ref(null);
 //-----------------------------------------------------------
 
-const handleEnterKey = (props, scope) => {
-  console.log("scope", scope);
-  const nextRow = listaNumeroSerie_a.value[props.rowIndex + 1];
-
-  if (nextRow != undefined) {
-    scope.set();
-    scope.cancel();
-    scope.updatePosition();
-    //poputEdit.value.show();
-    presionar();
-  }
-};
-
-const presionar = () => {
-  console.log("click");
-};
+function getFocus(index) {
+  let docu = document.getElementsByName(`myText${index + 1}`);
+  docu[0].focus();
+}
 
 const columns = [
   {
@@ -79,4 +57,21 @@ const columns = [
 ];
 </script>
 
-<style></style>
+<style scoped>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>

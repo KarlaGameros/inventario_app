@@ -13,11 +13,14 @@
     "build": "quasar build"
   },
   "dependencies": {
+    "@handsontable/vue": "^13.1.0",
+    "@handsontable/vue3": "^13.1.0",
     "@pdftron/webviewer": "^10.2.3",
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
     "core-js": "^3.6.5",
     "file-saver": "^2.0.5",
+    "handsontable": "^13.1.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.31",
     "pdfjs-dist": "^3.8.162",
