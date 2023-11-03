@@ -47,7 +47,7 @@ const ReporteListadoInventario = async () => {
         // { content: "Importe" },
         { content: "Estatus" },
         // { content: "Usuario" },
-        { content: "QR" },
+        // { content: "QR" },
       ],
     ];
 
@@ -77,7 +77,7 @@ const ReporteListadoInventario = async () => {
         item.modelo,
         item.color,
         item.estatus,
-        (item.qr = true ? "Si" : "No"),
+        // item.qr === true ? "Si" : "No",
       ]),
       bodyStyles: { fontSize: 10, textColor: [0, 0, 0] },
       tableLineColor: [0, 0, 0],

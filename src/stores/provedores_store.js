@@ -35,7 +35,11 @@ export const useProvedores = defineStore("provedores", {
           return {
             id: proveedor.id,
             nombre: proveedor.nombre,
-            razon_Social: proveedor.razon_Social,
+            razon_Social:
+              proveedor.razon_Social.length >= 50
+                ? proveedor.razon_Social.slice(0, 50) + "..."
+                : proveedor.razon_Social,
+            razon_Social_completo: proveedor.razon_Social,
             rfc: proveedor.rfc,
             telefono: proveedor.telefono,
             eMail: proveedor.eMail,

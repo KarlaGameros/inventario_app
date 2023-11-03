@@ -101,13 +101,13 @@ export const useModeloStore = defineStore("modelos", {
       this.marca_id = id;
       try {
         let detalle = await api.get(`/Modelos/ByMarca/${id}`);
-        console.log("detalle", detalle);
         this.listModelo = detalle.data.data.map((detalle) => {
           return {
             label: detalle.clave,
             value: detalle.id,
           };
         });
+        console.log("listModelo", listModelo);
       } catch (error) {
         return {
           success: false,

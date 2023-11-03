@@ -8,12 +8,6 @@ const ReporteBodega = async () => {
   const asignacionStore = useAsignacionStore();
   const { listInventarioByBodega } = storeToRefs(asignacionStore);
   const { asignacion } = storeToRefs(asignacionStore);
-  console.log("listInventarioByBodega", listInventarioByBodega);
-  console.log("asignacion", asignacion.value.folio);
-  console.log("asignacion", asignacion.value.area);
-  console.log("asignacion", asignacion.value.empleado);
-  console.log("asignacion", asignacion.value.puesto);
-  console.log("asignacion", asignacion.value.fecha_Asignacion);
   try {
     //--------------------------------------------------------------------------//
 

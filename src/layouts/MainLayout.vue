@@ -167,7 +167,7 @@
             </q-item-section>
           </q-item> -->
 
-          <q-item
+          <!-- <q-item
             v-if="CatalogosConList.some((element) => element == 'SI-ENT-REC')"
             :content-inset-level="2"
             :header-inset-level="2"
@@ -181,7 +181,7 @@
                 Entrega recepcion
               </q-item-label>
             </q-item-section>
-          </q-item>
+          </q-item> -->
 
           <q-item
             v-if="CatalogosConList.some((element) => element == 'SI-MI-INV')"
@@ -335,6 +335,9 @@ export default defineComponent({
             break;
           case "SI-CAT-PRO":
             CatalogosConList.value.push("SI-CAT-PRO");
+            break;
+          case "SI-ASI-FAC":
+            CatalogosConList.value.push("SI-ASI-FAC");
             break;
         }
       });

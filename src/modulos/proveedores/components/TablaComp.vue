@@ -1,8 +1,9 @@
-<template>
+<template v-if="modulo">
   <div class="row">
     <div class="col">
       <q-table
         :rows="proveedores"
+        :visible-columns="visible_columns"
         :columns="columns"
         :filter="filter"
         :pagination="pagination"
@@ -47,6 +48,18 @@
                 >
                   <q-tooltip>Eliminar asignación</q-tooltip>
                 </q-btn>
+              </div>
+              <div v-else-if="col.name == 'razon_Social'">
+                <label>{{ col.value }} </label>
+                <q-tooltip
+                  :offset="[10, 10]"
+                  v-if="
+                    col.value.length !=
+                    props.row['razon_Social_completo'].length
+                  "
+                >
+                  {{ props.row["razon_Social_completo"] }}
+                </q-tooltip>
               </div>
               <label v-else>{{ col.value }}</label>
             </q-td>
@@ -96,6 +109,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: "razon_Social_completo",
+    align: "center",
+    label: "Razón social",
+    field: "razon_Social_completo",
+    sortable: true,
+  },
+  {
     name: "rfc",
     align: "center",
     label: "RFC",
@@ -130,6 +150,16 @@ const columns = [
     field: "id",
     sortable: false,
   },
+];
+
+const visible_columns = [
+  "nombre",
+  "razon_Social",
+  "rfc",
+  "telefono",
+  "eMail",
+  "direccion",
+  "id",
 ];
 
 const pagination = ref({

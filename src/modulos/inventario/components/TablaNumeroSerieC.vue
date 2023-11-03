@@ -1,12 +1,12 @@
 <template>
   <div class="q-pa-md">
     <div class="col">
-      <table
-        class="default"
-        v-for="(list, index) in listaNumeroSerie_c"
-        :key="list"
-      >
+      <table class="default">
         <tr>
+          <th>No.</th>
+          <th>Número de serie</th>
+        </tr>
+        <tr v-for="(list, index) in listaNumeroSerie_c" :key="list">
           <td>{{ list.id }}</td>
 
           <td>
@@ -56,4 +56,17 @@ const columns = [
 ];
 </script>
 
-<style></style>
+<style scoped>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td,
+th {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 8px;
+}
+</style>

@@ -393,7 +393,6 @@ const visualizarByBodega = async (fechaAsignacion, id) => {
   var [mes, dia, año] = fechaParte.split("/");
   var [hora, minutos, segundos] = horaParte.split(":");
   var fecha = `${mes}-${dia}-${año} ${hora}:${minutos}:${segundos}`;
-  console.log("fecha", fecha);
   await asignacionStore.loadAsignacion(id);
   await asignacionStore.inventariosByFecha(fechaAsignacion);
   asignacionStore.updateVisualizar(true);

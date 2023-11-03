@@ -21,7 +21,7 @@
             label="Nuevo"
             @click="actualizarModal(true)"
             text-color="white"
-            icon="add_circle_outline"
+            icon="add"
           >
             <q-tooltip>Nuevo</q-tooltip>
           </q-avatar>
@@ -45,11 +45,25 @@
           >
             <q-tooltip>Generar QR nuevos</q-tooltip>
           </q-avatar>
+
+          <q-avatar
+            v-if="modulo == null ? false : modulo.registrar"
+            type="button"
+            class="q-ma-sm"
+            color="purple-ieen"
+            label="Nuevo"
+            @click="asignarFactura(true)"
+            text-color="white"
+            icon="fact_check"
+          >
+            <q-tooltip>Asignar factura</q-tooltip>
+          </q-avatar>
         </div>
       </div>
     </div>
     <TablaComp />
     <ModalComp />
+    <ModalFactura />
   </q-page>
 </template>
 
@@ -62,12 +76,14 @@ import { onBeforeMount, ref } from "vue";
 import ReporteListadoInventario from "../../../helpers/ListadoInventario";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
+import ModalFactura from "../components/ModalFactura.vue";
 
 const $q = useQuasar();
 const authStore = useAuthStore();
 const inventarioStore = useInventarioStore();
-const { modulo } = storeToRefs(authStore);
+const { modulo, inventario } = storeToRefs(authStore);
 const siglas = "SI-CAT-INV";
+const botonQR = ref(true);
 
 onBeforeMount(() => {
   leerPermisos();
@@ -95,6 +111,32 @@ const generar = async () => {
     $q.loading.hide();
     ReporteListadoInventario();
   }, 1000);
+};
+
+const generarQR = async () => {
+  $q.loading.show();
+  let resp = null;
+  resp = await inventarioStore.generarPDFmasivo();
+  if (resp.success == true) {
+    inventarioStore.actualizarModalPDF(true);
+  } else {
+    $q.dialog({
+      title: "Atención",
+      message: "No hay códigos QR nuevos",
+      icon: "Warning",
+      persistent: true,
+      transitionShow: "scale",
+      transitionHide: "scale",
+    });
+  }
+
+  $q.loading.hide();
+};
+
+const asignarFactura = async (valor) => {
+  $q.loading.show();
+  inventarioStore.actualizarModalFactura(valor);
+  $q.loading.hide();
 };
 </script>
 

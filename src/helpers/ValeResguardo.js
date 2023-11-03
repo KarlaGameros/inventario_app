@@ -15,7 +15,6 @@ const Reporte = async () => {
     let id = asignacion.value.id;
     let respDetalle = await api.get(`/DetalleAsignaciones/BySolicitud/${id}`);
     let { data } = respDetalle.data;
-    console.log("data", data);
     //--------------------------------------------------------------------------//
 
     let img = new Image();

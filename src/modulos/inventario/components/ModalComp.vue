@@ -20,9 +20,8 @@
           v-close-popup
         />
       </q-card-section>
-
       <q-card-section>
-        <q-form @submit="onSubmit" class="row q-col-gutter-xs">
+        <q-form class="row q-col-gutter-xs" @submit="onSubmit">
           <!----------------------------------------------------------------------------->
           <div
             v-if="!isEditar"
@@ -64,7 +63,6 @@
               </q-checkbox>
             </q-list>
           </div>
-
           <!----------------------------------------------------------------------------->
           <!--Individual, agranel y paquete-->
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -106,6 +104,213 @@
             </q-input>
           </div>
 
+          <div v-if="isEditar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <q-input
+              disable
+              v-model="inventario.clave"
+              label="Clave del producto"
+              autogrow
+            >
+            </q-input>
+          </div>
+          <div v-if="isEditar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <q-input
+              v-model="inventario.numero_Serie"
+              label="Numero de serie"
+              autogrow
+              lazy-rules
+              :rules="[(val) => !!val || 'El número de serie es requerido']"
+            >
+            </q-input>
+          </div>
+          <div
+            v-if="radio != 'paquete'"
+            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+          >
+            <q-input
+              v-model.trim="inventario.descripcion"
+              label="Descripción del producto"
+              name="descripcion"
+              autogrow
+              lazy-rules
+              :rules="[(val) => !!val || 'La descripción es requerida']"
+            >
+            </q-input>
+          </div>
+          <div
+            v-if="radio != 'paquete'"
+            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+          >
+            <q-input
+              v-model.trim="inventario.nombre_corto"
+              label="Nombre corto"
+              name="nombre_corto"
+              autogrow
+              lazy-rules
+              counter
+              maxlength="25"
+              :rules="[(val) => !!val || 'La nombre corto es requerido']"
+            >
+            </q-input>
+          </div>
+          <div
+            v-if="radio != 'paquete'"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+          >
+            <q-select
+              v-model="marcaId"
+              :options="opcionesMarca"
+              label="Marca"
+              hint="Selecciona una marca"
+              lazy-rules
+              use-input
+              @filter="buscarMarca"
+              :rules="[(val) => !!val || 'La marca es requerida']"
+            >
+            </q-select>
+          </div>
+          <div
+            v-if="radio != 'paquete'"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+          >
+            <q-select
+              v-model="modeloId"
+              :options="opcionesModelo"
+              label="Modelo"
+              hint="Selecciona modelo"
+              lazy-rules
+              use-input
+              @filter="buscarModelo"
+              :rules="[(val) => !!val || 'El modelo es requerida']"
+            >
+            </q-select>
+          </div>
+          <div
+            v-if="radio != 'paquete'"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
+          >
+            <q-input
+              v-model.trim="inventario.color"
+              label="Color"
+              name="color"
+              autogrow
+            >
+            </q-input>
+          </div>
+          <div
+            v-if="radio == 'agranel'"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+          >
+            <q-input
+              v-model.trim="cantidad"
+              label="Cantidad"
+              type="number"
+              name="cantidad"
+              autogrow
+              lazy-rules
+              :rules="[(val) => !!val || 'La cantidad es requerida']"
+            >
+            </q-input>
+          </div>
+          <div
+            v-if="radio == 'individual' || radio == 'agranel' || isEditar"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
+          >
+            <q-input
+              type="number"
+              v-model.number="inventario.importe"
+              label="Importe"
+              name="Importe"
+              autogrow
+            >
+              <template v-slot:prepend>
+                <q-icon name="$" />
+              </template>
+            </q-input>
+          </div>
+          <div
+            v-if="radio == 'individual' || radio == 'agranel' || isEditar"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
+          >
+            <q-input
+              v-model.trim="inventario.numero_factura"
+              label="Número de factura"
+              name="Número de factura"
+            >
+            </q-input>
+          </div>
+          <div
+            v-if="radio == 'individual' || radio == 'agranel' || isEditar"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
+          >
+            <q-input v-model.trim="inventario.uuid" label="UUID" name="UUID">
+            </q-input>
+          </div>
+
+          <q-card
+            v-if="radio != 'paquete'"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
+          >
+            <q-file
+              accept="image/png, image/jpeg"
+              color="purple-12"
+              v-model="foto1"
+              label="Foto 1"
+            >
+              <template v-slot:prepend>
+                <q-icon name="attach_file" />
+              </template>
+            </q-file>
+            <img v-if="isEditar" :src="inventario.foto_1" />
+          </q-card>
+          <q-card
+            v-if="radio != 'paquete'"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
+          >
+            <q-file
+              accept="image/png, image/jpeg"
+              color="purple-12"
+              v-model="foto2"
+              label="Foto 2"
+            >
+              <template v-slot:prepend>
+                <q-icon name="attach_file" />
+              </template>
+            </q-file>
+            <img v-if="isEditar" :src="inventario.foto_2" />
+          </q-card>
+          <q-card
+            v-if="radio != 'paquete'"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
+          >
+            <q-file
+              accept="image/png, image/jpeg"
+              color="purple-12"
+              v-model="foto3"
+              label="Foto 3"
+            >
+              <template v-slot:prepend>
+                <q-icon name="attach_file" />
+              </template>
+            </q-file>
+            <img v-if="isEditar" :src="inventario.foto_3" />
+          </q-card>
+          <q-card
+            v-if="radio != 'paquete'"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
+          >
+            <q-file
+              accept="image/png, image/jpeg"
+              color="purple-12"
+              v-model="foto4"
+              label="Foto 4"
+            >
+              <template v-slot:prepend>
+                <q-icon name="attach_file" />
+              </template>
+            </q-file>
+            <img v-if="isEditar" :src="inventario.foto_4" />
+          </q-card>
           <!----------------------------------------------------------------------------->
 
           <div
@@ -122,9 +327,9 @@
             </q-toolbar>
             <q-separator />
             <q-tab-panels v-model="tab" animated class="shadow-2">
+              <!-- GENERAL -->
               <q-tab-panel name="general">
                 <div class="text-h6">General</div>
-
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     v-model.trim="inventario.descripcion"
@@ -135,8 +340,7 @@
                   >
                   </q-input>
                 </div>
-
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pb-md">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     v-model.trim="inventario.nombre_corto"
                     label="Nombre corto"
@@ -146,45 +350,79 @@
                   >
                   </q-input>
                 </div>
-
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <q-select
-                    v-model="marcaId"
-                    :options="opcionesMarca"
-                    label="Marca"
-                    hint="Selecciona una marca"
-                    lazy-rules
-                    use-input
-                    @filter="buscarMarca"
-                    :rules="[(val) => !!val || 'La marca es requerida']"
-                  >
-                  </q-select>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                    <q-select
+                      v-model="marcaId"
+                      :options="opcionesMarca"
+                      label="Marca"
+                      hint="Selecciona una marca"
+                      lazy-rules
+                      use-input
+                      @filter="buscarMarca"
+                      :rules="[(val) => !!val || 'La marca es requerida']"
+                    >
+                    </q-select>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <q-select
+                      v-model="modeloId"
+                      :options="opcionesModelo"
+                      label="Modelo"
+                      hint="Selecciona modelo"
+                      use-input
+                      lazy-rules
+                      @filter="buscarModelo"
+                      :rules="[(val) => !!val || 'El modelo es requerida']"
+                    >
+                    </q-select>
+                  </div>
                 </div>
-
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <q-select
-                    v-model="modeloId"
-                    :options="opcionesModelo"
-                    label="Modelo"
-                    hint="Selecciona modelo"
-                    use-input
-                    lazy-rules
-                    @filter="buscarModelo"
-                    :rules="[(val) => !!val || 'El modelo es requerida']"
-                  >
-                  </q-select>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                    <q-input
+                      v-model.trim="inventario.color"
+                      label="Color"
+                      autogrow
+                    >
+                    </q-input>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <q-input
+                      type="number"
+                      v-model.number="inventario.importe"
+                      label="Importe"
+                      name="Importe"
+                      autogrow
+                    >
+                      <template v-slot:prepend>
+                        <q-icon name="$" />
+                      </template>
+                    </q-input>
+                  </div>
                 </div>
-
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
-                  <q-input
-                    v-model.trim="inventario.color"
-                    label="Color"
-                    autogrow
+                <div class="row">
+                  <div
+                    class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs q-pb-md"
                   >
-                  </q-input>
+                    <q-input
+                      v-model.trim="inventario.numero_factura"
+                      label="Número de factura"
+                      name="Número de factura"
+                      autogrow
+                    >
+                    </q-input>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
+                    <q-input
+                      v-model.trim="inventario.uuid"
+                      label="UUID"
+                      name="UUID"
+                      autogrow
+                    >
+                    </q-input>
+                  </div>
                 </div>
-
-                <!-------------------------------------------------------------------------->
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto1"
@@ -206,7 +444,6 @@
                     </template>
                   </q-file>
                 </div>
-
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto2"
@@ -228,7 +465,6 @@
                     </template>
                   </q-file>
                 </div>
-
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto3"
@@ -272,32 +508,31 @@
                     </template>
                   </q-file>
                 </div>
-
                 <!-------------------------------------------------------------------------->
+                <!-- TABLA NUMERO DE SERIE GENERAL -->
+                <div class="q-pa-md">
+                  <div v-if="cantidad >= 1" class="col">
+                    <table class="default">
+                      <tr>
+                        <th>No.</th>
+                        <th>Número de serie</th>
+                      </tr>
+                      <tr v-for="(list, index) in listaNumeroSerie" :key="list">
+                        <td>{{ list.id }}</td>
 
-                <div v-if="cantidad >= 1" class="col">
-                  <table
-                    class="default"
-                    v-for="(list, index) in listaNumeroSerie"
-                    :key="list"
-                  >
-                    <tr>
-                      <td>{{ list.id }}</td>
-
-                      <td>
-                        <q-input
-                          :name="`myText${index}`"
-                          v-model="list.numero_serie"
-                          @keydown.enter.prevent="getFocus(index)"
-                        />
-                      </td>
-                    </tr>
-                  </table>
+                        <td>
+                          <q-input
+                            :name="`myText${index}`"
+                            v-model="list.numero_serie"
+                            @keydown.enter.prevent="getFocus(index)"
+                          />
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
                 </div>
               </q-tab-panel>
-
-              <!---------------------------------------------------------------->
-
+              <!-- EXTENSION A -->
               <q-tab-panel name="extension_a">
                 <div class="text-h6">Extensión A</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -311,7 +546,6 @@
                   >
                   </q-input>
                 </div>
-
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     v-model.trim="inventario.descripcion_a"
@@ -322,7 +556,6 @@
                   >
                   </q-input>
                 </div>
-
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     v-model.trim="inventario.nombre_corto_a"
@@ -335,44 +568,76 @@
                   >
                   </q-input>
                 </div>
-
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <q-select
-                    v-model="marcaId_A"
-                    :options="opcionesMarca"
-                    label="Marca"
-                    hint="Selecciona una marca"
-                    lazy-rules
-                    use-input
-                    @filter="buscarMarca"
-                    :rules="[(val) => !!val || 'La marca es requerida']"
-                  >
-                  </q-select>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                    <q-select
+                      v-model="marcaId_A"
+                      :options="opcionesMarca"
+                      label="Marca"
+                      hint="Selecciona una marca"
+                      lazy-rules
+                      use-input
+                      @filter="buscarMarca"
+                      :rules="[(val) => !!val || 'La marca es requerida']"
+                    >
+                    </q-select>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <q-select
+                      v-model="modeloId_A"
+                      :options="opcionesModelo"
+                      label="Modelo"
+                      hint="Selecciona modelo"
+                      lazy-rules
+                      use-input
+                      @filter="buscarModelo"
+                      :rules="[(val) => !!val || 'El modelo es requerida']"
+                    >
+                    </q-select>
+                  </div>
                 </div>
-
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <q-select
-                    v-model="modeloId_A"
-                    :options="opcionesModelo"
-                    label="Modelo"
-                    hint="Selecciona modelo"
-                    lazy-rules
-                    use-input
-                    @filter="buscarModelo"
-                    :rules="[(val) => !!val || 'El modelo es requerida']"
-                  >
-                  </q-select>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                    <q-input
+                      v-model.trim="inventario.color_a"
+                      label="Color"
+                      autogrow
+                    >
+                    </q-input>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <q-input
+                      type="number"
+                      v-model.number="inventario.importe_a"
+                      label="Importe"
+                      name="Importe"
+                    >
+                      <template v-slot:prepend>
+                        <q-icon name="$" />
+                      </template>
+                    </q-input>
+                  </div>
                 </div>
-
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
-                  <q-input
-                    v-model.trim="inventario.color_a"
-                    label="Color"
-                    autogrow
+                <div class="row">
+                  <div
+                    class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs q-pb-md"
                   >
-                  </q-input>
+                    <q-input
+                      v-model.trim="inventario.numero_factura_a"
+                      label="Número de factura"
+                      name="Número de factura"
+                    >
+                    </q-input>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
+                    <q-input
+                      v-model.trim="inventario.uuid_a"
+                      label="UUID"
+                      name="UUID"
+                    >
+                    </q-input>
+                  </div>
                 </div>
-                <!-------------------------------------------------------------------------->
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto1_a"
@@ -394,7 +659,6 @@
                     </template>
                   </q-file>
                 </div>
-
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto2_a"
@@ -416,7 +680,6 @@
                     </template>
                   </q-file>
                 </div>
-
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto3_a"
@@ -438,7 +701,6 @@
                     </template>
                   </q-file>
                 </div>
-
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto4_a"
@@ -460,14 +722,11 @@
                     </template>
                   </q-file>
                 </div>
-
                 <!-------------------------------------------------------------------------->
                 <TablaNumerosSeriesA v-if="cantidad >= 1" />
                 <!-------------------------------------------------------------------------->
               </q-tab-panel>
-
-              <!---------------------------------------------------------------->
-
+              <!-- EXTENSION B -->
               <q-tab-panel name="extension_b">
                 <div class="text-h6">Extensión B</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -481,7 +740,6 @@
                   >
                   </q-input>
                 </div>
-
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     v-model.trim="inventario.descripcion_b"
@@ -492,7 +750,6 @@
                   >
                   </q-input>
                 </div>
-
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     v-model.trim="inventario.nombre_corto_b"
@@ -505,45 +762,76 @@
                   >
                   </q-input>
                 </div>
-
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <q-select
-                    v-model="marcaId_B"
-                    :options="opcionesMarca"
-                    label="Marca"
-                    hint="Selecciona una marca"
-                    lazy-rules
-                    use-input
-                    @filter="buscarMarca"
-                    :rules="[(val) => !!val || 'La marca es requerida']"
-                  >
-                  </q-select>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                    <q-select
+                      v-model="marcaId_B"
+                      :options="opcionesMarca"
+                      label="Marca"
+                      hint="Selecciona una marca"
+                      lazy-rules
+                      use-input
+                      @filter="buscarMarca"
+                      :rules="[(val) => !!val || 'La marca es requerida']"
+                    >
+                    </q-select>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <q-select
+                      v-model="modeloId_B"
+                      :options="opcionesModelo"
+                      label="Modelo"
+                      hint="Selecciona modelo"
+                      lazy-rules
+                      use-input
+                      @filter="buscarModelo"
+                      :rules="[(val) => !!val || 'El modelo es requerida']"
+                    >
+                    </q-select>
+                  </div>
                 </div>
-
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <q-select
-                    v-model="modeloId_B"
-                    :options="opcionesModelo"
-                    label="Modelo"
-                    hint="Selecciona modelo"
-                    lazy-rules
-                    use-input
-                    @filter="buscarModelo"
-                    :rules="[(val) => !!val || 'El modelo es requerida']"
-                  >
-                  </q-select>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                    <q-input
+                      v-model.trim="inventario.color_b"
+                      label="Color"
+                      autogrow
+                    >
+                    </q-input>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <q-input
+                      type="number"
+                      v-model.number="inventario.importe_b"
+                      label="Importe"
+                      name="Importe"
+                    >
+                      <template v-slot:prepend>
+                        <q-icon name="$" />
+                      </template>
+                    </q-input>
+                  </div>
                 </div>
-
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
-                  <q-input
-                    v-model.trim="inventario.color_b"
-                    label="Color"
-                    autogrow
+                <div class="row">
+                  <div
+                    class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs q-pb-md"
                   >
-                  </q-input>
+                    <q-input
+                      v-model.trim="inventario.numero_factura_b"
+                      label="Número de factura"
+                      name="Número de factura"
+                    >
+                    </q-input>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
+                    <q-input
+                      v-model.trim="inventario.uuid_b"
+                      label="UUID"
+                      name="UUID"
+                    >
+                    </q-input>
+                  </div>
                 </div>
-
-                <!-------------------------------------------------------------------------->
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto1_b"
@@ -565,7 +853,6 @@
                     </template>
                   </q-file>
                 </div>
-
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto2_b"
@@ -587,7 +874,6 @@
                     </template>
                   </q-file>
                 </div>
-
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto3_b"
@@ -609,7 +895,6 @@
                     </template>
                   </q-file>
                 </div>
-
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto4_b"
@@ -631,14 +916,11 @@
                     </template>
                   </q-file>
                 </div>
-
                 <!-------------------------------------------------------------------------->
                 <TablaNumerosSeriesB v-if="cantidad >= 1" />
                 <!-------------------------------------------------------------------------->
               </q-tab-panel>
-
-              <!---------------------------------------------------------------->
-
+              <!-- EXTENSION C -->
               <q-tab-panel name="extension_c">
                 <div class="text-h6">Extensión C</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -652,7 +934,6 @@
                   >
                   </q-input>
                 </div>
-
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     v-model.trim="inventario.descripcion_c"
@@ -663,7 +944,6 @@
                   >
                   </q-input>
                 </div>
-
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
                     v-model.trim="inventario.nombre_corto_c"
@@ -676,45 +956,76 @@
                   >
                   </q-input>
                 </div>
-
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <q-select
-                    v-model="marcaId_C"
-                    :options="opcionesMarca"
-                    label="Marca"
-                    hint="Selecciona una marca"
-                    lazy-rules
-                    use-input
-                    @filter="buscarMarca"
-                    :rules="[(val) => !!val || 'La marca es requerida']"
-                  >
-                  </q-select>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                    <q-select
+                      v-model="marcaId_C"
+                      :options="opcionesMarca"
+                      label="Marca"
+                      hint="Selecciona una marca"
+                      lazy-rules
+                      use-input
+                      @filter="buscarMarca"
+                      :rules="[(val) => !!val || 'La marca es requerida']"
+                    >
+                    </q-select>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <q-select
+                      v-model="modeloId_C"
+                      :options="opcionesModelo"
+                      label="Modelo"
+                      hint="Selecciona modelo"
+                      lazy-rules
+                      use-input
+                      @filter="buscarModelo"
+                      :rules="[(val) => !!val || 'El modelo es requerida']"
+                    >
+                    </q-select>
+                  </div>
                 </div>
-
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                  <q-select
-                    v-model="modeloId_C"
-                    :options="opcionesModelo"
-                    label="Modelo"
-                    hint="Selecciona modelo"
-                    lazy-rules
-                    use-input
-                    @filter="buscarModelo"
-                    :rules="[(val) => !!val || 'El modelo es requerida']"
-                  >
-                  </q-select>
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                    <q-input
+                      v-model.trim="inventario.color_c"
+                      label="Color"
+                      autogrow
+                    >
+                    </q-input>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <q-input
+                      type="number"
+                      v-model.number="inventario.importe_c"
+                      label="Importe"
+                      name="Importe"
+                    >
+                      <template v-slot:prepend>
+                        <q-icon name="$" />
+                      </template>
+                    </q-input>
+                  </div>
                 </div>
-
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
-                  <q-input
-                    v-model.trim="inventario.color_c"
-                    label="Color"
-                    autogrow
+                <div class="row">
+                  <div
+                    class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs q-pb-md"
                   >
-                  </q-input>
+                    <q-input
+                      v-model.trim="inventario.numero_factura_c"
+                      label="Número de factura"
+                      name="Número de factura"
+                    >
+                    </q-input>
+                  </div>
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
+                    <q-input
+                      v-model.trim="inventario.uuid_c"
+                      label="UUID"
+                      name="UUID"
+                    >
+                    </q-input>
+                  </div>
                 </div>
-
-                <!-------------------------------------------------------------------------->
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto1_c"
@@ -736,7 +1047,6 @@
                     </template>
                   </q-file>
                 </div>
-
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto2_c"
@@ -758,7 +1068,6 @@
                     </template>
                   </q-file>
                 </div>
-
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto3_c"
@@ -780,7 +1089,6 @@
                     </template>
                   </q-file>
                 </div>
-
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto4_c"
@@ -802,217 +1110,15 @@
                     </template>
                   </q-file>
                 </div>
-
                 <!-------------------------------------------------------------------------->
                 <TablaNumerosSeriesC v-if="cantidad >= 1" />
                 <!-------------------------------------------------------------------------->
               </q-tab-panel>
-
-              <!---------------------------------------------------------------->
             </q-tab-panels>
           </div>
 
           <!----------------------------------------------------------------------------->
-
-          <div v-if="isEditar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <q-input
-              disable
-              v-model="inventario.clave"
-              label="Clave del producto"
-              autogrow
-            >
-            </q-input>
-          </div>
-
-          <div v-if="isEditar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <q-input
-              v-model="inventario.numero_Serie"
-              label="Numero de serie"
-              autogrow
-              lazy-rules
-              :rules="[(val) => !!val || 'El número de serie es requerido']"
-            >
-            </q-input>
-          </div>
-
-          <div
-            v-if="radio != 'paquete'"
-            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
-          >
-            <q-input
-              v-model.trim="inventario.descripcion"
-              label="Descripción del producto"
-              name="descripcion"
-              autogrow
-              lazy-rules
-              :rules="[(val) => !!val || 'La descripción es requerida']"
-            >
-            </q-input>
-          </div>
-
-          <div
-            v-if="radio != 'paquete'"
-            class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
-          >
-            <q-input
-              v-model.trim="inventario.nombre_corto"
-              label="Nombre corto"
-              name="nombre_corto"
-              autogrow
-              lazy-rules
-              counter
-              maxlength="25"
-              :rules="[(val) => !!val || 'La nombre corto es requerido']"
-            >
-            </q-input>
-          </div>
-
-          <div
-            v-if="radio != 'paquete'"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-          >
-            <q-select
-              v-model="marcaId"
-              :options="opcionesMarca"
-              label="Marca"
-              hint="Selecciona una marca"
-              lazy-rules
-              use-input
-              @filter="buscarMarca"
-              :rules="[(val) => !!val || 'La marca es requerida']"
-            >
-            </q-select>
-          </div>
-
-          <div
-            v-if="radio != 'paquete'"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-          >
-            <q-select
-              v-model="modeloId"
-              :options="opcionesModelo"
-              label="Modelo"
-              hint="Selecciona modelo"
-              lazy-rules
-              use-input
-              @filter="buscarModelo"
-              :rules="[(val) => !!val || 'El modelo es requerida']"
-            >
-            </q-select>
-          </div>
-
-          <div
-            v-if="radio == 'individual'"
-            class="col-lg-12 col-md-12 col-sm-12 col-xs-12 q-pb-md"
-          >
-            <q-input
-              v-model.trim="inventario.color"
-              label="Color"
-              name="color"
-              autogrow
-            >
-            </q-input>
-          </div>
-
-          <div
-            v-if="radio == 'agranel'"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
-          >
-            <q-input
-              v-model.trim="inventario.color"
-              label="Color"
-              name="color"
-              autogrow
-            >
-            </q-input>
-          </div>
-
-          <div
-            v-if="radio == 'agranel'"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-          >
-            <q-input
-              v-model.trim="cantidad"
-              label="Cantidad"
-              type="number"
-              name="cantidad"
-              autogrow
-              lazy-rules
-              :rules="[(val) => !!val || 'La cantidad es requerida']"
-            >
-            </q-input>
-          </div>
-
-          <q-card
-            v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
-          >
-            <q-file
-              accept="image/png, image/jpeg"
-              color="purple-12"
-              v-model="foto1"
-              label="Foto 1"
-            >
-              <template v-slot:prepend>
-                <q-icon name="attach_file" />
-              </template>
-            </q-file>
-            <img v-if="isEditar" :src="inventario.foto_1" />
-          </q-card>
-
-          <q-card
-            v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
-          >
-            <q-file
-              accept="image/png, image/jpeg"
-              color="purple-12"
-              v-model="foto2"
-              label="Foto 2"
-            >
-              <template v-slot:prepend>
-                <q-icon name="attach_file" />
-              </template>
-            </q-file>
-            <img v-if="isEditar" :src="inventario.foto_2" />
-          </q-card>
-
-          <q-card
-            v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
-          >
-            <q-file
-              accept="image/png, image/jpeg"
-              color="purple-12"
-              v-model="foto3"
-              label="Foto 3"
-            >
-              <template v-slot:prepend>
-                <q-icon name="attach_file" />
-              </template>
-            </q-file>
-            <img v-if="isEditar" :src="inventario.foto_3" />
-          </q-card>
-
-          <q-card
-            v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
-          >
-            <q-file
-              accept="image/png, image/jpeg"
-              color="purple-12"
-              v-model="foto4"
-              label="Foto 4"
-            >
-              <template v-slot:prepend>
-                <q-icon name="attach_file" />
-              </template>
-            </q-file>
-            <img v-if="isEditar" :src="inventario.foto_4" />
-          </q-card>
-
-          <!----------------------------------------------------------------------------->
-
+          <q-space />
           <div class="col-12 justify-end">
             <div class="text-right q-gutter-xs">
               <q-btn
@@ -1029,7 +1135,6 @@
               />
             </div>
           </div>
-
           <!----------------------------------------------------------------------------->
         </q-form>
       </q-card-section>
@@ -1197,16 +1302,18 @@ watch(marcaId_C, (val) => {
 });
 
 watch(radio, (val) => {
-  catalogoId.value = null;
-  bodegaId.value = null;
-  marcaId.value = null;
-  modeloId.value = null;
-  cantidad.value = null;
-  foto1.value = null;
-  foto2.value = null;
-  foto3.value = null;
-  foto4.value = null;
-  inventarioStore.initInventario();
+  if (val != null) {
+    catalogoId.value = null;
+    bodegaId.value = null;
+    marcaId.value = null;
+    modeloId.value = null;
+    cantidad.value = null;
+    foto1.value = null;
+    foto2.value = null;
+    foto3.value = null;
+    foto4.value = null;
+    inventarioStore.initInventario();
+  }
 });
 
 watch(inventario.value, (val) => {
@@ -1223,11 +1330,6 @@ watch(cantidad, (val) => {
   }
 });
 
-watch(bodegaId, (val) => {
-  if (val != null) {
-    empleadoStore.loadResponsableByArea(val.area_Id);
-  }
-});
 //-----------------------------------------------------------
 
 const buscarMarca = (val, update) => {
@@ -1284,7 +1386,17 @@ const cargarMarca = async (val) => {
       (x) => x.value == `${val.marca_id}`
     );
     marcaId.value = marcaFiltrado;
-    modeloId.value = val.modelo;
+    await modeloStore.modeloByMarca(marcaId.value.value);
+    cargarModelo(val);
+  }
+};
+
+const cargarModelo = async (val) => {
+  if (modeloId.value == null) {
+    let modeloFiltrado = listModelo.value.find(
+      (x) => x.value == `${val.modelo_id}`
+    );
+    modeloId.value = modeloFiltrado;
   }
 };
 
@@ -1319,7 +1431,6 @@ const onSubmit = async () => {
       "Nombre_Corto",
       inventario.value.nombre_corto
     );
-
     editarInventarioFormData.append(
       "Numero_Serie",
       inventario.value.numero_Serie
@@ -1329,6 +1440,18 @@ const onSubmit = async () => {
     editarInventarioFormData.append("Foto_2", foto2.value);
     editarInventarioFormData.append("Foto_3", foto3.value);
     editarInventarioFormData.append("Foto_4", foto4.value);
+    if (inventario.value.importe != null) {
+      editarInventarioFormData.append("Importe", inventario.value.importe);
+    }
+    if (inventario.value.numero_factura != null) {
+      editarInventarioFormData.append(
+        "Factura",
+        inventario.value.numero_factura
+      );
+    }
+    if (inventario.value.uuid != null) {
+      editarInventarioFormData.append("UUID_Factura", inventario.value.uuid);
+    }
   } else {
     if (radio.value != "paquete") {
       inventarioFormData.append("Catalago_Id", catalogoId.value.value);
@@ -1344,7 +1467,15 @@ const onSubmit = async () => {
       inventarioFormData.append("Foto_3", foto3.value);
       inventarioFormData.append("Foto_4", foto4.value);
       inventarioFormData.append("Cantidad", cantidad.value);
-      inventarioFormData.append("Empleado_Id", empleado.value.id);
+      if (
+        inventario.value.importe != null &&
+        inventario.value.numero_factura != null &&
+        inventario.value.uuid != null
+      ) {
+        inventarioFormData.append("Importe", inventario.value.importe);
+        inventarioFormData.append("Factura", inventario.value.numero_factura);
+        inventarioFormData.append("UUID_Factura", inventario.value.uuid);
+      }
     } else if (radio.value == "paquete") {
       //-----------------------------------------------------------
       //General
@@ -1355,6 +1486,7 @@ const onSubmit = async () => {
         "General.Modelo_Id",
         modeloId.value.value
       );
+      console.log("m", modeloId.value.value);
       inventarioPaqueteFormData.append(
         "General.Descripcion",
         inventario.value.descripcion
@@ -1370,12 +1502,25 @@ const onSubmit = async () => {
         );
       });
       inventarioPaqueteFormData.append("General.Color", inventario.value.color);
+      console.log("color", inventario.value.color);
       inventarioPaqueteFormData.append("Cantidad", cantidad.value);
       inventarioPaqueteFormData.append("General.Foto_1", foto1.value);
       inventarioPaqueteFormData.append("General.Foto_2", foto2.value);
       inventarioPaqueteFormData.append("General.Foto_3", foto3.value);
       inventarioPaqueteFormData.append("General.Foto_4", foto4.value);
-      inventarioPaqueteFormData.append("Empleado_Id", empleado.value.id);
+      inventarioPaqueteFormData.append(
+        "General.Factura",
+        inventario.value.numero_factura
+      );
+      inventarioPaqueteFormData.append(
+        "General.UUID_Factura",
+        inventario.value.uuid
+      );
+      inventarioPaqueteFormData.append(
+        "General.Importe",
+        inventario.value.importe
+      );
+      console.log("uui", inventario.value.uuid);
       //-----------------------------------------------------------
       //Extencion A
       if (marcaId_A.value) {
@@ -1409,7 +1554,18 @@ const onSubmit = async () => {
         inventarioPaqueteFormData.append("Extension_A.Foto_2", foto2_a.value);
         inventarioPaqueteFormData.append("Extension_A.Foto_3", foto3_a.value);
         inventarioPaqueteFormData.append("Extension_A.Foto_1", foto4_a.value);
-
+        inventarioPaqueteFormData.append(
+          "Extension_A.Factura",
+          inventario.value.numero_factura_a
+        );
+        inventarioPaqueteFormData.append(
+          "Extension_A.UUID_Factura",
+          inventario.value.uuid_a
+        );
+        inventarioPaqueteFormData.append(
+          "Extension_A.Importe",
+          inventario.value.importe_a
+        );
         //-----------------------------------------------------------
         //Extencion B
         if (marcaId_B.value) {
@@ -1443,6 +1599,18 @@ const onSubmit = async () => {
           inventarioPaqueteFormData.append("Extension_B.Foto_2", foto2_b.value);
           inventarioPaqueteFormData.append("Extension_B.Foto_3", foto3_b.value);
           inventarioPaqueteFormData.append("Extension_B.Foto_1", foto4_b.value);
+          inventarioPaqueteFormData.append(
+            "Extension_B.Factura",
+            inventario.value.numero_factura_b
+          );
+          inventarioPaqueteFormData.append(
+            "Extension_B.UUID_Factura",
+            inventario.value.uuid_b
+          );
+          inventarioPaqueteFormData.append(
+            "Extension_B.Importe",
+            inventario.value.importe_b
+          );
         }
 
         //-----------------------------------------------------------
@@ -1478,13 +1646,24 @@ const onSubmit = async () => {
           inventarioPaqueteFormData.append("Extension_C.Foto_2", foto2_c.value);
           inventarioPaqueteFormData.append("Extension_C.Foto_3", foto3_c.value);
           inventarioPaqueteFormData.append("Extension_C.Foto_1", foto4_c.value);
+          inventarioPaqueteFormData.append(
+            "Extension_C.Factura",
+            inventario.value.numero_factura_c
+          );
+          inventarioPaqueteFormData.append(
+            "Extension_C.UUID_Factura",
+            inventario.value.uuid_c
+          );
+          inventarioPaqueteFormData.append(
+            "Extension_C.Importe",
+            inventario.value.importe_c
+          );
         }
       }
     }
   }
 
   let resp = null;
-  let error = 0;
 
   $q.loading.show();
 
@@ -1511,6 +1690,9 @@ const onSubmit = async () => {
         }
       }
     } else if (radio.value == "paquete") {
+      inventarioPaqueteFormData.forEach((ele) => {
+        console.log("e", ele);
+      });
       //paquete
       try {
         resp = await inventarioStore.createInventarioPaquete(
@@ -1538,46 +1720,6 @@ const onSubmit = async () => {
       message: resp.data,
     });
   }
-
-  // if (error > 0) {
-  //   $q.dialog({
-  //     title: "Volver a registrar",
-  //     message: "¿Quieres volver a registrar los que arrojaron error?",
-  //     icon: "Warning",
-  //     persistent: true,
-  //     transitionShow: "scale",
-  //     transitionHide: "scale",
-  //     ok: {
-  //       color: "positive",
-  //       label: "¡Sí!, volver a registrar",
-  //     },
-  //     cancel: {
-  //       color: "negative",
-  //       label: " No Cancelar",
-  //     },
-  //   }).onOk(async () => {
-  //     $q.loading.show();
-  //     console.log("onOk");
-  //     for (let i = 0; i < error; i++) {
-  //       resp = await inventarioStore.createInventario(inventarioFormData);
-  //     }
-  //     if (resp.success) {
-  //       $q.loading.hide();
-  //       $q.notify({
-  //         type: "positive",
-  //         message: resp.data,
-  //       });
-  //       inventarioStore.loadInformacionInventarios();
-  //     } else {
-  //       $q.loading.hide();
-  //       $q.notify({
-  //         type: "negative",
-  //         message: resp.data,
-  //       });
-  //     }
-  //   });
-  // }
-
   $q.loading.hide();
 };
 </script>

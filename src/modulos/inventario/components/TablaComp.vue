@@ -3,6 +3,7 @@
     <div v-if="isLoading" color="purple" label="Show Loading"></div>
     <div v-else class="col">
       <q-table
+        :visible-columns="visible_columns"
         :rows="listFiltroInventario"
         :columns="columns"
         :filter="filter"
@@ -21,12 +22,20 @@
             style="width: 260px"
           >
           </q-select>
-
           <q-select
+            class="q-pr-xs"
             v-model="estatusId"
             :options="estatus"
             label="Selecciona un estatus"
             hint="Seleccione un catalogo de inventarios a mostrar"
+            style="width: 260px"
+          >
+          </q-select>
+          <q-select
+            v-model="estatusId"
+            :options="estatus"
+            label="Factura"
+            hint="Fcatura"
             style="width: 260px"
           >
           </q-select>
@@ -86,6 +95,17 @@
                 >
                   <q-tooltip>Eliminar inventario</q-tooltip>
                 </q-btn>
+              </div>
+              <div v-else-if="col.name == 'descripcion'">
+                <label>{{ col.value }}</label>
+                <q-tooltip
+                  :offset="[10, 10]"
+                  v-if="
+                    col.value.length != props.row['descripcion_completo'].length
+                  "
+                >
+                  {{ props.row["descripcion_completo"] }}
+                </q-tooltip>
               </div>
               <label v-else>{{ col.value }}</label>
             </q-td>
@@ -225,6 +245,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: "descripcion_completo",
+    align: "center",
+    label: "Descripción",
+    field: "descripcion_completo",
+    sortable: true,
+  },
+  {
     name: "nombre_corto",
     align: "center",
     label: "Nombre",
@@ -260,6 +287,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: "fecha_Registro",
+    align: "center",
+    label: "Fecha de Registro",
+    field: "fecha_Registro",
+    sortable: true,
+  },
+  {
     name: "fecha_compra",
     align: "center",
     label: "Fecha de Compra",
@@ -274,12 +308,39 @@ const columns = [
     sortable: true,
   },
   {
+    name: "uuid",
+    align: "center",
+    label: "UUID",
+    field: "uuid",
+    sortable: true,
+  },
+  {
     name: "importe",
     align: "center",
     label: "Importe",
     field: "importe",
     sortable: true,
   },
+];
+
+const visible_columns = [
+  "id",
+  "catalogo",
+  "estatus",
+  "bodega",
+  "empleado",
+  "clave",
+  "descripcion",
+  "nombre_corto",
+  "marca",
+  "modelo",
+  "numero_Serie",
+  "color",
+  "fecha_Registro",
+  "fecha_compra",
+  "factura",
+  "uuid",
+  "importe",
 ];
 
 const pagination = ref({

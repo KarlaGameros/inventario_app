@@ -28,19 +28,21 @@
             inventario.foto_4
           "
         >
-          <q-carousel
-            swipeable
-            animated
-            v-model="slide"
-            thumbnails
-            infinite
-            class="shadow-10"
-          >
-            <q-carousel-slide :name="1" :img-src="inventario.foto_1" />
-            <q-carousel-slide :name="2" :img-src="inventario.foto_2" />
-            <q-carousel-slide :name="3" :img-src="inventario.foto_3" />
-            <q-carousel-slide :name="4" :img-src="inventario.foto_4" />
-          </q-carousel>
+          <q-responsive :ratio="1" class="col">
+            <q-carousel
+              swipeable
+              animated
+              v-model="slide"
+              thumbnails
+              infinite
+              class="shadow-10"
+            >
+              <q-carousel-slide :name="1" :img-src="inventario.foto_1" />
+              <q-carousel-slide :name="2" :img-src="inventario.foto_2" />
+              <q-carousel-slide :name="3" :img-src="inventario.foto_3" />
+              <q-carousel-slide :name="4" :img-src="inventario.foto_4" />
+            </q-carousel>
+          </q-responsive>
         </div>
         <div v-else class="text-h6">No hay fotos</div>
 

@@ -122,7 +122,6 @@ const onSubmit = async () => {
     asignacionStore.loadAsignacion(resp.id);
   }
   if (resp.success === true) {
-    console.log("reso fecha", resp.fecha);
     respVale = await asignacionStore.inventariosByFecha(resp.fecha);
     if (respVale.success === true) {
       asignacionStore.actualizarModalValeBodega(false);

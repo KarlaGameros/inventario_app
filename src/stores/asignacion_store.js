@@ -84,7 +84,6 @@ export const useAsignacionStore = defineStore("asignacion", {
       try {
         let resp = await api.get("/AsignacionesInventarios");
         let { data } = resp.data;
-        console.log(data);
         let listaAsignacionInventario = data.map((asignacion) => {
           return {
             id: asignacion.id,
