@@ -240,7 +240,7 @@ import { useRoute, useRouter } from "vue-router";
 
 export default defineComponent({
   name: "MainLayout",
-
+  storage: Storage | undefined,
   components: {},
 
   setup() {

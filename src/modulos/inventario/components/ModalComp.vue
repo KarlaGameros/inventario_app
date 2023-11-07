@@ -34,13 +34,26 @@
             "
           >
             <q-radio
+              color="purple"
               v-model="radio"
               size="md"
               val="individual"
               label="Individual"
             />
-            <q-radio v-model="radio" size="md" val="agranel" label="Agranel" />
-            <q-radio v-model="radio" size="md" val="paquete" label="Paquete" />
+            <q-radio
+              color="purple"
+              v-model="radio"
+              size="md"
+              val="agranel"
+              label="Agranel"
+            />
+            <q-radio
+              color="purple"
+              v-model="radio"
+              size="md"
+              val="paquete"
+              label="Paquete"
+            />
           </div>
 
           <div
@@ -53,6 +66,7 @@
                 :key="item.tab.name"
                 tag="label"
                 :model-value="item.selected"
+                color="purple"
                 @update:model-value="
                   (status) => {
                     setTabSelected(item.tab, status);
@@ -87,21 +101,6 @@
               :rules="[(val) => !!val || 'La bodega es requerida']"
             >
             </q-select>
-          </div>
-
-          <div
-            v-if="radio == 'paquete'"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-          >
-            <q-input
-              v-model.trim="cantidad"
-              label="Cantidad"
-              type="number"
-              autogrow
-              lazy-rules
-              :rules="[(val) => !!val || 'La cantidad es requerida']"
-            >
-            </q-input>
           </div>
 
           <div v-if="isEditar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -198,14 +197,13 @@
             </q-input>
           </div>
           <div
-            v-if="radio == 'agranel'"
+            v-if="radio != 'individual'"
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
           >
             <q-input
               v-model.trim="cantidad"
               label="Cantidad"
               type="number"
-              name="cantidad"
               autogrow
               lazy-rules
               :rules="[(val) => !!val || 'La cantidad es requerida']"
@@ -213,6 +211,10 @@
             </q-input>
           </div>
           <div
+            v-if="radio == 'individual'"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+          ></div>
+          <!-- <div
             v-if="radio == 'individual' || radio == 'agranel' || isEditar"
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
           >
@@ -227,8 +229,8 @@
                 <q-icon name="$" />
               </template>
             </q-input>
-          </div>
-          <div
+          </div> -->
+          <!-- <div
             v-if="radio == 'individual' || radio == 'agranel' || isEditar"
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
           >
@@ -245,7 +247,31 @@
           >
             <q-input v-model.trim="inventario.uuid" label="UUID" name="UUID">
             </q-input>
-          </div>
+          </div> -->
+          <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <q-input v-model="date" label="Fecha de compra">
+              <template v-slot:append>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy
+                    ref="qDateProxy"
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
+                    <q-date v-model="date" color="purple">
+                      <div class="row items-center justify-end">
+                        <q-btn
+                          v-close-popup
+                          label="Cerrar"
+                          color="purple-3"
+                          flat
+                        />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+          </div> -->
 
           <q-card
             v-if="radio != 'paquete'"
@@ -387,7 +413,7 @@
                     >
                     </q-input>
                   </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-input
                       type="number"
                       v-model.number="inventario.importe"
@@ -399,10 +425,10 @@
                         <q-icon name="$" />
                       </template>
                     </q-input>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="row">
-                  <div
+                  <!-- <div
                     class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs q-pb-md"
                   >
                     <q-input
@@ -421,7 +447,7 @@
                       autogrow
                     >
                     </q-input>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
@@ -605,7 +631,7 @@
                     >
                     </q-input>
                   </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-input
                       type="number"
                       v-model.number="inventario.importe_a"
@@ -616,28 +642,9 @@
                         <q-icon name="$" />
                       </template>
                     </q-input>
-                  </div>
+                  </div> -->
                 </div>
-                <div class="row">
-                  <div
-                    class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs q-pb-md"
-                  >
-                    <q-input
-                      v-model.trim="inventario.numero_factura_a"
-                      label="Número de factura"
-                      name="Número de factura"
-                    >
-                    </q-input>
-                  </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
-                    <q-input
-                      v-model.trim="inventario.uuid_a"
-                      label="UUID"
-                      name="UUID"
-                    >
-                    </q-input>
-                  </div>
-                </div>
+
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto1_a"
@@ -799,7 +806,7 @@
                     >
                     </q-input>
                   </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-input
                       type="number"
                       v-model.number="inventario.importe_b"
@@ -810,28 +817,9 @@
                         <q-icon name="$" />
                       </template>
                     </q-input>
-                  </div>
+                  </div> -->
                 </div>
-                <div class="row">
-                  <div
-                    class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs q-pb-md"
-                  >
-                    <q-input
-                      v-model.trim="inventario.numero_factura_b"
-                      label="Número de factura"
-                      name="Número de factura"
-                    >
-                    </q-input>
-                  </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
-                    <q-input
-                      v-model.trim="inventario.uuid_b"
-                      label="UUID"
-                      name="UUID"
-                    >
-                    </q-input>
-                  </div>
-                </div>
+
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto1_b"
@@ -993,7 +981,7 @@
                     >
                     </q-input>
                   </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-input
                       type="number"
                       v-model.number="inventario.importe_c"
@@ -1004,28 +992,9 @@
                         <q-icon name="$" />
                       </template>
                     </q-input>
-                  </div>
+                  </div> -->
                 </div>
-                <div class="row">
-                  <div
-                    class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs q-pb-md"
-                  >
-                    <q-input
-                      v-model.trim="inventario.numero_factura_c"
-                      label="Número de factura"
-                      name="Número de factura"
-                    >
-                    </q-input>
-                  </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
-                    <q-input
-                      v-model.trim="inventario.uuid_c"
-                      label="UUID"
-                      name="UUID"
-                    >
-                    </q-input>
-                  </div>
-                </div>
+
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto1_c"
@@ -1196,6 +1165,7 @@ const modeloId_B = ref(null);
 const modeloId_C = ref(null);
 const cantidad = ref(null);
 const radio = ref("individual");
+const date = ref("");
 
 const foto1 = ref();
 const foto2 = ref();
@@ -1217,16 +1187,6 @@ const foto2_c = ref();
 const foto3_c = ref();
 const foto4_c = ref();
 
-const position = ref(0);
-//-----------------------------------------------------------
-
-onBeforeMount(() => {
-  bodegaStore.loadBodegasList();
-  catalogoStore.loadCatalogoListNormal();
-  marcaStore.loadMarcaList();
-});
-//-----------------------------------------------------------
-
 const tabsDefinition = [
   { name: "extension_a", label: "Extensión A" },
   { name: "extension_b", label: "Extensión B" },
@@ -1234,46 +1194,13 @@ const tabsDefinition = [
 ];
 const tabs = ref(tabsDefinition.slice(0, 0));
 const tab = ref("general");
+//-----------------------------------------------------------
 
-const columns = [
-  {
-    name: "id",
-    align: "center",
-    label: "No.",
-    field: "id",
-    sortable: true,
-  },
-  {
-    name: "numero_serie",
-    align: "center",
-    label: "Números de serie",
-    field: "numero_serie",
-    sortable: true,
-  },
-];
-
-const allTabs = computed(() => {
-  return tabsDefinition.map((tab) => ({
-    tab,
-    selected: tabs.value.indexOf(tab) > -1,
-  }));
+onBeforeMount(() => {
+  bodegaStore.loadBodegasList();
+  catalogoStore.loadCatalogoListNormal();
+  marcaStore.loadMarcaList();
 });
-
-const setTabSelected = (tab, status) => {
-  if (status === true) {
-    tabs.value.push(tab);
-  } else {
-    const index = tabs.value.indexOf(tab);
-    if (index > -1) {
-      tabs.value.splice(index, 1);
-    }
-  }
-};
-
-function getFocus(index) {
-  let docu = document.getElementsByName(`myText${index + 1}`);
-  docu[0].focus();
-}
 
 //-----------------------------------------------------------
 
@@ -1330,7 +1257,54 @@ watch(cantidad, (val) => {
   }
 });
 
+watch(modal, (val) => {
+  if (val == true) {
+    radio.value = "individual";
+  }
+});
 //-----------------------------------------------------------
+
+const columns = [
+  {
+    name: "id",
+    align: "center",
+    label: "No.",
+    field: "id",
+    sortable: true,
+  },
+  {
+    name: "numero_serie",
+    align: "center",
+    label: "Números de serie",
+    field: "numero_serie",
+    sortable: true,
+  },
+];
+
+//-----------------------------------------------------------
+
+const allTabs = computed(() => {
+  return tabsDefinition.map((tab) => ({
+    tab,
+    selected: tabs.value.indexOf(tab) > -1,
+  }));
+});
+
+const setTabSelected = (tab, status) => {
+  if (status === true) {
+    tabs.value.push(tab);
+  } else {
+    const index = tabs.value.indexOf(tab);
+    if (index > -1) {
+      tabs.value.splice(index, 1);
+    }
+  }
+};
+
+function getFocus(index) {
+  let docu = document.getElementsByName(`myText${index + 1}`);
+  docu[0].focus();
+}
 
 const buscarMarca = (val, update) => {
   if (val === "") {
@@ -1402,6 +1376,7 @@ const cargarModelo = async (val) => {
 
 const actualizarModal = (valor) => {
   inventarioStore.actualizarModal(valor);
+  inventarioStore.updateEditar(false);
   catalogoId.value = null;
   bodegaId.value = null;
   marcaId.value = null;
@@ -1467,15 +1442,20 @@ const onSubmit = async () => {
       inventarioFormData.append("Foto_3", foto3.value);
       inventarioFormData.append("Foto_4", foto4.value);
       inventarioFormData.append("Cantidad", cantidad.value);
-      if (
-        inventario.value.importe != null &&
-        inventario.value.numero_factura != null &&
-        inventario.value.uuid != null
-      ) {
-        inventarioFormData.append("Importe", inventario.value.importe);
-        inventarioFormData.append("Factura", inventario.value.numero_factura);
-        inventarioFormData.append("UUID_Factura", inventario.value.uuid);
-      }
+      // if (
+      //   inventario.value.importe != null &&
+      //   inventario.value.numero_factura != null &&
+      //   inventario.value.uuid != null &&
+      //   inventario.value.fecha_compra != null
+      // ) {
+      //   inventarioFormData.append("Importe", inventario.value.importe);
+      //   inventarioFormData.append("Factura", inventario.value.numero_factura);
+      //   inventarioFormData.append("UUID_Factura", inventario.value.uuid);
+      //   inventarioFormData.append(
+      //     "UUID_Factura",
+      //     inventario.value.fecha_compra
+      //   );
+      // }
     } else if (radio.value == "paquete") {
       //-----------------------------------------------------------
       //General
@@ -1486,7 +1466,6 @@ const onSubmit = async () => {
         "General.Modelo_Id",
         modeloId.value.value
       );
-      console.log("m", modeloId.value.value);
       inventarioPaqueteFormData.append(
         "General.Descripcion",
         inventario.value.descripcion
@@ -1502,25 +1481,23 @@ const onSubmit = async () => {
         );
       });
       inventarioPaqueteFormData.append("General.Color", inventario.value.color);
-      console.log("color", inventario.value.color);
       inventarioPaqueteFormData.append("Cantidad", cantidad.value);
       inventarioPaqueteFormData.append("General.Foto_1", foto1.value);
       inventarioPaqueteFormData.append("General.Foto_2", foto2.value);
       inventarioPaqueteFormData.append("General.Foto_3", foto3.value);
       inventarioPaqueteFormData.append("General.Foto_4", foto4.value);
-      inventarioPaqueteFormData.append(
-        "General.Factura",
-        inventario.value.numero_factura
-      );
-      inventarioPaqueteFormData.append(
-        "General.UUID_Factura",
-        inventario.value.uuid
-      );
-      inventarioPaqueteFormData.append(
-        "General.Importe",
-        inventario.value.importe
-      );
-      console.log("uui", inventario.value.uuid);
+      // inventarioPaqueteFormData.append(
+      //   "General.Factura",
+      //   inventario.value.numero_factura
+      // );
+      // inventarioPaqueteFormData.append(
+      //   "General.UUID_Factura",
+      //   inventario.value.uuid
+      // );
+      // inventarioPaqueteFormData.append(
+      //   "General.Importe",
+      //   inventario.value.importe
+      // );
       //-----------------------------------------------------------
       //Extencion A
       if (marcaId_A.value) {
@@ -1554,18 +1531,18 @@ const onSubmit = async () => {
         inventarioPaqueteFormData.append("Extension_A.Foto_2", foto2_a.value);
         inventarioPaqueteFormData.append("Extension_A.Foto_3", foto3_a.value);
         inventarioPaqueteFormData.append("Extension_A.Foto_1", foto4_a.value);
-        inventarioPaqueteFormData.append(
-          "Extension_A.Factura",
-          inventario.value.numero_factura_a
-        );
-        inventarioPaqueteFormData.append(
-          "Extension_A.UUID_Factura",
-          inventario.value.uuid_a
-        );
-        inventarioPaqueteFormData.append(
-          "Extension_A.Importe",
-          inventario.value.importe_a
-        );
+        // inventarioPaqueteFormData.append(
+        //   "Extension_A.Factura",
+        //   inventario.value.numero_factura_a
+        // );
+        // inventarioPaqueteFormData.append(
+        //   "Extension_A.UUID_Factura",
+        //   inventario.value.uuid_a
+        // );
+        // inventarioPaqueteFormData.append(
+        //   "Extension_A.Importe",
+        //   inventario.value.importe_a
+        // );
         //-----------------------------------------------------------
         //Extencion B
         if (marcaId_B.value) {
@@ -1599,18 +1576,18 @@ const onSubmit = async () => {
           inventarioPaqueteFormData.append("Extension_B.Foto_2", foto2_b.value);
           inventarioPaqueteFormData.append("Extension_B.Foto_3", foto3_b.value);
           inventarioPaqueteFormData.append("Extension_B.Foto_1", foto4_b.value);
-          inventarioPaqueteFormData.append(
-            "Extension_B.Factura",
-            inventario.value.numero_factura_b
-          );
-          inventarioPaqueteFormData.append(
-            "Extension_B.UUID_Factura",
-            inventario.value.uuid_b
-          );
-          inventarioPaqueteFormData.append(
-            "Extension_B.Importe",
-            inventario.value.importe_b
-          );
+          // inventarioPaqueteFormData.append(
+          //   "Extension_B.Factura",
+          //   inventario.value.numero_factura_b
+          // );
+          // inventarioPaqueteFormData.append(
+          //   "Extension_B.UUID_Factura",
+          //   inventario.value.uuid_b
+          // );
+          // inventarioPaqueteFormData.append(
+          //   "Extension_B.Importe",
+          //   inventario.value.importe_b
+          // );
         }
 
         //-----------------------------------------------------------
@@ -1646,18 +1623,18 @@ const onSubmit = async () => {
           inventarioPaqueteFormData.append("Extension_C.Foto_2", foto2_c.value);
           inventarioPaqueteFormData.append("Extension_C.Foto_3", foto3_c.value);
           inventarioPaqueteFormData.append("Extension_C.Foto_1", foto4_c.value);
-          inventarioPaqueteFormData.append(
-            "Extension_C.Factura",
-            inventario.value.numero_factura_c
-          );
-          inventarioPaqueteFormData.append(
-            "Extension_C.UUID_Factura",
-            inventario.value.uuid_c
-          );
-          inventarioPaqueteFormData.append(
-            "Extension_C.Importe",
-            inventario.value.importe_c
-          );
+          // inventarioPaqueteFormData.append(
+          //   "Extension_C.Factura",
+          //   inventario.value.numero_factura_c
+          // );
+          // inventarioPaqueteFormData.append(
+          //   "Extension_C.UUID_Factura",
+          //   inventario.value.uuid_c
+          // );
+          // inventarioPaqueteFormData.append(
+          //   "Extension_C.Importe",
+          //   inventario.value.importe_c
+          // );
         }
       }
     }

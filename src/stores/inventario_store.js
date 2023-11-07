@@ -11,6 +11,7 @@ export const useInventarioStore = defineStore("inventario", {
     isEditar: false,
     cantidad: null,
     listInventario: [],
+    listSinFactura: [],
     listFiltroInventario: [],
     listFiltroInventarioFactura: [],
     listInventarioByBodega: [],
@@ -101,6 +102,19 @@ export const useInventarioStore = defineStore("inventario", {
       numero_factura_c: null,
       importe_c: null,
       uuid_c: null,
+    },
+    factura: {
+      inventarios_Generales_Id: [],
+      inventarios_Generales_A_Id: [],
+      inventarios_Generales_B_Id: [],
+      inventarios_Generales_C_Id: [],
+      costo_General: null,
+      costo_A: null,
+      costo_B: null,
+      costo_C: null,
+      factura: null,
+      uuid: null,
+      fecha_Compra: null,
     },
   }),
   actions: {
@@ -194,13 +208,85 @@ export const useInventarioStore = defineStore("inventario", {
             factura: inventario.factura,
             importe:
               inventario.importe == null ? "" : `$ ${inventario.importe}`,
-            uuid: inventario.uui,
+            uuid: inventario.uuiD_Factura,
             paquete_Id: inventario.paquete_Id,
           };
         });
 
         this.inventarios = listInventario;
         this.listInventario = listInventario;
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
+    async loadSinFactura() {
+      try {
+        const resp = await api.get("/Inventarios/GetSinFactura");
+        let { data } = resp.data;
+        let listSinFactura = data.map((inventario) => {
+          return {
+            id: inventario.id,
+            catalogo_id: inventario.catalago_Id,
+            catalogo: inventario.catalago,
+            bodega_id: inventario.bodega_id,
+            bodega: inventario.bodega,
+            descripcion: inventario.descripcion,
+            nombre_corto: inventario.nombre_Corto,
+            marca_id: inventario.marca_id,
+            marca: inventario.marca,
+            modelo_id: inventario.modelo_id,
+            modelo: inventario.modelo,
+            color: inventario.color,
+            estatus: inventario.estatus,
+            clave: inventario.clave,
+            numero_Serie: inventario.numero_Serie,
+            empleado: inventario.empleado,
+            ruta_PDF: inventario.PDf_url,
+            fecha_Registro: inventario.fecha_Registro,
+            fecha_compra: inventario.fecha_Compra,
+            factura: inventario.factura,
+            importe:
+              inventario.importe == null ? "" : `$ ${inventario.importe}`,
+            uuid: inventario.uuiD_Factura,
+            paquete_Id: inventario.paquete_Id,
+          };
+        });
+        this.listSinFactura = listSinFactura;
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
+    async createAsignacionFactura(asignacionFactura) {
+      try {
+        const resp = await api.post(
+          "/Inventarios/AsignacionFactura",
+          asignacionFactura
+        );
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+          };
+        }
       } catch (error) {
         return {
           success: false,
@@ -280,6 +366,7 @@ export const useInventarioStore = defineStore("inventario", {
         let resp = await api.get(`/Inventarios/${id}`);
         if (resp.status == 200) {
           const { success, data } = resp.data;
+          console.log("data", data);
           if (success == true) {
             this.inventario.id = data.id;
             this.inventario.foto_1 = data.foto_1_URL;
@@ -295,7 +382,6 @@ export const useInventarioStore = defineStore("inventario", {
             this.inventario.clave = data.clave;
             this.inventario.bodega_id = data.bodega_Id;
             this.inventario.bodega = data.bodega;
-            this.inventario.catalogo = data.catalago;
             this.inventario.descripcion = data.descripcion;
             this.inventario.nombre_corto = data.nombre_Corto;
             this.inventario.color = data.color;
@@ -303,9 +389,10 @@ export const useInventarioStore = defineStore("inventario", {
             this.inventario.numero_Serie = data.numero_Serie;
             this.inventario.ruta_PDF = data.pdF_URL;
             this.inventario.importe = data.importe;
-            this.inventario.uuid = data.uuid;
+            this.inventario.uuid = data.uuiD_Factura;
             this.inventario.numero_factura = data.factura;
           }
+          console.log("this", this.inventario);
         }
       } catch (error) {
         return {

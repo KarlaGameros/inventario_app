@@ -135,6 +135,7 @@ const generarQR = async () => {
 
 const asignarFactura = async (valor) => {
   $q.loading.show();
+  inventarioStore.loadSinFactura();
   inventarioStore.actualizarModalFactura(valor);
   $q.loading.hide();
 };

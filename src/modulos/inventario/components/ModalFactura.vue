@@ -22,14 +22,94 @@
       <q-card-section>
         <q-form class="q-col-gutter-xs" @submit="onSubmit">
           <div class="row">
-            <q-radio v-model="tipo" val="individual" label="Individual" />
-            <q-radio v-model="tipo" val="paquete" label="Paquete" />
+            <q-radio
+              color="purple"
+              v-model="tipo"
+              val="individual"
+              label="Individual"
+            />
+            <q-radio
+              color="purple"
+              v-model="tipo"
+              val="paquete"
+              label="Paquete"
+            />
           </div>
-          <div>
-            <div class="text-subtitle2 text-bold" v-show="general">General</div>
-            <div class="row" v-if="general">
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
+          <div
+            class="text-subtitle2 text-bold"
+            v-show="general || tipo == 'individual'"
+          >
+            General
+          </div>
+          <div class="row" v-if="general || tipo == 'individual'">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pr-md">
+              <q-input
+                v-model="costo_General"
+                type="number"
+                label="Importe"
+                :lazy-rules="true"
+                :rules="[(val) => !!val || 'El importe es requerido']"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="$" />
+                </template>
+              </q-input>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pr-md">
+              <q-input
+                v-model="facturaGeneral"
+                label="Número de factura"
+                :lazy-rules="true"
+                :rules="[(val) => !!val || 'El número de factura es requerido']"
+              >
+              </q-input>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pr-md">
+              <q-input
+                v-model="uuid"
+                label="UUID"
+                :lazy-rules="true"
+                :rules="[(val) => !!val || 'El UUID es requerido']"
+              >
+              </q-input>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pr-md">
+              <q-input v-model="fecha_Compra" label="Fecha de asignación">
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      ref="qDateProxy"
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="fecha_Compra" color="purple">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Cerrar"
+                            color="purple"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
+          </div>
+          <!------------------------------------------->
+          <div class="row">
+            <div
+              class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md"
+              v-if="extencion_A"
+            >
+              <div v-show="extencion_A" class="text-subtitle2 text-bold">
+                Extensión A
+              </div>
+              <div>
                 <q-input
+                  v-model="costo_A"
                   type="number"
                   label="Importe"
                   :lazy-rules="true"
@@ -38,71 +118,20 @@
                   <template v-slot:prepend>
                     <q-icon name="$" />
                   </template>
-                </q-input>
-              </div>
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
-                <q-input
-                  label="Número de factura"
-                  :lazy-rules="true"
-                  :rules="[
-                    (val) => !!val || 'El número de factura es requerido',
-                  ]"
-                >
-                </q-input>
-              </div>
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
-                <q-input
-                  label="UUID"
-                  :lazy-rules="true"
-                  :rules="[(val) => !!val || 'El UUID es requerido']"
-                >
-                </q-input>
-              </div>
-            </div>
-            <!------------------------------------------->
-            <div v-show="extencion_A" class="text-subtitle2 text-bold">
-              Extensión A
-            </div>
-            <div class="row" v-if="extencion_A">
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
-                <q-input
-                  type="number"
-                  label="Importe"
-                  :lazy-rules="true"
-                  :rules="[(val) => !!val || 'El importe es requerido']"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="$" />
-                  </template>
-                </q-input>
-              </div>
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
-                <q-input
-                  label="Número de factura"
-                  :lazy-rules="true"
-                  :rules="[
-                    (val) => !!val || 'El número de factura es requerido',
-                  ]"
-                >
-                </q-input>
-              </div>
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
-                <q-input
-                  label="UUID"
-                  :lazy-rules="true"
-                  :rules="[(val) => !!val || 'El UUID es requerido']"
-                >
                 </q-input>
               </div>
             </div>
 
-            <!------------------------------------------->
-            <div v-show="extencion_B" class="text-subtitle2 text-bold">
-              Extensión B
-            </div>
-            <div class="row" v-if="extencion_B">
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
+            <div
+              v-if="extencion_B"
+              class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md"
+            >
+              <div v-show="extencion_B" class="text-subtitle2 text-bold">
+                Extensión B
+              </div>
+              <div>
                 <q-input
+                  v-model="costo_B"
                   type="number"
                   label="Importe"
                   :lazy-rules="true"
@@ -111,35 +140,20 @@
                   <template v-slot:prepend>
                     <q-icon name="$" />
                   </template>
-                </q-input>
-              </div>
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
-                <q-input
-                  label="Número de factura"
-                  :lazy-rules="true"
-                  :rules="[
-                    (val) => !!val || 'El número de factura es requerido',
-                  ]"
-                >
-                </q-input>
-              </div>
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
-                <q-input
-                  label="UUID"
-                  :lazy-rules="true"
-                  :rules="[(val) => !!val || 'El UUID es requerido']"
-                >
                 </q-input>
               </div>
             </div>
 
-            <!------------------------------------------->
-            <div v-show="extencion_C" class="text-subtitle2 text-bold">
-              Extensión C
-            </div>
-            <div class="row" v-if="extencion_C">
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
+            <div
+              v-if="extencion_C"
+              class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md"
+            >
+              <div v-show="extencion_C" class="text-subtitle2 text-bold">
+                Extensión C
+              </div>
+              <div>
                 <q-input
+                  v-model="costo_C"
                   type="number"
                   label="Importe"
                   :lazy-rules="true"
@@ -148,58 +162,6 @@
                   <template v-slot:prepend>
                     <q-icon name="$" />
                   </template>
-                </q-input>
-              </div>
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
-                <q-input
-                  label="Número de factura"
-                  :lazy-rules="true"
-                  :rules="[
-                    (val) => !!val || 'El número de factura es requerido',
-                  ]"
-                >
-                </q-input>
-              </div>
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
-                <q-input
-                  label="UUID"
-                  :lazy-rules="true"
-                  :rules="[(val) => !!val || 'El UUID es requerido']"
-                >
-                </q-input>
-              </div>
-            </div>
-          </div>
-          <div v-if="tipo == 'individual'">
-            <div class="row">
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
-                <q-input
-                  type="number"
-                  label="Importe"
-                  :lazy-rules="true"
-                  :rules="[(val) => !!val || 'El importe es requerido']"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="$" />
-                  </template>
-                </q-input>
-              </div>
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
-                <q-input
-                  label="Número de factura"
-                  :lazy-rules="true"
-                  :rules="[
-                    (val) => !!val || 'El número de factura es requerido',
-                  ]"
-                >
-                </q-input>
-              </div>
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 q-pr-md">
-                <q-input
-                  label="UUID"
-                  :lazy-rules="true"
-                  :rules="[(val) => !!val || 'El UUID es requerido']"
-                >
                 </q-input>
               </div>
             </div>
@@ -207,6 +169,7 @@
 
           <div class="col-12 justify-end q-pt-md">
             <q-table
+              v-if="tipo == 'individual'"
               flat
               bordered
               :rows="listFiltroInventarioFactura"
@@ -214,6 +177,43 @@
               row-key="id"
               selection="multiple"
               v-model:selected="selected"
+            >
+              <template v-slot:top-right>
+                <div class="text-subtitle2 q-pr-md">Filtrar por fechas</div>
+                <q-btn icon="event" round color="purple">
+                  <q-popup-proxy
+                    cover
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
+                    <q-date v-model="date" range color="purple">
+                      <div class="row items-center justify-end q-gutter-sm">
+                        <q-btn
+                          label="Cancel"
+                          color="primary"
+                          flat
+                          v-close-popup
+                        />
+                        <q-btn
+                          label="OK"
+                          color="primary"
+                          flat
+                          @click="save"
+                          v-close-popup
+                        />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-btn>
+              </template>
+            </q-table>
+            <q-table
+              v-else
+              flat
+              bordered
+              :rows="listFiltroInventarioFactura"
+              :columns="columns"
+              row-key="id"
             >
               <template v-slot:top-left v-if="tipo == 'paquete'">
                 <q-input v-model="paquete_Id" label="Paquete"> </q-input>
@@ -281,11 +281,18 @@ import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useInventarioStore } from "src/stores/inventario_store";
 import { onBeforeMount, onMounted, ref, watch, watchEffect } from "vue";
 
+//-----------------------------------------------------------
+
 const $q = useQuasar();
 const inventarioStore = useInventarioStore();
 const catalogoStore = useCatalogoProductoStore();
-const { modalFactura, listFiltroInventario, listFiltroInventarioFactura } =
-  storeToRefs(inventarioStore);
+const {
+  modalFactura,
+  listFiltroInventario,
+  listFiltroInventarioFactura,
+  listSinFactura,
+  factura,
+} = storeToRefs(inventarioStore);
 const selected = ref([]);
 const catalogoId = ref(null);
 const date = ref({});
@@ -295,17 +302,26 @@ const general = ref(false);
 const extencion_A = ref(false);
 const extencion_B = ref(false);
 const extencion_C = ref(false);
-
-watch(listFiltroInventario, (val) => {
-  listFiltroInventarioFactura.value = val;
-});
+const costo_General = ref(null);
+const costo_A = ref(null);
+const costo_B = ref(null);
+const costo_C = ref(null);
+const facturaGeneral = ref(null);
+const uuid = ref(null);
+const fecha_Compra = ref(null);
+//-----------------------------------------------------------
 
 watch(tipo, (val) => {
-  general.value = false;
-  extencion_A.value = false;
-  extencion_B.value = false;
-  extencion_C.value = false;
+  limpiar();
+  if (val != null) {
+    inventarioStore.loadSinFactura();
+  }
 });
+
+watch(listSinFactura, (val) => {
+  listFiltroInventarioFactura.value = listSinFactura.value;
+});
+//-----------------------------------------------------------
 
 const filtrar = (listFiltroInventario, filtro) => {
   listFiltroInventarioFactura.value = listFiltroInventario.filter((item) => {
@@ -332,7 +348,7 @@ const filtrar = (listFiltroInventario, filtro) => {
 const save = () => {
   const filtro = {};
   if (date.value != {}) filtro.date = date.value;
-  filtrar(listFiltroInventario.value, filtro);
+  filtrar(listSinFactura.value, filtro);
 };
 
 const columns = [
@@ -415,8 +431,6 @@ const columns = [
   },
 ];
 
-// const visible_columns = ["clave", "nombre_corto", "numero_Serie"];
-
 const pagination = ref({
   page: 1,
   rowsPerPage: 25,
@@ -426,50 +440,120 @@ const pagination = ref({
 
 const filter = ref("");
 
+//-----------------------------------------------------------
+
+const limpiar = () => {
+  general.value = false;
+  extencion_A.value = false;
+  extencion_B.value = false;
+  extencion_C.value = false;
+  paquete_Id.value = null;
+};
+
 const actualizarModal = async (valor) => {
   $q.loading.show();
+  limpiar();
   inventarioStore.actualizarModalFactura(valor);
+  inventarioStore.loadInformacionInventarios();
   $q.loading.hide();
 };
 
-const onSubmit = async () => {
-  console.log("selected", selected.value);
-};
-
-const buscarPaquete = () => {
+const buscarPaquete = async () => {
   general.value = false;
   extencion_A.value = false;
   extencion_B.value = false;
   extencion_C.value = false;
   if (paquete_Id.value != null) {
-    const result = listFiltroInventario.value.filter(
+    const result = listSinFactura.value.filter(
       (x) => x.paquete_Id == paquete_Id.value
     );
     listFiltroInventarioFactura.value = result;
+    console.log("listSinFactura", listFiltroInventarioFactura.value);
     validarPaqute();
   }
 };
 
 const validarPaqute = () => {
+  factura.value.inventarios_Generales_Id = [];
+  factura.value.inventarios_Generales_A_Id = [];
+  factura.value.inventarios_Generales_B_Id = [];
+  factura.value.inventarios_Generales_C_Id = [];
   const elementosGeneral = listFiltroInventarioFactura.value.filter(
     (element) =>
       !element.clave.includes("A") &&
       !element.clave.includes("B") &&
       !element.clave.includes("C")
   );
+  elementosGeneral.forEach((element) => {
+    factura.value.inventarios_Generales_Id.push(element.id);
+  });
   if (elementosGeneral.length > 0) general.value = true;
+
+  //-----------------------------------------------------
+
   const elementos_a = listFiltroInventarioFactura.value.filter((element) =>
     element.clave.includes("A")
   );
+  elementos_a.forEach((element) => {
+    factura.value.inventarios_Generales_A_Id.push(element.id);
+  });
   if (elementos_a.length > 0) extencion_A.value = true;
+
+  //-----------------------------------------------------
+
   const elementos_b = listFiltroInventarioFactura.value.filter((element) =>
-    element.clave.includes("A")
+    element.clave.includes("B")
   );
+  elementos_b.forEach((element) => {
+    factura.value.inventarios_Generales_B_Id.push(element.id);
+  });
   if (elementos_b.length > 0) extencion_B.value = true;
+
+  //-----------------------------------------------------
+
   const elementos_c = listFiltroInventarioFactura.value.filter((element) =>
     element.clave.includes("C")
   );
+  elementos_c.forEach((element) => {
+    factura.value.inventarios_Generales_C_Id.push(element.id);
+  });
   if (elementos_c.length > 0) extencion_C.value = true;
+};
+
+const onSubmit = async () => {
+  let resp = null;
+  $q.loading.show();
+  factura.value.factura = facturaGeneral.value;
+  factura.value.uuid = uuid.value;
+  factura.value.costo_General = costo_General.value;
+  factura.value.fecha_Compra = fecha_Compra.value;
+  selected.value.forEach((element) => {
+    factura.value.inventarios_Generales_Id.push(element.id);
+  });
+  if (tipo.value != "individual") {
+    factura.value.costo_A = costo_A.value;
+    factura.value.costo_B = costo_B.value;
+    factura.value.costo_C = costo_C.value;
+  }
+
+  console.log("mando factura", factura.value);
+  resp = await inventarioStore.createAsignacionFactura(factura.value);
+
+  if (resp.success) {
+    $q.notify({
+      position: "top-right",
+      type: "positive",
+      message: resp.data,
+    });
+    actualizarModal(false);
+  } else {
+    $q.notify({
+      position: "top-right",
+      type: "negative",
+      message: resp.data,
+    });
+  }
+  $q.loading.hide();
 };
 </script>
 

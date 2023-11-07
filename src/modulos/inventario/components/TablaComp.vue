@@ -31,14 +31,6 @@
             style="width: 260px"
           >
           </q-select>
-          <q-select
-            v-model="estatusId"
-            :options="estatus"
-            label="Factura"
-            hint="Fcatura"
-            style="width: 260px"
-          >
-          </q-select>
         </template>
         <template v-slot:top-right>
           <q-input
