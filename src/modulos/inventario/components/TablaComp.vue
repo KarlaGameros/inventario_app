@@ -348,8 +348,8 @@ const filter = ref("");
 
 const editar = async (id) => {
   $q.loading.show();
-  await inventarioStore.loadInventario(id);
   inventarioStore.updateEditar(true);
+  await inventarioStore.loadInventario(id);
   inventarioStore.actualizarModal(true);
   $q.loading.hide();
 };

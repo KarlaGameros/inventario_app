@@ -74,7 +74,9 @@ export const useMarcaStore = defineStore("marcas", {
             value: marca.value,
           };
         });
-        this.listMarca = listMarca;
+        this.listMarca = listMarca.sort((a, b) =>
+          a.label.localeCompare(b.label)
+        );
       } catch (error) {
         return {
           success: false,

@@ -179,7 +179,6 @@ export const useInventarioStore = defineStore("inventario", {
       try {
         let resp = await api.get("/Inventarios");
         let { data } = resp.data;
-        console.log(data);
         let listInventario = data.map((inventario) => {
           return {
             id: inventario.id,
@@ -197,7 +196,7 @@ export const useInventarioStore = defineStore("inventario", {
             marca: inventario.marca,
             modelo_id: inventario.modelo_id,
             modelo: inventario.modelo,
-            color: inventario.color,
+            color: inventario.color == "null" ? "Sin color" : inventario.color,
             estatus: inventario.estatus,
             clave: inventario.clave,
             numero_Serie: inventario.numero_Serie,
@@ -366,7 +365,6 @@ export const useInventarioStore = defineStore("inventario", {
         let resp = await api.get(`/Inventarios/${id}`);
         if (resp.status == 200) {
           const { success, data } = resp.data;
-          console.log("data", data);
           if (success == true) {
             this.inventario.id = data.id;
             this.inventario.foto_1 = data.foto_1_URL;
@@ -391,8 +389,9 @@ export const useInventarioStore = defineStore("inventario", {
             this.inventario.importe = data.importe;
             this.inventario.uuid = data.uuiD_Factura;
             this.inventario.numero_factura = data.factura;
+            this.inventario.estatus = data.estatus;
+            this.inventario.fecha_compra = data.fecha_Compra;
           }
-          console.log("this", this.inventario);
         }
       } catch (error) {
         return {

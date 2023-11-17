@@ -1,4 +1,4 @@
-<template>
+<template v-if="modulo">
   <div class="row">
     <div class="col">
       <q-table
@@ -7,7 +7,6 @@
         :filter="filter"
         :pagination="pagination"
         row-key="id"
-        sort-method="asc"
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
       >
@@ -424,10 +423,6 @@ const GenerarVale = async (id) => {
 const GenerarValeBodega = async (fecha, id) => {
   let resp = null;
   let respAsignacion = null;
-  // var [fechaParte, horaParte] = fecha1.split(" ");
-  // var [mes, dia, año] = fechaParte.split("/");
-  // var [hora, minutos, segundos] = horaParte.split(":");
-  // var fecha = `${mes}-${dia}-${año} ${hora}:${minutos}:${segundos}`;
   $q.loading.show();
   resp = await asignacionStore.inventariosByFecha(fecha);
   respAsignacion = await asignacionStore.loadAsignacion(id);

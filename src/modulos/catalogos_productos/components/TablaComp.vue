@@ -1,4 +1,4 @@
-<template>
+<template v-if="modulo">
   <div class="row">
     <div class="col">
       <q-table

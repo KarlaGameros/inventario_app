@@ -106,6 +106,7 @@ const onSubmit = async () => {
     });
     modeloStore.modeloByMarca(marca_id.value);
     modeloStore.initModelo();
+    modeloStore.updateEditar(false);
   } else {
     $q.notify({
       position: "top-right",

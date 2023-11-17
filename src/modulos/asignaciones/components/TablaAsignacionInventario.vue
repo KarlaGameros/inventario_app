@@ -138,7 +138,9 @@ const eliminar = async (id) => {
         type: "positive",
         message: resp.data,
       });
-      asignacionStore.detalleAsignacion(asignacion.value.id);
+      if (isEditar.value == true) {
+        asignacionStore.detalleAsignacion(asignacion.value.id);
+      }
     } else {
       $q.loading.hide();
       $q.notify({

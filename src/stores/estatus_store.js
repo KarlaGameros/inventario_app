@@ -15,7 +15,8 @@ export const useEstatusStore = defineStore("estatus", {
   actions: {
     //-----------------------------------------------------------
     initEstatus() {
-      (this.estatu.id = null), (this.estatu.nombre = null);
+      this.estatu.id = null;
+      this.estatu.nombre = null;
     },
 
     //-----------------------------------------------------------
@@ -23,7 +24,6 @@ export const useEstatusStore = defineStore("estatus", {
       try {
         let resp = await api.get("/EstatusInventarios");
         let { data } = resp.data;
-
         let listEstatus = data.map((estatu) => {
           return {
             value: estatu.id,

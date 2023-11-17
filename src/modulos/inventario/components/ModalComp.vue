@@ -55,7 +55,6 @@
               label="Paquete"
             />
           </div>
-
           <div
             v-if="radio == 'paquete'"
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
@@ -90,7 +89,6 @@
             >
             </q-select>
           </div>
-
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 mb-5">
             <q-select
               v-model="bodegaId"
@@ -102,7 +100,6 @@
             >
             </q-select>
           </div>
-
           <div v-if="isEditar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
               disable
@@ -197,7 +194,11 @@
             </q-input>
           </div>
           <div
-            v-if="radio != 'individual'"
+            v-if="radio == 'individual' || isEditar"
+            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+          ></div>
+          <div
+            v-if="radio != 'individual' && !isEditar"
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
           >
             <q-input
@@ -210,12 +211,9 @@
             >
             </q-input>
           </div>
+
           <div
-            v-if="radio == 'individual'"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-          ></div>
-          <!-- <div
-            v-if="radio == 'individual' || radio == 'agranel' || isEditar"
+            v-if="radio != 'paquete'"
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
           >
             <q-input
@@ -229,11 +227,8 @@
                 <q-icon name="$" />
               </template>
             </q-input>
-          </div> -->
-          <!-- <div
-            v-if="radio == 'individual' || radio == 'agranel' || isEditar"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
-          >
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
             <q-input
               v-model.trim="inventario.numero_factura"
               label="Número de factura"
@@ -241,14 +236,12 @@
             >
             </q-input>
           </div>
-          <div
-            v-if="radio == 'individual' || radio == 'agranel' || isEditar"
-            class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
-          >
+          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
             <q-input v-model.trim="inventario.uuid" label="UUID" name="UUID">
             </q-input>
-          </div> -->
-          <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+          </div>
+
+          <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input v-model="date" label="Fecha de compra">
               <template v-slot:append>
                 <q-icon name="event" class="cursor-pointer">
@@ -271,7 +264,7 @@
                 </q-icon>
               </template>
             </q-input>
-          </div> -->
+          </div>
 
           <q-card
             v-if="radio != 'paquete'"
@@ -404,7 +397,7 @@
                     </q-select>
                   </div>
                 </div>
-                <div class="row">
+                <div class="row q-pb-md">
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
                     <q-input
                       v-model.trim="inventario.color"
@@ -413,7 +406,7 @@
                     >
                     </q-input>
                   </div>
-                  <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-input
                       type="number"
                       v-model.number="inventario.importe"
@@ -425,29 +418,7 @@
                         <q-icon name="$" />
                       </template>
                     </q-input>
-                  </div> -->
-                </div>
-                <div class="row">
-                  <!-- <div
-                    class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs q-pb-md"
-                  >
-                    <q-input
-                      v-model.trim="inventario.numero_factura"
-                      label="Número de factura"
-                      name="Número de factura"
-                      autogrow
-                    >
-                    </q-input>
                   </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
-                    <q-input
-                      v-model.trim="inventario.uuid"
-                      label="UUID"
-                      name="UUID"
-                      autogrow
-                    >
-                    </q-input>
-                  </div> -->
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
@@ -622,7 +593,7 @@
                     </q-select>
                   </div>
                 </div>
-                <div class="row">
+                <div class="row q-pb-md">
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
                     <q-input
                       v-model.trim="inventario.color_a"
@@ -631,7 +602,7 @@
                     >
                     </q-input>
                   </div>
-                  <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-input
                       type="number"
                       v-model.number="inventario.importe_a"
@@ -642,7 +613,7 @@
                         <q-icon name="$" />
                       </template>
                     </q-input>
-                  </div> -->
+                  </div>
                 </div>
 
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
@@ -797,7 +768,7 @@
                     </q-select>
                   </div>
                 </div>
-                <div class="row">
+                <div class="row q-pb-md">
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
                     <q-input
                       v-model.trim="inventario.color_b"
@@ -806,7 +777,7 @@
                     >
                     </q-input>
                   </div>
-                  <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-input
                       type="number"
                       v-model.number="inventario.importe_b"
@@ -817,7 +788,7 @@
                         <q-icon name="$" />
                       </template>
                     </q-input>
-                  </div> -->
+                  </div>
                 </div>
 
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
@@ -972,7 +943,7 @@
                     </q-select>
                   </div>
                 </div>
-                <div class="row">
+                <div class="row q-pb-md">
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
                     <q-input
                       v-model.trim="inventario.color_c"
@@ -981,7 +952,7 @@
                     >
                     </q-input>
                   </div>
-                  <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-input
                       type="number"
                       v-model.number="inventario.importe_c"
@@ -992,7 +963,7 @@
                         <q-icon name="$" />
                       </template>
                     </q-input>
-                  </div> -->
+                  </div>
                 </div>
 
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
@@ -1204,6 +1175,12 @@ onBeforeMount(() => {
 
 //-----------------------------------------------------------
 
+watch(modal, (val) => {
+  if (val == false) {
+    radio.value = "individual";
+  }
+});
+
 watch(marcaId, (val) => {
   if (val != null) {
     modeloStore.modeloByMarca(marcaId.value.value);
@@ -1248,6 +1225,7 @@ watch(inventario.value, (val) => {
     cargarBodega(val);
     cargarCatalogo(val);
     cargarMarca(val);
+    date.value = val.fecha_compra;
   }
 });
 
@@ -1257,11 +1235,6 @@ watch(cantidad, (val) => {
   }
 });
 
-watch(modal, (val) => {
-  if (val == true) {
-    radio.value = "individual";
-  }
-});
 //-----------------------------------------------------------
 
 const columns = [
@@ -1384,7 +1357,8 @@ const actualizarModal = (valor) => {
   cantidad.value = null;
   radio.value = null;
   isEditar.value = false;
-  inventarioStore.initInventario();
+  date.value = null;
+  //inventarioStore.initInventario();
 };
 
 const onSubmit = async () => {
@@ -1393,8 +1367,9 @@ const onSubmit = async () => {
   let editarInventarioFormData = new FormData();
 
   if (isEditar.value == true) {
+    //--------------------EDITAR--------------------------------------
     editarInventarioFormData.append("Catalago_Id", catalogoId.value.value);
-    editarInventarioFormData.append("Estatus_Id", 2);
+    editarInventarioFormData.append("Estatus_Id", 1);
     editarInventarioFormData.append("Bodega_Id", bodegaId.value.value);
     editarInventarioFormData.append("Marca_Id", marcaId.value.value);
     editarInventarioFormData.append("Modelo_Id", modeloId.value.value);
@@ -1415,20 +1390,21 @@ const onSubmit = async () => {
     editarInventarioFormData.append("Foto_2", foto2.value);
     editarInventarioFormData.append("Foto_3", foto3.value);
     editarInventarioFormData.append("Foto_4", foto4.value);
-    if (inventario.value.importe != null) {
+    if (inventario.value.importe != null)
       editarInventarioFormData.append("Importe", inventario.value.importe);
-    }
-    if (inventario.value.numero_factura != null) {
+    if (inventario.value.numero_factura != null)
       editarInventarioFormData.append(
         "Factura",
         inventario.value.numero_factura
       );
-    }
-    if (inventario.value.uuid != null) {
+    if (inventario.value.uuid != null)
       editarInventarioFormData.append("UUID_Factura", inventario.value.uuid);
+    if (date.value != null) {
+      editarInventarioFormData.append("Fecha_Compra", date.value);
     }
   } else {
-    if (radio.value != "paquete") {
+    //--------------------CREAR INDIVIDUAL--------------------------------------
+    if (radio.value == "individual") {
       inventarioFormData.append("Catalago_Id", catalogoId.value.value);
       inventarioFormData.append("Estatus_Id", 1);
       inventarioFormData.append("Bodega_Id", bodegaId.value.value);
@@ -1442,23 +1418,20 @@ const onSubmit = async () => {
       inventarioFormData.append("Foto_3", foto3.value);
       inventarioFormData.append("Foto_4", foto4.value);
       inventarioFormData.append("Cantidad", cantidad.value);
-      // if (
-      //   inventario.value.importe != null &&
-      //   inventario.value.numero_factura != null &&
-      //   inventario.value.uuid != null &&
-      //   inventario.value.fecha_compra != null
-      // ) {
-      //   inventarioFormData.append("Importe", inventario.value.importe);
-      //   inventarioFormData.append("Factura", inventario.value.numero_factura);
-      //   inventarioFormData.append("UUID_Factura", inventario.value.uuid);
-      //   inventarioFormData.append(
-      //     "UUID_Factura",
-      //     inventario.value.fecha_compra
-      //   );
-      // }
-    } else if (radio.value == "paquete") {
-      //-----------------------------------------------------------
-      //General
+      if (inventario.value.importe != null) {
+        inventarioFormData.append("Importe", inventario.value.importe);
+      }
+      if (inventario.value.numero_factura != null) {
+        inventarioFormData.append("Factura", inventario.value.numero_factura);
+      }
+      if (inventario.value.uuid != null) {
+        inventarioFormData.append("UUID_Factura", inventario.value.uuid);
+      }
+      if (date.value != null) {
+        inventarioFormData.append("Fecha_Compra", date.value);
+      }
+    } else if (radio.value != "individual") {
+      //--------------------CREAR AGRANEL O PAQUETE--------------------------------------
       inventarioPaqueteFormData.append("Catalago_Id", catalogoId.value.value);
       inventarioPaqueteFormData.append("Bodega_Id", bodegaId.value.value);
       inventarioPaqueteFormData.append("General.Marca_Id", marcaId.value.value);
@@ -1486,20 +1459,28 @@ const onSubmit = async () => {
       inventarioPaqueteFormData.append("General.Foto_2", foto2.value);
       inventarioPaqueteFormData.append("General.Foto_3", foto3.value);
       inventarioPaqueteFormData.append("General.Foto_4", foto4.value);
-      // inventarioPaqueteFormData.append(
-      //   "General.Factura",
-      //   inventario.value.numero_factura
-      // );
-      // inventarioPaqueteFormData.append(
-      //   "General.UUID_Factura",
-      //   inventario.value.uuid
-      // );
-      // inventarioPaqueteFormData.append(
-      //   "General.Importe",
-      //   inventario.value.importe
-      // );
-      //-----------------------------------------------------------
-      //Extencion A
+      if (inventario.value.importe != null) {
+        inventarioPaqueteFormData.append(
+          "General.Importe",
+          inventario.value.importe
+        );
+      }
+      if (inventario.value.numero_factura != null) {
+        inventarioPaqueteFormData.append(
+          "General.Factura",
+          inventario.value.numero_factura
+        );
+      }
+      if (inventario.value.uuid != null) {
+        inventarioPaqueteFormData.append(
+          "General.UUID_Factura",
+          inventario.value.uuid
+        );
+      }
+      if (date.value != null) {
+        inventarioPaqueteFormData.append("General.Fecha_Compra", date.value);
+      }
+      //--------------------EXTENSION A--------------------------------------
       if (marcaId_A.value) {
         inventarioPaqueteFormData.append(
           "Extension_A.Marca_Id",
@@ -1531,20 +1512,25 @@ const onSubmit = async () => {
         inventarioPaqueteFormData.append("Extension_A.Foto_2", foto2_a.value);
         inventarioPaqueteFormData.append("Extension_A.Foto_3", foto3_a.value);
         inventarioPaqueteFormData.append("Extension_A.Foto_1", foto4_a.value);
-        // inventarioPaqueteFormData.append(
-        //   "Extension_A.Factura",
-        //   inventario.value.numero_factura_a
-        // );
-        // inventarioPaqueteFormData.append(
-        //   "Extension_A.UUID_Factura",
-        //   inventario.value.uuid_a
-        // );
-        // inventarioPaqueteFormData.append(
-        //   "Extension_A.Importe",
-        //   inventario.value.importe_a
-        // );
-        //-----------------------------------------------------------
-        //Extencion B
+        if (inventario.value.importe_a) {
+          inventarioPaqueteFormData.append(
+            "Extension_A.Importe",
+            inventario.value.importe_a
+          );
+        }
+        if (inventario.value.numero_factura != null) {
+          inventarioPaqueteFormData.append(
+            "Extension_A.Factura",
+            inventario.value.numero_factura
+          );
+        }
+        if (inventario.value.uuid != null) {
+          inventarioPaqueteFormData.append(
+            "Extension_A.UUID_Factura",
+            inventario.value.uuid
+          );
+        }
+        //--------------------EXTENSION B--------------------------------------
         if (marcaId_B.value) {
           inventarioPaqueteFormData.append(
             "Extension_B.Marca_Id",
@@ -1576,22 +1562,26 @@ const onSubmit = async () => {
           inventarioPaqueteFormData.append("Extension_B.Foto_2", foto2_b.value);
           inventarioPaqueteFormData.append("Extension_B.Foto_3", foto3_b.value);
           inventarioPaqueteFormData.append("Extension_B.Foto_1", foto4_b.value);
-          // inventarioPaqueteFormData.append(
-          //   "Extension_B.Factura",
-          //   inventario.value.numero_factura_b
-          // );
-          // inventarioPaqueteFormData.append(
-          //   "Extension_B.UUID_Factura",
-          //   inventario.value.uuid_b
-          // );
-          // inventarioPaqueteFormData.append(
-          //   "Extension_B.Importe",
-          //   inventario.value.importe_b
-          // );
+          if (inventario.value.importe_b) {
+            inventarioPaqueteFormData.append(
+              "Extension_B.Importe",
+              inventario.value.importe_b
+            );
+          }
+          if (inventario.value.numero_factura != null) {
+            inventarioPaqueteFormData.append(
+              "Extension_B.Factura",
+              inventario.value.numero_factura
+            );
+          }
+          if (inventario.value.uuid != null) {
+            inventarioPaqueteFormData.append(
+              "Extension_B.UUID_Factura",
+              inventario.value.uuid
+            );
+          }
         }
-
-        //-----------------------------------------------------------
-        //Extencion C
+        //--------------------EXTENSION C--------------------------------------
         if (marcaId_C.value) {
           inventarioPaqueteFormData.append(
             "Extension_C.Marca_Id",
@@ -1623,18 +1613,24 @@ const onSubmit = async () => {
           inventarioPaqueteFormData.append("Extension_C.Foto_2", foto2_c.value);
           inventarioPaqueteFormData.append("Extension_C.Foto_3", foto3_c.value);
           inventarioPaqueteFormData.append("Extension_C.Foto_1", foto4_c.value);
-          // inventarioPaqueteFormData.append(
-          //   "Extension_C.Factura",
-          //   inventario.value.numero_factura_c
-          // );
-          // inventarioPaqueteFormData.append(
-          //   "Extension_C.UUID_Factura",
-          //   inventario.value.uuid_c
-          // );
-          // inventarioPaqueteFormData.append(
-          //   "Extension_C.Importe",
-          //   inventario.value.importe_c
-          // );
+          if (inventario.value.importe_c) {
+            inventarioPaqueteFormData.append(
+              "Extension_C.Importe",
+              inventario.value.importe_c
+            );
+          }
+          if (inventario.value.numero_factura != null) {
+            inventarioPaqueteFormData.append(
+              "Extension_C.Factura",
+              inventario.value.numero_factura
+            );
+          }
+          if (inventario.value.uuid != null) {
+            inventarioPaqueteFormData.append(
+              "Extension_C.UUID_Factura",
+              inventario.value.uuid
+            );
+          }
         }
       }
     }
@@ -1651,26 +1647,12 @@ const onSubmit = async () => {
     );
     //inventarioStore.initInventario();
   } else {
-    if (cantidad.value == null) {
+    if (cantidad.value == null && radio.value == "individual") {
       //individual
       resp = await inventarioStore.createInventario(inventarioFormData);
       inventarioStore.initInventario();
-    } else if (radio.value == "agranel") {
-      //agranel
-      for (let i = 0; i < cantidad.value; i++) {
-        try {
-          resp = await inventarioStore.createInventario(inventarioFormData);
-          if (!resp.success) error++;
-        } catch (error) {
-          error++;
-          console.log(error);
-        }
-      }
-    } else if (radio.value == "paquete") {
-      inventarioPaqueteFormData.forEach((ele) => {
-        console.log("e", ele);
-      });
-      //paquete
+    } else if (radio.value != "individual") {
+      //paquete y agranel
       try {
         resp = await inventarioStore.createInventarioPaquete(
           inventarioPaqueteFormData

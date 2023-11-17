@@ -174,12 +174,25 @@
               bordered
               :rows="listFiltroInventarioFactura"
               :columns="columns"
+              :filter="filter"
+              :pagination="pagination"
               row-key="id"
               selection="multiple"
               v-model:selected="selected"
             >
               <template v-slot:top-right>
-                <div class="text-subtitle2 q-pr-md">Filtrar por fechas</div>
+                <q-input
+                  borderless
+                  dense
+                  debounce="300"
+                  v-model="filter"
+                  placeholder="Buscar..."
+                >
+                  <template v-slot:append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+                <!-- <div class="text-subtitle2 q-pr-md">Filtrar por fechas</div>
                 <q-btn icon="event" round color="purple">
                   <q-popup-proxy
                     cover
@@ -204,7 +217,7 @@
                       </div>
                     </q-date>
                   </q-popup-proxy>
-                </q-btn>
+                </q-btn> -->
               </template>
             </q-table>
             <q-table
@@ -328,7 +341,6 @@ const filtrar = (listFiltroInventario, filtro) => {
     let cumple = true;
     if (filtro.date !== undefined) {
       if (filtro.date == "") {
-        console.log(item.fecha_Registro);
         cumple = cumple && item.fecha_Registro === item.fecha_Registro;
       } else {
         let from = filtro.date.from.split("/");
@@ -468,7 +480,6 @@ const buscarPaquete = async () => {
       (x) => x.paquete_Id == paquete_Id.value
     );
     listFiltroInventarioFactura.value = result;
-    console.log("listSinFactura", listFiltroInventarioFactura.value);
     validarPaqute();
   }
 };
@@ -536,7 +547,6 @@ const onSubmit = async () => {
     factura.value.costo_C = costo_C.value;
   }
 
-  console.log("mando factura", factura.value);
   resp = await inventarioStore.createAsignacionFactura(factura.value);
 
   if (resp.success) {
