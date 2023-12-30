@@ -19,7 +19,7 @@
       </q-card-section>
 
       <q-card-section>
-        <iframe :src="inventario.ruta_PDF" width="100%" height="500"></iframe>
+        <iframe :src="pdf" width="100%" height="500"></iframe>
         <div class="col-12 justify-end">
           <div class="text-right q-gutter-xs">
             <q-btn
@@ -37,15 +37,22 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
+import { ref, watch } from "vue";
 import { useInventarioStore } from "../../../stores/inventario_store";
 
 //-----------------------------------------------------------
 
 const inventarioStore = useInventarioStore();
-
 const { modalPDF, inventario } = storeToRefs(inventarioStore);
+const pdf = ref(null);
 
 //-----------------------------------------------------------
+
+watch(inventario.value, (val) => {
+  if (val != null) {
+    pdf.value = val.ruta_PDF;
+  }
+});
 
 const mostrarPDF = (valor) => {
   inventarioStore.actualizarModalPDF(valor);

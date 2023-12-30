@@ -27,7 +27,7 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              <div v-if="col.name === 'asignacion_Id'">
+              <div v-if="col.name === 'id'">
                 <q-btn
                   :disable="isShow == true"
                   flat
@@ -61,6 +61,7 @@ const asignacionStore = useAsignacionStore();
 const { listaAsignacionInventario, isEditar, isShow, asignacion } =
   storeToRefs(asignacionStore);
 let columnasVisibles = [];
+
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -69,10 +70,10 @@ onBeforeMount(() => {
 
 const columns = [
   {
-    name: "asignacion_Id",
+    name: "id",
     align: "center",
-    label: "Asignación",
-    field: "asignacion_Id",
+    label: "Acciones",
+    field: "id",
     sortable: true,
   },
   {
@@ -104,7 +105,7 @@ const cargarColumnas = async () => {
   if (isShow.value == true) {
     columnasVisibles = ["clave", "descripcion"];
   } else {
-    columnasVisibles = ["clave", "descripcion", "asignacion_Id"];
+    columnasVisibles = ["clave", "descripcion", "id"];
   }
 };
 //-----------------------------------------------------------

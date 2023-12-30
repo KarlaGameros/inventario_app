@@ -46,6 +46,7 @@ import { onBeforeMount, ref } from "vue";
 const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
 const { listInventarioByBodega, isShow } = storeToRefs(asignacionStore);
+
 //-----------------------------------------------------------
 
 const columns = [

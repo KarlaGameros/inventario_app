@@ -29,18 +29,20 @@
       <q-form @submit="registrar">
         <q-card-section>
           <div class="row q-col-gutter-xs">
-            <div v-if="isEditar" class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+            <div
+              v-if="isEditar || isShow"
+              class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+            >
               <q-input readonly v-model="asignacion.estatus" label="Estatus">
               </q-input>
             </div>
-
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-input
                 v-if="!isByBodega"
                 v-model="date"
                 label="Fecha de asignación"
               >
-                <template v-slot:append>
+                <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy
                       ref="qDateProxy"
@@ -60,6 +62,26 @@
                     </q-popup-proxy>
                   </q-icon>
                 </template>
+                <template v-slot:append>
+                  <q-icon name="access_time" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-time v-model="date" mask="YYYY-MM-DD HH:mm" format24h>
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Close"
+                            color="primary"
+                            flat
+                          />
+                        </div>
+                      </q-time>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
               </q-input>
               <q-input
                 v-else
@@ -69,7 +91,6 @@
               >
               </q-input>
             </div>
-
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
                 v-if="!isShow"
@@ -119,6 +140,7 @@
             </div>
             <div class="col-lg-5 col-md-5 col-sm-4 col-xs-12">
               <q-select
+                :loading="loading"
                 v-show="!isShow && !qr"
                 v-model="inventario_Id"
                 :options="opciones_Inventario"
@@ -129,18 +151,18 @@
               >
               </q-select>
               <q-input
-                :loading="loading_qr"
+                :loading="loading"
                 v-show="qr"
                 ref="codigo_QR_Ref"
                 label="Código QR"
                 v-model="codigo_QR"
                 @keydown.enter.prevent="buscarPorQr(codigo_QR)"
-                @keypress="loading_qr = true"
+                @keypress="loading = true"
                 hint="Leer código QR"
               >
               </q-input>
             </div>
-            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-12">
+            <div v-if="!isShow" class="col-lg-1 col-md-1 col-sm-2 col-xs-12">
               <q-btn @click="setInput" color="purple" icon="qr_code_scanner">
                 <q-tooltip>Buscar por código de barra</q-tooltip>
               </q-btn>
@@ -197,7 +219,7 @@ import { useQuasar } from "quasar";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useEstatusStore } from "src/stores/estatus_store";
 import { useInventarioStore } from "src/stores/inventario_store";
-import { onBeforeMount, ref, watch, watchEffect } from "vue";
+import { onBeforeMount, onMounted, ref, watch, watchEffect } from "vue";
 import { useAsignacionStore } from "../../../stores/asignacion_store";
 import { useEmpleadosStore } from "src/stores/empleados_store";
 import { useBodegaStore } from "src/stores/bodega_store";
@@ -228,8 +250,8 @@ const {
   isEditar,
   isShow,
   isByBodega,
+  detalleAsignaciones,
 } = storeToRefs(asignacionStore);
-const { empleado } = storeToRefs(empleadoStore);
 
 const estatus_Id = ref(null);
 const area_Id = ref(null);
@@ -240,7 +262,7 @@ const empleado_Id = ref(null);
 const catalogo_Id = ref(null);
 const opciones_Inventario = ref([...inventarios.value]);
 const habilitar_Button = ref(false);
-const loading_qr = ref(false);
+const loading = ref(false);
 const qr = ref(false);
 const codigo_QR = ref("");
 const codigo_QR_Ref = ref(null);
@@ -278,12 +300,13 @@ watch(
 );
 
 watch(asignacion.value, (val) => {
-  if (val.id != null) {
-    cargarEstatus(val);
-    cargarArea(val);
-    cargarPuestos(val);
-    date.value = val.fecha_Asignacion;
-    catalogo_Id.value = { value: 0, label: "Todos" };
+  if (isEditar.value == true || isShow.value == true) {
+    if (val.id != null) {
+      cargarEstatus(val);
+      cargarArea(val);
+      cargarPuestos(val);
+      catalogo_Id.value = { value: 0, label: "Todos" };
+    }
   }
 });
 
@@ -311,6 +334,12 @@ watch(empleado_Id, (val) => {
   if (val != null) {
     puesto.value = empleado_Id.value.puesto;
     puesto_Id.value = val.puesto_Id;
+  }
+});
+
+watch(modal, (val) => {
+  if (val == true) {
+    catalogo_Id.value = { value: 0, label: "Todos" };
   }
 });
 
@@ -387,6 +416,7 @@ const actualizarModal = (valor) => {
   catalogo_Id.value = { value: 0, label: "Todos" };
   asignacionStore.actualizarModal(valor);
   asignacionStore.initAsignacion();
+  asignacionStore.updateEditar(false);
   asignacionStore.updateIsBodega(false);
 };
 //-----------------------------------------------------------
@@ -399,7 +429,7 @@ const buscarPorQr = (q_r) => {
     if (inventario_filtrado != null) {
       inventario_Id.value = inventario_filtrado;
       codigo_QR.value = "";
-      loading_qr.value = false;
+      loading.value = false;
       agregarProducto();
       setTimeout(() => {
         codigo_QR_Ref.value.focus();
@@ -411,8 +441,13 @@ const buscarPorQr = (q_r) => {
 const filterInventario = (val, update) => {
   if (val === "") {
     update(() => {
-      opciones_Inventario.value = inventarios.value;
+      loading.value = true;
+      setTimeout(() => {
+        opciones_Inventario.value = inventarios.value;
+        loading.value = false;
+      }, 1000);
     });
+
     return;
   }
   update(() => {
@@ -466,10 +501,20 @@ const agregarProducto = async () => {
   if (respValidate == true) {
     if (listaAsignacionInventario.value.length == 0) {
       if (isEditar.value == true) {
-        await asignacionStore.createDetalleAsignacion(inventario_Id.value);
-        await asignacionStore.addInventario(inventario_Id.value);
+        detalleAsignaciones.value.inventario_Id = inventario_Id.value.value;
+        await asignacionStore.createDetalleAsignacion(
+          asignacion.value.id,
+          detalleAsignaciones.value
+        );
+        await asignacionStore.addInventario(
+          asignacion.value.id,
+          inventario_Id.value
+        );
       } else {
-        await asignacionStore.addInventario(inventario_Id.value);
+        await asignacionStore.addInventario(
+          asignacion.value.id,
+          inventario_Id.value
+        );
       }
       inventario_Id.value = null;
     } else {
@@ -478,10 +523,20 @@ const agregarProducto = async () => {
       );
       if (filtro == undefined) {
         if (isEditar.value == true) {
-          await asignacionStore.createDetalleAsignacion(inventario_Id.value);
-          await asignacionStore.addInventario(inventario_Id.value);
+          detalleAsignaciones.value.inventario_Id = inventario_Id.value.value;
+          await asignacionStore.createDetalleAsignacion(
+            asignacion.value.id,
+            detalleAsignaciones.value
+          );
+          await asignacionStore.addInventario(
+            asignacion.value.id,
+            inventario_Id.value
+          );
         } else {
-          await asignacionStore.addInventario(inventario_Id.value);
+          await asignacionStore.addInventario(
+            asignacion.value.id,
+            inventario_Id.value
+          );
         }
         inventario_Id.value = null;
       } else {
@@ -503,16 +558,10 @@ const agregarProducto = async () => {
 const registrar = async () => {
   let resp = null;
   $q.loading.show();
-
-  if (empleado_Id.value == undefined) {
-    asignacion.value.empleado_Id = asignacion.value.empleado_Id;
-    asignacion.value.puesto_Id = asignacion.value.puesto_Id;
-  } else {
-    asignacion.value.empleado_Id = empleado_Id.value.value;
-    asignacion.value.puesto_Id = puesto_Id.value;
-  }
-
-  asignacion.value.area_Id = area_Id.value.value;
+  asignacion.value.empleado_Id = empleado_Id.value.value;
+  asignacion.value.puesto_Id = puesto_Id.value;
+  asignacion.value.detalle = listaAsignacionInventario.value;
+  asignacion.value.area_Id = parseInt(area_Id.value.value);
   asignacion.value.eliminado = false;
   asignacion.value.fecha_Asignacion = date.value;
   asignacion.value.tipo = "Personal";
@@ -520,7 +569,6 @@ const registrar = async () => {
   if (isEditar.value == true) {
     resp = await asignacionStore.updateAsignacion(asignacion.value);
   } else {
-    asignacion.value.detalle = listaAsignacionInventario.value;
     resp = await asignacionStore.createAsignacion(asignacion.value);
   }
   if (resp.success) {

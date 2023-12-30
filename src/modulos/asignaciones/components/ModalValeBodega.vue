@@ -104,6 +104,7 @@ const onSubmit = async () => {
   let resp = null;
   let respByBodega = null;
   let respVale = null;
+  let fecha = null;
   $q.loading.show();
   if (bodega_Id.value != null) {
     asignacion.value.empleado_Id = empleado.value.id;
@@ -115,14 +116,16 @@ const onSubmit = async () => {
     asignacion.value.puesto = empleado.value.puesto;
     asignacion.value.tipo = "Bodega";
     resp = await asignacionStore.createAsignacion(asignacion.value);
+
+    fecha = resp.fecha.replace(" ", " ");
     respByBodega = await asignacionStore.valeByBodega(
       bodega_Id.value.value,
-      resp.fecha
+      fecha
     );
     asignacionStore.loadAsignacion(resp.id);
   }
   if (resp.success === true) {
-    respVale = await asignacionStore.inventariosByFecha(resp.fecha);
+    respVale = await asignacionStore.inventariosByFecha(fecha);
     if (respVale.success === true) {
       asignacionStore.actualizarModalValeBodega(false);
       asignacionStore.loadInformacionAsignaciones();

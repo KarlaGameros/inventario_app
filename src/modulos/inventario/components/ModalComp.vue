@@ -1221,7 +1221,7 @@ watch(radio, (val) => {
 });
 
 watch(inventario.value, (val) => {
-  if (val.id != null) {
+  if (val != null) {
     cargarBodega(val);
     cargarCatalogo(val);
     cargarMarca(val);
@@ -1333,8 +1333,10 @@ const cargarMarca = async (val) => {
       (x) => x.value == `${val.marca_id}`
     );
     marcaId.value = marcaFiltrado;
-    await modeloStore.modeloByMarca(marcaId.value.value);
-    cargarModelo(val);
+    if (marcaFiltrado != undefined) {
+      await modeloStore.modeloByMarca(marcaId.value.value);
+      cargarModelo(val);
+    }
   }
 };
 
@@ -1358,7 +1360,7 @@ const actualizarModal = (valor) => {
   radio.value = null;
   isEditar.value = false;
   date.value = null;
-  //inventarioStore.initInventario();
+  inventarioStore.initInventario();
 };
 
 const onSubmit = async () => {

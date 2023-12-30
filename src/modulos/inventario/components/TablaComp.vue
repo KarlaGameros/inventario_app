@@ -365,13 +365,15 @@ const loadFotos = (id, valor) => {
 
 const mostrarPDF = async (valor, id) => {
   $q.loading.show();
-  await inventarioStore.loadInventario(id);
-  if (inventario.value.ruta_PDF != null) {
-    inventarioStore.actualizarModalPDF(valor);
-  } else if (inventario.value.ruta_PDF == null) {
-    await inventarioStore.generarPDF(id);
-    inventarioStore.actualizarModalPDF(valor);
-  }
+  // await inventarioStore.loadInventario(id);
+  // if (inventario.value.ruta_PDF != null) {
+  //   inventarioStore.actualizarModalPDF(valor);
+  // } else if (inventario.value.ruta_PDF == null) {
+  //   await inventarioStore.generarPDF(id);
+  //   inventarioStore.actualizarModalPDF(valor);
+  // }
+  await inventarioStore.generarPDF(id);
+  inventarioStore.actualizarModalPDF(valor);
   $q.loading.hide();
 };
 

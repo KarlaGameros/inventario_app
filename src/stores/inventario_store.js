@@ -201,7 +201,7 @@ export const useInventarioStore = defineStore("inventario", {
             clave: inventario.clave,
             numero_Serie: inventario.numero_Serie,
             empleado: inventario.empleado,
-            ruta_PDF: inventario.PDf_url,
+            ruta_PDF: inventario.pdF_URL,
             fecha_Registro: inventario.fecha_Registro,
             fecha_compra: inventario.fecha_Compra,
             factura: inventario.factura,
@@ -246,7 +246,7 @@ export const useInventarioStore = defineStore("inventario", {
             clave: inventario.clave,
             numero_Serie: inventario.numero_Serie,
             empleado: inventario.empleado,
-            ruta_PDF: inventario.PDf_url,
+            ruta_PDF: inventario.pdF_URL,
             fecha_Registro: inventario.fecha_Registro,
             fecha_compra: inventario.fecha_Compra,
             factura: inventario.factura,
@@ -391,6 +391,7 @@ export const useInventarioStore = defineStore("inventario", {
             this.inventario.numero_factura = data.factura;
             this.inventario.estatus = data.estatus;
             this.inventario.fecha_compra = data.fecha_Compra;
+            return { success };
           }
         }
       } catch (error) {
@@ -431,6 +432,7 @@ export const useInventarioStore = defineStore("inventario", {
         };
       }
     },
+
     //-----------------------------------------------------------
 
     async updateInventario(inventario, editarInventarioFormData) {

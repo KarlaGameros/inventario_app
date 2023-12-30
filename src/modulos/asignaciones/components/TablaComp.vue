@@ -159,19 +159,29 @@ import { useQuasar } from "quasar";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useAsignacionStore } from "src/stores/asignacion_store";
 import { onBeforeMount, ref, watch, watchEffect } from "vue";
+import { useInventarioStore } from "src/stores/inventario_store";
 import ValeResguardo from "../../../helpers/ValeResguardo";
 import ValeByBodega from "../../../helpers/ValeByBodega";
+
 //-----------------------------------------------------------
 
 const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
+const inventarioStore = useInventarioStore();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
-const { asignaciones, areas, listEmpleados, listFiltroAsignaciones } =
-  storeToRefs(asignacionStore);
+const {
+  asignaciones,
+  areas,
+  listEmpleados,
+  listFiltroAsignaciones,
+  listaAsignacionInventario,
+} = storeToRefs(asignacionStore);
+const { inventarios } = storeToRefs(inventarioStore);
 const areaId = ref(null);
 const empleado_Id = ref(null);
 const hidden = ref(false);
+const inventariosEliminar = ref([]);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -301,42 +311,85 @@ const filter = ref("");
 
 //-----------------------------------------------------------
 
-const afectar = async (id) => {
-  $q.dialog({
-    title: "Afectar asignación",
-    message: "Al aceptar, se ejecutaran los movimientos realizados",
-    icon: "Warning",
-    persistent: true,
-    transitionShow: "scale",
-    transitionHide: "scale",
-    ok: {
-      color: "positive",
-      label: "Si, Aceptar",
-    },
-    cancel: {
-      color: "negative",
-      label: "No cancelar",
-    },
-  }).onOk(async () => {
-    $q.loading.show();
-    const resp = await asignacionStore.afectarAsignacion(id);
-    if (resp.success) {
-      $q.loading.hide();
-      $q.notify({
-        position: "top-right",
-        type: "positive",
-        message: resp.data,
-      });
-      asignacionStore.loadInformacionAsignaciones();
-    } else {
-      $q.loading.hide();
-      $q.notify({
-        position: "top-right",
-        type: "negative",
-        message: resp.data,
-      });
+const validarInventario = async (id) => {
+  inventariosEliminar.value = [];
+  await asignacionStore.detalleAsignacion(id);
+  await inventarioStore.loadListInventario(0);
+  for (let index = 0; index < listaAsignacionInventario.value.length; index++) {
+    const elementInventario = listaAsignacionInventario.value[index];
+    const found = inventarios.value.find(
+      (element) => element.value == elementInventario.inventario_Id
+    );
+    if (found == undefined) {
+      inventariosEliminar.value.push(elementInventario.id);
     }
-  });
+  }
+  if (inventariosEliminar.value.length != 0) {
+    $q.dialog({
+      title: "Uno o más productos ya fueron asignados a otro personal",
+      message: "¿Desea eliminar el producto de esta lista?",
+      icon: "Warning",
+      persistent: true,
+      transitionShow: "scale",
+      transitionHide: "scale",
+      ok: {
+        color: "positive",
+        label: "Si, Aceptar",
+      },
+      cancel: {
+        color: "negative",
+        label: "No cancelar",
+      },
+    }).onOk(async () => {
+      inventariosEliminar.value.forEach(async (element) => {
+        let resp = await asignacionStore.deleteDetalle(element, id);
+      });
+    });
+  } else {
+    return true;
+  }
+};
+
+const afectar = async (id) => {
+  const resp = await validarInventario(id);
+  if (resp == true) {
+    $q.dialog({
+      title: "Afectar asignación",
+      message: "Al aceptar, se ejecutaran los movimientos realizados",
+      icon: "Warning",
+      persistent: true,
+      transitionShow: "scale",
+      transitionHide: "scale",
+      ok: {
+        color: "positive",
+        label: "Si, Aceptar",
+      },
+      cancel: {
+        color: "negative",
+        label: "No cancelar",
+      },
+    }).onOk(async () => {
+      $q.loading.show();
+      const resp = await asignacionStore.afectarAsignacion(id);
+      if (resp.success) {
+        $q.loading.hide();
+        $q.notify({
+          position: "top-right",
+          type: "positive",
+          message: resp.data,
+        });
+        asignacionStore.loadInformacionAsignaciones();
+        asignacionStore.initAsignacion();
+      } else {
+        $q.loading.hide();
+        $q.notify({
+          position: "top-right",
+          type: "negative",
+          message: resp.data,
+        });
+      }
+    });
+  }
 };
 
 const cancelar = async (id) => {
@@ -366,6 +419,7 @@ const cancelar = async (id) => {
         message: resp.data,
       });
       asignacionStore.loadInformacionAsignaciones();
+      asignacionStore.initAsignacion();
     } else {
       $q.loading.hide();
       $q.notify({
@@ -378,22 +432,22 @@ const cancelar = async (id) => {
 };
 const visualizar = async (id) => {
   $q.loading.show();
-  await asignacionStore.loadAsignacion(id);
-  await asignacionStore.detalleAsignacion(id);
   asignacionStore.updateVisualizar(true);
   asignacionStore.actualizarModal(true);
   asignacionStore.updateIsBodega(false);
+  await asignacionStore.loadAsignacion(id);
+  await asignacionStore.detalleAsignacion(id);
   $q.loading.hide();
 };
 
 const visualizarByBodega = async (fechaAsignacion, id) => {
   $q.loading.show();
   var [fechaParte, horaParte] = fechaAsignacion.split(" ");
-  var [mes, dia, año] = fechaParte.split("/");
+  var [dia, mes, año] = fechaParte.split("-");
   var [hora, minutos, segundos] = horaParte.split(":");
-  var fecha = `${mes}-${dia}-${año} ${hora}:${minutos}:${segundos}`;
+  var fecha = `${año}-${mes}-${dia} ${hora}:${minutos}:${segundos}`;
   await asignacionStore.loadAsignacion(id);
-  await asignacionStore.inventariosByFecha(fechaAsignacion);
+  await asignacionStore.inventariosByFecha(fecha);
   asignacionStore.updateVisualizar(true);
   asignacionStore.actualizarModal(true);
   asignacionStore.updateIsBodega(true);
@@ -402,20 +456,27 @@ const visualizarByBodega = async (fechaAsignacion, id) => {
 
 const editar = async (id) => {
   $q.loading.show();
-  await asignacionStore.loadAsignacion(id);
-  await asignacionStore.detalleAsignacion(id);
+
   asignacionStore.updateEditar(true);
   asignacionStore.updateVisualizar(false);
   asignacionStore.actualizarModal(true);
+  asignacionStore.updateIsBodega(false);
+  await asignacionStore.loadAsignacion(id);
+  await asignacionStore.detalleAsignacion(id);
   $q.loading.hide();
 };
 
 const GenerarVale = async (id) => {
   let resp = null;
+  let respDetalle = null;
   $q.loading.show();
   resp = await asignacionStore.loadAsignacion(id);
+  respDetalle = await asignacionStore.detalleAsignacion(id);
   if (resp.success === true) {
-    ValeResguardo();
+    let respVale = await ValeResguardo();
+    if (respVale.success == true) {
+      asignacionStore.initAsignacion();
+    }
   }
   $q.loading.hide();
 };
@@ -429,6 +490,7 @@ const GenerarValeBodega = async (fecha, id) => {
   if (resp.success === true && respAsignacion.success === true) {
     ValeByBodega();
   }
+  asignacionStore.initAsignacion();
   $q.loading.hide();
 };
 </script>

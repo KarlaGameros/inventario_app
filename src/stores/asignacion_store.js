@@ -32,7 +32,6 @@ export const useAsignacionStore = defineStore("asignacion", {
       eliminado: null,
       fecha_Asignacion: null,
       folio: null,
-      asignacion_Id: null,
       tipo: null,
       detalle: [],
     },
@@ -68,12 +67,15 @@ export const useAsignacionStore = defineStore("asignacion", {
     initAsignacion() {
       this.asignacion.id = null;
       this.asignacion.area_Id = null;
+      this.asignacion.area = null;
       this.asignacion.empleado_Id = null;
+      this.asignacion.empleado = null;
       this.asignacion.puesto_Id = null;
-      this.asignacion.estatus_Id = null;
+      this.asignacion.puesto = null;
+      this.asignacion.estatus = null;
       this.asignacion.fecha_Asignacion = null;
       this.asignacion.fecha_Registro = null;
-      this.isEditar = false;
+      this.asignacion.folio = null;
       this.tipo = null;
       this.listaAsignacionInventario = [];
     },
@@ -185,15 +187,18 @@ export const useAsignacionStore = defineStore("asignacion", {
 
     //-----------------------------------------------------------
 
-    async addInventario(id) {
+    async addInventario(id, inventario) {
       try {
         this.listaAsignacionInventario.push({
-          asignacion_Id: this.asignacion.id,
-          inventario_Id: id.value,
-          nombre_producto: id.label,
-          descripcion: id.descripcion,
-          clave: id.clave,
+          asignacion_Id: id,
+          inventario_Id: inventario.value,
+          nombre_producto: inventario.label,
+          descripcion: inventario.descripcion,
+          clave: inventario.clave,
         });
+        this.listaAsignacionInventario.sort((a, b) =>
+          a.clave.localeCompare(b.clave)
+        );
       } catch (error) {
         return {
           success: false,
@@ -334,6 +339,7 @@ export const useAsignacionStore = defineStore("asignacion", {
             this.asignacion.folio = data.folio;
             this.asignacion.puesto = data.puesto;
             this.asignacion.puesto_Id = data.puesto_Id;
+            this.asignacion.tipo = data.tipo;
             return { success };
           }
         }
@@ -349,42 +355,26 @@ export const useAsignacionStore = defineStore("asignacion", {
 
     async detalleAsignacion(id) {
       try {
-        if (id == null) {
-          let resp = await api.get(
-            `/DetalleAsignaciones/BySolicitud/${this.asignacion.id}`
-          );
-          let { data } = resp.data;
-          this.listaAsignacionInventario = data.map((asignacion) => {
-            return {
-              asignacion_Id: asignacion.id,
-              clave: asignacion.inventario,
-              descripcion: asignacion.descripcion,
-              inventario_Id: asignacion.inventario_Id,
-            };
-          });
-        } else {
-          let id1 = null;
-          let resp = await api.get(`/DetalleAsignaciones/BySolicitud/${id}`);
-          let { data } = resp.data;
-
-          data.forEach(async (element) => {
-            id1 = element.id;
-            let resp = await api.get(`/Inventarios/${element.inventario_Id}`);
-            let { data } = resp.data;
-            if (data.estatus == "Asignado" && this.isEditar == true) {
-              this.deleteDetalle(id1, id);
-            }
-          });
-
-          this.listaAsignacionInventario = data.map((asignacion) => {
-            return {
-              asignacion_Id: asignacion.id,
-              clave: asignacion.inventario,
-              descripcion: asignacion.descripcion,
-              inventario_Id: asignacion.inventario_Id,
-            };
-          });
-        }
+        let resp = await api.get(`/DetalleAsignaciones/BySolicitud/${id}`);
+        let { data } = resp.data;
+        this.listaAsignacionInventario = data.map((asignacion) => {
+          return {
+            id: asignacion.id,
+            asignacion_Id: asignacion.asignacion_Id,
+            clave: asignacion.inventario,
+            descripcion: asignacion.descripcion,
+            inventario_Id: asignacion.inventario_Id,
+            inventario: asignacion.inventario,
+            numero_Serie: asignacion.numero_Serie,
+            marca: asignacion.marca,
+            modelo: asignacion.modelo,
+            color: asignacion.color,
+            importe: asignacion.importe,
+          };
+        });
+        this.listaAsignacionInventario.sort((a, b) =>
+          a.clave.localeCompare(b.clave)
+        );
       } catch (error) {
         return {
           success: false,
@@ -405,7 +395,8 @@ export const useAsignacionStore = defineStore("asignacion", {
             let { data } = resp.data;
             this.listaAsignacionInventario = data.map((asignacion) => {
               return {
-                asignacion_Id: asignacion.id,
+                id: asignacion.id,
+                asignacion_Id: asignacion.asignacion_Id,
                 clave: asignacion.inventario,
                 descripcion: asignacion.descripcion,
                 inventario_Id: asignacion.inventario_Id,
@@ -459,13 +450,9 @@ export const useAsignacionStore = defineStore("asignacion", {
 
     //-----------------------------------------------------------
 
-    async createDetalleAsignacion(detalle) {
-      this.detalleAsignaciones.inventario_Id = detalle.value;
+    async createDetalleAsignacion(id, detalle) {
       try {
-        let resp = await api.post(
-          `/DetalleAsignaciones/${this.asignacion.id}`,
-          this.detalleAsignaciones
-        );
+        const resp = await api.post(`/DetalleAsignaciones/${id}`, detalle);
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success === true) {
