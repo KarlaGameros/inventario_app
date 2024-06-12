@@ -29,11 +29,11 @@
           <q-avatar
             color="purple-ieen"
             text-color="white"
-            icon="print"
             class="q-ma-sm"
-            @click="generar()"
+            @click="generarExcel()"
           >
-            <q-tooltip>Imprimir listado de inventario</q-tooltip>
+            <i class="fa-solid fa-file-excel"></i>
+            <q-tooltip>Generar excel</q-tooltip>
           </q-avatar>
 
           <q-avatar
@@ -44,6 +44,16 @@
             @click="generarQR()"
           >
             <q-tooltip>Generar QR nuevos</q-tooltip>
+          </q-avatar>
+
+          <q-avatar
+            color="purple-ieen"
+            text-color="white"
+            icon="print"
+            class="q-ma-sm"
+            @click="generar()"
+          >
+            <q-tooltip>Imprimir listado de inventario</q-tooltip>
           </q-avatar>
 
           <q-avatar
@@ -78,16 +88,21 @@ import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 import ModalFactura from "../components/ModalFactura.vue";
 
+//-----------------------------------------------------------
+
 const $q = useQuasar();
 const authStore = useAuthStore();
 const inventarioStore = useInventarioStore();
 const { modulo, inventario } = storeToRefs(authStore);
 const siglas = "SI-CAT-INV";
-const botonQR = ref(true);
+
+//-----------------------------------------------------------
 
 onBeforeMount(() => {
   leerPermisos();
 });
+
+//-----------------------------------------------------------
 
 const leerPermisos = async () => {
   $q.loading.show();
@@ -133,6 +148,17 @@ const generarQR = async () => {
   $q.loading.hide();
 };
 
+const generarExcel = async () => {
+  $q.loading.show();
+  await inventarioStore.downloadExcelInventario();
+  const link = document.createElement("a");
+  link.href = inventarioStore.excelIventario;
+  link.setAttribute("download", "ListadoInventario.xlsx");
+  document.body.appendChild(link);
+  link.click();
+  $q.loading.hide();
+};
+
 const asignarFactura = async (valor) => {
   $q.loading.show();
   inventarioStore.loadSinFactura();
@@ -140,5 +166,3 @@ const asignarFactura = async (valor) => {
   $q.loading.hide();
 };
 </script>
-
-<style></style>

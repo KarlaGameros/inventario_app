@@ -14,7 +14,7 @@ const ValePrestamo = async () => {
     doc.setFontSize(10);
     doc.setFont("helvetica", "bold");
     doc.text(
-      "INSTITULO ESTATAL ELECTORAL DEL ESTADO DE NAYARIT \n \n VALE DE PRESTAMO",
+      "INSTITUTO ESTATAL ELECTORAL DEL ESTADO DE NAYARIT \n \n VALE DE PRESTAMO",
       110,
       15,
       null,

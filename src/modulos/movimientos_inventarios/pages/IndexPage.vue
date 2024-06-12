@@ -30,7 +30,8 @@
     </div>
     <TablaComp />
     <ModalComp />
-    <ModalProveedores />
+    <ModalFotos />
+    <ModalVerInventario />
   </q-page>
 </template>
 
@@ -42,7 +43,9 @@ import { useMovimientoInventario } from "src/stores/movimiento_inventario";
 import { onBeforeMount } from "vue";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
-import ModalProveedores from "../../proveedores/components/ModalComp.vue";
+import ModalVerInventario from "src/modulos/entrega_recepcion/components/ModalVerInventario.vue";
+import ModalFotos from "../components/ModalFotos.vue";
+
 //-----------------------------------------------------------
 
 const authStore = useAuthStore();

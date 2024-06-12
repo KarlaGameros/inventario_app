@@ -82,7 +82,7 @@ const area_Id = ref(null);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
-  bodegaStore.loadAreasList();
+  cargarData();
 });
 
 //-----------------------------------------------------------
@@ -94,6 +94,12 @@ watch(bodega.value, (val) => {
 });
 
 //-----------------------------------------------------------
+
+const cargarData = async () => {
+  $q.loading.show();
+  await bodegaStore.loadAreasList();
+  $q.loading.hide();
+};
 
 const actualizarModal = (valor) => {
   bodegaStore.actualizarModal(valor);

@@ -102,7 +102,6 @@ const onSubmit = async () => {
   } else {
     resp = await catalagoStore.createCatalogo(catalogo.value);
   }
-
   if (resp.success) {
     $q.notify({
       position: "top-right",

@@ -68,13 +68,13 @@ import { useBodegaStore } from "../../../stores/bodega_store";
 const $q = useQuasar();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
-const bodegaStore = useBodegaStore();
 const { bodegas } = storeToRefs(bodegaStore);
+const bodegaStore = useBodegaStore();
 
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
-  bodegaStore.loadInformacionBodega();
+  cargarData();
 });
 
 //-----------------------------------------------------------
@@ -113,6 +113,12 @@ const pagination = ref({
 const filter = ref("");
 
 //-----------------------------------------------------------
+
+const cargarData = async () => {
+  $q.loading.show();
+  await bodegaStore.loadInformacionBodega();
+  $q.loading.hide();
+};
 
 const editar = async (id) => {
   $q.loading.show();

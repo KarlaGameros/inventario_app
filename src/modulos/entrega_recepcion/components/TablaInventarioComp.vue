@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="entrega"
+        :rows="list_Inventario"
         :columns="columns"
         :filter="filter"
         :pagination="pagination"
@@ -47,16 +47,7 @@
               </div>
               <div v-if="col.name === 'asignar_a'">
                 <q-select
-                  v-if="props.row.asignar == 'bodega'"
-                  label="Bodega"
-                  :options="listEmpleados"
-                  hint="Selecciona una bodega"
-                  :lazy-rules="true"
-                  :rules="[(val) => !!val || 'La bodega es requerida']"
-                >
-                </q-select>
-                <q-select
-                  v-else
+                  v-if="props.row.asignar == 'personal'"
                   label="Personal"
                   :options="listEmpleados"
                   hint="Selecciona personal"
@@ -75,7 +66,6 @@
                 >
                   <q-tooltip>Ver inventario</q-tooltip>
                 </q-btn>
-                <TablaVerInventario />
                 <q-btn
                   flat
                   round
@@ -158,25 +148,13 @@
 import { storeToRefs } from "pinia";
 import { useEntregaRecepcionStore } from "src/stores/entrega-recepcion-store";
 import { ref, watch } from "vue";
-import TablaVerInventario from "../components/ModalVerInventario.vue";
 
 //-----------------------------------------------------------
 const entregaRecepcionStore = useEntregaRecepcionStore();
-const { modalVerInventario } = storeToRefs(entregaRecepcionStore);
+const { modalVerInventario, list_Inventario } = storeToRefs(
+  entregaRecepcionStore
+);
 
-const entrega = [
-  {
-    descripcion: "Producto1",
-    inventario_Id: 1,
-    asignar: "bodega",
-  },
-  {
-    descripcion: "Producto2",
-    inventario_Id: 2,
-    asignar: "personal",
-  },
-];
-const asignar = ref("bodega");
 const columns = [
   {
     name: "descripcion",

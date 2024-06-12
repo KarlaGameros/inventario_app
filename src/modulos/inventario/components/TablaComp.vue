@@ -1,113 +1,120 @@
 <template>
-  <div class="row">
-    <div v-if="isLoading" color="purple" label="Show Loading"></div>
-    <div v-else class="col">
-      <q-table
-        :visible-columns="visible_columns"
-        :rows="listFiltroInventario"
-        :columns="columns"
-        :filter="filter"
-        :pagination="pagination"
-        row-key="id"
-        rows-per-page-label="Filas por pagina"
-        no-data-label="No hay registros"
-      >
-        <template v-slot:top-left>
-          <q-select
-            class="q-pr-xs"
-            v-model="catalogoId"
-            :options="listCatalogosTodos"
-            label="Selecciona un catalogo"
-            hint="Seleccione un estatus de inventarios a mostrar"
-            style="width: 260px"
-          >
-          </q-select>
-          <q-select
-            class="q-pr-xs"
-            v-model="estatusId"
-            :options="estatus"
-            label="Selecciona un estatus"
-            hint="Seleccione un catalogo de inventarios a mostrar"
-            style="width: 260px"
-          >
-          </q-select>
-        </template>
-        <template v-slot:top-right>
-          <q-input
-            borderless
-            dense
-            debounce="300"
-            v-model="filter"
-            placeholder="Buscar..."
-          >
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </template>
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              <div v-if="col.name === 'id'">
-                <q-btn
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="image"
-                  @click="loadFotos(col.value, true)"
-                >
-                </q-btn>
-                <q-btn
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="qr_code_scanner"
-                  @click="mostrarPDF(true, col.value)"
-                >
-                  <q-tooltip>Generar PDF</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="modulo.actualizar"
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="edit"
-                  @click="editar(col.value)"
-                >
-                  <q-tooltip>Editar inventario</q-tooltip>
-                </q-btn>
-
-                <q-btn
-                  v-if="modulo.eliminar"
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="delete"
-                  @click="eliminar(col.value)"
-                >
-                  <q-tooltip>Eliminar inventario</q-tooltip>
-                </q-btn>
-              </div>
-              <div v-else-if="col.name == 'descripcion'">
-                <label>{{ col.value }}</label>
-                <q-tooltip
-                  :offset="[10, 10]"
-                  v-if="
-                    col.value.length != props.row['descripcion_completo'].length
-                  "
-                >
-                  {{ props.row["descripcion_completo"] }}
-                </q-tooltip>
-              </div>
-              <label v-else>{{ col.value }}</label>
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table>
-      <ModalFotos />
-      <ModalPDF />
+  <template v-if="isLoading">
+    <div class="q-pa-md">
+      <div class="absolute-center">
+        <q-spinner color="grey" size="10.5em" />
+      </div>
     </div>
-  </div>
+  </template>
+  <template v-else>
+    <div class="row">
+      <div class="col">
+        <q-table
+          :rows="listFiltroInventario"
+          :columns="columns"
+          :filter="filter"
+          :pagination="pagination"
+          row-key="id"
+          rows-per-page-label="Filas por pagina"
+          no-data-label="No hay registros"
+        >
+          <template v-slot:top-left>
+            <q-select
+              class="q-pr-xs"
+              v-model="catalogoId"
+              :options="listCatalogosTodos"
+              label="Selecciona un catalogo"
+              hint="Seleccione un estatus de inventarios a mostrar"
+              style="width: 260px"
+            >
+            </q-select>
+            <q-select
+              class="q-pr-xs"
+              v-model="estatusId"
+              :options="estatus"
+              label="Selecciona un estatus"
+              hint="Seleccione un catalogo de inventarios a mostrar"
+              style="width: 260px"
+            >
+            </q-select>
+          </template>
+          <template v-slot:top-right>
+            <q-input
+              borderless
+              dense
+              debounce="300"
+              v-model="filter"
+              placeholder="Buscar..."
+            >
+              <template v-slot:append>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </template>
+          <template v-slot:body="props">
+            <q-tr :props="props">
+              <q-td v-for="col in props.cols" :key="col.name" :props="props">
+                <div v-if="col.name === 'id'">
+                  <q-btn
+                    flat
+                    round
+                    color="purple-ieen"
+                    icon="image"
+                    @click="loadFotos(col.value, true)"
+                  >
+                  </q-btn>
+                  <q-btn
+                    flat
+                    round
+                    color="purple-ieen"
+                    icon="qr_code_scanner"
+                    @click="mostrarPDF(true, col.value)"
+                  >
+                    <q-tooltip>Generar PDF</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    v-if="modulo.actualizar"
+                    flat
+                    round
+                    color="purple-ieen"
+                    icon="edit"
+                    @click="editar(col.value)"
+                  >
+                    <q-tooltip>Editar inventario</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    v-if="modulo.eliminar"
+                    flat
+                    round
+                    color="purple-ieen"
+                    icon="delete"
+                    @click="eliminar(col.value)"
+                  >
+                    <q-tooltip>Eliminar inventario</q-tooltip>
+                  </q-btn>
+                </div>
+                <div v-else-if="col.name == 'descripcion'">
+                  <label>{{ col.value }}</label>
+                  <q-tooltip
+                    :offset="[10, 10]"
+                    v-if="
+                      col.value.length !=
+                      props.row['descripcion_completo'].length
+                    "
+                  >
+                    {{ props.row["descripcion_completo"] }}
+                  </q-tooltip>
+                </div>
+                <label v-else>{{ col.value }}</label>
+              </q-td>
+            </q-tr>
+          </template>
+        </q-table>
+        <ModalFotos />
+        <ModalPDF />
+      </div>
+    </div>
+  </template>
 </template>
 
 <script setup>
@@ -140,6 +147,12 @@ const isLoading = ref(false);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
+  cargarData();
+});
+
+//-----------------------------------------------------------
+
+const cargarData = async () => {
   if (catalogoId.value == null && estatusId.value == null) {
     $q.loading.show({
       message: "Cargando...",
@@ -149,14 +162,12 @@ onBeforeMount(() => {
       $q.loading.hide();
     }, 2000);
   }
-  estatusStore.loadEstatusList(true);
-  catalogoStore.loadCatalogoList(true);
+  await estatusStore.loadEstatusList(true);
+  await catalogoStore.loadCatalogoList(true);
   estatusId.value = { value: 0, label: "Todos" };
   catalogoId.value = { value: 0, label: "Todos" };
-});
+};
 
-//-----------------------------------------------------------
-//FILTRAR
 const filtrar = (listInventario, filtro) => {
   listFiltroInventario.value = listInventario.filter((item) => {
     let cumple = true;
@@ -177,12 +188,88 @@ const filtrar = (listInventario, filtro) => {
     return cumple;
   });
 };
+
 watchEffect(() => {
   const filtro = {};
   if (catalogoId.value != null) filtro.catalogo = catalogoId.value.value;
   if (estatusId.value != null) filtro.estatus = estatusId.value.label;
   filtrar(listInventario.value, filtro);
 });
+
+//-----------------------------------------------------------
+
+const editar = async (id) => {
+  $q.loading.show();
+  inventarioStore.updateEditar(true);
+  await inventarioStore.loadInventario(id);
+  inventarioStore.actualizarModal(true);
+  $q.loading.hide();
+};
+
+const cargarInventarios = async () => {
+  $q.loading.show();
+  isLoading.value = true;
+  await inventarioStore.loadInformacionInventarios();
+  isLoading.value = false;
+  $q.loading.hide();
+};
+
+const loadFotos = (id, valor) => {
+  inventarioStore.loadInventario(id);
+  inventarioStore.actualizarModalFotos(valor);
+};
+
+const mostrarPDF = async (valor, id) => {
+  $q.loading.show();
+  // await inventarioStore.loadInventario(id);
+  // if (inventario.value.ruta_PDF != null) {
+  //   inventarioStore.actualizarModalPDF(valor);
+  // } else if (inventario.value.ruta_PDF == null) {
+  //   await inventarioStore.generarPDF(id);
+  //   inventarioStore.actualizarModalPDF(valor);
+  // }
+  await inventarioStore.generarPDF(id);
+  inventarioStore.actualizarModalPDF(valor);
+  $q.loading.hide();
+};
+
+const eliminar = async (id) => {
+  $q.dialog({
+    title: "Eliminar inventario",
+    message: "¿Está seguro de eliminar el inventario?",
+    icon: "Warning",
+    persistent: true,
+    transitionShow: "scale",
+    transitionHide: "scale",
+    ok: {
+      color: "positive",
+      label: "¡Sí!, eliminar",
+    },
+    cancel: {
+      color: "negative",
+      label: " No Cancelar",
+    },
+  }).onOk(async () => {
+    $q.loading.show();
+    const resp = await inventarioStore.deleteInventario(id);
+    if (resp.success) {
+      $q.loading.hide();
+      $q.notify({
+        position: "top-right",
+        type: "positive",
+        message: resp.data,
+      });
+      inventarioStore.loadInformacionInventarios();
+    } else {
+      $q.loading.hide();
+      $q.notify({
+        position: "top-right",
+        type: "negative",
+        message: resp.data,
+      });
+    }
+  });
+};
 
 //-----------------------------------------------------------
 
@@ -315,26 +402,6 @@ const columns = [
   },
 ];
 
-const visible_columns = [
-  "id",
-  "catalogo",
-  "estatus",
-  "bodega",
-  "empleado",
-  "clave",
-  "descripcion",
-  "nombre_corto",
-  "marca",
-  "modelo",
-  "numero_Serie",
-  "color",
-  "fecha_Registro",
-  "fecha_compra",
-  "factura",
-  "uuid",
-  "importe",
-];
-
 const pagination = ref({
   page: 1,
   rowsPerPage: 25,
@@ -343,77 +410,4 @@ const pagination = ref({
 });
 
 const filter = ref("");
-
-//-----------------------------------------------------------
-
-const editar = async (id) => {
-  $q.loading.show();
-  inventarioStore.updateEditar(true);
-  await inventarioStore.loadInventario(id);
-  inventarioStore.actualizarModal(true);
-  $q.loading.hide();
-};
-
-const cargarInventarios = async () => {
-  await inventarioStore.loadInformacionInventarios();
-};
-
-const loadFotos = (id, valor) => {
-  inventarioStore.loadInventario(id);
-  inventarioStore.actualizarModalFotos(valor);
-};
-
-const mostrarPDF = async (valor, id) => {
-  $q.loading.show();
-  // await inventarioStore.loadInventario(id);
-  // if (inventario.value.ruta_PDF != null) {
-  //   inventarioStore.actualizarModalPDF(valor);
-  // } else if (inventario.value.ruta_PDF == null) {
-  //   await inventarioStore.generarPDF(id);
-  //   inventarioStore.actualizarModalPDF(valor);
-  // }
-  await inventarioStore.generarPDF(id);
-  inventarioStore.actualizarModalPDF(valor);
-  $q.loading.hide();
-};
-
-const eliminar = async (id) => {
-  $q.dialog({
-    title: "Eliminar inventario",
-    message: "¿Está seguro de eliminar el inventario?",
-    icon: "Warning",
-    persistent: true,
-    transitionShow: "scale",
-    transitionHide: "scale",
-    ok: {
-      color: "positive",
-      label: "¡Sí!, eliminar",
-    },
-    cancel: {
-      color: "negative",
-      label: " No Cancelar",
-    },
-  }).onOk(async () => {
-    $q.loading.show();
-    const resp = await inventarioStore.deleteInventario(id);
-    if (resp.success) {
-      $q.loading.hide();
-      $q.notify({
-        position: "top-right",
-        type: "positive",
-        message: resp.data,
-      });
-      inventarioStore.loadInformacionInventarios();
-    } else {
-      $q.loading.hide();
-      $q.notify({
-        position: "top-right",
-        type: "negative",
-        message: resp.data,
-      });
-    }
-  });
-};
 </script>
-
-<style></style>

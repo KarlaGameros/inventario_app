@@ -25,8 +25,8 @@
           <div class="row q-col-gutter-xs">
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
               <q-select
-                v-if="!isEditar"
-                v-model="tipoMovimiento"
+                :readonly="isEditar || visualizar"
+                v-model="tipo_Movimiento"
                 :options="listTipoMovimientos"
                 label="Tipo de movimiento"
                 hint="Selecciona un tipo de movimiento"
@@ -36,87 +36,37 @@
                 ]"
               >
               </q-select>
-              <q-input
-                v-else
-                readonly
-                v-model="movimiento.tipo_Movimiento"
-                label="Tipo de movimiento"
-              ></q-input>
             </div>
-
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div
+              v-if="tipo == 'Salida'"
+              class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
+            >
               <q-select
-                v-if="!isEditar"
-                v-model="conceptoMovimiento"
+                :readonly="isEditar || visualizar"
+                v-model="concepto_Movimiento"
                 :options="listConceptoMovimiento"
                 label="Concepto de movimiento"
                 hint="Selecciona un concepto"
-                :lazy-rules="true"
-                :rules="[(val) => !!val || 'El concepto es requerido']"
               >
               </q-select>
-              <q-input
-                v-else
-                readonly
-                v-model="movimiento.concepto_Movimiento"
-                label="Concepto de movimiento"
-              ></q-input>
             </div>
-
             <div
-              v-if="inputSalida == 'Salida'"
+              v-if="tipo == 'Salida' && tipo_Movimiento_2 == 'Pendiente Baja'"
               class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
             >
-              <q-select
-                v-if="!isEditar"
-                v-model="bodega_origen"
-                :options="listBodega"
-                label="Bodega origen"
-                hint="Selecciona bodega origen"
-                :lazy-rules="true"
-                :rules="[(val) => !!val || 'La bodega origen es requerida']"
-              >
-              </q-select>
               <q-input
-                v-else
-                readonly
-                v-model="movimiento.bodega_Origen"
-                label="Concepto de movimiento"
-              ></q-input>
+                :readonly="visualizar"
+                v-model="movimiento.folio_Dictamen_Baja"
+                label="Folio dictame baja"
+              />
             </div>
-
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-              <q-select
-                v-if="!isEditar"
-                v-model="bodega_destino"
-                :options="listBodega"
-                label="Bodega destino"
-                hint="Selecciona bodega destino"
-                :lazy-rules="true"
-                :rules="[(val) => !!val || 'La bodega destino es requerida']"
-              >
-              </q-select>
               <q-input
-                v-else
-                readonly
-                v-model="movimiento.bodega_Destino"
-                label="Concepto de movimiento"
-              ></q-input>
-            </div>
-
-            <div
-              :class="
-                inputSalida == 'Salida'
-                  ? 'col-lg-12 col-md-12 col-sm-12 col-xs-12'
-                  : 'col-lg-6 col-md-6 col-sm-12 col-xs-12'
-              "
-            >
-              <q-input
-                v-if="!isEditar"
+                :readonly="isEditar || visualizar"
                 v-model="date"
                 label="Fecha de movimiento"
               >
-                <template v-slot:append>
+                <template v-if="!visualizar" v-slot:append>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy
                       ref="qDateProxy"
@@ -137,204 +87,180 @@
                   </q-icon>
                 </template>
               </q-input>
-              <q-input
-                v-else
-                readonly
-                v-model="movimiento.fecha_Movimiento"
-                label="Fecha de movimiento"
-              ></q-input>
             </div>
-
             <div
-              v-if="isCompra == true"
-              class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+              v-if="tipo_Movimiento_2 != 'Pendiente Baja'"
+              class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
+            ></div>
+            <div
+              v-if="tipo == 'Salida' && !visualizar"
+              class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
             >
               <q-select
-                v-if="!isEditar"
-                v-model="proveedor"
-                :options="proveedores"
-                label="Provedor"
-                hint="Selecciona un provedor"
+                label="Bodega"
+                v-model="bodega_Id"
+                :options="listBodega"
+                hint="Selecciona una bodega"
                 :lazy-rules="true"
-                :rules="[(val) => !!val || 'El provedor es requerido']"
-              >
-                <template v-slot:after>
-                  <q-btn round dense flat icon="add" @click="addProveedor" />
-                </template>
-              </q-select>
-              <q-input
-                v-else
-                readonly
-                v-model="movimiento.provedor"
-                label="Proveedor"
-              ></q-input>
-            </div>
-
-            <div
-              v-if="isCompra == true"
-              class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-            >
-              <q-input
-                v-if="!isEditar"
-                v-model="uuid"
-                label="UUID"
-                autogrow
-                lazy-rules
-                :rules="[(val) => !!val || 'El UUID es requerido']"
-              >
-                <q-icon v-show="validarUuid" name="done" color="green" />
-                <q-icon v-show="!validarUuid" name="close" color="red" />
-              </q-input>
-              <q-input
-                v-else
-                readonly
-                v-model="movimiento.uuid"
-                label="UUID"
-              ></q-input>
-            </div>
-
-            <div
-              v-if="isCompra == true"
-              class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-            >
-              <q-input
-                v-if="!isEditar"
-                v-model="movimiento.no_factura"
-                label="Número de factura"
-                autogrow
-                lazy-rules
-                :rules="[(val) => !!val || 'El número de factura es requerido']"
-              >
-              </q-input>
-              <q-input
-                v-else
-                readonly
-                v-model="movimiento.no_Factura"
-                label="Número de factura"
-              ></q-input>
-            </div>
-
-            <div v-if="!isEditar" class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-              <q-select
-                v-model="catalogoId"
-                :options="listCatalogo"
-                label="Catálogo perteneciente del inventario"
-                hint="Selecciona una catalogo"
-                :lazy-rules="true"
-                :rules="[(val) => !!val || 'El catálogo es requerido']"
+                :rules="[(val) => !!val || 'La bodega es requerida']"
               >
               </q-select>
             </div>
-
-            <div v-if="!isEditar" class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div
+              v-if="tipo == 'Salida' && !visualizar"
+              class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
+            >
               <q-select
-                v-model="inventarioId"
-                :options="opcionesInventario"
+                v-model="inventario_Id"
+                :options="opciones_Inventario"
                 use-input
                 @filter="filterInventario"
                 label="Productos"
                 hint="Selecciona un producto"
+              >
+              </q-select>
+            </div>
+            <div
+              v-if="tipo == 'Entrega Recepción' || tipo == 'Traspaso'"
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+            >
+              <q-select
+                :readonly="isEditar || visualizar"
+                label="Área"
+                v-model="area_Id"
+                :options="list_Areas"
+                hint="Selecciona una área"
                 :lazy-rules="true"
-                :rules="[(val) => !!val || 'El inventario es requerido']"
+                :rules="[(val) => !!val || 'El área es requerida']"
+              >
+              </q-select>
+            </div>
+            <div
+              v-if="tipo == 'Entrega Recepción' || tipo == 'Traspaso'"
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+            >
+              <q-select
+                :readonly="isEditar || visualizar"
+                label="Empleado"
+                v-model="empleado_Id"
+                :options="list_Empleados"
+                hint="Selecciona una empleado"
+                :lazy-rules="true"
+                :rules="[(val) => !!val || 'El empleado es requerido']"
+              >
+              </q-select>
+            </div>
+            <div
+              v-if="tipo == 'Traspaso'"
+              class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
+            >
+              <q-select
+                label="Tipo de traspaso"
+                v-model="tipo_Traspaso_Id"
+                :options="list_Tipo_Traspaso"
+                hint="Selecciona un tipo de traspaso"
+              >
+              </q-select>
+            </div>
+            <div
+              v-if="tipo == 'Traspaso'"
+              class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
+            >
+              Asignar a:
+              <q-radio
+                :disable="visualizar"
+                checked-icon="task_alt"
+                v-model="destino"
+                unchecked-icon="panorama_fish_eye"
+                val="Bodega"
+                label="Bodega"
+              />
+              <q-radio
+                :disable="visualizar"
+                checked-icon="task_alt"
+                v-model="destino"
+                unchecked-icon="panorama_fish_eye"
+                val="Personal"
+                label="Personal"
+              />
+            </div>
+            <div
+              v-if="tipo == 'Traspaso' && tipo_Traspaso_Id == 'Individual'"
+              class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
+            >
+              <q-select
+                @filter="filterInventario"
+                use-input
+                label="Inventario"
+                v-model="inventario_Asignado_Id"
+                :options="opciones_Inventario_Traspaso"
+                hint="Selecciona una inventario"
               >
               </q-select>
             </div>
 
             <div
-              v-if="isCompra == true"
-              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
-            >
-              <q-input
-                v-if="!isEditar"
-                v-model="cantidad"
-                label="Cantidad"
-                type="number"
-                min="1"
-              >
-              </q-input>
-              <q-input
-                v-else
-                readonly
-                v-model="movimiento.cantidad"
-                label="Cantidad"
-              ></q-input>
-            </div>
-            <div
-              v-if="isCompra == true"
-              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
-            >
-              <q-input
-                v-if="!isEditar"
-                v-model="precio_Unitario"
-                label="Precio unitario del producto"
-                prefix="$"
-              >
-              </q-input>
-              <q-input
-                v-else
-                readonly
-                v-model="movimiento.precio_Unitario"
-                label="Precio Unitario"
-              ></q-input>
-            </div>
-            <div
-              v-if="isCompra == true"
-              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
-            >
-              <q-input
-                v-if="!isEditar"
-                v-model="importe"
-                label="Importe total de la transición"
-                prefix="$"
-              >
-              </q-input>
-              <q-input
-                v-else
-                readonly
-                v-model="movimiento.precio_Unitario"
-                label="Importe total de la transición"
-                prefix="$"
-              ></q-input>
-            </div>
-
-            <div
-              v-if="isCompra == true"
+              v-if="tipo == 'Traspaso' && destino == 'Personal'"
               class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
             >
-              <!-- <q-file filled bottom-slots v-model="model" label="PDF" counter>
-                <template v-slot:prepend>
-                  <q-icon name="cloud_upload" @click.stop.prevent />
-                </template>
-                <template v-slot:append>
-                  <q-icon
-                    name="close"
-                    @click.stop.prevent="model = null"
-                    class="cursor-pointer"
-                  />
-                </template>
-              </q-file> -->
+              <q-select
+                :disable="visualizar"
+                label="Área"
+                v-model="area_Traspaso"
+                :options="list_Areas"
+                hint="Selecciona área"
+              >
+              </q-select>
+              <q-select
+                :disable="visualizar"
+                label="Personal"
+                v-model="personal_Traspaso"
+                :options="list_Empleados"
+                hint="Selecciona personal"
+              >
+              </q-select>
             </div>
-
             <div
-              v-if="isCompra == true"
+              v-if="tipo == 'Traspaso' && destino == 'Bodega'"
               class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
             >
-              <!-- <q-file filled bottom-slots v-model="model" label="XML" counter>
-                <template v-slot:prepend>
-                  <q-icon name="cloud_upload" @click.stop.prevent />
-                </template>
-                <template v-slot:append>
-                  <q-icon
-                    name="close"
-                    @click.stop.prevent="model = null"
-                    class="cursor-pointer"
-                  />
-                </template>
-              </q-file> -->
+              <q-select
+                :disable="visualizar"
+                label="Bodega"
+                v-model="bodega_traspaso_Id"
+                :options="listBodega"
+                hint="Selecciona bodega"
+              >
+              </q-select>
+            </div>
+            <div
+              v-if="tipo == 'Salida' && !isEditar && !visualizar"
+              class="col-lg-6 col-md-6 col-sm-6 col-xs-12"
+            >
+              <q-select
+                v-model="estado_Fisico"
+                :options="
+                  tipo_Movimiento_2 == 'Pendiente Baja'
+                    ? listEstadoFisicoBaja
+                    : listEstadoFisico
+                "
+                label="Estado fisico"
+                hint="Selecciona un estado fsico"
+              >
+              </q-select>
+            </div>
+            <div v-if="tipo == 'Salida' && !visualizar" class="col-12">
+              <q-input v-model="observacion" type="textarea" />
             </div>
 
+            <div v-if="visualizar" class="col-6">
+              <q-input v-model="movimiento.estatus" label="Estatus" readonly />
+            </div>
             <q-space />
-            <div class="col-12 justify-end">
+            <div
+              v-if="tipo == 'Salida' && !visualizar"
+              class="col-12 justify-end"
+            >
               <div class="text-right q-gutter-xs">
                 <q-btn
                   icon-right="add"
@@ -347,14 +273,194 @@
                 />
               </div>
             </div>
+            <div
+              v-if="tipo == 'Traspaso' && !visualizar"
+              class="col-12 justify-end"
+            >
+              <div class="text-right q-gutter-xs">
+                <q-btn
+                  :disable="
+                    list_Traspaso.length > 0 && tipo_Traspaso_Id == 'Todo'
+                  "
+                  icon-right="add"
+                  label="Agregar"
+                  color="positive"
+                  class="q-ml-sm"
+                  @click="
+                    $refs.RegistroMovimiento.validate(),
+                      agregarInventarioTraspaso()
+                  "
+                />
+              </div>
+            </div>
           </div>
         </q-card-section>
-
-        <q-separator></q-separator>
         <q-card-section>
-          <TablaMovimientoInventario />
+          <TablaMovimientoInventario v-if="tipo == 'Entrega Recepción'" />
+          <div class="row" v-else-if="tipo == 'Salida'">
+            <div class="col">
+              <q-table
+                :rows="list_Detalle"
+                :columns="columns"
+                :filter="filter"
+                :pagination="pagination"
+                row-key="id"
+                rows-per-page-label="Filas por pagina"
+                no-data-label="No hay registros"
+              >
+                <template v-slot:top-right>
+                  <q-input
+                    borderless
+                    dense
+                    debounce="300"
+                    v-model="filter"
+                    placeholder="Buscar.."
+                  >
+                    <template v-slot:append>
+                      <q-icon name="search" />
+                    </template>
+                  </q-input>
+                </template>
+                <template v-slot:body="props">
+                  <q-tr :props="props">
+                    <q-td
+                      v-for="col in props.cols"
+                      :key="col.name"
+                      :props="props"
+                    >
+                      <div v-if="col.name === 'destino'">
+                        <q-radio
+                          :disable="visualizar"
+                          checked-icon="task_alt"
+                          v-model="props.row.destino"
+                          unchecked-icon="panorama_fish_eye"
+                          val="Bodega"
+                          label="Bodega"
+                        />
+                        <q-radio
+                          :disable="visualizar"
+                          checked-icon="task_alt"
+                          v-model="props.row.destino"
+                          unchecked-icon="panorama_fish_eye"
+                          val="Personal"
+                          label="Personal"
+                        />
+                      </div>
+                      <div v-else-if="col.name === 'empleado'">
+                        <q-select
+                          :disable="visualizar"
+                          v-if="props.row.destino == 'Personal'"
+                          label="Personal"
+                          v-model="props.row.empleado"
+                          :options="list_Empleados"
+                          hint="Selecciona personal"
+                        >
+                        </q-select>
+                        <q-select
+                          :disable="visualizar"
+                          v-if="props.row.destino == 'Bodega'"
+                          label="Bodega"
+                          v-model="props.row.bodega_Destino"
+                          :options="listBodega"
+                          hint="Selecciona bodega"
+                        >
+                        </q-select>
+                      </div>
+                      <div v-else-if="col.name === 'inventario_Id'">
+                        <q-btn
+                          flat
+                          round
+                          color="purple-ieen"
+                          icon="search"
+                          @click="actualizarModalVer(true, col.value)"
+                        >
+                          <q-tooltip>Ver inventario</q-tooltip>
+                        </q-btn>
+                        <q-btn
+                          flat
+                          round
+                          color="purple-ieen"
+                          icon="edit_note"
+                          @click="agregarObservacion(col.value)"
+                        >
+                          <q-tooltip>Ver inventario</q-tooltip>
+                        </q-btn>
+                      </div>
+                      <label v-else>{{ col.value }}</label>
+                    </q-td>
+                  </q-tr>
+                </template>
+              </q-table>
+            </div>
+            <ModalVerInventario />
+          </div>
+          <div class="row" v-else-if="tipo == 'Traspaso'">
+            <div class="col">
+              <q-table
+                :rows="list_Traspaso"
+                :columns="columnsTraspaso"
+                :filter="filter"
+                :pagination="pagination"
+                row-key="id"
+                rows-per-page-label="Filas por pagina"
+                no-data-label="No hay registros"
+              >
+                <template v-slot:top-right>
+                  <q-input
+                    borderless
+                    dense
+                    debounce="300"
+                    v-model="filter"
+                    placeholder="Buscar.."
+                  >
+                    <template v-slot:append>
+                      <q-icon name="search" />
+                    </template>
+                  </q-input>
+                </template>
+                <template v-slot:body="props">
+                  <q-tr :props="props">
+                    <q-td
+                      v-for="col in props.cols"
+                      :key="col.name"
+                      :props="props"
+                    >
+                      <div v-if="col.name === 'empleado'">
+                        {{
+                          props.row.destino == "Personal"
+                            ? col.value
+                            : props.row.bodega
+                        }}
+                      </div>
+                      <div v-else-if="col.name === 'inventario_Id'">
+                        <q-btn
+                          flat
+                          round
+                          color="purple-ieen"
+                          icon="search"
+                          @click="actualizarModalVer(true, col.value)"
+                        >
+                          <q-tooltip>Ver inventario</q-tooltip>
+                        </q-btn>
+                        <!-- <q-btn
+                          flat
+                          round
+                          color="purple-ieen"
+                          icon="edit_note"
+                          @click="agregarObservacion(col.value)"
+                        >
+                          <q-tooltip>Ver inventario</q-tooltip>
+                        </q-btn> -->
+                      </div>
+                      <label v-else>{{ col.value }}</label>
+                    </q-td>
+                  </q-tr>
+                </template>
+              </q-table>
+            </div>
+            <ModalVerInventario />
+          </div>
         </q-card-section>
-
         <q-card-section>
           <q-space />
           <div class="col-12 justify-end">
@@ -366,6 +472,7 @@
                 @click="actualizarModal(false)"
               />
               <q-btn
+                v-if="!visualizar && movimiento.tipo_Movimiento != 'Salida'"
                 label="Guardar"
                 type="submit"
                 color="positive"
@@ -389,6 +496,7 @@ import { useProvedores } from "src/stores/provedores_store";
 import { onBeforeMount, ref, watch } from "vue";
 import { useMovimientoInventario } from "../../../stores/movimiento_inventario";
 import TablaMovimientoInventario from "../components/TablaMovimientoInventario.vue";
+import ModalVerInventario from "./ModalVerInventario.vue";
 
 //-----------------------------------------------------------
 
@@ -401,323 +509,473 @@ const inventarioStore = useInventarioStore();
 
 const {
   modal,
-  listaMovimientoInventario,
   listTipoMovimientos,
   listConceptoMovimiento,
   isEditar,
   movimiento,
-  isCompra,
+  list_Inventario,
+  list_Areas,
+  list_Empleados,
+  list_Detalle_By_Movimiento,
+  list_Detalle,
+  visualizar,
+  list_Traspaso,
+  list_Inventario_By_Empleado,
 } = storeToRefs(movimientoInventarioStore);
-const { proveedores } = storeToRefs(proveedorStore);
-const { listCatalogo } = storeToRefs(catalogoStore);
 const { listBodega } = storeToRefs(bodegaStore);
-const { inventarios } = storeToRefs(inventarioStore);
-const catalogoId = ref(null);
-const bodega_origen = ref(null);
-const bodega_destino = ref(null);
-const tipoMovimiento = ref(null);
-const inventarioId = ref(null);
-const proveedor = ref(null);
-const opcionesInventario = ref([...inventarios.value]);
-const conceptoMovimiento = ref(null);
-const inputSalida = ref(null);
-const cantidad = ref(null);
-const precio_Unitario = ref(null);
-const importe = ref(null);
-const uuid = ref(null);
-const validarUuid = ref(false);
-//-----------------------------------------------------------
-//Get fecha actual
-const dateActual = new Date();
-const year = dateActual.getFullYear();
-const month = String(dateActual.getMonth() + 1).padStart(2, "0");
-const day = String(dateActual.getDate()).padStart(2, "0");
-const date = ref(`${year}/${month}/${day}`);
+const tipo_Movimiento = ref(null);
+const inventario_Id = ref(null);
+const opciones_Inventario = ref([...list_Inventario.value]);
+const concepto_Movimiento = ref(null);
+const tipo = ref(null);
+const tipo_Movimiento_2 = ref(null);
+const bodega_Id = ref(null);
+const area_Id = ref(null);
+const empleado_Id = ref(null);
+const observacion = ref(null);
+const date = ref(null);
+const estado_Fisico = ref(null);
+const listEstadoFisicoBaja = ref(["Malo", "Obsoleto", "No requerido en 1 año"]);
+const listEstadoFisico = ref(["Bueno", "Regular"]);
+const inventario_Asignado_Id = ref(null);
+const area_Traspaso = ref(null);
+const bodega_traspaso_Id = ref(null);
+const destino = ref(null);
+const personal_Traspaso = ref(null);
+const tipo_Traspaso_Id = ref("Todo");
+const list_Tipo_Traspaso = ref(["Todo", "Individual"]);
+const opciones_Inventario_Traspaso = ref([]);
 
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
-  inventarioStore.loadListInventario(0);
-  catalogoStore.loadCatalogoListNormal();
-  bodegaStore.loadBodegasList();
-  movimientoInventarioStore.loadTipoMovimientos();
-  proveedorStore.loadInformacionProvedores();
-  catalogoId.value = { value: 0, label: "Todos" };
+  cargarData();
 });
 
 //-----------------------------------------------------------
 
-watch(catalogoId, (val) => {
+watch(tipo_Movimiento, (val) => {
   if (val != null) {
-    inventarioStore.loadListInventario(val.value);
-  }
-});
-
-watch(tipoMovimiento, (val) => {
-  if (val != null) {
-    if (val.label == "Salida") {
-      inputSalida.value = val.label;
-      conceptoMovimiento.value = null;
-      movimientoInventarioStore.loadConceptoMovimientoListFiltro(val.value);
-      movimientoInventarioStore.updateCompra(false);
-    } else {
-      inputSalida.value = val.label;
-      conceptoMovimiento.value = null;
-      movimientoInventarioStore.loadConceptoMovimientoListFiltro(val.value);
+    concepto_Movimiento.value = null;
+    observacion.value = null;
+    empleado_Id.value = null;
+    //area_Id.value = null;
+    bodega_Id.value = null;
+    list_Detalle.value = [];
+    tipo.value = val.label;
+    if (isEditar.value == false) {
+      movimientoInventarioStore.loadConceptoMovimientoListFiltro(val);
     }
   }
 });
 
-watch(conceptoMovimiento, (val) => {
+watch(concepto_Movimiento, (val) => {
   if (val != null) {
-    if (val.label == "Entrada por compra") {
-      movimientoInventarioStore.updateCompra(true);
-      movimientoInventarioStore.initMovimiento();
-    } else {
-      movimientoInventarioStore.updateCompra(false);
-      movimientoInventarioStore.initMovimiento();
-    }
+    tipo_Movimiento_2.value = val.label;
   }
 });
 
 watch(movimiento.value, (val) => {
   if (val.id != null) {
     cargarTipoMovimiento(val);
-    cargarBodegaDestino(val);
-    cargarConceptoMovimiento(val);
+    cargarArea(val);
+    date.value = val.fecha_Registro;
   }
 });
 
-watch(uuid, (val) => {
+watch(bodega_Id, async (val) => {
   if (val != null) {
-    if (val.length == 36) {
-      validarUuid.value = true;
-    } else {
-      validarUuid.value = false;
-    }
+    await movimientoInventarioStore.loadInventarioByBodega(val.value);
   }
 });
+
+watch(area_Id, async (val) => {
+  if (val != null) {
+    empleado_Id.value = null;
+    await movimientoInventarioStore.loadEmpleadosByArea(val.value);
+  }
+});
+
+watch(area_Traspaso, async (val) => {
+  if (val != null) {
+    await movimientoInventarioStore.loadEmpleadosByArea(val.value);
+  }
+});
+
+watch(empleado_Id, async (val) => {
+  if (
+    val != null &&
+    tipo.value != "Salida" &&
+    visualizar.value == false &&
+    isEditar.value === false
+  ) {
+    await movimientoInventarioStore.loadInventarioByEmpleado(val.value);
+  } else if (tipo.value == "Traspaso") {
+    await movimientoInventarioStore.loadInventarioByEmpleado(val.value);
+    opciones_Inventario_Traspaso.value = list_Inventario_By_Empleado.value;
+  }
+});
+
 //-----------------------------------------------------------
 
+const columnsTraspaso = [
+  {
+    name: "clave",
+    align: "center",
+    label: "Clave",
+    field: "clave",
+    sortable: true,
+  },
+  {
+    name: "destino",
+    align: "center",
+    label: "Destino",
+    field: "destino",
+    sortable: false,
+  },
+  {
+    name: "empleado",
+    align: "center",
+    label: "Asignar a",
+    field: "empleado",
+    sortable: false,
+  },
+  {
+    name: "inventario_Id",
+    align: "center",
+    label: "Acciones",
+    field: "inventario_Id",
+    sortable: false,
+  },
+];
+
+const columns = [
+  {
+    name: "clave",
+    align: "center",
+    label: "Clave",
+    field: "clave",
+    sortable: true,
+  },
+  {
+    name: "inventario",
+    align: "center",
+    label: "Inventario",
+    field: "inventario",
+    sortable: true,
+  },
+  {
+    name: "estado_Fisico",
+    align: "center",
+    label: "Estado fisico",
+    field: "estado_Fisico",
+    sortable: true,
+  },
+  {
+    name: "observaciones",
+    align: "center",
+    label: "Observaciones",
+    field: "observaciones",
+    sortable: true,
+  },
+  {
+    name: "inventario_Id",
+    align: "center",
+    label: "Acciones",
+    field: "inventario_Id",
+    sortable: false,
+  },
+];
+
+const pagination = ref({
+  //********** */
+  page: 1,
+  rowsPerPage: 25,
+  sortBy: "name",
+  descending: false,
+});
+
+const filter = ref("");
+
+//-----------------------------------------------------------
+
+const obtenerFecha = () => {
+  let dateActual = new Date();
+  let year = dateActual.getFullYear();
+  let month = String(dateActual.getMonth() + 1).padStart(2, "0");
+  let day = String(dateActual.getDate()).padStart(2, "0");
+  date.value = `${year}/${month}/${day}`;
+};
+
+const cargarData = async () => {
+  $q.loading.show();
+  obtenerFecha();
+  await movimientoInventarioStore.loadAreas();
+  await inventarioStore.loadListInventario(0);
+  await catalogoStore.loadCatalogoListNormal();
+  await bodegaStore.loadBodegasList();
+  await movimientoInventarioStore.loadTipoMovimientos();
+  await proveedorStore.loadInformacionProvedores();
+  $q.loading.hide();
+};
+
+const actualizarModalVer = (valor, value) => {
+  $q.loading.show();
+  movimientoInventarioStore.actualizarVerInventario(valor);
+  movimientoInventarioStore.loadInventario(value);
+
+  $q.loading.hide();
+};
+
+const cargarArea = async (val) => {
+  if (val.area_Id != null) {
+    if (area_Id.value == null) {
+      let areaFiltrado = list_Areas.value.find(
+        (x) => x.value == `${val.area_Id}`
+      );
+      area_Id.value = areaFiltrado;
+      await movimientoInventarioStore.loadEmpleadosByArea(val.area_Id);
+      cargarEmpleado(val);
+    }
+  }
+};
+
+const cargarEmpleado = async (val) => {
+  if (empleado_Id.value == null) {
+    let empleadoFiltrado = list_Empleados.value.find(
+      (x) => x.value == `${val.empleado_Id}`
+    );
+    empleado_Id.value = empleadoFiltrado;
+  }
+};
+
 const cargarTipoMovimiento = async (val) => {
-  if (tipoMovimiento.value == null) {
+  if (tipo_Movimiento.value == null) {
     let tipoFiltrado = listTipoMovimientos.value.find(
       (x) => x.value == `${val.tipo_Movimiento_Id}`
     );
-    tipoMovimiento.value = tipoFiltrado;
+    tipo.value = tipoFiltrado.label;
+    tipo_Movimiento.value = tipoFiltrado;
+    await movimientoInventarioStore.loadConceptoMovimientoListFiltro(
+      tipo_Movimiento.value
+    );
+    cargarConceptoMovimiento(val);
   }
 };
 
 const cargarConceptoMovimiento = async (val) => {
-  if (conceptoMovimiento.value == null) {
+  if (concepto_Movimiento.value == null) {
     let conceptoFiltrado = listConceptoMovimiento.value.find(
-      (x) => x.value == `${val.concepto_Movimiento_Id}`
+      (x) => x.value == `${val.concepto_Id}`
     );
-    conceptoMovimiento.value = conceptoFiltrado;
-  }
-};
-
-const cargarBodegaDestino = async (val) => {
-  if (bodega_destino.value == null) {
-    let bodegaDestinoFiltrado = listBodega.value.find(
-      (x) => x.value == `${val.bodega_Destino_Id}`
-    );
-    bodega_destino.value = bodegaDestinoFiltrado;
+    concepto_Movimiento.value = conceptoFiltrado;
   }
 };
 
 const actualizarModal = (valor) => {
   movimientoInventarioStore.actualizarModal(valor);
-  movimientoInventarioStore.updateCompra(valor);
-  proveedorStore.actualizarModal(false);
+  movimientoInventarioStore.updateEditar(false);
+  movimientoInventarioStore.updateVisualizar(false);
   limpiarRegistro();
-  isEditar.value = false;
-  catalogoId.value = { value: 0, label: "Todos" };
-};
-
-const addProveedor = () => {
-  $q.loading.show();
-  proveedorStore.actualizarModal(true);
-  $q.loading.hide();
 };
 
 const limpiarRegistro = () => {
-  inventarioId.value = null;
-  cantidad.value = null;
-  precio_Unitario.value = null;
-  importe.value = null;
-  bodega_origen.value = null;
-  bodega_destino.value = null;
-  tipoMovimiento.value = null;
-  conceptoMovimiento.value = null;
-  opcionesInventario.value = null;
-  catalogoId.value = null;
+  tipo_Movimiento.value = null;
+  concepto_Movimiento.value = null;
+  observacion.value = null;
+  bodega_Id.value = null;
+  inventario_Id.value = null;
+  date.value = null;
+  tipo.value = null;
+  area_Id.value = null;
+  empleado_Id.value = null;
+  estado_Fisico.value = null;
   movimientoInventarioStore.initMovimiento();
 };
 
 const filterInventario = (val, update) => {
   if (val === "") {
     update(() => {
-      opcionesInventario.value = inventarios.value;
+      if (tipo.value == "Traspaso") {
+        opciones_Inventario_Traspaso.value = list_Inventario_By_Empleado.value;
+      } else {
+        opciones_Inventario.value = list_Inventario.value;
+      }
     });
     return;
   }
   update(() => {
     const needle = val.toLowerCase();
-    opcionesInventario.value = inventarios.value.filter(
-      (v) => v.label.toLowerCase().indexOf(needle) > -1
-    );
+    if (tipo.value == "Traspaso") {
+      opciones_Inventario_Traspaso.value =
+        list_Inventario_By_Empleado.value.filter(
+          (v) => v.label.toLowerCase().indexOf(needle) > -1
+        );
+    } else {
+      opciones_Inventario.value = list_Inventario.value.filter(
+        (v) => v.label.toLowerCase().indexOf(needle) > -1
+      );
+    }
   });
 };
 
-const validarForm = async () => {
-  if (isCompra.value == true) {
-    if (
-      cantidad.value == null ||
-      precio_Unitario.value == null ||
-      importe.value == null ||
-      tipoMovimiento.value == null ||
-      conceptoMovimiento.value == null ||
-      bodega_destino.value == null ||
-      proveedor.value == null
-    ) {
-      $q.notify({
-        position: "top-right",
-        type: "negative",
-        message: "Ingrese datos completos",
-      });
-    } else if (validarUuid.value == false) {
-      $q.notify({
-        position: "top-right",
-        type: "negative",
-        message: "UUI incorrecto",
-      });
-    } else {
-      return true;
-    }
+const agregarInventarioTraspaso = async () => {
+  if (destino.value == null) {
+    $q.dialog({
+      title: "Atención",
+      message: "El destino no se ha seleccionado",
+      icon: "Warning",
+      persistent: true,
+      transitionShow: "scale",
+      transitionHide: "scale",
+    });
+  } else if (
+    destino.value == "Personal" &&
+    (area_Traspaso.value == null || personal_Traspaso.value == null)
+  ) {
+    $q.dialog({
+      title: "Atención",
+      message: "Campos vacios",
+      icon: "Warning",
+      persistent: true,
+      transitionShow: "scale",
+      transitionHide: "scale",
+    });
+  } else if (destino.value == "Bodega" && bodega_traspaso_Id.value == null) {
+    $q.dialog({
+      title: "Atención",
+      message: "La bodega destino no se ha seleccionado",
+      icon: "Warning",
+      persistent: true,
+      transitionShow: "scale",
+      transitionHide: "scale",
+    });
   } else {
-    if (
-      tipoMovimiento.value == null ||
-      conceptoMovimiento.value == null ||
-      bodega_destino.value == null
-    ) {
-      $q.notify({
-        position: "top-right",
-        type: "negative",
-        message: "Ingrese datos completos",
+    if (tipo_Traspaso_Id.value == "Todo") {
+      list_Detalle.value.forEach(async (element) => {
+        await movimientoInventarioStore.addInventarioTraspaso(
+          element,
+          destino.value,
+          personal_Traspaso.value,
+          bodega_traspaso_Id.value
+        );
       });
     } else {
-      return true;
+      let filtro = list_Traspaso.value.find(
+        (x) => x.inventario_Id == inventario_Asignado_Id.value.value
+      );
+      if (filtro == undefined) {
+        await movimientoInventarioStore.addInventarioTraspaso(
+          inventario_Asignado_Id.value,
+          destino.value,
+          personal_Traspaso.value,
+          bodega_traspaso_Id.value
+        );
+      } else {
+        $q.dialog({
+          title: "Atención",
+          message: "El producto ya se agrego",
+          icon: "Warning",
+          persistent: true,
+          transitionShow: "scale",
+          transitionHide: "scale",
+        });
+      }
     }
   }
-};
 
-const validarProducto = async (inventario) => {
-  let filtro = listaMovimientoInventario.value.find(
-    (x) => x.inventario_Id == inventario
-  );
-  return filtro;
+  inventario_Asignado_Id.value = null;
+  personal_Traspaso.value = null;
+  bodega_traspaso_Id.value = null;
+  area_Traspaso.value = null;
 };
 
 const agregarProducto = async () => {
-  let resp = await validarForm();
-  if (resp == true && isCompra.value == true) {
-    if (listaMovimientoInventario.value.length == 0) {
-      await movimientoInventarioStore.addMovimiento(
-        inventarioId.value,
-        cantidad.value,
-        precio_Unitario.value,
-        importe.value
-      );
-    } else {
-      let respValidarProducto = await validarProducto(inventarioId.value.value);
-      if (respValidarProducto == undefined) {
-        await movimientoInventarioStore.addMovimiento(inventarioId.value);
-      } else {
-        $q.dialog({
-          title: "Atención",
-          message: "El producto ya se agrego",
-          icon: "Warning",
-          persistent: true,
-          transitionShow: "scale",
-          transitionHide: "scale",
-        });
-      }
-    }
-  } else if (resp == true && isCompra.value == false) {
-    if (listaMovimientoInventario.value.length == 0) {
-      await movimientoInventarioStore.addMovimiento(
-        inventarioId.value,
-        cantidad.value,
-        precio_Unitario.value,
-        importe.value
-      );
-    } else {
-      let respValidarProducto = await validarProducto(inventarioId.value.value);
-      if (respValidarProducto == undefined) {
-        await movimientoInventarioStore.addMovimiento(inventarioId.value);
-      } else {
-        $q.dialog({
-          title: "Atención",
-          message: "El producto ya se agrego",
-          icon: "Warning",
-          persistent: true,
-          transitionShow: "scale",
-          transitionHide: "scale",
-        });
-      }
-    }
+  let filtro = list_Detalle.value.find(
+    (x) => x.inventario_Id == inventario_Id.value.value
+  );
+  if (filtro == undefined) {
+    await movimientoInventarioStore.addInventario(
+      inventario_Id.value,
+      observacion.value,
+      estado_Fisico.value
+    );
+  } else {
+    $q.dialog({
+      title: "Atención",
+      message: "El producto ya se agrego",
+      icon: "Warning",
+      persistent: true,
+      transitionShow: "scale",
+      transitionHide: "scale",
+    });
   }
 };
 
 const onSubmit = async () => {
-  let movimientosFormData = new FormData();
-  let resp = null;
   $q.loading.show();
-  if (isEditar == true) {
-  } else {
-    movimientosFormData.append(
-      "Tipo_Movimiento_Id",
-      tipoMovimiento.value.value
-    );
-    movimientosFormData.append(
-      "Concepto_Movimiento_Id",
-      conceptoMovimiento.value.value
-    );
-    movimientosFormData.append("Fecha_Movimiento", date.value);
-    movimientosFormData.append("Bodega_Destino_Id", bodega_destino.value.value);
-    listaMovimientoInventario.value.forEach((row) => {
-      movimientosFormData.append("Detalle[]", row.id);
-    });
+  let resp = null;
+
+  movimiento.value.tipo_Movimiento_Id = tipo_Movimiento.value.value;
+
+  if (tipo.value == "Entrega Recepción") {
+    if (isEditar.value == false) {
+      movimiento.value.empleado_Id = empleado_Id.value.value;
+      movimiento.value.area_Id = area_Id.value.value;
+      movimiento.value.puesto_Id = empleado_Id.value.puesto_Id;
+      movimiento.value.detalle = list_Detalle.value;
+      movimiento.value.concepto_Id = listConceptoMovimiento.value[0].value;
+    }
+
+    for (let index = 0; index < list_Detalle.value.length; index++) {
+      const element = list_Detalle.value[index];
+
+      if (typeof element.empleado === "object" && element.empleado != null) {
+        element.empleado_Id = element.empleado.value;
+      }
+      if (
+        typeof element.bodega_Destino === "object" &&
+        element.bodega_Destino != null
+      ) {
+        element.bodega_Destino_Id = parseInt(element.bodega_Destino.value);
+      } else {
+        element.bodega_Destino_Id = element.bodega_Destino_Id;
+      }
+    }
+  } else if (tipo.value == "Traspaso") {
+    movimiento.value.empleado_Id = empleado_Id.value.value;
+    movimiento.value.area_Id = area_Id.value.value;
+    movimiento.value.puesto_Id = empleado_Id.value.puesto_Id;
+    movimiento.value.concepto_Id = listConceptoMovimiento.value[0].value;
+    movimiento.value.detalle = list_Traspaso.value;
+  } else if (tipo.value == "Salida") {
+    movimiento.value.detalle = list_Detalle.value;
+    movimiento.value.concepto_Id = concepto_Movimiento.value.value;
   }
 
   if (isEditar.value == true) {
-  } else {
-    let respValidar = await validarForm();
-    if (respValidar == true) {
-      resp = await movimientoInventarioStore.createMovimiento(
-        movimientosFormData
-      );
+    for (var detalle of list_Detalle.value) {
+      resp = await movimientoInventarioStore.updateDetalleMovimiento(detalle);
     }
+  } else {
+    resp = await movimientoInventarioStore.createMovimiento(movimiento.value);
   }
-  // if (resp.success) {
-  //   $q.notify({
-  //     position: "top-right",
-  //     type: "positive",
-  //     message: resp.data,
-  //   });
-  //   actualizarModal(false);
-  //   movimientoInventarioStore.initMovimiento();
-  //   movimientoInventarioStore.loadInformacionMovimientos();
-  // } else {
-  //   $q.notify({
-  //     position: "top-right",
-  //     type: "negative",
-  //     message: resp.data,
-  //   });
-  // }
+  if (resp.success) {
+    $q.notify({
+      position: "top-right",
+      type: "positive",
+      message: resp.data,
+    });
+    actualizarModal(false);
+    movimientoInventarioStore.initMovimiento();
+    movimientoInventarioStore.loadInformacionMovimientos();
+  } else {
+    $q.notify({
+      position: "top-right",
+      type: "negative",
+      message: resp.data,
+    });
+  }
   $q.loading.hide();
 };
 </script>
-
-<style></style>

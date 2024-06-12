@@ -38,15 +38,21 @@ import { useBodegaStore } from "src/stores/bodega_store";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 
+//-----------------------------------------------------------
+
 const $q = useQuasar();
 const authStore = useAuthStore();
 const bodegaStore = useBodegaStore();
 const { modulo } = storeToRefs(authStore);
 const siglas = "SI-CAT-BOD";
 
+//-----------------------------------------------------------
+
 onBeforeMount(() => {
   leerPermisos();
 });
+
+//-----------------------------------------------------------
 
 const leerPermisos = async () => {
   $q.loading.show();

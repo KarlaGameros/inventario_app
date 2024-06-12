@@ -54,9 +54,9 @@ watch(inventario.value, (val) => {
   }
 });
 
+//-----------------------------------------------------------
+
 const mostrarPDF = (valor) => {
   inventarioStore.actualizarModalPDF(valor);
 };
 </script>
-
-<style></style>

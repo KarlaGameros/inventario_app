@@ -117,5 +117,3 @@ const onSubmit = async () => {
   $q.loading.hide();
 };
 </script>
-
-<style></style>

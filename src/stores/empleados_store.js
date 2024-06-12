@@ -14,16 +14,20 @@ export const useEmpleadosStore = defineStore("empleados", {
       puesto_Id: null,
       area_Id: null,
       area: null,
+      tratamiento: null,
     },
   }),
   actions: {
-    initInventario() {
+    initEmpleado() {
       this.empleado.id = null;
       this.empleado.nombres = null;
       this.empleado.apellido_Materno = null;
       this.empleado.apellido_Paterno = null;
       this.empleado.puesto = null;
       this.empleado.puesto_Id = null;
+      this.empleado.area_Id = null;
+      this.empleado.area = null;
+      this.empleado.tratamiento = null;
     },
     //-----------------------------------------------------------
 
@@ -59,6 +63,30 @@ export const useEmpleadosStore = defineStore("empleados", {
             this.empleado.puesto_Id = data.puesto_Id;
             this.empleado.area_Id = data.area_Id;
             this.empleado.area = data.area;
+          }
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+    async loadEmpleadoById(id) {
+      try {
+        let resp = await api.get(`/Empleados/${id}`);
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success == true) {
+            this.empleado.id = data.id;
+            this.empleado.puesto = data.puesto;
+            this.empleado.nombres = `${data.nombres} ${data.apellido_Paterno} ${data.apellido_Materno}`;
+            this.empleado.puesto_Id = data.puesto_Id;
+            this.empleado.area_Id = data.area_Id;
+            this.empleado.area = data.area;
+            this.empleado.tratamiento = data.tratamiento;
           }
         }
       } catch (error) {

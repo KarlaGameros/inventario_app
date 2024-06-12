@@ -68,6 +68,8 @@ onBeforeMount(() => {
   cargarColumnas();
 });
 
+//-----------------------------------------------------------
+
 const columns = [
   {
     name: "id",
@@ -92,7 +94,6 @@ const columns = [
   },
 ];
 const pagination = ref({
-  //********** */
   page: 1,
   rowsPerPage: 25,
   sortBy: "name",
@@ -108,7 +109,6 @@ const cargarColumnas = async () => {
     columnasVisibles = ["clave", "descripcion", "id"];
   }
 };
-//-----------------------------------------------------------
 
 const eliminar = async (id) => {
   $q.dialog({
@@ -152,8 +152,4 @@ const eliminar = async (id) => {
     }
   });
 };
-
-//-----------------------------------------------------------
 </script>
-
-<style></style>

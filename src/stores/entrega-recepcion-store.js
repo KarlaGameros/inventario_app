@@ -7,6 +7,7 @@ export const useEntregaRecepcionStore = defineStore("entrega-recepcion", {
     modalVerInventario: false,
     areas: [],
     listEmpleados: [],
+    list_Inventario: [],
   }),
   actions: {
     actualizarModal(valor) {

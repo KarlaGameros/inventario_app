@@ -9,6 +9,7 @@
         row-key="id"
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
+        class="my-sticky-last-column-table"
       >
         <template v-slot:top-left>
           <q-select
@@ -113,7 +114,7 @@
                   icon="print"
                   @click="GenerarVale(col.value)"
                 >
-                  <q-tooltip>General vale</q-tooltip>
+                  <q-tooltip>Generar vale</q-tooltip>
                 </q-btn>
 
                 <q-btn
@@ -126,7 +127,7 @@
                     GenerarValeBodega(props.row.fecha_Registro, col.value)
                   "
                 >
-                  <q-tooltip>General vale bodega</q-tooltip>
+                  <q-tooltip>Generar vale bodega</q-tooltip>
                 </q-btn>
 
                 <q-btn
@@ -182,6 +183,7 @@ const areaId = ref(null);
 const empleado_Id = ref(null);
 const hidden = ref(false);
 const inventariosEliminar = ref([]);
+
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -231,16 +233,10 @@ watchEffect(() => {
   if (empleado_Id.value != null) filtro.empleado = empleado_Id.value.label;
   filtrar(asignaciones.value, filtro);
 });
+
 //-----------------------------------------------------------
 
 const columns = [
-  {
-    name: "id",
-    align: "center",
-    label: "Acciones",
-    field: "id",
-    sortable: false,
-  },
   {
     name: "tipo",
     align: "center",
@@ -296,6 +292,13 @@ const columns = [
     label: "Fecha de asignación",
     field: "fecha_Asignacion",
     sortable: true,
+  },
+  {
+    name: "id",
+    align: "center",
+    label: "Acciones",
+    field: "id",
+    sortable: false,
   },
 ];
 
@@ -430,6 +433,7 @@ const cancelar = async (id) => {
     }
   });
 };
+
 const visualizar = async (id) => {
   $q.loading.show();
   asignacionStore.updateVisualizar(true);
@@ -456,7 +460,6 @@ const visualizarByBodega = async (fechaAsignacion, id) => {
 
 const editar = async (id) => {
   $q.loading.show();
-
   asignacionStore.updateEditar(true);
   asignacionStore.updateVisualizar(false);
   asignacionStore.actualizarModal(true);
@@ -495,4 +498,18 @@ const GenerarValeBodega = async (fecha, id) => {
 };
 </script>
 
-<style></style>
+<style lang="sass">
+.my-sticky-last-column-table
+  thead tr:last-child th:last-child
+    /* bg color is important for th; just specify one */
+    background-color: white
+
+  td:last-child
+    background-color: white
+
+  th:last-child,
+  td:last-child
+    position: sticky
+    right: 0
+    z-index: 1
+</style>

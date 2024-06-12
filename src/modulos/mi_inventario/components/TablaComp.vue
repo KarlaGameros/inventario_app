@@ -21,7 +21,6 @@
     <q-banner
       inline-actions
       class="text-justify bg-grey-2"
-      v-show="visible_banner"
       style="border-radius: 20px"
     >
       <div class="text-h6 text-purple-ieen text-bold q-pb-xs">Nota</div>
@@ -36,11 +35,6 @@
         mismo conforme a su naturaleza. Este resguardo se cancela al momento de
         la entrega del bien del usuario responsable al área correspondiente.
       </div>
-      <template v-slot:action>
-        <q-btn icon="close" flat @click="visible_banner = false"
-          ><q-tooltip>Ocultar</q-tooltip></q-btn
-        >
-      </template>
     </q-banner>
   </div>
   <div class="row">
@@ -85,10 +79,16 @@ const { listMiInventario, miInventario } = storeToRefs(miInventarioStore);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
-  miInventarioStore.loadMiInventario();
-  miInventarioStore.loadUser();
+  cargarData();
 });
-const visible_banner = ref(true);
+
+//-----------------------------------------------------------
+
+const cargarData = async () => {
+  await miInventarioStore.loadMiInventario();
+  await miInventarioStore.loadUser();
+};
+
 //-----------------------------------------------------------
 
 const columns = [
@@ -166,5 +166,3 @@ const pagination = ref({
 
 const filter = ref("");
 </script>
-
-<style></style>

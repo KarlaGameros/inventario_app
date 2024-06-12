@@ -63,5 +63,3 @@ const actualizarModal = (valor) => {
   modeloStore.actualizarModal(valor);
 };
 </script>
-
-<style></style>

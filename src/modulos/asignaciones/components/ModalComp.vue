@@ -37,24 +37,69 @@
               </q-input>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-              <q-input
-                v-if="!isByBodega"
-                v-model="date"
-                label="Fecha de asignación"
+              <q-input v-if="!isByBodega && !isShow" v-model="date">
+                <template v-slot:prepend>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date v-model="date" mask="YYYY-MM-DD HH:mm">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Close"
+                            color="purple"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+
+                <template v-slot:append>
+                  <q-icon name="access_time" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-time v-model="date" mask="YYYY-MM-DD HH:mm" format24h>
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Close"
+                            color="purple"
+                            flat
+                          />
+                        </div>
+                      </q-time>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+              <!-- <q-input
+                v-if="!isByBodega && isEditar"
+                v-model="asignacion.fecha_Asignacion"
               >
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy
-                      ref="qDateProxy"
+                      cover
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-date v-model="date" color="purple-3">
+                      <q-date
+                        v-model="asignacion.fecha_Asignacion"
+                        mask="YYYY-MM-DD HH:mm"
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
-                            label="Cerrar"
-                            color="purple-3"
+                            label="Close"
+                            color="purple"
                             flat
                           />
                         </div>
@@ -69,12 +114,16 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-time v-model="date" mask="YYYY-MM-DD HH:mm" format24h>
+                      <q-time
+                        v-model="asignacion.fecha_Asignacion"
+                        mask="YYYY-MM-DD HH:mm"
+                        format24h
+                      >
                         <div class="row items-center justify-end">
                           <q-btn
                             v-close-popup
                             label="Close"
-                            color="primary"
+                            color="purple"
                             flat
                           />
                         </div>
@@ -82,7 +131,7 @@
                     </q-popup-proxy>
                   </q-icon>
                 </template>
-              </q-input>
+              </q-input> -->
               <q-input
                 v-else
                 readonly
@@ -278,7 +327,7 @@ const day = String(dateActual.getDate()).padStart(2, "0");
 const hours = String(dateActual.getHours());
 const minutes = String(dateActual.getMinutes());
 const seconds = String(dateActual.getSeconds());
-const date = ref(`${year}/${month}/${day} ${hours}:${minutes}:${seconds}`);
+const date = ref(`${year}-${month}-${day} ${hours}:${minutes}:${seconds}`);
 
 //-----------------------------------------------------------
 
@@ -563,9 +612,10 @@ const registrar = async () => {
   asignacion.value.detalle = listaAsignacionInventario.value;
   asignacion.value.area_Id = parseInt(area_Id.value.value);
   asignacion.value.eliminado = false;
-  asignacion.value.fecha_Asignacion = date.value;
   asignacion.value.tipo = "Personal";
-
+  if (isEditar.value == false) {
+    asignacion.value.fecha_Asignacion = date.value;
+  }
   if (isEditar.value == true) {
     resp = await asignacionStore.updateAsignacion(asignacion.value);
   } else {

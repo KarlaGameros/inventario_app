@@ -21,7 +21,7 @@ const ReporteBodega = async () => {
       doc.setFontSize(10);
       doc.setFont("helvetica", "bold");
       doc.text(
-        "INSTITULO ESTATAL ELECTORAL DEL ESTADO DE NAYARIT \n \n VALE DE RESGUARDO",
+        "INSTITUTO ESTATAL ELECTORAL DEL ESTADO DE NAYARIT \n \n VALE DE RESGUARDO",
         110,
         15,
         null,

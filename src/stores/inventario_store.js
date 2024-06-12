@@ -10,6 +10,7 @@ export const useInventarioStore = defineStore("inventario", {
     modalFactura: false,
     isEditar: false,
     cantidad: null,
+    excelIventario: null,
     listInventario: [],
     listSinFactura: [],
     listFiltroInventario: [],
@@ -212,8 +213,8 @@ export const useInventarioStore = defineStore("inventario", {
           };
         });
 
+        this.listInventario = listInventario.sort((a, b) => a.id - b.id);
         this.inventarios = listInventario;
-        this.listInventario = listInventario;
       } catch (error) {
         return {
           success: false,
@@ -403,6 +404,7 @@ export const useInventarioStore = defineStore("inventario", {
     },
 
     //-----------------------------------------------------------
+
     async loadListInventario(id) {
       try {
         let resp = await api.get("/Inventarios/GetDisponibles");
@@ -466,6 +468,7 @@ export const useInventarioStore = defineStore("inventario", {
         };
       }
     },
+
     //-----------------------------------------------------------
 
     async addCantidad(cantidad, catalogoId) {
@@ -526,6 +529,7 @@ export const useInventarioStore = defineStore("inventario", {
         };
       }
     },
+
     //-----------------------------------------------------------
 
     async deleteInventario(id) {
@@ -551,73 +555,6 @@ export const useInventarioStore = defineStore("inventario", {
         };
       }
     },
-
-    //-----------------------------------------------------------
-
-    // async inventarioByCatalogo1(id, estatus) {
-    //   try {
-    //     const resp = await api.get(`/Inventarios/ByCatalogo/${id}`);
-    //     if (resp.status == 200) {
-    //       let { data } = resp.data;
-    //       if (estatus != "Todos") {
-    //         this.listInventario = data.map((inventario) => {
-    //           return {
-    //             id: inventario.id,
-    //             catalogo_id: inventario.catalogo_id,
-    //             catalogo: inventario.catalago,
-    //             bodega_id: inventario.bodega_id,
-    //             bodega: inventario.bodega,
-    //             descripcion: inventario.descripcion,
-    //             nombre_corto: inventario.nombre_Corto,
-    //             marca_id: inventario.marca_id,
-    //             marca: inventario.marca,
-    //             modelo_id: inventario.modelo_id,
-    //             modelo: inventario.modelo,
-    //             color: inventario.color,
-    //             estatus: inventario.estatus,
-    //             clave: inventario.clave,
-    //             numero_Serie: inventario.numero_Serie,
-    //             empleado: inventario.empleado,
-    //           };
-    //         });
-    //         this.listInventario = this.listInventario.filter(
-    //           (item) => item.estatus === estatus
-    //         );
-    //       } else {
-    //         this.listInventario = data.map((inventario) => {
-    //           return {
-    //             id: inventario.id,
-    //             catalogo_id: inventario.catalogo_id,
-    //             catalogo: inventario.catalago,
-    //             bodega_id: inventario.bodega_id,
-    //             bodega: inventario.bodega,
-    //             descripcion: inventario.descripcion,
-    //             nombre_corto: inventario.nombre_Corto,
-    //             marca_id: inventario.marca_id,
-    //             marca: inventario.marca,
-    //             modelo_id: inventario.modelo_id,
-    //             modelo: inventario.modelo,
-    //             color: inventario.color,
-    //             estatus: inventario.estatus,
-    //             clave: inventario.clave,
-    //             numero_Serie: inventario.numero_Serie,
-    //             empleado: inventario.empleado,
-    //           };
-    //         });
-    //       }
-    //     } else {
-    //       return {
-    //         success: false,
-    //         data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
-    //       };
-    //     }
-    //   } catch (error) {
-    //     return {
-    //       success: false,
-    //       data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
-    //     };
-    //   }
-    // },
 
     //-----------------------------------------------------------
 
@@ -767,6 +704,32 @@ export const useInventarioStore = defineStore("inventario", {
       }
     },
 
+    //-----------------------------------------------------------
+    async downloadExcelInventario() {
+      try {
+        this.excelIventario = "";
+        const resp = await api.get("/Inventarios/GenerarExcelInventarios", {
+          responseType: "blob",
+        });
+        if (resp.status == 200) {
+          let blob = new window.Blob([resp.data], {
+            type: "application/xlsx",
+          });
+          this.excelIventario = window.URL.createObjectURL(blob);
+          return { success: true };
+        } else {
+          return {
+            success: false,
+            data: "Error al descargar archivo, intentelo de nuevo",
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrio un error, intentelo de nuevo. Si el error persiste contacte a soporte",
+        };
+      }
+    },
     //-----------------------------------------------------------
 
     actualizarModal(valor) {

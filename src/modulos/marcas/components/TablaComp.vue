@@ -23,7 +23,6 @@
             </template>
           </q-input>
         </template>
-
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
@@ -75,8 +74,8 @@ import { useQuasar } from "quasar";
 import { onBeforeMount, ref } from "vue";
 import { useMarcaStore } from "../../../stores/marcas_store";
 import { useModeloStore } from "../../../stores/modelo_store";
-import ModalModeloComp from "../../modelos/components/ModalComp.vue";
 import { useAuthStore } from "../../../stores/auth_store";
+import ModalModeloComp from "../../modelos/components/ModalComp.vue";
 
 //-----------------------------------------------------------
 
@@ -90,46 +89,16 @@ const { marcas } = storeToRefs(marcaStore);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
-  marcaStore.loadInformacionMarca();
+  cargarData();
 });
 
 //-----------------------------------------------------------
 
-const columns = [
-  {
-    name: "clave",
-    align: "center",
-    label: "Clave de la marca",
-    field: "clave",
-    sortable: true,
-  },
-  {
-    name: "descripcion",
-    align: "center",
-    label: "Descripción",
-    field: "descripcion",
-    sortable: true,
-  },
-  {
-    name: "id",
-    align: "center",
-    label: "Acciones",
-    field: "id",
-    sortable: false,
-  },
-];
-
-const pagination = ref({
-  //********** */
-  page: 1,
-  rowsPerPage: 25,
-  sortBy: "name",
-  descending: false,
-});
-
-const filter = ref("");
-
-//-----------------------------------------------------------
+const cargarData = async () => {
+  $q.loading.show();
+  await marcaStore.loadInformacionMarca();
+  $q.loading.hide();
+};
 
 const editar = async (id) => {
   $q.loading.show();
@@ -184,6 +153,37 @@ const addModelo = (valor, id) => {
   modeloStore.initModelo();
   $q.loading.hide();
 };
-</script>
 
-<style></style>
+const columns = [
+  {
+    name: "clave",
+    align: "center",
+    label: "Clave de la marca",
+    field: "clave",
+    sortable: true,
+  },
+  {
+    name: "descripcion",
+    align: "center",
+    label: "Descripción",
+    field: "descripcion",
+    sortable: true,
+  },
+  {
+    name: "id",
+    align: "center",
+    label: "Acciones",
+    field: "id",
+    sortable: false,
+  },
+];
+
+const pagination = ref({
+  page: 1,
+  rowsPerPage: 25,
+  sortBy: "name",
+  descending: false,
+});
+
+const filter = ref("");
+</script>

@@ -19,7 +19,11 @@ export const useMiInventarioStore = defineStore("mi_inventario", {
       importe: null,
       area: null,
       nombre_completo: null,
-      area: null
+      area: null,
+      nombres: null,
+      apellido_Paterno: null,
+      apellido_Materno: null,
+      puesto: null,
     },
   }),
   actions: {
@@ -62,7 +66,11 @@ export const useMiInventarioStore = defineStore("mi_inventario", {
           const { success, data } = resp.data;
           if (success == true) {
             this.miInventario.nombre_completo = data.nombre_Completo;
-            this.miInventario.area = data.area
+            this.miInventario.area = data.area;
+            this.miInventario.nombres = data.nombres;
+            this.miInventario.apellido_Paterno = data.apellido_Paterno;
+            this.miInventario.apellido_Materno = data.apellido_Materno;
+            this.miInventario.puesto = data.puesto;
           }
         }
       } catch (error) {

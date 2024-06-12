@@ -45,9 +45,7 @@
           </q-responsive>
         </div>
         <div v-else class="text-h6">No hay fotos</div>
-
         <q-space />
-
         <div class="col-12 justify-end">
           <div class="text-right q-gutter-xs">
             <q-btn
@@ -81,5 +79,3 @@ const actualizarModalFotos = (valor) => {
   inventarioStore.actualizarModalFotos(valor);
 };
 </script>
-
-<style></style>

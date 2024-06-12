@@ -17,11 +17,9 @@
           v-close-popup
         />
       </q-card-section>
-
       <q-card-section>
         <iframe :src="inventario.ruta_PDF" width="100%" height="500"></iframe>
       </q-card-section>
-
       <q-card-section>
         <div class="col-12 justify-end">
           <div class="text-right q-gutter-xs">

@@ -86,7 +86,6 @@
             />
             <q-btn
               v-if="!isEditar"
-              :disable="habilitarButton"
               label="Guardar"
               type="submit"
               color="positive"

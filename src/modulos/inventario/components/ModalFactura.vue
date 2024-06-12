@@ -45,7 +45,9 @@
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pr-md">
               <q-input
                 v-model="costo_General"
-                type="number"
+                mask="#.##"
+                fill-mask="0"
+                reverse-fill-mask
                 label="Importe"
                 :lazy-rules="true"
                 :rules="[(val) => !!val || 'El importe es requerido']"
@@ -226,7 +228,9 @@
               bordered
               :rows="listFiltroInventarioFactura"
               :columns="columns"
+              :filter="filter"
               row-key="id"
+              :pagination="pagination"
             >
               <template v-slot:top-left v-if="tipo == 'paquete'">
                 <q-input v-model="paquete_Id" label="Paquete"> </q-input>
@@ -238,6 +242,17 @@
                 />
               </template>
               <template v-slot:top-right>
+                <q-input
+                  borderless
+                  dense
+                  debounce="300"
+                  v-model="filter"
+                  placeholder="Buscar..."
+                >
+                  <template v-slot:append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
                 <div class="text-subtitle2 q-pr-md">Filtrar por fechas</div>
                 <q-btn icon="event" round color="purple">
                   <q-popup-proxy
@@ -292,13 +307,12 @@ import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useInventarioStore } from "src/stores/inventario_store";
-import { onBeforeMount, onMounted, ref, watch, watchEffect } from "vue";
+import { ref, watch } from "vue";
 
 //-----------------------------------------------------------
 
 const $q = useQuasar();
 const inventarioStore = useInventarioStore();
-const catalogoStore = useCatalogoProductoStore();
 const {
   modalFactura,
   listFiltroInventario,
@@ -307,7 +321,6 @@ const {
   factura,
 } = storeToRefs(inventarioStore);
 const selected = ref([]);
-const catalogoId = ref(null);
 const date = ref({});
 const paquete_Id = ref(null);
 const tipo = ref("individual");
@@ -322,10 +335,12 @@ const costo_C = ref(null);
 const facturaGeneral = ref(null);
 const uuid = ref(null);
 const fecha_Compra = ref(null);
+
 //-----------------------------------------------------------
 
 watch(tipo, (val) => {
   limpiar();
+  filter.value = "";
   if (val != null) {
     inventarioStore.loadSinFactura();
   }
@@ -334,6 +349,7 @@ watch(tipo, (val) => {
 watch(listSinFactura, (val) => {
   listFiltroInventarioFactura.value = listSinFactura.value;
 });
+
 //-----------------------------------------------------------
 
 const filtrar = (listFiltroInventario, filtro) => {
@@ -455,11 +471,18 @@ const filter = ref("");
 //-----------------------------------------------------------
 
 const limpiar = () => {
+  costo_General.value = null;
+  facturaGeneral.value = null;
+  uuid.value = null;
+  fecha_Compra.value = null;
   general.value = false;
   extencion_A.value = false;
   extencion_B.value = false;
   extencion_C.value = false;
   paquete_Id.value = null;
+  costo_A.value = null;
+  costo_B.value = null;
+  costo_C.value = null;
 };
 
 const actualizarModal = async (valor) => {
@@ -566,5 +589,3 @@ const onSubmit = async () => {
   $q.loading.hide();
 };
 </script>
-
-<style></style>

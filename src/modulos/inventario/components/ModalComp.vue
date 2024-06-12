@@ -109,16 +109,6 @@
             >
             </q-input>
           </div>
-          <div v-if="isEditar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <q-input
-              v-model="inventario.numero_Serie"
-              label="Numero de serie"
-              autogrow
-              lazy-rules
-              :rules="[(val) => !!val || 'El número de serie es requerido']"
-            >
-            </q-input>
-          </div>
           <div
             v-if="radio != 'paquete'"
             class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
@@ -194,9 +184,18 @@
             </q-input>
           </div>
           <div
-            v-if="radio == 'individual' || isEditar"
+            v-if="radio == 'individual'"
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-          ></div>
+          >
+            <q-input
+              v-model="inventario.numero_Serie"
+              label="Numero de serie"
+              autogrow
+              lazy-rules
+              :rules="[(val) => !!val || 'El número de serie es requerido']"
+            >
+            </q-input>
+          </div>
           <div
             v-if="radio != 'individual' && !isEditar"
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
@@ -211,7 +210,6 @@
             >
             </q-input>
           </div>
-
           <div
             v-if="radio != 'paquete'"
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
@@ -240,7 +238,6 @@
             <q-input v-model.trim="inventario.uuid" label="UUID" name="UUID">
             </q-input>
           </div>
-
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input v-model="date" label="Fecha de compra">
               <template v-slot:append>
@@ -265,7 +262,6 @@
               </template>
             </q-input>
           </div>
-
           <q-card
             v-if="radio != 'paquete'"
             class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
@@ -331,7 +327,6 @@
             <img v-if="isEditar" :src="inventario.foto_4" />
           </q-card>
           <!----------------------------------------------------------------------------->
-
           <div
             v-if="radio == 'paquete'"
             class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
@@ -615,7 +610,6 @@
                     </q-input>
                   </div>
                 </div>
-
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto1_a"
@@ -790,7 +784,6 @@
                     </q-input>
                   </div>
                 </div>
-
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
                     v-model="foto1_b"
@@ -1056,7 +1049,6 @@
               </q-tab-panel>
             </q-tab-panels>
           </div>
-
           <!----------------------------------------------------------------------------->
           <q-space />
           <div class="col-12 justify-end">
@@ -1084,17 +1076,17 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { event, useQuasar } from "quasar";
+import { useQuasar } from "quasar";
 import { computed, onBeforeMount, ref, watch } from "vue";
 import { useInventarioStore } from "../../../stores/inventario_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useBodegaStore } from "src/stores/bodega_store";
 import { useMarcaStore } from "src/stores/marcas_store";
 import { useModeloStore } from "src/stores/modelo_store";
+import { useEmpleadosStore } from "src/stores/empleados_store";
 import TablaNumerosSeriesA from "./TablaNumeroSerieA.vue";
 import TablaNumerosSeriesB from "./TablaNumeroSerieB.vue";
 import TablaNumerosSeriesC from "./TablaNumeroSerieC.vue";
-import { useEmpleadosStore } from "src/stores/empleados_store";
 
 //-----------------------------------------------------------
 
@@ -1117,7 +1109,7 @@ const {
   listaNumeroSerie_b,
   listaNumeroSerie_c,
 } = storeToRefs(inventarioStore);
-const { listCatalogo, catalogos } = storeToRefs(catalogoStore);
+const { listCatalogo } = storeToRefs(catalogoStore);
 const { listBodega } = storeToRefs(bodegaStore);
 const { listMarca } = storeToRefs(marcaStore);
 const { listModelo } = storeToRefs(modeloStore);
@@ -1165,6 +1157,7 @@ const tabsDefinition = [
 ];
 const tabs = ref(tabsDefinition.slice(0, 0));
 const tab = ref("general");
+
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -1234,25 +1227,6 @@ watch(cantidad, (val) => {
     inventarioStore.addCantidad(cantidad.value, catalogoId);
   }
 });
-
-//-----------------------------------------------------------
-
-const columns = [
-  {
-    name: "id",
-    align: "center",
-    label: "No.",
-    field: "id",
-    sortable: true,
-  },
-  {
-    name: "numero_serie",
-    align: "center",
-    label: "Números de serie",
-    field: "numero_serie",
-    sortable: true,
-  },
-];
 
 //-----------------------------------------------------------
 
@@ -1420,6 +1394,7 @@ const onSubmit = async () => {
       inventarioFormData.append("Foto_3", foto3.value);
       inventarioFormData.append("Foto_4", foto4.value);
       inventarioFormData.append("Cantidad", cantidad.value);
+      inventarioFormData.append("Numero_Serie", inventario.value.numero_Serie);
       if (inventario.value.importe != null) {
         inventarioFormData.append("Importe", inventario.value.importe);
       }

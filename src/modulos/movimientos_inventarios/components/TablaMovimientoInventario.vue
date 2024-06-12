@@ -2,13 +2,14 @@
   <div class="row">
     <div class="col">
       <q-table
-        :rows="listaMovimientoInventario"
-        :columns="isCompra ? columnsIsCompra : columns"
+        :rows="list_Detalle"
+        :columns="columns"
         :filter="filter"
         :pagination="pagination"
         row-key="id"
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
+        binary-state-sort
       >
         <template v-slot:top-right>
           <q-input
@@ -26,15 +27,66 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              <div v-if="col.name === 'inventario_Id'">
+              <div v-if="col.name === 'destino'">
+                <q-radio
+                  :disable="visualizar"
+                  checked-icon="task_alt"
+                  v-model="props.row.destino"
+                  unchecked-icon="panorama_fish_eye"
+                  val="Bodega"
+                  label="Bodega"
+                />
+                <q-radio
+                  :disable="visualizar"
+                  checked-icon="task_alt"
+                  v-model="props.row.destino"
+                  unchecked-icon="panorama_fish_eye"
+                  val="Personal"
+                  label="Personal"
+                />
+              </div>
+              <div v-else-if="col.name === 'empleado'">
+                <q-select
+                  :disable="visualizar"
+                  v-if="props.row.destino == 'Personal'"
+                  label="Personal"
+                  v-model="props.row.empleado"
+                  :options="list_Empleados"
+                  hint="Selecciona personal"
+                  :lazy-rules="true"
+                  :rules="[(val) => !!val || 'El personal es requerido']"
+                >
+                </q-select>
+                <q-select
+                  :disable="visualizar"
+                  v-if="props.row.destino == 'Bodega'"
+                  label="Bodega"
+                  v-model="props.row.bodega_Destino"
+                  :options="list_Bodegas"
+                  hint="Selecciona bodega"
+                  :lazy-rules="true"
+                  :rules="[(val) => !!val || 'La bodega es requerido']"
+                >
+                </q-select>
+              </div>
+              <div v-else-if="col.name === 'inventario_Id'">
                 <q-btn
                   flat
                   round
                   color="purple-ieen"
-                  icon="cancel"
-                  @click="eliminar(col.value)"
+                  icon="search"
+                  @click="actualizarModalVer(true, col.value)"
                 >
-                  <q-tooltip>Eliminar inventario</q-tooltip>
+                  <q-tooltip>Ver inventario</q-tooltip>
+                </q-btn>
+                <q-btn
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="edit_note"
+                  @click="agregarObservacion(col.value)"
+                >
+                  <q-tooltip>Ver inventario</q-tooltip>
                 </q-btn>
               </div>
               <label v-else>{{ col.value }}</label>
@@ -43,67 +95,54 @@
         </template>
       </q-table>
     </div>
+    <ModalVerInventario />
   </div>
 </template>
 
 <script setup>
+import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { useMovimientoInventario } from "src/stores/movimiento_inventario";
-import { ref } from "vue";
+import ModalVerInventario from "./ModalVerInventario.vue";
 
 //-----------------------------------------------------------
 
 const $q = useQuasar();
 const movimientoStore = useMovimientoInventario();
-const { listaMovimientoInventario, isCompra } = storeToRefs(movimientoStore);
+const { list_Detalle, list_Empleados, visualizar, list_Bodegas } =
+  storeToRefs(movimientoStore);
 
 //-----------------------------------------------------------
 
-const columnsIsCompra = [
-  {
-    name: "nombre_producto",
-    align: "center",
-    label: "Nombre del producto",
-    field: "nombre_producto",
-    sortable: true,
-  },
-  {
-    name: "cantidad",
-    align: "center",
-    label: "Cantidad",
-    field: "cantidad",
-    sortable: true,
-  },
-  {
-    name: "precio_Unitario",
-    align: "center",
-    label: "Precio unitario",
-    field: "precio_Unitario",
-    sortable: true,
-  },
-  {
-    name: "importe",
-    align: "center",
-    label: "Importe",
-    field: "importe",
-    sortable: true,
-  },
-  {
-    name: "inventario_Id",
-    align: "center",
-    label: "Acciones",
-    field: "inventario_Id",
-    sortable: false,
-  },
-];
 const columns = [
   {
-    name: "nombre_producto",
+    name: "clave",
     align: "center",
-    label: "Nombre del producto",
-    field: "nombre_producto",
+    label: "Clave",
+    field: "clave",
     sortable: true,
+  },
+  {
+    name: "inventario",
+    align: "center",
+    label: "Nombre del inventario",
+    field: "inventario",
+    sortable: true,
+  },
+  {
+    name: "destino",
+    align: "center",
+    label: "Asignar a ",
+    field: "destino",
+    sortable: false,
+  },
+  {
+    name: "empleado",
+    align: "center",
+    label: "Asignar a",
+    field: "empleado",
+    sortable: false,
   },
   {
     name: "inventario_Id",
@@ -124,6 +163,37 @@ const pagination = ref({
 const filter = ref("");
 
 //-----------------------------------------------------------
+
+const agregarObservacion = (id) => {
+  let elemento = list_Detalle.value.findIndex((x) => x.inventario_Id == id);
+  $q.dialog({
+    title: "Agregar observacion",
+    message: "Escribe la observación",
+    prompt: {
+      model: list_Detalle.value[elemento].observaciones,
+      type: "text", // optional
+    },
+    cancel: true,
+    persistent: true,
+  })
+    .onOk((data) => {
+      movimientoStore.addObservacion(id, data);
+      // console.log('>>>> OK, received', data)
+    })
+    .onCancel(() => {
+      // console.log('>>>> Cancel')
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    });
+};
+
+const actualizarModalVer = (valor, value) => {
+  $q.loading.show();
+  movimientoStore.actualizarVerInventario(valor);
+  movimientoStore.loadInventario(value);
+  $q.loading.hide();
+};
 
 const eliminar = async (id) => {
   $q.dialog({

@@ -74,7 +74,7 @@ const { catalogos } = storeToRefs(catalagoStore);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
-  catalagoStore.loadInformacionCatalago();
+  cargarData();
 });
 
 //-----------------------------------------------------------
@@ -120,6 +120,12 @@ const pagination = ref({
 const filter = ref("");
 
 //-----------------------------------------------------------
+
+const cargarData = async () => {
+  $q.loading.show();
+  await catalagoStore.loadInformacionCatalago();
+  $q.loading.hide();
+};
 
 const editar = async (id) => {
   $q.loading.show();

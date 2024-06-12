@@ -37,24 +37,8 @@ function getFocus(index) {
   let docu = document.getElementsByName(`myText${index + 1}`);
   docu[0].focus();
 }
-
-const columns = [
-  {
-    name: "id",
-    align: "center",
-    label: "No.",
-    field: "id",
-    sortable: true,
-  },
-  {
-    name: "numero_serie",
-    align: "center",
-    label: "Números de serie",
-    field: "numero_serie",
-    sortable: true,
-  },
-];
 </script>
+
 <style scoped>
 table {
   font-family: arial, sans-serif;

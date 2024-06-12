@@ -6,6 +6,7 @@ export const useAsignacionStore = defineStore("asignacion", {
     modal: false,
     modalVale: false,
     modalValeBodega: false,
+    modalByEmpleado: false,
     isByBodega: false,
     isEditar: false,
     isShow: false,
@@ -15,6 +16,7 @@ export const useAsignacionStore = defineStore("asignacion", {
     listInventarioByBodega: [],
     listEmpleados: [],
     listFiltroAsignaciones: [],
+    list_Inventario_By_Empleado: [],
     areas: [],
     puestos: [],
     empleado_Id: null,
@@ -64,6 +66,11 @@ export const useAsignacionStore = defineStore("asignacion", {
     actualizarModalValeBodega(valor) {
       this.modalValeBodega = valor;
     },
+
+    actualizarModalByEmpleado(valor) {
+      this.modalByEmpleado = valor;
+    },
+
     initAsignacion() {
       this.asignacion.id = null;
       this.asignacion.area_Id = null;
@@ -82,11 +89,53 @@ export const useAsignacionStore = defineStore("asignacion", {
 
     //-----------------------------------------------------------
 
+    async loadInventarioByEmpleado(id) {
+      try {
+        this.list_Inventario_By_Empleado = [];
+        const resp = await api.get(
+          `/Inventarios/InventarioFinalByEmpleado/${id}`
+        );
+        if (resp.status == 200) {
+          let { data } = resp.data;
+          this.list_Inventario_By_Empleado = data.map((inventario) => {
+            return {
+              id: inventario.id,
+              catalago: inventario.catalago,
+              estatus: inventario.estatus,
+              bodega: inventario.bodega,
+              marca: inventario.marca,
+              modelo: inventario.modelo,
+              empleado: inventario.empleado,
+              clave: inventario.clave,
+              descripcion: inventario.descripcion,
+              nombre_Corto: inventario.nombre_Corto,
+              numero_Serie: inventario.numero_Serie,
+              color: inventario.color,
+              fecha_Registro: inventario.fecha_Registro,
+              folio_Asignacion: inventario.folio_Asignacion,
+            };
+          });
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
     async loadInformacionAsignaciones() {
       try {
         let resp = await api.get("/AsignacionesInventarios");
         let { data } = resp.data;
-        let listaAsignacionInventario = data.map((asignacion) => {
+        this.asignaciones = data.map((asignacion) => {
           return {
             id: asignacion.id,
             area_Id: asignacion.area_Id,
@@ -101,7 +150,7 @@ export const useAsignacionStore = defineStore("asignacion", {
             tipo: asignacion.tipo,
           };
         });
-        this.asignaciones = listaAsignacionInventario;
+        this.asignaciones.sort((a, b) => a.id - b.id);
       } catch (error) {
         return {
           success: false,
@@ -327,6 +376,7 @@ export const useAsignacionStore = defineStore("asignacion", {
         let resp = await api.get(`/AsignacionesInventarios/${id}`);
         if (resp.status == 200) {
           const { success, data } = resp.data;
+          console.log(data);
           if (success == true) {
             this.asignacion.id = data.id;
             this.asignacion.area_Id = data.area_Id;

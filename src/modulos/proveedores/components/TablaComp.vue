@@ -88,8 +88,62 @@ const { modulo } = storeToRefs(authStore);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
-  proveedoresStore.loadInformacionProvedores();
+  cargarData();
 });
+
+//-----------------------------------------------------------
+
+const cargarData = async () => {
+  $q.loading.show();
+  await proveedoresStore.loadInformacionProvedores();
+  $q.loading.hide();
+};
+
+const editar = async (id) => {
+  $q.loading.show();
+  await proveedoresStore.loadProveedor(id);
+  proveedoresStore.actualizarModal(true);
+  proveedoresStore.updateEditar(true);
+  $q.loading.hide();
+};
+
+const eliminar = async (id) => {
+  $q.dialog({
+    title: "Eliminar bodega",
+    message: "¿Está seguro de eliminar el estatus?",
+    icon: "Warning",
+    persistent: true,
+    transitionShow: "scale",
+    transitionHide: "scale",
+    ok: {
+      color: "positive",
+      label: "¡Sí!, eliminar",
+    },
+    cancel: {
+      color: "negative",
+      label: " No Cancelar",
+    },
+  }).onOk(async () => {
+    $q.loading.show();
+    const resp = await proveedoresStore.deleteProveedor(id);
+    if (resp.success) {
+      $q.loading.hide();
+      $q.notify({
+        position: "top-right",
+        type: "positive",
+        message: resp.data,
+      });
+      proveedoresStore.loadInformacionProvedores();
+    } else {
+      $q.loading.hide();
+      $q.notify({
+        position: "top-right",
+        type: "negative",
+        message: resp.data,
+      });
+    }
+  });
+};
 
 //-----------------------------------------------------------
 
@@ -163,7 +217,6 @@ const visible_columns = [
 ];
 
 const pagination = ref({
-  //********** */
   page: 1,
   rowsPerPage: 25,
   sortBy: "name",
@@ -171,54 +224,4 @@ const pagination = ref({
 });
 
 const filter = ref("");
-
-//-----------------------------------------------------------
-
-const editar = async (id) => {
-  $q.loading.show();
-  await proveedoresStore.loadProveedor(id);
-  proveedoresStore.actualizarModal(true);
-  proveedoresStore.updateEditar(true);
-  $q.loading.hide();
-};
-
-const eliminar = async (id) => {
-  $q.dialog({
-    title: "Eliminar bodega",
-    message: "¿Está seguro de eliminar el estatus?",
-    icon: "Warning",
-    persistent: true,
-    transitionShow: "scale",
-    transitionHide: "scale",
-    ok: {
-      color: "positive",
-      label: "¡Sí!, eliminar",
-    },
-    cancel: {
-      color: "negative",
-      label: " No Cancelar",
-    },
-  }).onOk(async () => {
-    $q.loading.show();
-    const resp = await proveedoresStore.deleteProveedor(id);
-    if (resp.success) {
-      $q.loading.hide();
-      $q.notify({
-        position: "top-right",
-        type: "positive",
-        message: resp.data,
-      });
-      proveedoresStore.loadInformacionProvedores();
-    } else {
-      $q.loading.hide();
-      $q.notify({
-        position: "top-right",
-        type: "negative",
-        message: resp.data,
-      });
-    }
-  });
-};
 </script>
-
-<style></style>

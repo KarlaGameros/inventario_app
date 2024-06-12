@@ -75,7 +75,7 @@ const { estatus } = storeToRefs(estatusStore);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
-  estatusStore.loadInformacionEstatus();
+  cargarData();
 });
 
 //-----------------------------------------------------------
@@ -107,6 +107,12 @@ const pagination = ref({
 const filter = ref("");
 
 //-----------------------------------------------------------
+
+const cargarData = async () => {
+  $q.loading.show();
+  await estatusStore.loadInformacionEstatus();
+  $q.loading.hide();
+};
 
 const editar = async (id) => {
   $q.loading.show();
@@ -154,5 +160,3 @@ const eliminar = async (id) => {
   });
 };
 </script>
-
-<style></style>

@@ -72,5 +72,3 @@ const actualizarModal = (valor) => {
   $q.loading.hide();
 };
 </script>
-
-<style></style>

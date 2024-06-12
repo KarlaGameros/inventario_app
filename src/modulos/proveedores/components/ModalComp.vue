@@ -35,7 +35,6 @@
             >
             </q-input>
           </div>
-
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
               v-model.trim="proveedor.razon_Social"
@@ -49,7 +48,6 @@
             >
             </q-input>
           </div>
-
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input
               v-model.trim="proveedor.rfc"
@@ -61,7 +59,6 @@
             >
             </q-input>
           </div>
-
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input
               v-model.trim="proveedor.telefono"
@@ -75,7 +72,6 @@
               <template v-slot:hint>Ingrese teléfono</template>
             </q-input>
           </div>
-
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input
               v-model.trim="email"
@@ -87,7 +83,6 @@
             >
             </q-input>
           </div>
-
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input
               v-model.trim="proveedor.direccion"
@@ -99,7 +94,6 @@
             >
             </q-input>
           </div>
-
           <q-space />
           <div class="col-12 justify-end">
             <div class="text-right q-gutter-xs">
@@ -201,5 +195,3 @@ const onSubmit = async () => {
   $q.loading.hide();
 };
 </script>
-
-<style></style>

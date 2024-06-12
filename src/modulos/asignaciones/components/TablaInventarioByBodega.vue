@@ -39,7 +39,7 @@
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { useAsignacionStore } from "src/stores/asignacion_store";
-import { onBeforeMount, ref } from "vue";
+import { ref } from "vue";
 
 //-----------------------------------------------------------
 

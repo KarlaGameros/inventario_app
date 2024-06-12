@@ -83,7 +83,6 @@ const onSubmit = async () => {
   } else {
     resp = await estatusStore.createEstatu(estatu.value);
   }
-
   if (resp.success) {
     $q.notify({
       position: "top-right",
@@ -102,5 +101,3 @@ const onSubmit = async () => {
   $q.loading.hide();
 };
 </script>
-
-<style></style>

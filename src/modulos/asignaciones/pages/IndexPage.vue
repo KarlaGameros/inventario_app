@@ -13,17 +13,28 @@
     <div class="row">
       <div class="col">
         <div class="text-right q-pa-md items-start q-gutter-md">
-          <q-avatar
+          <q-btn
             v-if="modulo == null ? false : modulo.registrar"
+            type="button"
+            label="Vale empleado"
+            icon-right="list_alt"
             color="purple-ieen"
             text-color="white"
-            icon="receipt_long"
             class="q-ma-sm"
-            @click="generarResguardoBodega()"
+            @click="generarValeByEmpleado(true)"
           >
-            <q-tooltip>Generar resguardo por bodega</q-tooltip>
-          </q-avatar>
-
+          </q-btn>
+          <q-btn
+            v-if="modulo == null ? false : modulo.registrar"
+            type="button"
+            icon-right="receipt_long"
+            color="purple-ieen"
+            text-color="white"
+            class="q-ma-sm"
+            @click="generarResguardoBodega"
+          >
+            <q-tooltip>Generar resguardo por bodega</q-tooltip></q-btn
+          >
           <q-btn
             v-if="modulo == null ? false : modulo.registrar"
             type="button"
@@ -39,6 +50,7 @@
     <TablaComp />
     <ModalComp />
     <ModalValeBodega />
+    <ModalByEmpleado />
   </q-page>
 </template>
 
@@ -51,6 +63,7 @@ import { useAsignacionStore } from "src/stores/asignacion_store";
 import ModalValeBodega from "../components/ModalValeBodega.vue";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
+import ModalByEmpleado from "../components/ModalByEmpleado.vue";
 
 //-----------------------------------------------------------
 
@@ -85,6 +98,10 @@ const actualizarModal = (valor) => {
 
 const generarResguardoBodega = async () => {
   asignacionStore.actualizarModalValeBodega(true);
+};
+
+const generarValeByEmpleado = async (valor) => {
+  asignacionStore.actualizarModalByEmpleado(valor);
 };
 //-----------------------------------------------------------
 </script>

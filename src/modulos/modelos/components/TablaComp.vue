@@ -74,35 +74,6 @@ const { modulo } = storeToRefs(authStore);
 
 //-----------------------------------------------------------
 
-const columns = [
-  {
-    name: "label",
-    align: "center",
-    label: "Clave del modelo",
-    field: "label",
-    sortable: true,
-  },
-  {
-    name: "value",
-    align: "center",
-    label: "Acciones",
-    field: "value",
-    sortable: false,
-  },
-];
-
-const pagination = ref({
-  //********** */
-  page: 1,
-  rowsPerPage: 25,
-  sortBy: "name",
-  descending: false,
-});
-
-const filter = ref("");
-
-//-----------------------------------------------------------
-
 const editar = async (id) => {
   $q.loading.show();
   await modeloStore.loadModelo(id);
@@ -147,6 +118,33 @@ const eliminar = async (id) => {
     }
   });
 };
-</script>
 
-<style></style>
+//-----------------------------------------------------------
+
+const columns = [
+  {
+    name: "label",
+    align: "center",
+    label: "Clave del modelo",
+    field: "label",
+    sortable: true,
+  },
+  {
+    name: "value",
+    align: "center",
+    label: "Acciones",
+    field: "value",
+    sortable: false,
+  },
+];
+
+const pagination = ref({
+  //********** */
+  page: 1,
+  rowsPerPage: 25,
+  sortBy: "name",
+  descending: false,
+});
+
+const filter = ref("");
+</script>

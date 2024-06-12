@@ -61,19 +61,16 @@ import { useBodegaStore } from "src/stores/bodega_store";
 import { useInventarioStore } from "src/stores/inventario_store";
 import { onBeforeMount, ref, watch } from "vue";
 import { useEmpleadosStore } from "src/stores/empleados_store";
-import ValeResguardo from "../../../helpers/ValeResguardo";
 import ReporteBodega from "../../../helpers/ValeByBodega";
 //-----------------------------------------------------------
 
 const $q = useQuasar();
-const inventarioStore = useInventarioStore();
 const bodegaStore = useBodegaStore();
 const asignacionStore = useAsignacionStore();
 const empleadoStore = useEmpleadosStore();
 const { listBodega } = storeToRefs(bodegaStore);
 const { asignacion, modalValeBodega } = storeToRefs(asignacionStore);
 const { empleado } = storeToRefs(empleadoStore);
-const { listInventarioByBodega } = storeToRefs(inventarioStore);
 const bodega_Id = ref(null);
 //Get fecha actual
 const dateActual = new Date();
@@ -84,6 +81,7 @@ const hours = String(dateActual.getHours()).padStart(2, "0");
 const minutes = String(dateActual.getMinutes()).padStart(2, "0");
 const seconds = String(dateActual.getSeconds()).padStart(2, "0");
 const date = ref(`${year}/${month}/${day} ${hours}:${minutes}:${seconds}`);
+
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
@@ -116,7 +114,6 @@ const onSubmit = async () => {
     asignacion.value.puesto = empleado.value.puesto;
     asignacion.value.tipo = "Bodega";
     resp = await asignacionStore.createAsignacion(asignacion.value);
-
     fecha = resp.fecha.replace(" ", " ");
     respByBodega = await asignacionStore.valeByBodega(
       bodega_Id.value.value,

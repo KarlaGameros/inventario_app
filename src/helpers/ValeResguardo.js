@@ -25,7 +25,6 @@ const Reporte = async () => {
         doc.text(
           "INSTITUTO ESTATAL ELECTORAL DEL ESTADO DE NAYARIT \n \n VALE DE RESGUARDO",
           110,
-
           15,
           null,
           null,

@@ -20,7 +20,6 @@
           v-close-popup
         />
       </q-card-section>
-
       <q-card-section>
         <q-form class="row q-col-gutter-xs" @submit="onSubmit">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -112,5 +111,3 @@ const onSubmit = async () => {
   $q.loading.hide();
 };
 </script>
-
-<style></style>
