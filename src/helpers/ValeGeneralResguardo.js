@@ -10,9 +10,7 @@ const ValeGeneralResguardo = async () => {
     const empleadosStore = useEmpleadosStore();
     const { list_Inventario_By_Empleado } = storeToRefs(asignacionStore);
     const { empleado } = storeToRefs(empleadosStore);
-    // listaAsignacionInventario.value.sort((a, b) =>
-    //   a.clave.localeCompare(b.clave)
-    // );
+
     let img = new Image();
     img.src = require("../assets/IEEN300.png");
     const doc = new jsPDF({ orientation: "portrait", format: "letter" });
@@ -96,7 +94,6 @@ const ValeGeneralResguardo = async () => {
     var header = [
       newRow,
       [
-        { content: "Folio" },
         { content: "Clave" },
         { content: "No. Serie" },
         { content: "Descripción" },
@@ -125,7 +122,6 @@ const ValeGeneralResguardo = async () => {
       margin: { left: 9.6, rigth: 10, top: 45 },
       head: header,
       body: list_Inventario_By_Empleado.value.map((item) => [
-        item.folio_Asignacion,
         item.clave,
         item.numero_Serie == null ? "S/N" : item.numero_Serie,
         item.descripcion,
@@ -232,7 +228,6 @@ const ValeGeneralResguardo = async () => {
       msj: "Recibo generado con éxito",
     };
   } catch (error) {
-    console.log(error);
     return {
       success: false,
       data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",

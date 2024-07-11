@@ -43,14 +43,14 @@
               :to="{ name: 'marcas' }"
               :content-inset-level="2"
               :header-inset-level="2"
+              class="text-purple-ieen label-title text-bold"
+              active-class="text-pink-ieen-1"
             >
               <q-item-section avatar>
                 <q-icon name="library_books" color="purple-ieen" />
               </q-item-section>
               <q-item-section>
-                <q-item-label class="text-purple-ieen label-title text-bold"
-                  >Marcas</q-item-label
-                >
+                <q-item-label>Marcas</q-item-label>
               </q-item-section>
             </q-item>
 
@@ -59,14 +59,14 @@
               :to="{ name: 'bodegas' }"
               :content-inset-level="2"
               :header-inset-level="2"
+              class="text-purple-ieen label-title text-bold"
+              active-class="text-pink-ieen-1"
             >
               <q-item-section avatar>
                 <q-icon name="warehouse" color="purple-ieen" />
               </q-item-section>
               <q-item-section>
-                <q-item-label class="text-purple-ieen label-title text-bold"
-                  >Bodegas</q-item-label
-                >
+                <q-item-label>Bodegas</q-item-label>
               </q-item-section>
             </q-item>
 
@@ -75,30 +75,29 @@
               :to="{ name: 'catalogos' }"
               :content-inset-level="2"
               :header-inset-level="2"
+              class="text-purple-ieen label-title text-bold"
+              active-class="text-pink-ieen-1"
             >
               <q-item-section avatar>
                 <q-icon name="list_alt" color="purple-ieen" />
               </q-item-section>
               <q-item-section>
-                <q-item-label class="text-purple-ieen label-title text-bold"
-                  >Catálogo de productos</q-item-label
-                >
+                <q-item-label>Catálogo de productos</q-item-label>
               </q-item-section>
             </q-item>
-
             <q-item
               v-if="CatalogosConList.some((element) => element == 'SI-CAT-PRO')"
               :content-inset-level="2"
               :header-inset-level="2"
               :to="{ name: 'proveedores' }"
+              class="text-purple-ieen label-title text-bold"
+              active-class="text-pink-ieen-1"
             >
               <q-item-section avatar>
                 <q-icon name="groups" color="purple-ieen" />
               </q-item-section>
               <q-item-section>
-                <q-item-label class="text-purple-ieen label-title text-bold">
-                  Proveedores
-                </q-item-label>
+                <q-item-label> Proveedores </q-item-label>
               </q-item-section>
             </q-item>
 
@@ -107,14 +106,14 @@
               :content-inset-level="2"
               :header-inset-level="2"
               :to="{ name: 'estatus' }"
+              class="text-purple-ieen label-title text-bold"
+              active-class="text-pink-ieen-1"
             >
               <q-item-section avatar>
                 <q-icon name="add_box" color="purple-ieen" />
               </q-item-section>
               <q-item-section>
-                <q-item-label class="text-purple-ieen label-title text-bold">
-                  Estatus
-                </q-item-label>
+                <q-item-label> Estatus </q-item-label>
               </q-item-section>
             </q-item>
           </q-expansion-item>
@@ -124,14 +123,14 @@
             :to="{ name: 'inventario' }"
             :content-inset-level="2"
             :header-inset-level="2"
+            class="text-purple-ieen label-title text-bold"
+            active-class="text-pink-ieen-1"
           >
             <q-item-section avatar>
               <q-icon name="inventory" color="purple-ieen" />
             </q-item-section>
             <q-item-section>
-              <q-item-label class="text-purple-ieen label-title text-bold"
-                >Inventario</q-item-label
-              >
+              <q-item-label>Inventario</q-item-label>
             </q-item-section>
           </q-item>
 
@@ -140,14 +139,14 @@
             :content-inset-level="2"
             :header-inset-level="2"
             :to="{ name: 'asignaciones' }"
+            class="text-purple-ieen label-title text-bold"
+            active-class="text-pink-ieen-1"
           >
             <q-item-section avatar>
               <q-icon name="edit_square" color="purple-ieen" />
             </q-item-section>
             <q-item-section>
-              <q-item-label class="text-purple-ieen label-title text-bold">
-                Asignaciones
-              </q-item-label>
+              <q-item-label> Asignaciones </q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -155,14 +154,14 @@
             :content-inset-level="2"
             :header-inset-level="2"
             :to="{ name: 'movimiento_inventario' }"
+            class="text-purple-ieen label-title text-bold"
+            active-class="text-pink-ieen-1"
           >
             <q-item-section avatar>
               <q-icon name="exit_to_app" color="purple-ieen" />
             </q-item-section>
             <q-item-section>
-              <q-item-label class="text-purple-ieen label-title text-bold">
-                Movimiento Inventario
-              </q-item-label>
+              <q-item-label> Movimiento Inventario </q-item-label>
             </q-item-section>
           </q-item>
 
@@ -256,7 +255,17 @@ export default defineComponent({
 
     onBeforeMount(async () => {
       if (route.query.key) {
+        $q.loading.show();
         localStorage.setItem("key", route.query.key);
+        const resp = await authStore.validarToken(
+          route.query.key,
+          route.query.sistema
+        );
+        $q.loading.hide();
+        if (resp.success == false) {
+          localStorage.removeItem("key");
+          window.location = "http://sistema.ieenayarit.org:9271?return=false";
+        }
       }
 
       if (route.query.sistema) {

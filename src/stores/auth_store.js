@@ -8,31 +8,35 @@ export const useAuthStore = defineStore("auth", {
     apps: [],
     modulo: null,
   }),
-  getters: {
-    doubleCount: (state) => state.counter * 2,
-  },
   actions: {
-    /*
-    async loadDatosEmp() {
+    async validarToken(token, sistemaId) {
       try {
-        const resp = await api.get(`/Empleados/ByUsuario`);
+        const resp = await api.get(
+          `/Accesos/ValidaToken/?token=${token}&SistemaId=${sistemaId}`
+        );
         if (resp.status == 200) {
-          const { success, data } = resp.data;
+          const {
+            success,
+            data,
+            empleado,
+            perfil,
+            perfil_Id,
+            area,
+            area_Id,
+            puesto,
+            puesto_Id,
+          } = resp.data;
           if (success === true) {
-            if (data) {
-              localStorage.setItem("empleado", data.id);
-              if (data.area_Id == 13) {
-                const emp = await api.get("/ResponsablesAreas");
-                let datosEmp = emp.data.data;
-                let numEmp = datosEmp.find((x) => x.empleado_Id == data.id);
-                console.log("Este es el num de empleado", numEmp);
-                localStorage.setItem("area", numEmp.area_Id);
-              } else {
-                localStorage.setItem("area", data.area_Id);
-              }
-            }
+            localStorage.setItem("empleado", empleado);
+            localStorage.setItem("perfil", perfil);
+            localStorage.setItem("perfil_Id", perfil_Id);
+            localStorage.setItem("area", area);
+            localStorage.setItem("area_Id", area_Id);
+            localStorage.setItem("puesto", puesto);
+            localStorage.setItem("puesto_Id", puesto_Id);
+            return success;
           } else {
-            return { success, data };
+            return { success };
           }
         } else {
           return {
@@ -48,46 +52,6 @@ export const useAuthStore = defineStore("auth", {
         };
       }
     },
-
-    async loadRolEmp() {
-      try {
-        //if (parseInt(localStorage.getItem("area")) != 13) {
-        const resp = await api.get(`/ResponsablesAreas/ResposableByUsuario`);
-        if (resp.status == 200) {
-          const { success, data } = resp.data;
-          console.log("Esto es data del rol", data);
-          if (success === true) {
-            if (data != null) {
-              if (
-                data.empleado_Id == parseInt(localStorage.getItem("empleado"))
-              ) {
-                localStorage.setItem("tipoEmp", "JefeArea");
-              } else {
-                localStorage.setItem("tipoEmp", "Empleado");
-              }
-            } else {
-              localStorage.setItem("tipoEmp", "JefeArea");
-            }
-          } else {
-            return { success, data };
-          }
-        } else {
-          return {
-            success: false,
-            data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
-          };
-        }
-        //} else {
-        //localStorage.setItem("tipoEmp", "ConsejeroElectoral");
-        // }
-      } catch (error) {
-        console.log(error);
-        return {
-          success: false,
-          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
-        };
-      }
-    },*/
 
     async loadSistemas() {
       try {
@@ -148,6 +112,7 @@ export const useAuthStore = defineStore("auth", {
         };
       }
     },
+
     async loadModulos() {
       try {
         const sistema = localStorage.getItem("sistema");

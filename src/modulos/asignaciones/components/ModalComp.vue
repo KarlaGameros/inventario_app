@@ -5,15 +5,16 @@
     transition-show="scale"
     transition-hide="scale"
   >
-    <q-card style="width: 800px; max-width: 80vw">
+    <q-card style="width: 1200px; max-width: 120vw">
       <q-card-section class="row">
-        <div class="text-h6">
+        <q-img src="../../../assets/IEEN300.png" width="90px" />
+        <div class="text-h5 text-gray-ieen-1 text-bold absolute-center">
           {{
             !isEditar && !isShow
-              ? "Registrar de asignación"
+              ? "REGISTRAR ASIGNACIÓN"
               : isEditar
-              ? "Editar asignación"
-              : `Ver asignación ${asignacion.folio}`
+              ? "EDITAR ASIGNACIÓN"
+              : `VER ASIGNACIÓN ${asignacion.folio}`
           }}
         </div>
         <q-space />
@@ -33,11 +34,22 @@
               v-if="isEditar || isShow"
               class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
             >
-              <q-input readonly v-model="asignacion.estatus" label="Estatus">
+              <q-input
+                filled
+                readonly
+                v-model="asignacion.estatus"
+                label="Estatus"
+              >
               </q-input>
             </div>
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-              <q-input v-if="!isByBodega && !isShow" v-model="date">
+            <div
+              :class="
+                isEditar || isShow
+                  ? 'col-lg-6 col-md-6 col-sm-12 col-xs-12'
+                  : 'col-12'
+              "
+            >
+              <q-input filled v-if="!isByBodega && !isShow" v-model="date">
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy
@@ -58,7 +70,6 @@
                     </q-popup-proxy>
                   </q-icon>
                 </template>
-
                 <template v-slot:append>
                   <q-icon name="access_time" class="cursor-pointer">
                     <q-popup-proxy
@@ -133,6 +144,7 @@
                 </template>
               </q-input> -->
               <q-input
+                filled
                 v-else
                 readonly
                 v-model="asignacion.fecha_Registro"
@@ -142,6 +154,7 @@
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
+                filled
                 v-if="!isShow"
                 label="Área"
                 v-model="area_Id"
@@ -151,11 +164,18 @@
                 :rules="[(val) => !!val || 'El área es requerida']"
               >
               </q-select>
-              <q-input v-else readonly v-model="asignacion.area" label="Área">
+              <q-input
+                filled
+                v-else
+                readonly
+                v-model="asignacion.area"
+                label="Área"
+              >
               </q-input>
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
+                filled
                 v-if="!isShow"
                 label="Empleado"
                 v-model="empleado_Id"
@@ -164,6 +184,7 @@
               >
               </q-select>
               <q-input
+                filled
                 v-else
                 readonly
                 v-model="asignacion.empleado"
@@ -172,11 +193,12 @@
               </q-input>
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-              <q-input readonly label="Puesto" v-model="puesto" hint="Puesto">
+              <q-input filled readonly label="Puesto" v-model="puesto">
               </q-input>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
+                filled
                 v-show="!isShow"
                 v-model="catalogo_Id"
                 :options="listCatalogosTodos"
@@ -189,6 +211,7 @@
             </div>
             <div class="col-lg-5 col-md-5 col-sm-4 col-xs-12">
               <q-select
+                filled
                 :loading="loading"
                 v-show="!isShow && !qr"
                 v-model="inventario_Id"
@@ -200,6 +223,7 @@
               >
               </q-select>
               <q-input
+                filled
                 :loading="loading"
                 v-show="qr"
                 ref="codigo_QR_Ref"
@@ -212,7 +236,11 @@
               </q-input>
             </div>
             <div v-if="!isShow" class="col-lg-1 col-md-1 col-sm-2 col-xs-12">
-              <q-btn @click="setInput" color="purple" icon="qr_code_scanner">
+              <q-btn
+                @click="setInput"
+                color="purple-ieen"
+                icon="qr_code_scanner"
+              >
                 <q-tooltip>Buscar por código de barra</q-tooltip>
               </q-btn>
             </div>
@@ -221,9 +249,9 @@
               <div class="text-right q-gutter-xs">
                 <q-btn
                   v-if="!isShow"
-                  icon-right="add"
+                  icon-right="add_circle"
                   label="Agregar"
-                  color="positive"
+                  color="secondary"
                   class="q-ml-sm"
                   @click="agregarProducto"
                 />
@@ -243,15 +271,17 @@
               <q-btn
                 label="Cancelar"
                 type="reset"
-                color="negative"
+                color="red"
+                icon-right="close"
                 @click="actualizarModal(false)"
               />
               <q-btn
+                icon-right="save"
                 v-if="!isShow"
                 :disable="habilitar_Button"
                 label="Guardar"
                 type="submit"
-                color="positive"
+                color="secondary"
                 class="q-ml-sm"
               />
             </div>
@@ -301,7 +331,6 @@ const {
   isByBodega,
   detalleAsignaciones,
 } = storeToRefs(asignacionStore);
-
 const estatus_Id = ref(null);
 const area_Id = ref(null);
 const puesto_Id = ref(null);
@@ -332,15 +361,11 @@ const date = ref(`${year}-${month}-${day} ${hours}:${minutes}:${seconds}`);
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
-  inventarioStore.loadListInventario(0);
-  estatusStore.loadInformacionEstatus();
-  catalogoStore.loadCatalogoList(true);
-  bodegaStore.loadBodegasList();
-  asignacionStore.loadAreasList(false);
-  catalogo_Id.value = { value: 0, label: "Todos" };
+  cargarData();
 });
 
 //-----------------------------------------------------------
+
 watch(
   () => window.innerWidth,
   (width) => {
@@ -402,6 +427,15 @@ watchEffect(() => {
 
 //-----------------------------------------------------------
 
+const cargarData = async () => {
+  await inventarioStore.loadListInventario(0);
+  await estatusStore.loadInformacionEstatus();
+  await catalogoStore.loadCatalogoList(true);
+  await bodegaStore.loadBodegasList();
+  await asignacionStore.loadAreasList(false);
+  catalogo_Id.value = { value: 0, label: "Todos" };
+};
+
 const setInput = () => {
   qr.value = !qr.value;
   if (qr.value == true) {
@@ -457,7 +491,7 @@ const limpiarCampos = () => {
   puesto.value = null;
   puesto_Id.value = null;
   tipo_Asignacion.value = "personal";
-  empleadoStore.initInventario();
+  empleadoStore.initEmpleado();
 };
 
 const actualizarModal = (valor) => {
@@ -468,7 +502,7 @@ const actualizarModal = (valor) => {
   asignacionStore.updateEditar(false);
   asignacionStore.updateIsBodega(false);
 };
-//-----------------------------------------------------------
+
 const buscarPorQr = (q_r) => {
   if (q_r != null) {
     let resp = leerQR(q_r);
@@ -642,5 +676,3 @@ const registrar = async () => {
   $q.loading.hide();
 };
 </script>
-
-<style></style>

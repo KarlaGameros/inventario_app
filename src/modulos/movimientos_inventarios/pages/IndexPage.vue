@@ -32,6 +32,7 @@
     <ModalComp />
     <ModalFotos />
     <ModalVerInventario />
+    <ModalRecibio />
   </q-page>
 </template>
 
@@ -45,6 +46,7 @@ import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 import ModalVerInventario from "src/modulos/entrega_recepcion/components/ModalVerInventario.vue";
 import ModalFotos from "../components/ModalFotos.vue";
+import ModalRecibio from "../components/ModalRecibio.vue";
 
 //-----------------------------------------------------------
 
@@ -70,9 +72,9 @@ const leerPermisos = async () => {
 
 const actualizarModal = (valor) => {
   $q.loading.show();
+  movimientoInventarioStore.initMovimiento();
+  movimientoInventarioStore.initDetalleMovimiento();
   movimientoInventarioStore.actualizarModal(valor);
   $q.loading.hide();
 };
 </script>
-
-<style></style>

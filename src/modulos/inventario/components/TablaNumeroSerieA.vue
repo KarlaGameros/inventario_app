@@ -25,7 +25,6 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useInventarioStore } from "src/stores/inventario_store";
-import { ref } from "vue";
 
 //-----------------------------------------------------------
 

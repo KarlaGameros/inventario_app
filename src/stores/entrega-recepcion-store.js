@@ -13,9 +13,11 @@ export const useEntregaRecepcionStore = defineStore("entrega-recepcion", {
     actualizarModal(valor) {
       this.modal = valor;
     },
+
     actualizarModalVerInventario(valor) {
       this.modalVerInventario = valor;
     },
+
     //-----------------------------------------------------------
 
     async loadAreasList() {

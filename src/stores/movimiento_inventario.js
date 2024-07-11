@@ -6,6 +6,10 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
     modal: false,
     modalVerInv: false,
     modalFotos: false,
+    modalRecibio: false,
+    modalTraspaso: false,
+    limpiar: false,
+    actualizar: false,
     isEditar: false,
     visualizar: false,
     list_Traspaso: [],
@@ -99,6 +103,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       fecha_Registro: null,
       afectado: null,
       fecha_Afecto: null,
+      estado_Fisico: null,
     },
     responsable: {
       id: null,
@@ -115,6 +120,18 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
     },
   }),
   actions: {
+    actualizarModalTraspaso(valor) {
+      this.modalTraspaso = valor;
+    },
+
+    limpiarModal(valor) {
+      this.actualizar = valor;
+    },
+
+    limpiarInf(valor) {
+      this.limpiar = valor;
+    },
+
     initMovimiento() {
       this.movimiento.id = null;
       this.movimiento.tipo_Movimiento = null;
@@ -174,7 +191,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       try {
         let resp = await api.get("/MovimientosInventarios");
         let { data } = resp.data;
-        let listaMovimientos = data.map((movimiento) => {
+        this.movimientos = data.map((movimiento) => {
           return {
             id: movimiento.id,
             tipo_Movimiento_Id: movimiento.tipo_Movimiento_Id,
@@ -198,7 +215,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             fecha_Afecto: movimiento.fecha_Afecto,
           };
         });
-        this.movimientos = listaMovimientos;
+        this.movimientos.sort((a, b) => b.id - a.id);
       } catch (error) {
         return {
           success: false,
@@ -233,15 +250,16 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             foto_2_URL: inventario.foto_2_URL,
             foto_3_URL: inventario.foto_3_URL,
             foto_4_URL: inventario.foto_4_URL,
-            //-------------------
             inventario_Id: inventario.id,
             destino: "Bodega",
             observaciones: null,
             empleado_Id: null,
+            catalago_Id: inventario.catalago_Id,
             bodega_Destino_Id: inventario.bodega_Id,
             bodega: inventario.bodega,
             value: inventario.id,
             label: `${inventario.clave} ${inventario.nombre_Corto}`,
+            activo: false,
           };
         });
         this.list_Detalle = list;
@@ -260,6 +278,34 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
         const resp = await api.post(
           "/MovimientosInventarios",
           movimientoInventario
+        );
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        } else {
+          return {
+            success: false,
+            data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+          };
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+    async createDetalleMovimiento(detalle) {
+      try {
+        const resp = await api.post(
+          `/DetalleMovimientosInventarios/AgregarDetalle/${detalle.movimiento_Inventario_Id}`,
+          detalle
         );
         if (resp.status == 200) {
           const { success, data } = resp.data;
@@ -489,12 +535,45 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
         let nIndex = this.list_Movimiento_Inventario.findIndex(
           (x) => x.inventario_Id == id
         );
-
         this.list_Movimiento_Inventario.splice(nIndex, 1);
         return {
           success: true,
           data: "Producto eliminado de la lista",
         };
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+    async deleteInventario(id, tipo) {
+      try {
+        if (this.isEditar == false) {
+          if (tipo == "Traspaso") {
+            this.list_Traspaso = this.list_Traspaso.filter(
+              (x) => x.inventario_Id !== id
+            );
+            return { success: true, data: "Se elimino de la lista" };
+          }
+        } else {
+          let resp = await api.delete(`/DetalleMovimientosInventarios/${id}`);
+          if (resp.status == 200) {
+            let { success, data } = resp.data;
+            if (success === true) {
+              return { success, data };
+            } else {
+              return { success, data };
+            }
+          } else {
+            return {
+              success: false,
+              data: "Ocurrio un error, intentelo de nuevo",
+            };
+          }
+        }
       } catch (error) {
         return {
           success: false,
@@ -662,6 +741,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       }
     },
 
+    //-----------------------------------------------------------
     async addObservacion(id, observavacion) {
       try {
         let elemento = this.list_Detalle.findIndex(
@@ -687,7 +767,9 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
           observaciones: observacion,
           estado_Fisico: estado_Fisico,
         });
-        this.list_Detalle.sort((a, b) => a.clave.localeCompare(b.clave));
+        //this.list_Detalle.sort((a, b) => a.clave.localeCompare(b.clave));
+
+        return { success: true };
       } catch (error) {
         return {
           success: false,
@@ -703,7 +785,6 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       empleado_Id,
       bodega_Destino_Id
     ) {
-      console.log(inventario, destino, empleado_Id, bodega_Destino_Id);
       try {
         this.list_Traspaso.push({
           inventario_Id: inventario.value,
@@ -715,6 +796,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             bodega_Destino_Id != null ? bodega_Destino_Id.value : null,
           bodega: bodega_Destino_Id != null ? bodega_Destino_Id.label : null,
         });
+        return { success: true };
       } catch (error) {
         return {
           success: false,
@@ -745,9 +827,19 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
                   "/AsignacionesInventarios",
                   this.asignacion
                 );
+                if (element.tipo == "Bodega") {
+                  if (respAsignacion.status == 200) {
+                    const { data, success, fecha } = respAsignacion.data;
+                    if (success === true) {
+                      await api.get(
+                        `/Inventarios/Imprimir/${element.bodega_Id}/${fecha}`
+                      );
+                    }
+                  }
+                }
                 if (respAsignacion.status == 200) {
                   const { data } = respAsignacion.data;
-                  return { success: true, data };
+                  return { success: true, data: data };
                 } else {
                   return {
                     success: false,
@@ -755,10 +847,13 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
                   };
                 }
               });
-              return { success, data };
-            } else {
-              return { success, data };
+              return { success: true, data: data };
             }
+          } else {
+            return {
+              success: false,
+              data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+            };
           }
         } else {
           return {
@@ -826,9 +921,13 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
         };
       }
     },
+
     //-----------------------------------------------------------
     actualizarModal(valor) {
       this.modal = valor;
+    },
+    actualizarModalRecibio(valor) {
+      this.modalRecibio = valor;
     },
     actualizarVerInventario(valor) {
       this.modalVerInv = valor;

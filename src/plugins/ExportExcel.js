@@ -323,7 +323,6 @@ export function export_json_to_excel({
   /* add worksheet to workbook */
   wb.SheetNames.push(ws_name);
   wb.Sheets[ws_name] = ws;
-  console.log(ws);
   // Set color for excel
   var wbout = XLSX.write(wb, {
     bookType: bookType,

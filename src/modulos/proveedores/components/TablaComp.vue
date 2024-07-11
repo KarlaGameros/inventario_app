@@ -36,7 +36,7 @@
                   icon="edit"
                   @click="editar(col.value)"
                 >
-                  <q-tooltip>Editar asignación</q-tooltip>
+                  <q-tooltip>Editar proveedor</q-tooltip>
                 </q-btn>
                 <q-btn
                   v-if="modulo.eliminar"
@@ -46,7 +46,7 @@
                   icon="delete"
                   @click="eliminar(col.value)"
                 >
-                  <q-tooltip>Eliminar asignación</q-tooltip>
+                  <q-tooltip>Eliminar proveedor</q-tooltip>
                 </q-btn>
               </div>
               <div v-else-if="col.name == 'razon_Social'">
@@ -116,11 +116,11 @@ const eliminar = async (id) => {
     transitionShow: "scale",
     transitionHide: "scale",
     ok: {
-      color: "positive",
+      color: "secondary",
       label: "¡Sí!, eliminar",
     },
     cancel: {
-      color: "negative",
+      color: "red",
       label: " No Cancelar",
     },
   }).onOk(async () => {

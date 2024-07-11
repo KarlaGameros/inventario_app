@@ -5,6 +5,9 @@ export const useEmpleadosStore = defineStore("empleados", {
   state: () => ({
     listEmpleados: [],
     empleados: [],
+    list_Areas: [],
+    list_Empleados: [],
+    personal_Id: null,
     empleado: {
       id: null,
       nombres: null,
@@ -89,6 +92,46 @@ export const useEmpleadosStore = defineStore("empleados", {
             this.empleado.tratamiento = data.tratamiento;
           }
         }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+    async loadAreasList() {
+      try {
+        let resp = await api.get("/Areas/GetLista");
+        let { data } = resp.data;
+        this.list_Areas = data.map((area) => {
+          return {
+            label: area.label,
+            value: area.value,
+          };
+        });
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+    async loadEmpleadosByArea(id) {
+      try {
+        let resp = await api.get(`/Empleados/ByArea/${id}`);
+        let { data } = resp.data;
+        this.list_Empleados = data.map((detalle) => {
+          return {
+            puesto_Id: detalle.puesto_Id,
+            label: `${detalle.nombres} ${detalle.apellido_Paterno} ${detalle.apellido_Materno}`,
+            value: detalle.id,
+            puesto: detalle.puesto,
+          };
+        });
       } catch (error) {
         return {
           success: false,

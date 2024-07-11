@@ -36,13 +36,13 @@
               <q-btn
                 label="Cancelar"
                 type="reset"
-                color="negative"
+                color="red"
                 @click="actualizarModal(false)"
               />
               <q-btn
-                label="Guardar"
+                label="Generar"
                 type="submit"
-                color="positive"
+                color="secondary"
                 class="q-ml-sm"
               />
             </div>
@@ -58,7 +58,6 @@ import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { useAsignacionStore } from "src/stores/asignacion_store";
 import { useBodegaStore } from "src/stores/bodega_store";
-import { useInventarioStore } from "src/stores/inventario_store";
 import { onBeforeMount, ref, watch } from "vue";
 import { useEmpleadosStore } from "src/stores/empleados_store";
 import ReporteBodega from "../../../helpers/ValeByBodega";
@@ -100,7 +99,6 @@ const actualizarModal = (valor) => {
 
 const onSubmit = async () => {
   let resp = null;
-  let respByBodega = null;
   let respVale = null;
   let fecha = null;
   $q.loading.show();
@@ -114,11 +112,8 @@ const onSubmit = async () => {
     asignacion.value.puesto = empleado.value.puesto;
     asignacion.value.tipo = "Bodega";
     resp = await asignacionStore.createAsignacion(asignacion.value);
-    fecha = resp.fecha.replace(" ", " ");
-    respByBodega = await asignacionStore.valeByBodega(
-      bodega_Id.value.value,
-      fecha
-    );
+    fecha = resp.fecha;
+    await asignacionStore.valeByBodega(bodega_Id.value.value, fecha);
     asignacionStore.loadAsignacion(resp.id);
   }
   if (resp.success === true) {
@@ -137,8 +132,4 @@ const onSubmit = async () => {
   }
   $q.loading.hide();
 };
-
-//-----------------------------------------------------------
 </script>
-
-<style></style>

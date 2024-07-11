@@ -115,6 +115,9 @@ export const useAsignacionStore = defineStore("asignacion", {
               folio_Asignacion: inventario.folio_Asignacion,
             };
           });
+          this.list_Inventario_By_Empleado.sort((a, b) =>
+            a.clave.localeCompare(b.clave)
+          );
         } else {
           return {
             success: false,
@@ -150,7 +153,7 @@ export const useAsignacionStore = defineStore("asignacion", {
             tipo: asignacion.tipo,
           };
         });
-        this.asignaciones.sort((a, b) => a.id - b.id);
+        this.asignaciones.sort((a, b) => b.id.localeCompare(a.id));
       } catch (error) {
         return {
           success: false,
@@ -376,7 +379,6 @@ export const useAsignacionStore = defineStore("asignacion", {
         let resp = await api.get(`/AsignacionesInventarios/${id}`);
         if (resp.status == 200) {
           const { success, data } = resp.data;
-          console.log(data);
           if (success == true) {
             this.asignacion.id = data.id;
             this.asignacion.area_Id = data.area_Id;

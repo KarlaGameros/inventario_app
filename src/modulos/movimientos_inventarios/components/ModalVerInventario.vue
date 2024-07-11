@@ -63,5 +63,3 @@ const actualizarModal = (valor) => {
   movimientoInventarioStore.actualizarVerInventario(valor);
 };
 </script>
-
-<style></style>

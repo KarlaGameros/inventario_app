@@ -134,6 +134,7 @@ const editar = async (id) => {
   catalagoStore.actualizarModal(true);
   $q.loading.hide();
 };
+
 const eliminar = async (id) => {
   $q.dialog({
     title: "Eliminar catalogo",
@@ -143,11 +144,11 @@ const eliminar = async (id) => {
     transitionShow: "scale",
     transitionHide: "scale",
     ok: {
-      color: "positive",
+      color: "secondary",
       label: "¡Sí!, eliminar",
     },
     cancel: {
-      color: "negative",
+      color: "red",
       label: " No Cancelar",
     },
   }).onOk(async () => {

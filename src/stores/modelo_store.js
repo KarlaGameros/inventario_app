@@ -116,7 +116,6 @@ export const useModeloStore = defineStore("modelos", {
     },
 
     //-----------------------------------------------------------
-
     async createModelo(modelo) {
       try {
         modelo.marca_Id = this.marca_id;
@@ -191,6 +190,7 @@ export const useModeloStore = defineStore("modelos", {
         };
       }
     },
+
     //-----------------------------------------------------------
     actualizarModal(valor) {
       this.modal = valor;

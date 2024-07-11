@@ -7,6 +7,7 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
     isEditar: false,
     catalogos: [],
     listCatalogo: [],
+    listCatalogoFiltro: [],
     listCatalogosTodos: [],
     catalogo: {
       id: null,
@@ -71,6 +72,41 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
         }
 
         this.listCatalogo = listCatalogo;
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
+    async loadCatalogoFiltro() {
+      try {
+        this.listCatalogoFiltro = [];
+        let resp = await api.get("/Catalagos");
+        let { data } = resp.data;
+
+        let listCatalogo = data.map((catalogo) => {
+          return {
+            label: `${catalogo.clave} - ${catalogo.nombre}`,
+            value: catalogo.id,
+          };
+        });
+        const indexConsumible = listCatalogo.findIndex(
+          (element) => element.label === "EY-99 - Consumibles"
+        );
+
+        if (indexConsumible !== -1) {
+          listCatalogo.splice(indexConsumible, 1);
+        }
+
+        listCatalogo.splice(0, 0, {
+          value: 0,
+          label: "Todos",
+        });
+        this.listCatalogoFiltro = listCatalogo;
       } catch (error) {
         return {
           success: false,

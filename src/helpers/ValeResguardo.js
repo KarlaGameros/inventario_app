@@ -34,7 +34,7 @@ const Reporte = async () => {
 
         doc.setFillColor(84, 37, 131);
         doc.setDrawColor(0, 0, 0);
-        doc.setLineWidth(0.3);
+        doc.setLineWidth(0.1);
 
         doc.rect(10, 30, 40, 5, "FD");
         doc.rect(10, 35, 40, 5, "FD");
@@ -74,7 +74,7 @@ const Reporte = async () => {
       //--------------------------------------------------------------------------//
 
       doc.setFillColor(84, 37, 131);
-      doc.rect(10, 45, 191.8, 6, "FD");
+      doc.rect(9.5, 45, 192, 6, "FD");
       doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(8);
@@ -82,22 +82,22 @@ const Reporte = async () => {
 
       doc.setTextColor(0, 0, 0);
 
-      doc.rect(10, 51, 191.8, 7, "FD");
+      doc.rect(9.5, 51, 192, 7, "FD");
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.text("Responsable: ", 15, 56);
       doc.setFont("helvetica", "normal");
       doc.text(asignacion.value.empleado, 40, 56);
 
-      doc.rect(10, 58, 191.8, 7);
+      doc.rect(9.5, 58, 192, 7);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.text("Cargo:", 15, 63);
       doc.setFont("helvetica", "normal");
       doc.text(asignacion.value.puesto, 30, 63);
       doc.setFont("helvetica", "bold");
-
-      doc.rect(10, 65, 191.8, 7);
+      console.log(asignacion.value);
+      doc.rect(9.5, 65, 192, 7);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.text("Área:", 15, 70);
@@ -144,7 +144,7 @@ const Reporte = async () => {
           valign: "middle",
           fontSize: 8,
           lineColor: [0, 0, 0],
-          lineWidth: 0.3,
+          lineWidth: 0.1,
         },
       });
 
@@ -254,9 +254,10 @@ const Reporte = async () => {
       };
     }
   } catch (error) {
-    console.log(error);
-  } finally {
-    console.log("Acabó");
+    return {
+      success: false,
+      data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+    };
   }
 };
 

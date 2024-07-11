@@ -15,6 +15,7 @@ export const useMarcaStore = defineStore("marcas", {
   }),
   actions: {
     //-----------------------------------------------------------
+
     initMarca() {
       this.marca.id = null;
       this.marca.clave = null;
@@ -159,6 +160,7 @@ export const useMarcaStore = defineStore("marcas", {
         };
       }
     },
+
     //-----------------------------------------------------------
     actualizarModal(valor) {
       this.modal = valor;

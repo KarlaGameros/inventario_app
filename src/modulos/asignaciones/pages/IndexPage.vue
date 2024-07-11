@@ -32,9 +32,8 @@
             text-color="white"
             class="q-ma-sm"
             @click="generarResguardoBodega"
-          >
-            <q-tooltip>Generar resguardo por bodega</q-tooltip></q-btn
-          >
+            label="Resguardo por bodega"
+          />
           <q-btn
             v-if="modulo == null ? false : modulo.registrar"
             type="button"

@@ -7,7 +7,9 @@
   >
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
-        <div class="text-h6">Fotografía</div>
+        <div class="text-h5 text-purple-ieen text-bold absolute-center">
+          Subir fotografías
+        </div>
         <q-space />
         <q-btn
           icon="close"
@@ -23,6 +25,7 @@
           <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
+                filled
                 v-model="detalle_Id"
                 :options="list_Detalle"
                 label="Detalle del movimiento"
@@ -40,6 +43,7 @@
           <div class="row q-col-gutter-xs">
             <q-card class="col-lg-3 col-md-3 col-sm-3 col-xs-12 q-pa-xs">
               <q-file
+                filled
                 accept="image/png, image/jpeg"
                 color="purple-12"
                 v-model="foto_1"
@@ -53,10 +57,11 @@
             </q-card>
             <q-card class="col-lg-3 col-md-3 col-sm-3 col-xs-12 q-pa-xs">
               <q-file
+                filled
                 accept="image/png, image/jpeg"
                 color="purple-12"
                 v-model="foto_2"
-                label="Foto 1"
+                label="Foto 2"
               >
                 <template v-slot:prepend>
                   <q-icon name="attach_file" />
@@ -66,10 +71,11 @@
             </q-card>
             <q-card class="col-lg-3 col-md-3 col-sm-3 col-xs-12 q-pa-xs">
               <q-file
+                filled
                 accept="image/png, image/jpeg"
                 color="purple-12"
                 v-model="foto_3"
-                label="Foto 1"
+                label="Foto 3"
               >
                 <template v-slot:prepend>
                   <q-icon name="attach_file" />
@@ -79,10 +85,11 @@
             </q-card>
             <q-card class="col-lg-3 col-md-3 col-sm-3 col-xs-12 q-pa-xs">
               <q-file
+                filled
                 accept="image/png, image/jpeg"
                 color="purple-12"
                 v-model="foto_4"
-                label="Foto 1"
+                label="Foto 4"
               >
                 <template v-slot:prepend>
                   <q-icon name="attach_file" />
@@ -145,6 +152,8 @@ watch(detalle_Id, async (val) => {
   }
 });
 
+//-----------------------------------------------------------
+
 const actualizarModal = (valor) => {
   movimientoInventarioStore.actualizarModalFotos(valor);
   movimientoInventarioStore.initDetalleMovimiento();
@@ -163,7 +172,6 @@ const onSubmit = async () => {
   fotografiasFormData.append("Foto_2", foto_2.value);
   fotografiasFormData.append("Foto_3", foto_3.value);
   fotografiasFormData.append("Foto_4", foto_4.value);
-
   resp = await movimientoInventarioStore.agregarFotografias(
     detalle_Id.value.value,
     fotografiasFormData
@@ -174,7 +182,6 @@ const onSubmit = async () => {
       type: "positive",
       message: resp.data,
     });
-    //actualizarModal(false);
     movimientoInventarioStore.loadDetalleMovimientoById(
       detalle_Movimiento.value.id
     );

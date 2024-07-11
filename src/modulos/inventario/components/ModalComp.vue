@@ -5,10 +5,11 @@
     transition-show="scale"
     transition-hide="scale"
   >
-    <q-card style="width: 800px; max-width: 80vw">
+    <q-card style="width: 1000px; max-width: 100vw">
       <q-card-section class="row">
-        <div class="text-h6">
-          {{ !isEditar ? "Registrar inventario" : "Editar inventario" }}
+        <q-img src="../../../assets/IEEN300.png" width="90px" />
+        <div class="text-h5 text-gray-ieen-1 text-bold absolute-center">
+          {{ !isEditar ? "REGISTRAR INVENTARIO" : "EDITAR INVENTARIO" }}
         </div>
         <q-space />
         <q-btn
@@ -34,21 +35,21 @@
             "
           >
             <q-radio
-              color="purple"
+              color="purple-ieen"
               v-model="radio"
               size="md"
               val="individual"
               label="Individual"
             />
             <q-radio
-              color="purple"
+              color="purple-ieen"
               v-model="radio"
               size="md"
               val="agranel"
               label="Agranel"
             />
             <q-radio
-              color="purple"
+              color="purple-ieen"
               v-model="radio"
               size="md"
               val="paquete"
@@ -65,7 +66,7 @@
                 :key="item.tab.name"
                 tag="label"
                 :model-value="item.selected"
-                color="purple"
+                color="purple-ieen"
                 @update:model-value="
                   (status) => {
                     setTabSelected(item.tab, status);
@@ -80,6 +81,8 @@
           <!--Individual, agranel y paquete-->
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-select
+              color="purple-ieen"
+              filled
               v-model="catalogoId"
               :options="listCatalogo"
               label="Catálogo perteneciente del inventario"
@@ -91,6 +94,8 @@
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 mb-5">
             <q-select
+              color="purple-ieen"
+              filled
               v-model="bodegaId"
               :options="listBodega"
               label="Bodega de resguardo"
@@ -102,6 +107,7 @@
           </div>
           <div v-if="isEditar" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
+              filled
               disable
               v-model="inventario.clave"
               label="Clave del producto"
@@ -114,6 +120,7 @@
             class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
           >
             <q-input
+              filled
               v-model.trim="inventario.descripcion"
               label="Descripción del producto"
               name="descripcion"
@@ -128,6 +135,7 @@
             class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
           >
             <q-input
+              filled
               v-model.trim="inventario.nombre_corto"
               label="Nombre corto"
               name="nombre_corto"
@@ -144,6 +152,8 @@
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
           >
             <q-select
+              color="purple-ieen"
+              filled
               v-model="marcaId"
               :options="opcionesMarca"
               label="Marca"
@@ -160,6 +170,8 @@
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
           >
             <q-select
+              color="purple-ieen"
+              filled
               v-model="modeloId"
               :options="opcionesModelo"
               label="Modelo"
@@ -176,6 +188,7 @@
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
           >
             <q-input
+              filled
               v-model.trim="inventario.color"
               label="Color"
               name="color"
@@ -188,6 +201,7 @@
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
           >
             <q-input
+              filled
               v-model="inventario.numero_Serie"
               label="Numero de serie"
               autogrow
@@ -201,6 +215,7 @@
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
           >
             <q-input
+              filled
               v-model.trim="cantidad"
               label="Cantidad"
               type="number"
@@ -215,6 +230,7 @@
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
           >
             <q-input
+              filled
               type="number"
               v-model.number="inventario.importe"
               label="Importe"
@@ -228,6 +244,7 @@
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
             <q-input
+              filled
               v-model.trim="inventario.numero_factura"
               label="Número de factura"
               name="Número de factura"
@@ -235,11 +252,16 @@
             </q-input>
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
-            <q-input v-model.trim="inventario.uuid" label="UUID" name="UUID">
+            <q-input
+              filled
+              v-model.trim="inventario.uuid"
+              label="UUID"
+              name="UUID"
+            >
             </q-input>
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-            <q-input v-model="date" label="Fecha de compra">
+            <q-input filled v-model="date" label="Fecha de compra">
               <template v-slot:append>
                 <q-icon name="event" class="cursor-pointer">
                   <q-popup-proxy
@@ -267,6 +289,7 @@
             class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
           >
             <q-file
+              filled
               accept="image/png, image/jpeg"
               color="purple-12"
               v-model="foto1"
@@ -283,6 +306,7 @@
             class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
           >
             <q-file
+              filled
               accept="image/png, image/jpeg"
               color="purple-12"
               v-model="foto2"
@@ -299,6 +323,7 @@
             class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
           >
             <q-file
+              filled
               accept="image/png, image/jpeg"
               color="purple-12"
               v-model="foto3"
@@ -315,6 +340,7 @@
             class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
           >
             <q-file
+              filled
               accept="image/png, image/jpeg"
               color="purple-12"
               v-model="foto4"
@@ -346,6 +372,7 @@
                 <div class="text-h6">General</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    filled
                     v-model.trim="inventario.descripcion"
                     label="Descripción del producto"
                     autogrow
@@ -356,6 +383,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    filled
                     v-model.trim="inventario.nombre_corto"
                     label="Nombre corto"
                     autogrow
@@ -367,6 +395,8 @@
                 <div class="row">
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
                     <q-select
+                      color="purple-ieen"
+                      filled
                       v-model="marcaId"
                       :options="opcionesMarca"
                       label="Marca"
@@ -380,6 +410,8 @@
                   </div>
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-select
+                      color="purple-ieen"
+                      filled
                       v-model="modeloId"
                       :options="opcionesModelo"
                       label="Modelo"
@@ -395,6 +427,7 @@
                 <div class="row q-pb-md">
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
                     <q-input
+                      filled
                       v-model.trim="inventario.color"
                       label="Color"
                       autogrow
@@ -403,6 +436,7 @@
                   </div>
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-input
+                      filled
                       type="number"
                       v-model.number="inventario.importe"
                       label="Importe"
@@ -417,8 +451,8 @@
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
-                    v-model="foto1"
                     filled
+                    v-model="foto1"
                     bottom-slots
                     label="Foto 1"
                     counter
@@ -438,8 +472,8 @@
                 </div>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                   <q-file
-                    v-model="foto2"
                     filled
+                    v-model="foto2"
                     bottom-slots
                     label="Foto 2"
                     counter
@@ -529,6 +563,7 @@
                 <div class="text-h6">Extensión A</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    filled
                     v-if="isEditar"
                     v-model.trim="inventario.clave_a"
                     label="Clave del producto"
@@ -540,6 +575,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    filled
                     v-model.trim="inventario.descripcion_a"
                     label="Descripción del producto"
                     autogrow
@@ -550,6 +586,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    filled
                     v-model.trim="inventario.nombre_corto_a"
                     label="Nombre corto"
                     autogrow
@@ -563,6 +600,8 @@
                 <div class="row">
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
                     <q-select
+                      color="purple-ieen"
+                      filled
                       v-model="marcaId_A"
                       :options="opcionesMarca"
                       label="Marca"
@@ -576,6 +615,8 @@
                   </div>
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-select
+                      color="purple-ieen"
+                      filled
                       v-model="modeloId_A"
                       :options="opcionesModelo"
                       label="Modelo"
@@ -591,6 +632,7 @@
                 <div class="row q-pb-md">
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
                     <q-input
+                      filled
                       v-model.trim="inventario.color_a"
                       label="Color"
                       autogrow
@@ -599,6 +641,7 @@
                   </div>
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-input
+                      filled
                       type="number"
                       v-model.number="inventario.importe_a"
                       label="Importe"
@@ -703,6 +746,7 @@
                 <div class="text-h6">Extensión B</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    filled
                     v-if="isEditar"
                     v-model.trim="inventario.clave_b"
                     label="Clave del producto"
@@ -714,6 +758,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    filled
                     v-model.trim="inventario.descripcion_b"
                     label="Descripción del producto"
                     autogrow
@@ -724,6 +769,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    filled
                     v-model.trim="inventario.nombre_corto_b"
                     label="Nombre corto"
                     autogrow
@@ -737,6 +783,8 @@
                 <div class="row">
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
                     <q-select
+                      color="purple-ieen"
+                      filled
                       v-model="marcaId_B"
                       :options="opcionesMarca"
                       label="Marca"
@@ -750,6 +798,8 @@
                   </div>
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-select
+                      color="purple-ieen"
+                      filled
                       v-model="modeloId_B"
                       :options="opcionesModelo"
                       label="Modelo"
@@ -765,6 +815,7 @@
                 <div class="row q-pb-md">
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
                     <q-input
+                      filled
                       v-model.trim="inventario.color_b"
                       label="Color"
                       autogrow
@@ -773,6 +824,7 @@
                   </div>
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-input
+                      filled
                       type="number"
                       v-model.number="inventario.importe_b"
                       label="Importe"
@@ -877,6 +929,7 @@
                 <div class="text-h6">Extensión C</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    filled
                     v-if="isEditar"
                     v-model.trim="inventario.clave_c"
                     label="Clave del producto"
@@ -888,6 +941,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    filled
                     v-model.trim="inventario.descripcion_c"
                     label="Descripción del producto"
                     autogrow
@@ -898,6 +952,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    filled
                     v-model.trim="inventario.nombre_corto_c"
                     label="Nombre corto"
                     autogrow
@@ -911,6 +966,8 @@
                 <div class="row">
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
                     <q-select
+                      color="purple-ieen"
+                      filled
                       v-model="marcaId_C"
                       :options="opcionesMarca"
                       label="Marca"
@@ -924,6 +981,8 @@
                   </div>
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-select
+                      color="purple-ieen"
+                      filled
                       v-model="modeloId_C"
                       :options="opcionesModelo"
                       label="Modelo"
@@ -939,6 +998,7 @@
                 <div class="row q-pb-md">
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
                     <q-input
+                      filled
                       v-model.trim="inventario.color_c"
                       label="Color"
                       autogrow
@@ -947,6 +1007,7 @@
                   </div>
                   <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <q-input
+                      filled
                       type="number"
                       v-model.number="inventario.importe_c"
                       label="Importe"
@@ -1056,13 +1117,15 @@
               <q-btn
                 label="Cancelar"
                 type="reset"
-                color="negative"
+                color="red"
+                icon-right="close"
                 @click="actualizarModal(false)"
               />
               <q-btn
+                icon-right="save"
                 label="Guardar"
                 type="submit"
-                color="positive"
+                color="secondary"
                 class="q-ml-sm"
               />
             </div>
@@ -1083,7 +1146,6 @@ import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useBodegaStore } from "src/stores/bodega_store";
 import { useMarcaStore } from "src/stores/marcas_store";
 import { useModeloStore } from "src/stores/modelo_store";
-import { useEmpleadosStore } from "src/stores/empleados_store";
 import TablaNumerosSeriesA from "./TablaNumeroSerieA.vue";
 import TablaNumerosSeriesB from "./TablaNumeroSerieB.vue";
 import TablaNumerosSeriesC from "./TablaNumeroSerieC.vue";
@@ -1093,7 +1155,6 @@ import TablaNumerosSeriesC from "./TablaNumeroSerieC.vue";
 const $q = useQuasar();
 const inventarioStore = useInventarioStore();
 const catalogoStore = useCatalogoProductoStore();
-const empleadoStore = useEmpleadosStore();
 const bodegaStore = useBodegaStore();
 const marcaStore = useMarcaStore();
 const modeloStore = useModeloStore();
@@ -1113,7 +1174,6 @@ const { listCatalogo } = storeToRefs(catalogoStore);
 const { listBodega } = storeToRefs(bodegaStore);
 const { listMarca } = storeToRefs(marcaStore);
 const { listModelo } = storeToRefs(modeloStore);
-const { empleado } = storeToRefs(empleadoStore);
 const opcionesMarca = ref([...listMarca.value]);
 const opcionesModelo = ref([...listModelo.value]);
 const catalogoId = ref(null);
@@ -1176,25 +1236,29 @@ watch(modal, (val) => {
 
 watch(marcaId, (val) => {
   if (val != null) {
-    modeloStore.modeloByMarca(marcaId.value.value);
+    loadMarca(val);
   }
 });
 
+const loadMarca = async (marca) => {
+  await modeloStore.modeloByMarca(marca.value);
+};
+
 watch(marcaId_A, (val) => {
   if (val != null) {
-    modeloStore.modeloByMarca(marcaId_A.value.value);
+    loadMarca(val);
   }
 });
 
 watch(marcaId_B, (val) => {
   if (val != null) {
-    modeloStore.modeloByMarca(marcaId_B.value.value);
+    loadMarca(val);
   }
 });
 
 watch(marcaId_C, (val) => {
   if (val != null) {
-    modeloStore.modeloByMarca(marcaId_C.value.value);
+    loadMarca(val);
   }
 });
 

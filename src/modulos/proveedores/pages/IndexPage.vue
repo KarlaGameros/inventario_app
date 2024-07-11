@@ -5,10 +5,7 @@
         <div class="q-pa-md q-gutter-sm">
           <q-breadcrumbs>
             <q-breadcrumbs-el icon="home" to="/" />
-            <q-breadcrumbs-el
-              label="Movimiento_Inventario"
-              icon="library_books"
-            />
+            <q-breadcrumbs-el label="Proveedores" icon="library_books" />
           </q-breadcrumbs>
         </div>
       </div>

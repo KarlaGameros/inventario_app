@@ -39,12 +39,10 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useAsignacionStore } from "src/stores/asignacion_store";
-import { ref } from "vue";
-
 //-----------------------------------------------------------
 
 const asignacionStore = useAsignacionStore();
-const { modalVale } = storeToRefs(asignacionStore);
+const { modalFotos } = storeToRefs(asignacionStore);
 
 //-----------------------------------------------------------
 
@@ -52,5 +50,3 @@ const actualizarModal = (valor) => {
   asignacionStore.actualizarModalVale(valor);
 };
 </script>
-
-<style></style>

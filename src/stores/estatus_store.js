@@ -38,6 +38,7 @@ export const useEstatusStore = defineStore("estatus", {
         };
       }
     },
+
     //-----------------------------------------------------------
     async loadEstatusList(especial) {
       try {
@@ -64,6 +65,7 @@ export const useEstatusStore = defineStore("estatus", {
         };
       }
     },
+
     //-----------------------------------------------------------
     async createEstatu(estatu) {
       try {
@@ -115,7 +117,6 @@ export const useEstatusStore = defineStore("estatus", {
     },
 
     //-----------------------------------------------------------
-    //carga el estatus con el id que se mando para mostrarlo y asi poder editarlo
     async loadEstatus(id) {
       try {
         let resp = null;

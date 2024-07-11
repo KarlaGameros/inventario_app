@@ -67,9 +67,9 @@ import { useBodegaStore } from "../../../stores/bodega_store";
 
 const $q = useQuasar();
 const authStore = useAuthStore();
+const bodegaStore = useBodegaStore();
 const { modulo } = storeToRefs(authStore);
 const { bodegas } = storeToRefs(bodegaStore);
-const bodegaStore = useBodegaStore();
 
 //-----------------------------------------------------------
 
@@ -137,11 +137,11 @@ const eliminar = async (id) => {
     transitionShow: "scale",
     transitionHide: "scale",
     ok: {
-      color: "positive",
+      color: "secondary",
       label: "¡Sí!, eliminar",
     },
     cancel: {
-      color: "negative",
+      color: "red",
       label: " No Cancelar",
     },
   }).onOk(async () => {

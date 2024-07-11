@@ -28,7 +28,7 @@
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
               <div v-if="col.name === 'id'">
                 <q-btn
-                  v-if="modulo.registrar"
+                  v-if="modulo == null ? false : modulo.registrar"
                   flat
                   round
                   color="purple-ieen"
@@ -38,7 +38,7 @@
                   <q-tooltip>Agregar modelo</q-tooltip>
                 </q-btn>
                 <q-btn
-                  v-if="modulo.actualizar"
+                  v-if="modulo == null ? false : modulo.actualizar"
                   flat
                   round
                   color="purple-ieen"
@@ -48,7 +48,7 @@
                   <q-tooltip>Editar marca</q-tooltip>
                 </q-btn>
                 <q-btn
-                  v-if="modulo.eliminar"
+                  v-if="modulo == null ? false : modulo.eliminar"
                   flat
                   round
                   color="purple-ieen"
@@ -117,11 +117,11 @@ const eliminar = async (id) => {
     transitionShow: "scale",
     transitionHide: "scale",
     ok: {
-      color: "positive",
+      color: "secondary",
       label: "¡Sí!, eliminar",
     },
     cancel: {
-      color: "negative",
+      color: "red",
       label: " No Cancelar",
     },
   }).onOk(async () => {

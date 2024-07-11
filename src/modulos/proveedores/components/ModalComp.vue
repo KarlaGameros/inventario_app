@@ -7,7 +7,7 @@
   >
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
-        <div class="text-h6">
+        <div class="text-h5 text-purple-ieen text-bold absolute-center">
           {{ !isEditar ? "Registrar proveedor" : "Editar proveedor" }}
         </div>
         <q-space />
@@ -24,6 +24,8 @@
         <q-form class="row q-col-gutter-xs" @submit="onSubmit">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
+              filled
+              color="purple-ieen"
               v-model.trim="proveedor.nombre"
               label="Nombre del proveedor"
               hint="Ingrese nombre del proveedor"
@@ -37,6 +39,8 @@
           </div>
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
+              filled
+              color="purple-ieen"
               v-model.trim="proveedor.razon_Social"
               label="Razón social"
               hint="Ingrese razón social del proveedor"
@@ -50,6 +54,8 @@
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input
+              filled
+              color="purple-ieen"
               v-model.trim="proveedor.rfc"
               label="RFC"
               hint="Ingrese RFC"
@@ -61,6 +67,8 @@
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input
+              filled
+              color="purple-ieen"
               v-model.trim="proveedor.telefono"
               label="Teléfono"
               lazy-rules
@@ -74,6 +82,8 @@
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input
+              filled
+              color="purple-ieen"
               v-model.trim="email"
               label="Email"
               hint="Ingrese correo electronico"
@@ -85,6 +95,8 @@
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input
+              filled
+              color="purple-ieen"
               v-model.trim="proveedor.direccion"
               label="Dirección"
               hint="Ingrese dirección"
@@ -100,13 +112,15 @@
               <q-btn
                 label="Cancelar"
                 type="reset"
-                color="negative"
+                color="red"
+                icon-right="close"
                 @click="actualizarModal(false)"
               />
               <q-btn
+                icon-right="save"
                 label="Guardar"
                 type="submit"
-                color="positive"
+                color="secondary"
                 class="q-ml-sm"
               />
             </div>

@@ -8,7 +8,7 @@
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
         <div class="text-subtitle1 text-bold">
-          Seleccionar personal para descargar el vale
+          Seleccionar personal para visualizar el inventario asignado
         </div>
         <q-space />
         <q-btn
@@ -32,6 +32,30 @@
               :options="listEmpleados"
               label="Personal"
             />
+          </div>
+          <div v-if="empleado_Id != null" class="col-12">
+            <q-table
+              :rows="list_Inventario_By_Empleado"
+              row-key="name"
+              flat
+              :columns="columns"
+              bordered
+              :filter="filter"
+            >
+              <template v-slot:top-right>
+                <q-input
+                  borderless
+                  dense
+                  debounce="300"
+                  v-model="filter"
+                  placeholder="Search"
+                >
+                  <template v-slot:append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+              </template>
+            </q-table>
           </div>
           <div class="col-12 justify-end">
             <br />
@@ -71,9 +95,11 @@ import ValeGeneralResguardo from "../../../helpers/ValeGeneralResguardo";
 const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
 const empleadosStore = useEmpleadosStore();
-const { modalByEmpleado, areas, listEmpleados } = storeToRefs(asignacionStore);
+const { modalByEmpleado, areas, listEmpleados, list_Inventario_By_Empleado } =
+  storeToRefs(asignacionStore);
 const area_Id = ref(null);
 const empleado_Id = ref(null);
+const filter = ref("");
 
 //-----------------------------------------------------------
 
@@ -81,24 +107,103 @@ onBeforeMount(() => {
   cargarData();
 });
 
+//-----------------------------------------------------------
+
 watch(area_Id, (val) => {
   if (val != null) {
+    empleado_Id.value = null;
     asignacionStore.loadEmpleadosByArea(val.value);
   }
 });
+
+watch(empleado_Id, async (val) => {
+  if (val != null) {
+    empleadosStore.initEmpleado();
+    await empleadosStore.loadEmpleadoById(empleado_Id.value.value);
+    await asignacionStore.loadInventarioByEmpleado(empleado_Id.value.value);
+  }
+});
+
+//-----------------------------------------------------------
 
 const cargarData = async () => {
   await asignacionStore.loadAreasList();
 };
 
 const onSubmit = async () => {
-  empleadosStore.initEmpleado();
-  await empleadosStore.loadEmpleadoById(empleado_Id.value.value);
-  await asignacionStore.loadInventarioByEmpleado(empleado_Id.value.value);
   await ValeGeneralResguardo();
 };
 
 const actualizarModal = (valor) => {
+  area_Id.value = null;
+  empleado_Id.value = null;
+  list_Inventario_By_Empleado.value = [];
   asignacionStore.actualizarModalVale(valor);
 };
+
+const columns = [
+  {
+    name: "folio_Asignacion",
+    align: "center",
+    label: "Folio de asignación",
+    field: "folio_Asignacion",
+    sortable: true,
+  },
+  {
+    name: "catalago",
+    align: "center",
+    label: "Catalago",
+    field: "catalago",
+    sortable: true,
+  },
+  {
+    name: "clave",
+    align: "center",
+    label: "Clave",
+    field: "clave",
+    sortable: true,
+  },
+  {
+    name: "nombre_Corto",
+    align: "center",
+    label: "Nombre Corto",
+    field: "nombre_Corto",
+    sortable: true,
+  },
+  {
+    name: "descripcion",
+    align: "center",
+    label: "Descripcion",
+    field: "descripcion",
+    sortable: true,
+  },
+  {
+    name: "numero_Serie",
+    align: "center",
+    label: "Numero Serie",
+    field: "numero_Serie",
+    sortable: true,
+  },
+  {
+    name: "bodega",
+    align: "center",
+    label: "Bodega",
+    field: "bodega",
+    sortable: true,
+  },
+  {
+    name: "marca",
+    align: "center",
+    label: "Marca",
+    field: "marca",
+    sortable: true,
+  },
+  {
+    name: "modelo",
+    align: "center",
+    label: "Modelo",
+    field: "modelo",
+    sortable: true,
+  },
+];
 </script>

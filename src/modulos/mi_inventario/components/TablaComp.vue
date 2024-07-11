@@ -12,8 +12,16 @@
         MI INVENTARIO
       </div>
       <div class="text-body2">{{ miInventario.nombre_completo }}</div>
-
       <div class="text-body2">{{ miInventario.area }}</div>
+      <template v-slot:action>
+        <q-btn
+          v-if="listMiInventario.length > 0"
+          color="purple-ieen"
+          label="Descargar listado"
+          icon-right="download"
+          @click="generarValeByEmpleado(true)"
+        />
+      </template>
     </q-banner>
   </div>
 
@@ -23,6 +31,9 @@
       class="text-justify bg-grey-2"
       style="border-radius: 20px"
     >
+      <template v-slot:avatar>
+        <q-btn icon="campaign" size="lg" flat color="purple-ieen"></q-btn>
+      </template>
       <div class="text-h6 text-purple-ieen text-bold q-pb-xs">Nota</div>
       <div class="text-body2 text-justify">
         Resguardo temporal de préstamo de Bien Mueble del Instituto Estatal
@@ -40,6 +51,7 @@
   <div class="row">
     <div class="col">
       <q-table
+        :grid="$q.screen.xs"
         :rows="listMiInventario"
         :columns="columns"
         :filter="filter"
@@ -68,12 +80,19 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
+import { useQuasar } from "quasar";
+import { useEmpleadosStore } from "src/stores/empleados_store";
 import { onBeforeMount, ref } from "vue";
 import { useMiInventarioStore } from "../../../stores/mi_inventario";
+import ValeGeneralResguardo from "../../../helpers/ValeGeneralResguardo";
+import { useAsignacionStore } from "src/stores/asignacion_store";
 
 //-----------------------------------------------------------
 
+const $q = useQuasar();
 const miInventarioStore = useMiInventarioStore();
+const empleadosStore = useEmpleadosStore();
+const asignacionStore = useAsignacionStore();
 const { listMiInventario, miInventario } = storeToRefs(miInventarioStore);
 
 //-----------------------------------------------------------
@@ -85,8 +104,20 @@ onBeforeMount(() => {
 //-----------------------------------------------------------
 
 const cargarData = async () => {
+  $q.loading.show();
   await miInventarioStore.loadMiInventario();
   await miInventarioStore.loadUser();
+  $q.loading.hide();
+};
+
+const generarValeByEmpleado = async (valor) => {
+  $q.loading.show();
+  await empleadosStore.loadEmpleadoById(listMiInventario.value[0].empleado_Id);
+  await asignacionStore.loadInventarioByEmpleado(
+    listMiInventario.value[0].empleado_Id
+  );
+  await ValeGeneralResguardo();
+  $q.loading.hide();
 };
 
 //-----------------------------------------------------------

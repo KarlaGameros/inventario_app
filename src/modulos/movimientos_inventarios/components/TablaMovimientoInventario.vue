@@ -2,6 +2,7 @@
   <div class="row">
     <div class="col">
       <q-table
+        class="my-sticky-header-table"
         :rows="list_Detalle"
         :columns="columns"
         :filter="filter"
@@ -80,13 +81,14 @@
                   <q-tooltip>Ver inventario</q-tooltip>
                 </q-btn>
                 <q-btn
+                  v-if="!visualizar"
                   flat
                   round
                   color="purple-ieen"
                   icon="edit_note"
                   @click="agregarObservacion(col.value)"
                 >
-                  <q-tooltip>Ver inventario</q-tooltip>
+                  <q-tooltip>Agregar observación</q-tooltip>
                 </q-btn>
               </div>
               <label v-else>{{ col.value }}</label>
@@ -155,7 +157,7 @@ const columns = [
 const pagination = ref({
   //********** */
   page: 1,
-  rowsPerPage: 25,
+  rowsPerPage: 10,
   sortBy: "name",
   descending: false,
 });
@@ -178,14 +180,9 @@ const agregarObservacion = (id) => {
   })
     .onOk((data) => {
       movimientoStore.addObservacion(id, data);
-      // console.log('>>>> OK, received', data)
     })
-    .onCancel(() => {
-      // console.log('>>>> Cancel')
-    })
-    .onDismiss(() => {
-      // console.log('I am triggered on both OK and Cancel')
-    });
+    .onCancel(() => {})
+    .onDismiss(() => {});
 };
 
 const actualizarModalVer = (valor, value) => {
@@ -235,5 +232,9 @@ const eliminar = async (id) => {
   });
 };
 </script>
-
-<style></style>
+<style lang="sass">
+.my-sticky-header-table
+  .q-table__top,
+  thead tr:first-child th
+    background-color: #DCDADD
+</style>

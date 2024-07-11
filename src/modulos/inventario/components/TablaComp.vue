@@ -20,6 +20,7 @@
         >
           <template v-slot:top-left>
             <q-select
+              filled
               class="q-pr-xs"
               v-model="catalogoId"
               :options="listCatalogosTodos"
@@ -29,6 +30,7 @@
             >
             </q-select>
             <q-select
+              filled
               class="q-pr-xs"
               v-model="estatusId"
               :options="estatus"
@@ -136,8 +138,7 @@ const { modulo } = storeToRefs(authStore);
 const inventarioStore = useInventarioStore();
 const catalogoStore = useCatalogoProductoStore();
 const estatusStore = useEstatusStore();
-const { listFiltroInventario, listInventario, inventario } =
-  storeToRefs(inventarioStore);
+const { listFiltroInventario, listInventario } = storeToRefs(inventarioStore);
 const { listCatalogosTodos } = storeToRefs(catalogoStore);
 const { estatus } = storeToRefs(estatusStore);
 const catalogoId = ref(null);

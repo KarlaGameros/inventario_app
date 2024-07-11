@@ -26,6 +26,7 @@ export const useProvedores = defineStore("provedores", {
       this.proveedor.eMail = null;
       this.proveedor.direccion = null;
     },
+
     //-----------------------------------------------------------
     async loadInformacionProvedores() {
       try {
@@ -55,6 +56,7 @@ export const useProvedores = defineStore("provedores", {
         };
       }
     },
+
     //-----------------------------------------------------------
 
     async createProveedor(proveedor) {

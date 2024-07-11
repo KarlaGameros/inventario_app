@@ -1,156 +1,152 @@
-<template v-if="modulo">
-  <div class="row">
-    <div class="col">
-      <q-table
-        :rows="listFiltroAsignaciones"
-        :columns="columns"
-        :filter="filter"
-        :pagination="pagination"
-        row-key="id"
-        rows-per-page-label="Filas por pagina"
-        no-data-label="No hay registros"
-        class="my-sticky-last-column-table"
-      >
-        <template v-slot:top-left>
-          <q-select
-            label="Área"
-            v-model="areaId"
-            :options="areas"
-            hint="Selecciona una área"
-            style="width: 260px"
-            class="q-pr-md"
-          >
-          </q-select>
-          <q-select
-            v-if="hidden == false"
-            label="Empleado"
-            v-model="empleado_Id"
-            :options="listEmpleados"
-            hint="Selecciona una empleado"
-            style="width: 260px"
-          >
-          </q-select>
-        </template>
-        <template v-slot:top-right>
-          <q-input
-            borderless
-            dense
-            debounce="300"
-            v-model="filter"
-            placeholder="Buscar.."
-          >
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </template>
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              <div v-if="col.name === 'id'">
-                <q-btn
-                  v-show="
-                    modulo.actualizar &&
-                    props.row.estatus == 'Pendiente' &&
-                    props.row.tipo != 'Bodega'
-                  "
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="edit"
-                  @click="editar(col.value)"
-                >
-                  <q-tooltip>Editar asignación</q-tooltip>
-                </q-btn>
+<template>
+  <div class="col">
+    <q-table
+      :rows="listFiltroAsignaciones"
+      :columns="columns"
+      :filter="filter"
+      :pagination="pagination"
+      row-key="id"
+      rows-per-page-label="Filas por pagina"
+      no-data-label="No hay registros"
+      class="my-sticky-last-column-table"
+    >
+      <template v-slot:top-left>
+        <q-select
+          filled
+          label="Área"
+          v-model="areaId"
+          :options="areas"
+          hint="Selecciona una área"
+          style="width: 260px"
+          class="q-pr-md"
+        >
+        </q-select>
+        <q-select
+          filled
+          v-if="hidden == false"
+          label="Empleado"
+          v-model="empleado_Id"
+          :options="listEmpleados"
+          hint="Selecciona una empleado"
+          style="width: 260px"
+        >
+        </q-select>
+      </template>
+      <template v-slot:top-right>
+        <q-input
+          borderless
+          dense
+          debounce="300"
+          v-model="filter"
+          placeholder="Buscar.."
+        >
+          <template v-slot:append>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </template>
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td v-for="col in props.cols" :key="col.name" :props="props">
+            <div v-if="col.name === 'id'">
+              <q-btn
+                v-show="
+                  modulo.actualizar &&
+                  props.row.estatus == 'Pendiente' &&
+                  props.row.tipo != 'Bodega'
+                "
+                flat
+                round
+                color="purple-ieen"
+                icon="edit"
+                @click="editar(col.value)"
+              >
+                <q-tooltip>Editar asignación</q-tooltip>
+              </q-btn>
 
-                <q-btn
-                  v-show="modulo.leer && props.row.estatus != 'Pendiente'"
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="search"
-                  @click="visualizar(col.value)"
-                >
-                  <q-tooltip>Ver asignación</q-tooltip>
-                </q-btn>
+              <q-btn
+                v-show="modulo.leer && props.row.estatus != 'Pendiente'"
+                flat
+                round
+                color="purple-ieen"
+                icon="search"
+                @click="visualizar(col.value)"
+              >
+                <q-tooltip>Ver asignación</q-tooltip>
+              </q-btn>
 
-                <q-btn
-                  v-show="modulo.leer && props.row.tipo == 'Bodega'"
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="search"
-                  @click="
-                    visualizarByBodega(props.row.fecha_Registro, col.value)
-                  "
-                >
-                  <q-tooltip>Ver asignación por bodega</q-tooltip>
-                </q-btn>
+              <q-btn
+                v-show="modulo.leer && props.row.tipo == 'Bodega'"
+                flat
+                round
+                color="purple-ieen"
+                icon="search"
+                @click="visualizarByBodega(props.row, col.value)"
+              >
+                <q-tooltip>Ver asignación por bodega</q-tooltip>
+              </q-btn>
 
-                <q-btn
-                  v-show="
-                    modulo.actualizar &&
-                    props.row.estatus == 'Pendiente' &&
-                    props.row.tipo != 'Bodega'
-                  "
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="send"
-                  @click="afectar(col.value)"
-                >
-                  <q-tooltip>Afectar asignación</q-tooltip>
-                </q-btn>
+              <q-btn
+                v-show="
+                  modulo.actualizar &&
+                  props.row.estatus == 'Pendiente' &&
+                  props.row.tipo != 'Bodega'
+                "
+                flat
+                round
+                color="purple-ieen"
+                icon="send"
+                @click="afectar(col.value)"
+              >
+                <q-tooltip>Afectar asignación</q-tooltip>
+              </q-btn>
 
-                <q-btn
-                  v-show="
-                    modulo.actualizar &&
-                    props.row.estatus == 'Afectado' &&
-                    props.row.tipo == 'Personal'
-                  "
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="print"
-                  @click="GenerarVale(col.value)"
-                >
-                  <q-tooltip>Generar vale</q-tooltip>
-                </q-btn>
+              <q-btn
+                v-show="
+                  modulo.actualizar &&
+                  props.row.estatus == 'Afectado' &&
+                  props.row.tipo == 'Personal'
+                "
+                flat
+                round
+                color="purple-ieen"
+                icon="print"
+                @click="GenerarVale(col.value)"
+              >
+                <q-tooltip>Generar vale</q-tooltip>
+              </q-btn>
 
-                <q-btn
-                  v-show="modulo.actualizar && props.row.tipo == 'Bodega'"
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="print"
-                  @click="
-                    GenerarValeBodega(props.row.fecha_Registro, col.value)
-                  "
-                >
-                  <q-tooltip>Generar vale bodega</q-tooltip>
-                </q-btn>
+              <q-btn
+                v-show="modulo.actualizar && props.row.tipo == 'Bodega'"
+                flat
+                round
+                color="purple-ieen"
+                icon="print"
+                @click="GenerarValeBodega(props.row.fecha_Registro, col.value)"
+              >
+                <q-tooltip>Generar vale bodega</q-tooltip>
+              </q-btn>
 
-                <q-btn
-                  v-show="
-                    modulo.actualizar &&
-                    props.row.estatus == 'Pendiente' &&
-                    props.row.tipo != 'Bodega'
-                  "
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="cancel"
-                  @click="cancelar(col.value)"
-                >
-                  <q-tooltip>Cancelar asignación</q-tooltip>
-                </q-btn>
-              </div>
-              <label v-else>{{ col.value }}</label>
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table>
-    </div>
+              <q-btn
+                v-show="
+                  modulo.actualizar &&
+                  props.row.estatus == 'Pendiente' &&
+                  props.row.tipo != 'Bodega'
+                "
+                flat
+                round
+                color="purple-ieen"
+                icon="cancel"
+                @click="cancelar(col.value)"
+              >
+                <q-tooltip>Cancelar asignación</q-tooltip>
+              </q-btn>
+            </div>
+            <label v-else>{{ col.value }}</label>
+          </q-td>
+        </q-tr>
+      </template>
+    </q-table>
   </div>
 </template>
 
@@ -303,7 +299,6 @@ const columns = [
 ];
 
 const pagination = ref({
-  //********** */
   page: 1,
   rowsPerPage: 25,
   sortBy: "name",
@@ -444,9 +439,9 @@ const visualizar = async (id) => {
   $q.loading.hide();
 };
 
-const visualizarByBodega = async (fechaAsignacion, id) => {
+const visualizarByBodega = async (row, id) => {
   $q.loading.show();
-  var [fechaParte, horaParte] = fechaAsignacion.split(" ");
+  var [fechaParte, horaParte] = row.fecha_Registro.split(" ");
   var [dia, mes, año] = fechaParte.split("-");
   var [hora, minutos, segundos] = horaParte.split(":");
   var fecha = `${año}-${mes}-${dia} ${hora}:${minutos}:${segundos}`;
@@ -484,9 +479,13 @@ const GenerarVale = async (id) => {
   $q.loading.hide();
 };
 
-const GenerarValeBodega = async (fecha, id) => {
+const GenerarValeBodega = async (fecha_Registro, id) => {
   let resp = null;
   let respAsignacion = null;
+  var [fechaParte, horaParte] = fecha_Registro.split(" ");
+  var [dia, mes, año] = fechaParte.split("-");
+  var [hora, minutos, segundos] = horaParte.split(":");
+  var fecha = `${año}-${mes}-${dia} ${hora}:${minutos}:${segundos}`;
   $q.loading.show();
   resp = await asignacionStore.inventariosByFecha(fecha);
   respAsignacion = await asignacionStore.loadAsignacion(id);

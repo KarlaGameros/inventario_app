@@ -131,11 +131,11 @@ const eliminar = async (id) => {
     transitionShow: "scale",
     transitionHide: "scale",
     ok: {
-      color: "positive",
+      color: "secondary",
       label: "¡Sí!, eliminar",
     },
     cancel: {
-      color: "negative",
+      color: "red",
       label: " No Cancelar",
     },
   }).onOk(async () => {

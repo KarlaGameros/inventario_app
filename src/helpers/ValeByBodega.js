@@ -32,7 +32,7 @@ const ReporteBodega = async () => {
 
       doc.setFillColor(84, 37, 131);
       doc.setDrawColor(0, 0, 0);
-      doc.setLineWidth(0.3);
+      doc.setLineWidth(0.1);
 
       doc.rect(10, 30, 40, 5, "FD");
       doc.rect(10, 35, 40, 5, "FD");
@@ -72,7 +72,7 @@ const ReporteBodega = async () => {
     //--------------------------------------------------------------------------//
 
     doc.setFillColor(84, 37, 131);
-    doc.rect(10, 45, 191.8, 6, "FD");
+    doc.rect(9.7, 45, 191.99, 6, "FD");
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(8);
@@ -80,14 +80,14 @@ const ReporteBodega = async () => {
 
     doc.setTextColor(0, 0, 0);
 
-    doc.rect(10, 51, 191.8, 7, "FD");
+    doc.rect(9.7, 51, 191.99, 7, "FD");
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.text("Responsable: ", 15, 56);
     doc.setFont("helvetica", "normal");
     doc.text(asignacion.value.empleado, 40, 56);
 
-    doc.rect(10, 58, 191.8, 7);
+    doc.rect(9.7, 58, 191.99, 7);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.text("Cargo:", 15, 63);
@@ -95,7 +95,7 @@ const ReporteBodega = async () => {
     doc.text(asignacion.value.puesto, 30, 63);
     doc.setFont("helvetica", "bold");
 
-    doc.rect(10, 65, 191.8, 7);
+    doc.rect(9.7, 65, 191.99, 7);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
     doc.text("Área:", 15, 70);
@@ -142,7 +142,7 @@ const ReporteBodega = async () => {
         valign: "middle",
         fontSize: 8,
         lineColor: [0, 0, 0],
-        lineWidth: 0.3,
+        lineWidth: 0.1,
       },
     });
 

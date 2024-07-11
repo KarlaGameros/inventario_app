@@ -1,7 +1,7 @@
 import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
 import { useMovimientoInventario } from "src/stores/movimiento_inventario";
 import { storeToRefs } from "pinia";
+import autoTable from "jspdf-autotable";
 
 const ValeSalida = async () => {
   try {
@@ -67,7 +67,7 @@ const ValeSalida = async () => {
         "right"
       );
     }
-
+    createHeader();
     //--------------------------------------------------------------------------//
 
     doc.setFillColor(84, 37, 131);
@@ -217,7 +217,7 @@ const ValeSalida = async () => {
 
     var newPageCount = doc.internal.getNumberOfPages();
     for (var i = 0; i < newPageCount; i++) {
-      createHeader();
+      //createHeader();
       createFooter();
     }
 

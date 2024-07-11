@@ -7,7 +7,7 @@
   >
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
-        <div class="text-h6">
+        <div class="text-h5 text-purple-ieen text-bold absolute-center">
           {{ !isEditar ? "Registrar bodega" : "Editar bodega" }}
         </div>
         <q-space />
@@ -24,6 +24,8 @@
         <q-form class="row q-col-gutter-xs" @submit="onSubmit">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
+              color="purple-ieen"
+              filled
               v-model.trim="bodega.nombre"
               label="Nombre de bodega"
               hint="Ingrese un nombre"
@@ -35,6 +37,8 @@
           </div>
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-select
+              color="purple-ieen"
+              filled
               v-model.trim="area_Id"
               :options="areas"
               label="Área responsable de bodega"
@@ -50,13 +54,15 @@
               <q-btn
                 label="Cancelar"
                 type="reset"
-                color="negative"
+                color="red"
+                icon-right="close"
                 @click="actualizarModal(false)"
               />
               <q-btn
+                icon-right="save"
                 label="Guardar"
                 type="submit"
-                color="positive"
+                color="secondary"
                 class="q-ml-sm"
               />
             </div>
