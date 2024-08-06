@@ -45,7 +45,6 @@ export const useAuthStore = defineStore("auth", {
           };
         }
       } catch (error) {
-        console.log(error);
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
@@ -170,7 +169,7 @@ export const useAuthStore = defineStore("auth", {
         let filtro = data.find(
           (x) => x.sistema_Id == parseInt(localStorage.getItem("sistema"))
         );
-        localStorage.setItem("perfil", filtro.perfil_Id);
+        localStorage.setItem("perfil", filtro.perfil);
       } catch (error) {
         return {
           success: false,

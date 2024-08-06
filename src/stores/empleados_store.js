@@ -7,6 +7,7 @@ export const useEmpleadosStore = defineStore("empleados", {
     empleados: [],
     list_Areas: [],
     list_Empleados: [],
+    list_Empleados_Inventario: [],
     personal_Id: null,
     empleado: {
       id: null,
@@ -130,6 +131,26 @@ export const useEmpleadosStore = defineStore("empleados", {
             label: `${detalle.nombres} ${detalle.apellido_Paterno} ${detalle.apellido_Materno}`,
             value: detalle.id,
             puesto: detalle.puesto,
+            puesto_Id: detalle.puesto_Id,
+          };
+        });
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+    async loadEmpleadosByAreaInventario(id) {
+      try {
+        let resp = await api.get(`/Empleados/EmpleadosByAreaInventarios/${id}`);
+        let { data } = resp.data;
+        this.list_Empleados_Inventario = data.map((empleado) => {
+          return {
+            label: empleado.label,
+            value: empleado.value,
           };
         });
       } catch (error) {

@@ -5,10 +5,13 @@
     transition-show="scale"
     transition-hide="scale"
   >
-    <q-card style="width: 800px; max-width: 80vw">
+    <q-card style="width: 900px; max-width: 90vw">
       <q-card-section class="row">
-        <div class="text-h5 text-purple-ieen text-bold absolute-center">
-          Subir fotografías
+        <q-img src="../../../assets/IEEN300.png" width="70px" />
+        <div
+          class="text-h6 text-gray-ieen-1 text-bold text-center absolute-center"
+        >
+          SUBIR FOTOGRAFÍAS
         </div>
         <q-space />
         <q-btn
@@ -25,7 +28,7 @@
           <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
-                filled
+                color="purple-ieen"
                 v-model="detalle_Id"
                 :options="list_Detalle"
                 label="Detalle del movimiento"
@@ -41,9 +44,8 @@
         </q-card-section>
         <q-card-section>
           <div class="row q-col-gutter-xs">
-            <q-card class="col-lg-3 col-md-3 col-sm-3 col-xs-12 q-pa-xs">
+            <q-card class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
               <q-file
-                filled
                 accept="image/png, image/jpeg"
                 color="purple-12"
                 v-model="foto_1"
@@ -55,9 +57,8 @@
               </q-file>
               <img :src="detalle_Movimiento.foto_1_URL" />
             </q-card>
-            <q-card class="col-lg-3 col-md-3 col-sm-3 col-xs-12 q-pa-xs">
+            <q-card class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
               <q-file
-                filled
                 accept="image/png, image/jpeg"
                 color="purple-12"
                 v-model="foto_2"
@@ -69,9 +70,8 @@
               </q-file>
               <img :src="detalle_Movimiento.foto_2_URL" />
             </q-card>
-            <q-card class="col-lg-3 col-md-3 col-sm-3 col-xs-12 q-pa-xs">
+            <q-card class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
               <q-file
-                filled
                 accept="image/png, image/jpeg"
                 color="purple-12"
                 v-model="foto_3"
@@ -83,9 +83,8 @@
               </q-file>
               <img :src="detalle_Movimiento.foto_3_URL" />
             </q-card>
-            <q-card class="col-lg-3 col-md-3 col-sm-3 col-xs-12 q-pa-xs">
+            <q-card class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
               <q-file
-                filled
                 accept="image/png, image/jpeg"
                 color="purple-12"
                 v-model="foto_4"
@@ -105,15 +104,17 @@
           <div class="col-12 justify-end">
             <div class="text-right q-gutter-xs">
               <q-btn
+                icon-right="close"
                 label="Cancelar"
                 type="reset"
-                color="negative"
+                color="red"
                 @click="actualizarModal(false)"
               />
               <q-btn
+                icon-right="save"
                 label="Guardar"
                 type="submit"
-                color="positive"
+                color="secondary"
                 class="q-ml-sm"
               />
             </div>
@@ -156,6 +157,7 @@ watch(detalle_Id, async (val) => {
 
 const actualizarModal = (valor) => {
   movimientoInventarioStore.actualizarModalFotos(valor);
+  movimientoInventarioStore.initMovimiento();
   movimientoInventarioStore.initDetalleMovimiento();
   foto_1.value = false;
   foto_2.value = false;
@@ -199,5 +201,3 @@ const onSubmit = async () => {
   $q.loading.hide();
 };
 </script>
-
-<style></style>

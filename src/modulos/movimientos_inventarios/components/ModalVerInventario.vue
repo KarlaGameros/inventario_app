@@ -9,7 +9,6 @@
       <q-card-section class="row">
         <div class="text-h6">Ver inventario</div>
         <q-space />
-
         <q-btn
           icon="close"
           @click="actualizarModal(false)"
@@ -20,10 +19,15 @@
         />
       </q-card-section>
       <q-card-section>
-        <q-avatar rounded size="150px" v-if="inventario.foto_1_URL != null">
+        <q-avatar
+          class="text-center"
+          rounded
+          size="150px"
+          v-if="inventario.foto_1_URL != null"
+        >
           <img :src="inventario.foto_1_URL" />
         </q-avatar>
-        <q-timeline color="purple-4">
+        <q-timeline color="purple-ieen">
           <q-timeline-entry title="Clave">
             <div>{{ inventario.clave }}</div>
           </q-timeline-entry>

@@ -33,7 +33,7 @@
                   flat
                   round
                   color="purple-ieen"
-                  icon="cancel"
+                  icon="delete"
                   @click="eliminar(col.value)"
                 >
                   <q-tooltip>Eliminar inventario</q-tooltip>
@@ -119,11 +119,13 @@ const eliminar = async (id) => {
     transitionShow: "scale",
     transitionHide: "scale",
     ok: {
-      color: "positive",
+      icon: "delete",
+      color: "secondary",
       label: "¡Sí!, eliminar",
     },
     cancel: {
-      color: "negative",
+      icon: "close",
+      color: "red",
       label: " No Cancelar",
     },
   }).onOk(async () => {
@@ -131,7 +133,6 @@ const eliminar = async (id) => {
     let resp = null;
     resp = await asignacionStore.deleteProducto(id);
     $q.loading.hide();
-
     if (resp.success) {
       $q.loading.hide();
       $q.notify({

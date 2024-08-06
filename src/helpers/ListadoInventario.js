@@ -1,20 +1,13 @@
-import { api } from "src/boot/axios";
 import { storeToRefs } from "pinia";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useInventarioStore } from "src/stores/inventario_store";
-import { onBeforeMount } from "vue";
-
-const inventarioStore = useInventarioStore();
-const { listInventario } = storeToRefs(inventarioStore);
-
-onBeforeMount(() => {
-  inventarioStore.loadInformacionInventarios();
-});
 
 const ReporteListadoInventario = async () => {
   try {
-    let detalleData = listInventario.value;
+    const inventarioStore = useInventarioStore();
+    const { listFiltroInventario } = storeToRefs(inventarioStore);
+    let detalleData = listFiltroInventario.value;
     let img = new Image();
     img.src = require("../assets/IEEN300.png");
     let totalPagesExp = "{total_pages_count_string}";
@@ -22,8 +15,8 @@ const ReporteListadoInventario = async () => {
     doc.addImage(img, "png", 10, 5, 35, 21);
     doc.setFontSize(14);
     doc.text(
-      "INSTITUTO ESTATAL ELECTORAL DEL ESTADO DE NAYARIT \n \n Sistema de inventario \n" +
-        "Reporte general \n",
+      "INSTITUTO ESTATAL ELECTORAL DE NAYARIT \n \n SISTEMA DE INVENTARIO \n" +
+        "REPORTE GENERAL \n",
       180,
       10,
       null,
@@ -35,7 +28,7 @@ const ReporteListadoInventario = async () => {
       [
         { content: "#" },
         { content: "Clave" },
-        { content: "Nombre Catalogo" },
+        { content: "Nombre catálogo" },
         { content: "Descripción" },
         { content: "Nombre corto" },
         { content: "No. Serie" },
@@ -46,6 +39,7 @@ const ReporteListadoInventario = async () => {
         // { content: "Factura" },
         // { content: "Importe" },
         { content: "Estatus" },
+        { content: "Fecha movimiento" },
         // { content: "Usuario" },
         // { content: "QR" },
       ],
@@ -61,6 +55,17 @@ const ReporteListadoInventario = async () => {
         lineWidth: 0.3,
       },
     });
+    const columnStyles = {
+      5: {
+        cellWidth: 25,
+      },
+      7: {
+        cellWidth: 25,
+      },
+      8: {
+        cellWidth: 25,
+      },
+    };
     autoTable(doc, {
       theme: "grid",
       startY: 46,
@@ -70,17 +75,19 @@ const ReporteListadoInventario = async () => {
         index + 1,
         item.clave,
         item.catalogo,
-        item.descripcion,
+        item.descripcion_completo,
         item.nombre_corto,
         item.numero_Serie,
         item.marca,
         item.modelo,
         item.color,
         item.estatus,
+        item.fecha_Movimiento,
         // item.qr === true ? "Si" : "No",
       ]),
       bodyStyles: { fontSize: 10, textColor: [0, 0, 0] },
       tableLineColor: [0, 0, 0],
+      columnStyles: columnStyles,
     });
 
     var footer = function () {

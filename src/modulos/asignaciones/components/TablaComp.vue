@@ -1,6 +1,7 @@
 <template>
-  <div class="col">
+  <div class="col q-pl-lg q-pr-lg">
     <q-table
+      :grid="$q.screen.xs"
       :rows="listFiltroAsignaciones"
       :columns="columns"
       :filter="filter"
@@ -12,7 +13,8 @@
     >
       <template v-slot:top-left>
         <q-select
-          filled
+          outlined
+          dense
           label="Área"
           v-model="areaId"
           :options="areas"
@@ -22,7 +24,8 @@
         >
         </q-select>
         <q-select
-          filled
+          dense
+          outlined
           v-if="hidden == false"
           label="Empleado"
           v-model="empleado_Id"
@@ -34,7 +37,7 @@
       </template>
       <template v-slot:top-right>
         <q-input
-          borderless
+          outlined
           dense
           debounce="300"
           v-model="filter"
@@ -45,7 +48,123 @@
           </template>
         </q-input>
       </template>
-      <template v-slot:body="props">
+      <!--TEMPLATE SCREEN XS-->
+      <template v-if="$q.screen.xs" v-slot:item="props">
+        <div
+          class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+        >
+          <q-card bordered class="no-shadow">
+            <q-list dense>
+              <q-item
+                v-for="col in props.cols.filter((col) => col.name !== 'id')"
+                :key="col.name"
+              >
+                <q-item-section>
+                  <q-item-label class="text-bold"
+                    >{{ col.label }}:</q-item-label
+                  >
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ col.value }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+            <q-separator />
+            <q-card-section class="text-center">
+              <q-btn
+                v-show="
+                  modulo.actualizar &&
+                  props.row.estatus == 'Pendiente' &&
+                  props.row.tipo != 'Bodega'
+                "
+                flat
+                round
+                color="purple-ieen"
+                icon="edit"
+                @click="editar(props.row.id)"
+              >
+                <q-tooltip>Editar asignación</q-tooltip>
+              </q-btn>
+              <q-btn
+                v-show="modulo.leer && props.row.estatus != 'Pendiente'"
+                flat
+                round
+                color="purple-ieen"
+                icon="search"
+                @click="visualizar(props.row.id)"
+              >
+                <q-tooltip>Ver asignación</q-tooltip>
+              </q-btn>
+              <q-btn
+                v-show="modulo.leer && props.row.tipo == 'Bodega'"
+                flat
+                round
+                color="purple-ieen"
+                icon="search"
+                @click="visualizarByBodega(props.row)"
+              >
+                <q-tooltip>Ver asignación por bodega</q-tooltip>
+              </q-btn>
+              <q-btn
+                v-show="
+                  modulo.actualizar &&
+                  props.row.estatus == 'Pendiente' &&
+                  props.row.tipo != 'Bodega'
+                "
+                flat
+                round
+                color="purple-ieen"
+                icon="send"
+                @click="afectar(props.row.id)"
+              >
+                <q-tooltip>Afectar asignación</q-tooltip>
+              </q-btn>
+              <q-btn
+                v-show="
+                  modulo.actualizar &&
+                  props.row.estatus == 'Afectado' &&
+                  props.row.tipo == 'Personal'
+                "
+                flat
+                round
+                color="purple-ieen"
+                icon="print"
+                @click="GenerarVale(props.row.id)"
+              >
+                <q-tooltip>Generar vale</q-tooltip>
+              </q-btn>
+              <q-btn
+                v-show="modulo.actualizar && props.row.tipo == 'Bodega'"
+                flat
+                round
+                color="purple-ieen"
+                icon="print"
+                @click="
+                  GenerarValeBodega(props.row.fecha_Registro, props.row.id)
+                "
+              >
+                <q-tooltip>Generar vale bodega</q-tooltip>
+              </q-btn>
+              <q-btn
+                v-show="
+                  modulo.actualizar &&
+                  props.row.estatus == 'Pendiente' &&
+                  props.row.tipo != 'Bodega'
+                "
+                flat
+                round
+                color="purple-ieen"
+                icon="cancel"
+                @click="cancelar(props.row.id)"
+              >
+                <q-tooltip>Cancelar asignación</q-tooltip>
+              </q-btn>
+            </q-card-section>
+          </q-card>
+        </div>
+      </template>
+      <!--TEMPLATE SCREEN DESKTOP-->
+      <template v-slot:body="props" v-else>
         <q-tr :props="props">
           <q-td v-for="col in props.cols" :key="col.name" :props="props">
             <div v-if="col.name === 'id'">
@@ -63,7 +182,6 @@
               >
                 <q-tooltip>Editar asignación</q-tooltip>
               </q-btn>
-
               <q-btn
                 v-show="modulo.leer && props.row.estatus != 'Pendiente'"
                 flat
@@ -74,18 +192,16 @@
               >
                 <q-tooltip>Ver asignación</q-tooltip>
               </q-btn>
-
               <q-btn
                 v-show="modulo.leer && props.row.tipo == 'Bodega'"
                 flat
                 round
                 color="purple-ieen"
                 icon="search"
-                @click="visualizarByBodega(props.row, col.value)"
+                @click="visualizarByBodega(props.row)"
               >
                 <q-tooltip>Ver asignación por bodega</q-tooltip>
               </q-btn>
-
               <q-btn
                 v-show="
                   modulo.actualizar &&
@@ -100,7 +216,6 @@
               >
                 <q-tooltip>Afectar asignación</q-tooltip>
               </q-btn>
-
               <q-btn
                 v-show="
                   modulo.actualizar &&
@@ -115,7 +230,6 @@
               >
                 <q-tooltip>Generar vale</q-tooltip>
               </q-btn>
-
               <q-btn
                 v-show="modulo.actualizar && props.row.tipo == 'Bodega'"
                 flat
@@ -126,7 +240,6 @@
               >
                 <q-tooltip>Generar vale bodega</q-tooltip>
               </q-btn>
-
               <q-btn
                 v-show="
                   modulo.actualizar &&
@@ -142,6 +255,31 @@
                 <q-tooltip>Cancelar asignación</q-tooltip>
               </q-btn>
             </div>
+            <div v-else-if="col.name == 'estatus'">
+              <q-badge
+                :color="
+                  col.value == 'Pendiente'
+                    ? 'orange'
+                    : col.value == 'Cancelado'
+                    ? 'red'
+                    : 'green'
+                "
+                :label="col.value"
+              >
+                <q-icon
+                  :name="
+                    col.value == 'Pendiente'
+                      ? 'warning'
+                      : col.value == 'Cancelado'
+                      ? 'close'
+                      : 'done'
+                  "
+                />
+              </q-badge>
+            </div>
+            <label v-else-if="col.name == 'folio'" class="text-bold">{{
+              col.value
+            }}</label>
             <label v-else>{{ col.value }}</label>
           </q-td>
         </q-tr>
@@ -243,8 +381,15 @@ const columns = [
   {
     name: "folio",
     align: "center",
-    label: "Número de resguardo",
+    label: "Folio",
     field: "folio",
+    sortable: true,
+  },
+  {
+    name: "estatus",
+    align: "center",
+    label: "Estatus",
+    field: "estatus",
     sortable: true,
   },
   {
@@ -266,13 +411,6 @@ const columns = [
     align: "center",
     label: "Puesto",
     field: "puesto",
-    sortable: true,
-  },
-  {
-    name: "estatus",
-    align: "center",
-    label: "Estatus",
-    field: "estatus",
     sortable: true,
   },
   {
@@ -300,7 +438,7 @@ const columns = [
 
 const pagination = ref({
   page: 1,
-  rowsPerPage: 25,
+  rowsPerPage: 10,
   sortBy: "name",
   descending: false,
 });
@@ -359,11 +497,11 @@ const afectar = async (id) => {
       transitionShow: "scale",
       transitionHide: "scale",
       ok: {
-        color: "positive",
+        color: "secondary",
         label: "Si, Aceptar",
       },
       cancel: {
-        color: "negative",
+        color: "red",
         label: "No cancelar",
       },
     }).onOk(async () => {
@@ -399,11 +537,11 @@ const cancelar = async (id) => {
     transitionShow: "scale",
     transitionHide: "scale",
     ok: {
-      color: "positive",
+      color: "secondary",
       label: "Si, Aceptar",
     },
     cancel: {
-      color: "negative",
+      color: "red",
       label: "No cancelar",
     },
   }).onOk(async () => {
@@ -413,7 +551,7 @@ const cancelar = async (id) => {
       $q.loading.hide();
       $q.notify({
         position: "top-right",
-        type: "positive",
+        type: "secondary",
         message: resp.data,
       });
       asignacionStore.loadInformacionAsignaciones();
@@ -422,7 +560,7 @@ const cancelar = async (id) => {
       $q.loading.hide();
       $q.notify({
         position: "top-right",
-        type: "negative",
+        type: "red",
         message: resp.data,
       });
     }
@@ -439,13 +577,13 @@ const visualizar = async (id) => {
   $q.loading.hide();
 };
 
-const visualizarByBodega = async (row, id) => {
+const visualizarByBodega = async (row) => {
   $q.loading.show();
   var [fechaParte, horaParte] = row.fecha_Registro.split(" ");
   var [dia, mes, año] = fechaParte.split("-");
   var [hora, minutos, segundos] = horaParte.split(":");
   var fecha = `${año}-${mes}-${dia} ${hora}:${minutos}:${segundos}`;
-  await asignacionStore.loadAsignacion(id);
+  await asignacionStore.loadAsignacion(row.id);
   await asignacionStore.inventariosByFecha(fecha);
   asignacionStore.updateVisualizar(true);
   asignacionStore.actualizarModal(true);

@@ -8,11 +8,11 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
     modalFotos: false,
     modalRecibio: false,
     modalTraspaso: false,
-    limpiar: false,
-    actualizar: false,
+    modalAddAsignacion: false,
     isEditar: false,
     visualizar: false,
     list_Traspaso: [],
+    list_Movimientos_Pendiente: [],
     list_Movimiento_Inventario: [],
     list_Detalle_By_Movimiento: [],
     list_Detalle: [],
@@ -30,6 +30,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       tipo_Movimiento_Id: null,
       tipo_Movimiento: null,
       concepto_Id: null,
+      concepto: null,
       empleado_Id: null,
       puesto_Id: null,
       area_Id: null,
@@ -49,9 +50,11 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       empleado: null,
       puesto: null,
       fecha_Registro: null,
+      fecha_Movimiento: null,
       estatus: null,
       afectado: null,
       fecha_Afecto: null,
+      observaciones: null,
       detalle: [],
     },
     inventario: {
@@ -124,12 +127,8 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       this.modalTraspaso = valor;
     },
 
-    limpiarModal(valor) {
-      this.actualizar = valor;
-    },
-
-    limpiarInf(valor) {
-      this.limpiar = valor;
+    actualizarModalAddAsignacion(valor) {
+      this.modalAddAsignacion = valor;
     },
 
     initMovimiento() {
@@ -213,9 +212,64 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             estatus: movimiento.estatus,
             afectado: movimiento.afectado,
             fecha_Afecto: movimiento.fecha_Afecto,
+            fecha_Movimiento: movimiento.fecha_Movimiento,
+            concepto: movimiento.concepto,
+            value: movimiento.id,
+            label: movimiento.folio,
           };
         });
         this.movimientos.sort((a, b) => b.id - a.id);
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+    async loadInformacionMovimientosPendientes(tipo) {
+      try {
+        let resp = await api.get("/MovimientosInventarios");
+        let { data } = resp.data;
+        let list = data.map((movimiento) => {
+          return {
+            id: movimiento.id,
+            tipo_Movimiento_Id: movimiento.tipo_Movimiento_Id,
+            tipo_Movimiento: movimiento.tipo_Movimiento,
+            folio: movimiento.folio,
+            capturista_Id: movimiento.capturista_Id,
+            capturista: movimiento.capturista,
+            puesto_Capturista_Id: movimiento.puesto_Capturista_Id,
+            puesto_Capturista: movimiento.puesto_Capturista,
+            area_Capturista_Id: movimiento.area_Capturista_Id,
+            area_Capturista: movimiento.area_Capturista,
+            empleado_Id: movimiento.empleado_Id,
+            empleado: movimiento.empleado,
+            puesto_Id: movimiento.puesto_Id,
+            puesto: movimiento.puesto,
+            area_Id: movimiento.area_Id,
+            area: movimiento.area,
+            fecha_Registro: movimiento.fecha_Registro,
+            estatus: movimiento.estatus,
+            afectado: movimiento.afectado,
+            fecha_Afecto: movimiento.fecha_Afecto,
+            fecha_Movimiento: movimiento.fecha_Movimiento,
+            concepto: movimiento.concepto,
+            value: movimiento.id,
+            label: movimiento.folio,
+          };
+        });
+        this.list_Movimientos_Pendiente = list.filter(
+          (x) =>
+            x.estatus == "Afectado" &&
+            x.concepto ==
+              (tipo == "Baja"
+                ? "Pendiente Baja"
+                : tipo == "Comodato"
+                ? "Pendiente Comodato"
+                : "Pendiente Donación")
+        );
       } catch (error) {
         return {
           success: false,
@@ -262,7 +316,6 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             activo: false,
           };
         });
-        this.list_Detalle = list;
         this.list_Inventario_By_Empleado = list;
       } catch (error) {
         return {
@@ -280,9 +333,9 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
           movimientoInventario
         );
         if (resp.status == 200) {
-          const { success, data } = resp.data;
+          const { success, data, id } = resp.data;
           if (success === true) {
-            return { success, data };
+            return { success, data, id };
           } else {
             return { success, data };
           }
@@ -363,7 +416,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
           `/DetalleMovimientosInventarios/ByMovimiento/${id}`
         );
         let { data } = resp.data;
-        let list = data.map((movimiento) => {
+        this.list_Detalle = data.map((movimiento) => {
           return {
             id: movimiento.id,
             movimiento_Inventario_Id: movimiento.movimiento_Inventario_Id,
@@ -392,7 +445,6 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             bodega_Origen: movimiento.bodega_Origen,
             destino: movimiento.destino,
             bodega_Destino_Id: movimiento.bodega_Destino_Id,
-            bodega_Destino_Nombre: movimiento.bodega_Destino_Nombre,
             bodega_Destino: movimiento.bodega_Destino,
             bodega: movimiento.bodega_Destino,
             estatus: movimiento.estatus,
@@ -403,8 +455,6 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             label: movimiento.inventario,
           };
         });
-        this.list_Detalle = list;
-        this.list_Traspaso = list;
       } catch (error) {
         return {
           success: false,
@@ -465,6 +515,8 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
           const { success, data } = resp.data;
           if (success == true) {
             this.movimiento.id = data.id;
+            this.movimiento.concepto = data.concepto;
+            this.movimiento.observaciones = data.observaciones;
             this.movimiento.tipo_Movimiento_Id = data.tipo_Movimiento_Id;
             this.movimiento.tipo_Movimiento = data.tipo_Movimiento;
             this.movimiento.concepto_Id = data.concepto_Id;
@@ -486,6 +538,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             this.movimiento.afectado = data.afectado;
             this.movimiento.fecha_Afecto = data.fecha_Afecto;
             this.movimiento.folio_Dictamen_Baja = data.folio_Dictamen_Baja;
+            this.movimiento.fecha_Movimiento = data.fecha_Movimiento;
           }
         }
       } catch (error) {
@@ -549,15 +602,13 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
     },
 
     //-----------------------------------------------------------
-    async deleteInventario(id, tipo) {
+    async deleteInventario(id) {
       try {
         if (this.isEditar == false) {
-          if (tipo == "Traspaso") {
-            this.list_Traspaso = this.list_Traspaso.filter(
-              (x) => x.inventario_Id !== id
-            );
-            return { success: true, data: "Se elimino de la lista" };
-          }
+          this.list_Detalle = this.list_Detalle.filter(
+            (x) => x.inventario_Id !== id
+          );
+          return { success: true, data: "Se eliminó correctamente" };
         } else {
           let resp = await api.delete(`/DetalleMovimientosInventarios/${id}`);
           if (resp.status == 200) {
@@ -621,7 +672,9 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
           this.isEditar == false &&
           this.visualizar == false
         ) {
-          this.listConceptoMovimiento = list.splice(0, 3);
+          this.listConceptoMovimiento = list.filter(
+            (x) => !x.label.includes("Pendiente") && !x.label.includes("Salida")
+          );
         } else {
           this.listConceptoMovimiento = list;
         }
@@ -638,7 +691,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
       try {
         let resp = await api.get(`/Inventarios/ByBodega/${id}`);
         let { data } = resp.data;
-        this.list_Inventario = data.map((inventario) => {
+        let list = data.map((inventario) => {
           return {
             value: inventario.id,
             label: `${inventario.clave} - ${inventario.nombre_Corto}`,
@@ -647,8 +700,10 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             descripcion: inventario.descripcion,
             nombre_Corto: inventario.nombre_Corto,
             clave: inventario.clave,
+            estatus: inventario.estatus,
           };
         });
+        this.list_Inventario = list.filter((x) => x.estatus != "Baja");
       } catch (error) {
         return {
           success: false,
@@ -757,7 +812,14 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
     },
 
     //-----------------------------------------------------------
-    async addInventario(inventario, observacion, estado_Fisico) {
+    async addInventario(
+      inventario,
+      observacion,
+      estado_Fisico,
+      destino,
+      empleado_Id,
+      bodega_Destino_Id
+    ) {
       try {
         this.list_Detalle.push({
           inventario_Id: inventario.value,
@@ -766,29 +828,6 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
           clave: inventario.clave,
           observaciones: observacion,
           estado_Fisico: estado_Fisico,
-        });
-        //this.list_Detalle.sort((a, b) => a.clave.localeCompare(b.clave));
-
-        return { success: true };
-      } catch (error) {
-        return {
-          success: false,
-          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
-        };
-      }
-    },
-
-    //-----------------------------------------------------------
-    async addInventarioTraspaso(
-      inventario,
-      destino,
-      empleado_Id,
-      bodega_Destino_Id
-    ) {
-      try {
-        this.list_Traspaso.push({
-          inventario_Id: inventario.value,
-          clave: inventario.label,
           destino: destino,
           empleado_Id: empleado_Id != null ? empleado_Id.value : null,
           empleado: empleado_Id != null ? empleado_Id.label : null,
@@ -823,28 +862,13 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
                 this.asignacion.fecha_Asignacion = element.fecha_Asignacion;
                 this.asignacion.tipo = element.tipo;
                 this.asignacion.detalle = element.detalle;
-                respAsignacion = await api.post(
-                  "/AsignacionesInventarios",
-                  this.asignacion
-                );
-                if (element.tipo == "Bodega") {
-                  if (respAsignacion.status == 200) {
-                    const { data, success, fecha } = respAsignacion.data;
-                    if (success === true) {
-                      await api.get(
-                        `/Inventarios/Imprimir/${element.bodega_Id}/${fecha}`
-                      );
-                    }
-                  }
-                }
-                if (respAsignacion.status == 200) {
-                  const { data } = respAsignacion.data;
-                  return { success: true, data: data };
-                } else {
-                  return {
-                    success: false,
-                    data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
-                  };
+                this.asignacion.bodega_Id = element.bodega_Id;
+
+                if (element.tipo != "Bodega") {
+                  respAsignacion = await api.post(
+                    "/AsignacionesInventarios",
+                    this.asignacion
+                  );
                 }
               });
               return { success: true, data: data };

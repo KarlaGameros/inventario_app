@@ -11,6 +11,7 @@ export const useInventarioStore = defineStore("inventario", {
     isEditar: false,
     cantidad: null,
     excelIventario: null,
+    list_Kardex: [],
     listInventario: [],
     listSinFactura: [],
     listFiltroInventario: [],
@@ -18,6 +19,7 @@ export const useInventarioStore = defineStore("inventario", {
     listInventarioByBodega: [],
     listInventarioAsignacion: [],
     inventarios: [],
+    list_Inventario_By_Catalogo: [],
     listaNumeroSerie: [
       {
         id: null,
@@ -64,12 +66,13 @@ export const useInventarioStore = defineStore("inventario", {
       clave: null,
       empleado: null,
       ruta_PDF: null,
-      fecha_Registros: null,
+      fecha_Registro: null,
       fecha_compra: null,
       numero_factura: null,
       importe: null,
       uuid: null,
       ruta_PDF_masivo: null,
+      empleado_Registra: null,
       //-----------------------------
       descripcion_a: null,
       nombre_corto_a: null,
@@ -123,6 +126,8 @@ export const useInventarioStore = defineStore("inventario", {
     initInventario() {
       this.inventario.id = null;
       this.inventario.catalogo_id = null;
+      this.inventario.fecha_Registro = null;
+      this.inventario.empleado_Registra = null;
 
       this.inventario.catalogo = null;
       this.inventario.bodega_id = null;
@@ -210,9 +215,21 @@ export const useInventarioStore = defineStore("inventario", {
               inventario.importe == null ? "" : `$ ${inventario.importe}`,
             uuid: inventario.uuiD_Factura,
             paquete_Id: inventario.paquete_Id,
+            value: inventario.id,
+            label: `${inventario.clave}-${inventario.nombre_Corto}`,
+            fecha_Baja: inventario.fecha_Baja,
+            fecha_Comodato: inventario.fecha_Comodato,
+            fecha_Donacion: inventario.fecha_Donacion,
+            fecha_Movimiento:
+              inventario.estatus == "Baja"
+                ? inventario.fecha_Baja
+                : inventario.estatus == "Comodato"
+                ? inventario.fecha_Comodato
+                : inventario.estatus == "Donación"
+                ? inventario.fecha_Donacion
+                : "",
           };
         });
-
         this.listInventario = listInventario.sort((a, b) => a.id - b.id);
         this.inventarios = listInventario;
       } catch (error) {
@@ -258,6 +275,47 @@ export const useInventarioStore = defineStore("inventario", {
           };
         });
         this.listSinFactura = listSinFactura;
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+
+    async loadKardex(id) {
+      try {
+        const resp = await api.get(`/Inventarios/Kardex/${id}`);
+        let { data } = resp.data;
+        let listCompra = [];
+        listCompra.push({
+          folio_Movimiento: "Sin folio",
+          tipo_Movimiento: "Compra",
+          concepto: "Compra",
+          capturista: this.inventario.empleado_Registra,
+          fecha_Registro: this.inventario.fecha_Registro,
+          fecha_Movimiento: this.inventario.fecha_compra,
+        });
+        let list_Kardex = data.map((movimiento) => {
+          return {
+            movimiento_Id: movimiento.movimiento_Id,
+            folio_Movimiento: movimiento.folio_Movimiento,
+            tipo_Movimiento: movimiento.tipo_Movimiento,
+            concepto: movimiento.concepto,
+            empleado: movimiento.empleado,
+            capturista: movimiento.capturista,
+            bodega_Origen: movimiento.bodega_Origen,
+            bodega_Destino: movimiento.bodega_Destino,
+            destino: movimiento.bodega,
+            observaciones: movimiento.observaciones,
+            estado_Fisico: movimiento.estado_Fisico,
+            fecha_Registro: movimiento.fecha_Registro,
+            fecha_Movimiento: movimiento.fecha_Movimiento,
+          };
+        });
+        this.list_Kardex = listCompra.concat(list_Kardex);
       } catch (error) {
         return {
           success: false,
@@ -392,6 +450,8 @@ export const useInventarioStore = defineStore("inventario", {
             this.inventario.numero_factura = data.factura;
             this.inventario.estatus = data.estatus;
             this.inventario.fecha_compra = data.fecha_Compra;
+            this.inventario.fecha_Registro = data.fecha_Registro;
+            this.inventario.empleado_Registra = data.empleado_Registra;
             return { success };
           }
         }
@@ -435,6 +495,37 @@ export const useInventarioStore = defineStore("inventario", {
       }
     },
 
+    //-----------------------------------------------------------
+
+    async loadInventarioByCatalogo(id) {
+      try {
+        let resp = await api.get(`/Inventarios/ByCatalogo/${id}`);
+        let { data } = resp.data;
+        let filtro = [];
+        if (localStorage.getItem("perfil") == "Personal sin UTIE") {
+          filtro = data.filter(
+            (x) => x.estatus == "Activo" && x.bodega != "Bodega UTIE"
+          );
+        } else {
+          filtro = data.filter((x) => x.estatus == "Activo");
+        }
+        this.list_Inventario_By_Catalogo = filtro.map((inventario) => {
+          return {
+            value: inventario.id,
+            label: `${inventario.clave} - ${inventario.nombre_Corto}`,
+            descripcion: inventario.descripcion,
+            clave: inventario.clave,
+            estatus: inventario.estatus,
+            catalago_Id: inventario.catalago_Id,
+          };
+        });
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        };
+      }
+    },
     //-----------------------------------------------------------
 
     async updateInventario(inventario, editarInventarioFormData) {

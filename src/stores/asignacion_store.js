@@ -35,6 +35,7 @@ export const useAsignacionStore = defineStore("asignacion", {
       fecha_Asignacion: null,
       folio: null,
       tipo: null,
+      observaciones: null,
       detalle: [],
     },
     inventario: {
@@ -251,6 +252,7 @@ export const useAsignacionStore = defineStore("asignacion", {
         this.listaAsignacionInventario.sort((a, b) =>
           a.clave.localeCompare(b.clave)
         );
+        return { success: true };
       } catch (error) {
         return {
           success: false,
@@ -342,10 +344,8 @@ export const useAsignacionStore = defineStore("asignacion", {
     async deleteProducto(id) {
       try {
         if (id == null) {
-          let nIndex = this.listaAsignacionInventario.findIndex(
-            (x) => x.inventario_Id == id
-          );
-          this.listaAsignacionInventario.splice(nIndex, 1);
+          this.listaAsignacionInventario =
+            this.listaAsignacionInventario.filter((x) => x.inventario_Id == id);
           return { success: true, data: "Se elimino de la lista" };
         } else {
           let resp = await api.delete(`/DetalleAsignaciones/${id}`);
@@ -392,6 +392,7 @@ export const useAsignacionStore = defineStore("asignacion", {
             this.asignacion.puesto = data.puesto;
             this.asignacion.puesto_Id = data.puesto_Id;
             this.asignacion.tipo = data.tipo;
+            this.asignacion.observaciones = data.observaciones;
             return { success };
           }
         }

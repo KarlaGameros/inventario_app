@@ -11,7 +11,6 @@
           @click="toggleLeftDrawer"
         />
         <q-toolbar-title> Sistema inventario </q-toolbar-title>
-        <q-badge rounded color="green" />
         <q-btn flat round dense icon="apps" @click="show" />
       </q-toolbar>
     </q-header>
@@ -36,18 +35,18 @@
             expand-separator
             icon="menu_book"
             label="Catálogos generales"
-            class="text-purple-ieen label-title text-bold"
+            class="text-grey-8 text-bold"
           >
             <q-item
               v-if="CatalogosConList.some((element) => element == 'SI-CAT-MAR')"
               :to="{ name: 'marcas' }"
               :content-inset-level="2"
               :header-inset-level="2"
-              class="text-purple-ieen label-title text-bold"
-              active-class="text-pink-ieen-1"
+              class="text-grey-8 text-bold"
+              active-class="text-purple-ieen"
             >
               <q-item-section avatar>
-                <q-icon name="library_books" color="purple-ieen" />
+                <q-icon name="library_books" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>Marcas</q-item-label>
@@ -59,27 +58,26 @@
               :to="{ name: 'bodegas' }"
               :content-inset-level="2"
               :header-inset-level="2"
-              class="text-purple-ieen label-title text-bold"
-              active-class="text-pink-ieen-1"
+              class="text-grey-8 text-bold"
+              active-class="text-purple-ieen"
             >
               <q-item-section avatar>
-                <q-icon name="warehouse" color="purple-ieen" />
+                <q-icon name="warehouse" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>Bodegas</q-item-label>
               </q-item-section>
             </q-item>
-
             <q-item
               v-if="CatalogosConList.some((element) => element == 'SI-CAT-CAT')"
               :to="{ name: 'catalogos' }"
               :content-inset-level="2"
               :header-inset-level="2"
-              class="text-purple-ieen label-title text-bold"
-              active-class="text-pink-ieen-1"
+              class="text-grey-8 text-bold"
+              active-class="text-purple-ieen"
             >
               <q-item-section avatar>
-                <q-icon name="list_alt" color="purple-ieen" />
+                <q-icon name="list_alt" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>Catálogo de productos</q-item-label>
@@ -90,60 +88,76 @@
               :content-inset-level="2"
               :header-inset-level="2"
               :to="{ name: 'proveedores' }"
-              class="text-purple-ieen label-title text-bold"
-              active-class="text-pink-ieen-1"
+              class="text-grey-8 text-bold"
+              active-class="text-purple-ieen"
             >
               <q-item-section avatar>
-                <q-icon name="groups" color="purple-ieen" />
+                <q-icon
+                  name="groups"
+                  class="text-grey-8 text-bold"
+                  active-class="text-purple-ieen"
+                />
               </q-item-section>
               <q-item-section>
                 <q-item-label> Proveedores </q-item-label>
               </q-item-section>
             </q-item>
-
             <q-item
               v-if="CatalogosConList.some((element) => element == 'SI-CAT-EST')"
               :content-inset-level="2"
               :header-inset-level="2"
               :to="{ name: 'estatus' }"
-              class="text-purple-ieen label-title text-bold"
-              active-class="text-pink-ieen-1"
+              class="text-grey-8 text-bold"
+              active-class="text-purple-ieen"
             >
               <q-item-section avatar>
-                <q-icon name="add_box" color="purple-ieen" />
+                <q-icon name="add_box" />
               </q-item-section>
               <q-item-section>
                 <q-item-label> Estatus </q-item-label>
               </q-item-section>
             </q-item>
+            <q-item
+              v-if="CatalogosConList.some((element) => element == 'SI-TIP-MOV')"
+              :content-inset-level="2"
+              :header-inset-level="2"
+              :to="{ name: 'tipos_Movimientos' }"
+              class="text-grey-8 text-bold"
+              active-class="text-purple-ieen"
+            >
+              <q-item-section avatar>
+                <q-icon name="move_up" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label> Tipos de movimientos </q-item-label>
+              </q-item-section>
+            </q-item>
           </q-expansion-item>
-
           <q-item
             v-if="CatalogosConList.some((element) => element == 'SI-CAT-INV')"
             :to="{ name: 'inventario' }"
             :content-inset-level="2"
             :header-inset-level="2"
-            class="text-purple-ieen label-title text-bold"
-            active-class="text-pink-ieen-1"
+            class="text-grey-8 text-bold"
+            active-class="text-purple-ieen"
           >
             <q-item-section avatar>
-              <q-icon name="inventory" color="purple-ieen" />
+              <q-icon name="inventory" />
             </q-item-section>
             <q-item-section>
               <q-item-label>Inventario</q-item-label>
             </q-item-section>
           </q-item>
-
           <q-item
             v-if="CatalogosConList.some((element) => element == 'SI-CAT-ASI')"
             :content-inset-level="2"
             :header-inset-level="2"
             :to="{ name: 'asignaciones' }"
-            class="text-purple-ieen label-title text-bold"
-            active-class="text-pink-ieen-1"
+            class="text-grey-8 text-bold"
+            active-class="text-purple-ieen"
           >
             <q-item-section avatar>
-              <q-icon name="edit_square" color="purple-ieen" />
+              <q-icon name="edit_square" />
             </q-item-section>
             <q-item-section>
               <q-item-label> Asignaciones </q-item-label>
@@ -154,17 +168,16 @@
             :content-inset-level="2"
             :header-inset-level="2"
             :to="{ name: 'movimiento_inventario' }"
-            class="text-purple-ieen label-title text-bold"
-            active-class="text-pink-ieen-1"
+            class="text-grey-8 text-bold"
+            active-class="text-purple-ieen"
           >
             <q-item-section avatar>
-              <q-icon name="exit_to_app" color="purple-ieen" />
+              <q-icon name="exit_to_app" />
             </q-item-section>
             <q-item-section>
               <q-item-label> Movimiento Inventario </q-item-label>
             </q-item-section>
           </q-item>
-
           <!-- <q-item
             v-if="CatalogosConList.some((element) => element == 'SI-ENT-REC')"
             :content-inset-level="2"
@@ -180,20 +193,19 @@
               </q-item-label>
             </q-item-section>
           </q-item> -->
-
           <q-item
             v-if="CatalogosConList.some((element) => element == 'SI-MI-INV')"
             :content-inset-level="2"
             :header-inset-level="2"
             :to="{ name: 'mi_inventario' }"
+            class="text-grey-8 text-bold"
+            active-class="text-purple-ieen"
           >
             <q-item-section avatar>
-              <q-icon name="content_paste_search " color="purple-ieen" />
+              <q-icon name="content_paste_search" />
             </q-item-section>
             <q-item-section>
-              <q-item-label class="text-purple-ieen label-title text-bold">
-                Mi Inventario
-              </q-item-label>
+              <q-item-label> Mi Inventario </q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -207,7 +219,7 @@
         <div class="bg-transparent">
           <div class="text-weight-bold text-black">
             <br />
-            Bienvenido(a) {{ usuario }}
+            Bienvenido(a) <br />{{ usuario }}
           </div>
         </div>
       </q-img>
@@ -346,6 +358,9 @@ export default defineComponent({
             break;
           case "SI-ASI-FAC":
             CatalogosConList.value.push("SI-ASI-FAC");
+            break;
+          case "SI-TIP-MOV":
+            CatalogosConList.value.push("SI-TIP-MOV");
             break;
         }
       });

@@ -9,8 +9,7 @@ import axios from "axios";
 // for each client)
 
 const api = axios.create({
-  //baseURL: "http://sistema.ieenayarit.org:9170/api",
-  baseURL: "https://ld3r8rh0-7289.usw3.devtunnels.ms/api",
+  baseURL: "http://sistema.ieenayarit.org:9170/api",
 });
 
 // const api = axios.create({
@@ -24,17 +23,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// api.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response.status == 401) {
-//       alert("Su sesión ha expirado, sera redireccionado al logín");
-//       localStorage.clear();
-//       window.location = "http://sistema.ieenayarit.org:9271?return=false";
-//     }
-//     return Promise.reject();
-//   }
-// );
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response.status == 401) {
+      alert("Su sesión ha expirado, sera redireccionado al logín");
+      localStorage.clear();
+      window.location = "http://sistema.ieenayarit.org:9271?return=false";
+    }
+    return Promise.reject();
+  }
+);
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

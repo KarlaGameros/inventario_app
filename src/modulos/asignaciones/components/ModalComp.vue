@@ -5,16 +5,18 @@
     transition-show="scale"
     transition-hide="scale"
   >
-    <q-card style="width: 1200px; max-width: 120vw">
+    <q-card style="width: 900px; max-width: 90vw">
       <q-card-section class="row">
-        <q-img src="../../../assets/IEEN300.png" width="90px" />
-        <div class="text-h5 text-gray-ieen-1 text-bold absolute-center">
+        <q-img src="../../../assets/IEEN300.png" width="70px" />
+        <div
+          class="text-h6 text-center text-gray-ieen-1 text-bold absolute-center"
+        >
           {{
             !isEditar && !isShow
               ? "REGISTRAR ASIGNACIÓN"
               : isEditar
               ? "EDITAR ASIGNACIÓN"
-              : `VER ASIGNACIÓN ${asignacion.folio}`
+              : "VER ASIGNACIÓN"
           }}
         </div>
         <q-space />
@@ -34,12 +36,7 @@
               v-if="isEditar || isShow"
               class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
             >
-              <q-input
-                filled
-                readonly
-                v-model="asignacion.estatus"
-                label="Estatus"
-              >
+              <q-input disable v-model="asignacion.estatus" label="Estatus">
               </q-input>
             </div>
             <div
@@ -49,51 +46,10 @@
                   : 'col-12'
               "
             >
-              <q-input filled v-if="!isByBodega && !isShow" v-model="date">
-                <template v-slot:prepend>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-date v-model="date" mask="YYYY-MM-DD HH:mm">
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="Close"
-                            color="purple"
-                            flat
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-                <template v-slot:append>
-                  <q-icon name="access_time" class="cursor-pointer">
-                    <q-popup-proxy
-                      cover
-                      transition-show="scale"
-                      transition-hide="scale"
-                    >
-                      <q-time v-model="date" mask="YYYY-MM-DD HH:mm" format24h>
-                        <div class="row items-center justify-end">
-                          <q-btn
-                            v-close-popup
-                            label="Close"
-                            color="purple"
-                            flat
-                          />
-                        </div>
-                      </q-time>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
-              <!-- <q-input
-                v-if="!isByBodega && isEditar"
-                v-model="asignacion.fecha_Asignacion"
+              <q-input
+                color="purple-ieen"
+                v-if="!isByBodega && !isShow"
+                v-model="date"
               >
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
@@ -103,7 +59,8 @@
                       transition-hide="scale"
                     >
                       <q-date
-                        v-model="asignacion.fecha_Asignacion"
+                        color="purple-ieen"
+                        v-model="date"
                         mask="YYYY-MM-DD HH:mm"
                       >
                         <div class="row items-center justify-end">
@@ -126,7 +83,8 @@
                       transition-hide="scale"
                     >
                       <q-time
-                        v-model="asignacion.fecha_Asignacion"
+                        color="purple-ieen"
+                        v-model="date"
                         mask="YYYY-MM-DD HH:mm"
                         format24h
                       >
@@ -134,7 +92,7 @@
                           <q-btn
                             v-close-popup
                             label="Close"
-                            color="purple"
+                            color="purple-ieen"
                             flat
                           />
                         </div>
@@ -142,11 +100,11 @@
                     </q-popup-proxy>
                   </q-icon>
                 </template>
-              </q-input> -->
+              </q-input>
               <q-input
-                filled
+                color="purple-ieen"
                 v-else
-                readonly
+                disable
                 v-model="asignacion.fecha_Registro"
                 label="Fecha"
               >
@@ -154,8 +112,8 @@
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
-                filled
-                v-if="!isShow"
+                color="purple-ieen"
+                v-if="!isShow && !isEditar"
                 label="Área"
                 v-model="area_Id"
                 :options="areas"
@@ -163,42 +121,53 @@
                 :lazy-rules="true"
                 :rules="[(val) => !!val || 'El área es requerida']"
               >
+                <template v-slot:prepend>
+                  <q-icon name="apartment" />
+                </template>
               </q-select>
-              <q-input
-                filled
-                v-else
-                readonly
-                v-model="asignacion.area"
-                label="Área"
-              >
+              <q-input v-else disable v-model="asignacion.area" label="Área">
+                <template v-slot:prepend>
+                  <q-icon name="apartment" />
+                </template>
               </q-input>
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-select
-                filled
-                v-if="!isShow"
+                color="purple-ieen"
+                v-if="!isShow && !isEditar"
                 label="Empleado"
                 v-model="empleado_Id"
                 :options="listEmpleados"
                 hint="Selecciona una empleado"
               >
+                <template v-slot:prepend>
+                  <q-icon name="person" />
+                </template>
               </q-select>
               <q-input
-                filled
+                color="purple-ieen"
                 v-else
-                readonly
+                disable
                 v-model="asignacion.empleado"
                 label="Empleado"
               >
+                <template v-slot:prepend>
+                  <q-icon name="person" />
+                </template>
               </q-input>
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-              <q-input filled readonly label="Puesto" v-model="puesto">
+              <q-input
+                color="purple-ieen"
+                disable
+                label="Puesto"
+                v-model="puesto"
+              >
               </q-input>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
-                filled
+                color="purple-ieen"
                 v-show="!isShow"
                 v-model="catalogo_Id"
                 :options="listCatalogosTodos"
@@ -211,7 +180,7 @@
             </div>
             <div class="col-lg-5 col-md-5 col-sm-4 col-xs-12">
               <q-select
-                filled
+                color="purple-ieen"
                 :loading="loading"
                 v-show="!isShow && !qr"
                 v-model="inventario_Id"
@@ -223,7 +192,7 @@
               >
               </q-select>
               <q-input
-                filled
+                color="purple-ieen"
                 :loading="loading"
                 v-show="qr"
                 ref="codigo_QR_Ref"
@@ -235,21 +204,29 @@
               >
               </q-input>
             </div>
-            <div v-if="!isShow" class="col-lg-1 col-md-1 col-sm-2 col-xs-12">
+            <div
+              v-if="!isShow"
+              class="col-lg-1 col-md-1 col-sm-2 col-xs-12 q-pt-md"
+            >
               <q-btn
+                size="lg"
                 @click="setInput"
                 color="purple-ieen"
                 icon="qr_code_scanner"
+                flat
               >
-                <q-tooltip>Buscar por código de barra</q-tooltip>
+                <q-tooltip>{{
+                  qr ? "Buscar por clave" : "Buscar por código de barra"
+                }}</q-tooltip>
               </q-btn>
             </div>
             <q-space />
+            <br /><br />
             <div class="col-12 justify-end">
               <div class="text-right q-gutter-xs">
                 <q-btn
                   v-if="!isShow"
-                  icon-right="add_circle"
+                  icon-right="add"
                   label="Agregar"
                   color="secondary"
                   class="q-ml-sm"
@@ -259,7 +236,6 @@
             </div>
           </div>
         </q-card-section>
-        <q-separator />
         <q-card-section>
           <TablaAsignacionInventario v-show="!isByBodega" />
           <TablaInventarioByBodegaVue v-show="isByBodega" />
@@ -601,13 +577,14 @@ const agregarProducto = async () => {
       }
       inventario_Id.value = null;
     } else {
+      let resp = null;
       let filtro = listaAsignacionInventario.value.find(
         (x) => x.inventario_Id == inventario_Id.value.value
       );
       if (filtro == undefined) {
         if (isEditar.value == true) {
           detalleAsignaciones.value.inventario_Id = inventario_Id.value.value;
-          await asignacionStore.createDetalleAsignacion(
+          resp = await asignacionStore.createDetalleAsignacion(
             asignacion.value.id,
             detalleAsignaciones.value
           );
@@ -615,12 +592,27 @@ const agregarProducto = async () => {
             asignacion.value.id,
             inventario_Id.value
           );
+          if (resp.success == true) {
+            $q.notify({
+              position: "top-right",
+              type: "positive",
+              message: "Se agrego correctamente",
+            });
+          } else {
+            $q.notify({
+              position: "top-right",
+              type: "negative",
+              message:
+                "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+            });
+          }
         } else {
           await asignacionStore.addInventario(
             asignacion.value.id,
             inventario_Id.value
           );
         }
+
         inventario_Id.value = null;
       } else {
         $q.dialog({

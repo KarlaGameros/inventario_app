@@ -7,8 +7,11 @@
   >
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
-        <div class="text-subtitle1 text-bold">
-          Seleccionar personal para visualizar el inventario asignado
+        <q-img src="../../../assets/IEEN300.png" width="70px" />
+        <div
+          class="text-h6 text-center text-gray-ieen-1 text-bold absolute-center"
+        >
+          INVENTARIO ASIGNADO
         </div>
         <q-space />
         <q-btn
@@ -23,14 +26,23 @@
       <q-card-section>
         <q-form class="row q-col-gutter-xs" @submit="onSubmit">
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-            <q-select filled v-model="area_Id" :options="areas" label="Area" />
+            <q-select
+              :lazy-rules="true"
+              :rules="[(val) => !!val || 'El área es requerida']"
+              v-model="area_Id"
+              :options="areas"
+              label="Área"
+              color="purple-ieen"
+            />
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-select
-              filled
               v-model="empleado_Id"
               :options="listEmpleados"
               label="Personal"
+              :lazy-rules="true"
+              :rules="[(val) => !!val || 'El personal es requerido']"
+              color="purple-ieen"
             />
           </div>
           <div v-if="empleado_Id != null" class="col-12">
@@ -45,6 +57,7 @@
               <template v-slot:top-right>
                 <q-input
                   borderless
+                  outlined
                   dense
                   debounce="300"
                   v-model="filter"
@@ -62,13 +75,13 @@
             <div class="text-right q-gutter-xs">
               <q-btn
                 icon-right="close"
-                label="Cancelar"
+                label="Salir"
                 type="reset"
                 color="red"
                 @click="actualizarModal(false)"
               />
               <q-btn
-                :disable="empleado_Id == null"
+                v-if="empleado_Id != null"
                 label="Descargar"
                 type="submit"
                 icon-right="download"

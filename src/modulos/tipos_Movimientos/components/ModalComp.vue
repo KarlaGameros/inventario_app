@@ -6,12 +6,12 @@
     transition-hide="scale"
   >
     <q-card style="width: 800px; max-width: 90vw">
-      <q-card-section class="row"
-        ><q-img src="../../../assets/IEEN300.png" width="70px" />
+      <q-card-section class="row">
+        <q-img src="../../../assets/IEEN300.png" width="70px" />
         <div
           class="text-h6 text-gray-ieen-1 text-bold absolute-center text-center"
         >
-          {{ !isEditar ? "REGISTRAR ESTATUS" : "EDITAR ESTATUS" }}
+          {{ movimiento.id == null ? "REGISTRAR TIPO " : "VER TIPO" }}
         </div>
         <q-space />
         <q-btn
@@ -27,27 +27,41 @@
         <q-form class="row q-col-gutter-xs" @submit="onSubmit">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
+              :disable="movimiento.id != null"
               color="purple-ieen"
-              v-model.trim="estatu.nombre"
-              label="Estatus"
-              hint="Ingrese estatus"
+              v-model.trim="movimiento.tipo_Movimiento"
+              label="Nombre del tipo de movimiento"
+              hint="Ingrese tipo de movimiento"
               autogrow
               lazy-rules
-              :rules="[(val) => !!val || 'El estatus es requerido']"
+              :rules="[(val) => !!val || 'El tipo de movimiento es requerido']"
             >
             </q-input>
           </div>
-          <q-space />
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <q-input
+              :disable="movimiento.id != null"
+              color="purple-ieen"
+              v-model.trim="movimiento.naturaleza"
+              label="Naturaleza"
+              hint="Ingrese naturaleza"
+              autogrow
+              lazy-rules
+              :rules="[(val) => !!val || 'La naturaleza es requerido']"
+            >
+            </q-input>
+          </div>
           <div class="col-12 justify-end q-pt-lg">
             <div class="text-right q-gutter-xs">
               <q-btn
-                icon-right="close"
                 label="Cancelar"
                 type="reset"
                 color="red"
+                icon-right="close"
                 @click="actualizarModal(false)"
               />
               <q-btn
+                v-if="movimiento.id == null"
                 icon-right="save"
                 label="Guardar"
                 type="submit"
@@ -63,39 +77,33 @@
 </template>
 
 <script setup>
-import { useQuasar } from "quasar";
 import { storeToRefs } from "pinia";
-import { useEstatusStore } from "src/stores/estatus_store";
+import { useQuasar } from "quasar";
+import { useTiposConceptosMovimientos } from "src/stores/tipos-conceptos-movimientos";
 
 //-----------------------------------------------------------
 
 const $q = useQuasar();
-const estatusStore = useEstatusStore();
-const { estatu, modal, isEditar } = storeToRefs(estatusStore);
+const tiposConceptosStore = useTiposConceptosMovimientos();
+const { modal, movimiento } = storeToRefs(tiposConceptosStore);
 
 //-----------------------------------------------------------
 
 const actualizarModal = (valor) => {
-  estatusStore.actualizarModal(valor);
-  estatusStore.updateEditar(valor);
-  estatusStore.initEstatus();
+  tiposConceptosStore.actualizarModal(valor);
+  tiposConceptosStore.initMovimiento();
 };
 
 const onSubmit = async () => {
-  let resp = null;
   $q.loading.show();
-  if (isEditar.value == true) {
-    resp = await estatusStore.updateEstatus(estatu.value);
-  } else {
-    resp = await estatusStore.createEstatu(estatu.value);
-  }
+  let resp = await tiposConceptosStore.createTipoMovimiento(movimiento.value);
   if (resp.success) {
     $q.notify({
       position: "top-right",
       type: "positive",
       message: resp.data,
     });
-    estatusStore.loadInformacionEstatus();
+    tiposConceptosStore.loadTiposMovimientos();
     actualizarModal(false);
   } else {
     $q.notify({
@@ -104,6 +112,5 @@ const onSubmit = async () => {
       message: resp.data,
     });
   }
-  $q.loading.hide();
 };
 </script>

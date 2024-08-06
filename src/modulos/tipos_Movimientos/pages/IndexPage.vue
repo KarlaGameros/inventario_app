@@ -3,7 +3,7 @@
     <div class="row bg-grey-1">
       <div class="col-9">
         <div class="q-pa-md q-gutter-sm">
-          <div class="text-gray-ieen-1 text-h6">Bodegas</div>
+          <div class="text-gray-ieen-1 text-h6">Movimientos y Conceptos</div>
           <q-breadcrumbs>
             <template v-slot:separator>
               <q-icon size="1.5em" name="chevron_right" color="primary" />
@@ -12,7 +12,7 @@
             <q-breadcrumbs-el
               icon="library_books"
               class="text-grey-7"
-              label="Bodegas"
+              label="Movimientos y Conceptos"
             />
           </q-breadcrumbs>
         </div>
@@ -35,24 +35,27 @@
     </div>
     <TablaComp />
     <ModalComp />
+    <ModalConceptos />
   </q-page>
 </template>
+
 <script setup>
-import { useQuasar } from "quasar";
-import { useAuthStore } from "../../../stores/auth_store";
 import { onBeforeMount } from "vue";
+import { useQuasar } from "quasar";
 import { storeToRefs } from "pinia";
-import { useBodegaStore } from "src/stores/bodega_store";
+import { useAuthStore } from "../../../stores/auth_store";
+import { useTiposConceptosMovimientos } from "src/stores/tipos-conceptos-movimientos";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
+import ModalConceptos from "../components/ModalConceptos.vue";
 
 //-----------------------------------------------------------
 
 const $q = useQuasar();
 const authStore = useAuthStore();
-const bodegaStore = useBodegaStore();
+const tiposConceptosStore = useTiposConceptosMovimientos();
 const { modulo } = storeToRefs(authStore);
-const siglas = "SI-CAT-BOD";
+const siglas = "SI-TIP-MOV";
 
 //-----------------------------------------------------------
 
@@ -69,8 +72,6 @@ const leerPermisos = async () => {
 };
 
 const actualizarModal = (valor) => {
-  $q.loading.show();
-  bodegaStore.actualizarModal(valor);
-  $q.loading.hide();
+  tiposConceptosStore.actualizarModal(valor);
 };
 </script>

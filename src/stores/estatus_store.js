@@ -24,13 +24,12 @@ export const useEstatusStore = defineStore("estatus", {
       try {
         let resp = await api.get("/EstatusInventarios");
         let { data } = resp.data;
-        let listEstatus = data.map((estatu) => {
+        this.estatus = data.map((estatu) => {
           return {
             value: estatu.id,
             label: estatu.nombre,
           };
         });
-        this.estatus = listEstatus;
       } catch (error) {
         return {
           success: false,

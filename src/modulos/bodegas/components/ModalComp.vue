@@ -5,10 +5,13 @@
     transition-show="scale"
     transition-hide="scale"
   >
-    <q-card style="width: 800px; max-width: 80vw">
+    <q-card style="width: 800px; max-width: 90vw">
       <q-card-section class="row">
-        <div class="text-h5 text-purple-ieen text-bold absolute-center">
-          {{ !isEditar ? "Registrar bodega" : "Editar bodega" }}
+        <q-img src="../../../assets/IEEN300.png" width="70px" />
+        <div
+          class="text-h6 text-gray-ieen-1 text-bold absolute-center text-center"
+        >
+          {{ !isEditar ? "REGISTRAR BODEGA" : "EDITAR BODEGA" }}
         </div>
         <q-space />
         <q-btn
@@ -25,7 +28,6 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
               color="purple-ieen"
-              filled
               v-model.trim="bodega.nombre"
               label="Nombre de bodega"
               hint="Ingrese un nombre"
@@ -38,7 +40,6 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-select
               color="purple-ieen"
-              filled
               v-model.trim="area_Id"
               :options="areas"
               label="Área responsable de bodega"
@@ -49,7 +50,7 @@
             </q-select>
           </div>
           <q-space />
-          <div class="col-12 justify-end">
+          <div class="col-12 justify-end q-pt-lg">
             <div class="text-right q-gutter-xs">
               <q-btn
                 label="Cancelar"

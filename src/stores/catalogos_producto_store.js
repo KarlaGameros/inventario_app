@@ -141,10 +141,16 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
 
     async loadCatalogoList(especial) {
       try {
-        this.listCatalogo = [];
+        this.listCatalogosTodos = [];
         let resp = await api.get("/Catalagos");
         let { data } = resp.data;
-        let listCatalogo = data.map((catalogo) => {
+        let filtro = [];
+        if (localStorage.getItem("perfil") == "Personal sin UTIE") {
+          filtro = data.filter((x) => x.clave != "EY-02");
+        } else {
+          filtro = data;
+        }
+        let listCatalogo = filtro.map((catalogo) => {
           return {
             label: `${catalogo.clave} - ${catalogo.nombre}`,
             value: catalogo.id,
@@ -156,17 +162,14 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
             label: "Todos",
           });
         }
-
         // Encontrar el índice del elemento con label "consumible"
         const indexConsumible = listCatalogo.findIndex(
           (element) => element.label === "EY-99 - Consumibles"
         );
-
         if (indexConsumible !== -1) {
           // Eliminar la lista "consumible" si se encontró en la lista
           listCatalogo.splice(indexConsumible, 1);
         }
-
         this.listCatalogosTodos = listCatalogo;
       } catch (error) {
         return {

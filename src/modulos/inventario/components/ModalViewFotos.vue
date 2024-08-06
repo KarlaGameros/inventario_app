@@ -5,8 +5,9 @@
     transition-show="scale"
     transition-hide="scale"
   >
-    <q-card style="width: 800px; max-width: 80vw">
+    <q-card style="width: 800px; max-width: 90vw">
       <q-card-section class="row">
+        <q-img src="../../../assets/IEEN300.png" width="70px" />
         <q-space />
         <q-btn
           icon="close"
@@ -49,9 +50,10 @@
         <div class="col-12 justify-end">
           <div class="text-right q-gutter-xs">
             <q-btn
-              label="Cancelar"
+              icon-right="close"
+              label="Cerrar"
               type="reset"
-              color="negative"
+              color="red"
               @click="actualizarModalFotos(false)"
             />
           </div>

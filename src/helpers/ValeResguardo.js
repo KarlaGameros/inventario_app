@@ -23,7 +23,7 @@ const Reporte = async () => {
         doc.setFontSize(10);
         doc.setFont("helvetica", "bold");
         doc.text(
-          "INSTITUTO ESTATAL ELECTORAL DEL ESTADO DE NAYARIT \n \n VALE DE RESGUARDO",
+          "INSTITUTO ESTATAL ELECTORAL DE NAYARIT \n \n VALE DE RESGUARDO",
           110,
           15,
           null,
@@ -96,7 +96,6 @@ const Reporte = async () => {
       doc.setFont("helvetica", "normal");
       doc.text(asignacion.value.puesto, 30, 63);
       doc.setFont("helvetica", "bold");
-      console.log(asignacion.value);
       doc.rect(9.5, 65, 192, 7);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);

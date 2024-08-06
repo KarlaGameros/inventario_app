@@ -5,10 +5,13 @@
     transition-show="scale"
     transition-hide="scale"
   >
-    <q-card style="width: 800px; max-width: 80vw">
+    <q-card style="width: 800px; max-width: 90vw">
       <q-card-section class="row">
-        <div class="text-h5 text-purple-ieen text-bold absolute-center">
-          {{ !isEditar ? "Registrar catálogo" : "Editar catálogo" }}
+        <q-img src="../../../assets/IEEN300.png" width="70px" />
+        <div
+          class="text-h6 text-gray-ieen-1 text-bold absolute-center text-center"
+        >
+          {{ !isEditar ? "REGISTRAR CATÁLOGO" : "EDITAR CATÁLOGO" }}
         </div>
         <q-space />
         <q-btn
@@ -24,7 +27,6 @@
         <q-form class="row q-col-gutter-xs" @submit="onSubmit">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
-              filled
               color="purple-ieen"
               v-model.trim="catalogo.clave"
               label="Clave del catálogo"
@@ -37,7 +39,6 @@
           </div>
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
-              filled
               color="purple-ieen"
               v-model.trim="catalogo.nombre"
               label="Nombre del catálogo"
@@ -50,7 +51,6 @@
           </div>
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
-              filled
               color="purple-ieen"
               v-model.trim="catalogo.nombre_Corto"
               label="Nombre corto del catálogo"
@@ -60,7 +60,7 @@
             </q-input>
           </div>
           <q-space />
-          <div class="col-12 justify-end">
+          <div class="col-12 justify-end q-pt-lg">
             <div class="text-right q-gutter-xs">
               <q-btn
                 label="Cancelar"

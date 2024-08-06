@@ -1,9 +1,9 @@
-<template v-if="modulo">
+<template>
   <div class="row q-pl-lg q-pr-lg">
     <div class="col">
       <q-table
         :grid="$q.screen.xs"
-        :rows="catalogos"
+        :rows="list_Movimientos"
         :columns="columns"
         :filter="filter"
         :pagination="pagination"
@@ -52,20 +52,20 @@
                   flat
                   round
                   color="purple-ieen"
-                  icon="edit"
-                  @click="editar(props.row.id)"
+                  icon="add_circle"
+                  @click="addConceptos(props.row.id)"
                 >
-                  <q-tooltip>Editar catálogo</q-tooltip>
+                  <q-tooltip>Agregar conceptos</q-tooltip>
                 </q-btn>
                 <q-btn
-                  v-if="modulo == null ? false : modulo.eliminar"
+                  v-if="modulo == null ? false : modulo.actualizar"
                   flat
                   round
                   color="purple-ieen"
-                  icon="delete"
-                  @click="eliminar(props.row.id)"
+                  icon="visibility"
+                  @click="editar(props.row.id)"
                 >
-                  <q-tooltip>Eliminar catálogo</q-tooltip>
+                  <q-tooltip>Ver tipo de movimiento</q-tooltip>
                 </q-btn>
               </q-card-section>
             </q-card>
@@ -81,20 +81,20 @@
                   flat
                   round
                   color="purple-ieen"
-                  icon="edit"
-                  @click="editar(col.value)"
+                  icon="add_circle"
+                  @click="addConceptos(col.value)"
                 >
-                  <q-tooltip>Editar catálogo</q-tooltip>
+                  <q-tooltip>Agregar conceptos</q-tooltip>
                 </q-btn>
                 <q-btn
-                  v-if="modulo == null ? false : modulo.eliminar"
+                  v-if="modulo == null ? false : modulo.actualizar"
                   flat
                   round
                   color="purple-ieen"
-                  icon="delete"
-                  @click="eliminar(col.value)"
+                  icon="visibility"
+                  @click="editar(col.value)"
                 >
-                  <q-tooltip>Eliminar catálogo</q-tooltip>
+                  <q-tooltip>Ver tipo de movimiento</q-tooltip>
                 </q-btn>
               </div>
               <label v-else>{{ col.value }}</label>
@@ -105,20 +105,21 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
 import { onBeforeMount, ref } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
-import { useCatalogoProductoStore } from "../../../stores/catalogos_producto_store";
+import { useTiposConceptosMovimientos } from "../../../stores/tipos-conceptos-movimientos";
 
 //-----------------------------------------------------------
 
 const $q = useQuasar();
 const authStore = useAuthStore();
+const tiposConceptosMovStore = useTiposConceptosMovimientos();
+const { list_Movimientos } = storeToRefs(tiposConceptosMovStore);
 const { modulo } = storeToRefs(authStore);
-const catalagoStore = useCatalogoProductoStore();
-const { catalogos } = storeToRefs(catalagoStore);
 
 //-----------------------------------------------------------
 
@@ -128,32 +129,46 @@ onBeforeMount(() => {
 
 //-----------------------------------------------------------
 
+const cargarData = async () => {
+  $q.loading.show();
+  await tiposConceptosMovStore.loadTiposMovimientos();
+  $q.loading.hide();
+};
+
+const editar = async (id) => {
+  $q.loading.show();
+  await tiposConceptosMovStore.loadMovimiento(id);
+  tiposConceptosMovStore.actualizarModal(true);
+  $q.loading.hide();
+};
+
+const addConceptos = async (id) => {
+  await tiposConceptosMovStore.loadMovimiento(id);
+  await tiposConceptosMovStore.loadConceptosMovimientos(id);
+  tiposConceptosMovStore.actualizarModalConceptos(true);
+};
+
+//-----------------------------------------------------------
+
 const columns = [
   {
-    name: "clave",
+    name: "tipo_Movimiento",
     align: "center",
-    label: "Clave del catálogo",
-    field: "clave",
+    label: "Tipo de movimiento",
+    field: "tipo_Movimiento",
     sortable: true,
   },
   {
-    name: "nombre",
+    name: "naturaleza",
     align: "center",
-    label: "Nombre del catálogo",
-    field: "nombre",
-    sortable: true,
-  },
-  {
-    name: "nombre_Corto",
-    align: "center",
-    label: "Nombre corto del catálogo",
-    field: "nombre_Corto",
+    label: "Naturaleza",
+    field: "naturaleza",
     sortable: true,
   },
   {
     name: "id",
     align: "center",
-    label: "Opciones",
+    label: "Acciones",
     field: "id",
     sortable: false,
   },
@@ -167,58 +182,4 @@ const pagination = ref({
 });
 
 const filter = ref("");
-
-//-----------------------------------------------------------
-
-const cargarData = async () => {
-  $q.loading.show();
-  await catalagoStore.loadInformacionCatalago();
-  $q.loading.hide();
-};
-
-const editar = async (id) => {
-  $q.loading.show();
-  await catalagoStore.loadCatalago(id);
-  catalagoStore.updateEditar(true);
-  catalagoStore.actualizarModal(true);
-  $q.loading.hide();
-};
-
-const eliminar = async (id) => {
-  $q.dialog({
-    title: "Eliminar catalogo",
-    message: "¿Está seguro de eliminar el catálogo?",
-    icon: "Warning",
-    persistent: true,
-    transitionShow: "scale",
-    transitionHide: "scale",
-    ok: {
-      color: "secondary",
-      label: "¡Sí!, eliminar",
-    },
-    cancel: {
-      color: "red",
-      label: " No Cancelar",
-    },
-  }).onOk(async () => {
-    $q.loading.show();
-    const resp = await catalagoStore.deleteCatalogo(id);
-    if (resp.success) {
-      $q.loading.hide();
-      $q.notify({
-        position: "top-right",
-        type: "positive",
-        message: resp.data,
-      });
-      catalagoStore.loadInformacionCatalago();
-    } else {
-      $q.loading.hide();
-      $q.notify({
-        position: "top-right",
-        type: "negative",
-        message: resp.data,
-      });
-    }
-  });
-};
 </script>

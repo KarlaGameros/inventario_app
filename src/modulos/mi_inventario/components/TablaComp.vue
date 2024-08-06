@@ -6,7 +6,7 @@
       style="border-radius: 20px"
     >
       <template v-slot:avatar>
-        <q-btn icon="inventory_2" flat color="purple-ieen"></q-btn>
+        <q-icon name="inventory_2" flat color="purple-ieen" />
       </template>
       <div class="text-h6 text-purple-ieen text-bold q-pb-xs">
         MI INVENTARIO
@@ -24,7 +24,6 @@
       </template>
     </q-banner>
   </div>
-
   <div class="q-pb-md">
     <q-banner
       inline-actions
@@ -32,7 +31,7 @@
       style="border-radius: 20px"
     >
       <template v-slot:avatar>
-        <q-btn icon="campaign" size="lg" flat color="purple-ieen"></q-btn>
+        <q-icon name="campaign" size="lg" flat color="purple-ieen" />
       </template>
       <div class="text-h6 text-purple-ieen text-bold q-pb-xs">Nota</div>
       <div class="text-body2 text-justify">
@@ -84,8 +83,8 @@ import { useQuasar } from "quasar";
 import { useEmpleadosStore } from "src/stores/empleados_store";
 import { onBeforeMount, ref } from "vue";
 import { useMiInventarioStore } from "../../../stores/mi_inventario";
-import ValeGeneralResguardo from "../../../helpers/ValeGeneralResguardo";
 import { useAsignacionStore } from "src/stores/asignacion_store";
+import ValeGeneralResguardo from "../../../helpers/ValeGeneralResguardo";
 
 //-----------------------------------------------------------
 
@@ -190,7 +189,7 @@ const columns = [
 
 const pagination = ref({
   page: 1,
-  rowsPerPage: 25,
+  rowsPerPage: 5,
   sortBy: "name",
   descending: false,
 });

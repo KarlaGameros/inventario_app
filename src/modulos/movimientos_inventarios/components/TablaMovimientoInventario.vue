@@ -2,7 +2,6 @@
   <div class="row">
     <div class="col">
       <q-table
-        class="my-sticky-header-table"
         :rows="list_Detalle"
         :columns="columns"
         :filter="filter"
@@ -11,9 +10,11 @@
         rows-per-page-label="Filas por pagina"
         no-data-label="No hay registros"
         binary-state-sort
+        :visible-columns="visible_columns"
       >
         <template v-slot:top-right>
           <q-input
+            outlined
             borderless
             dense
             debounce="300"
@@ -28,7 +29,11 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              <div v-if="col.name === 'destino'">
+              <div
+                v-if="
+                  col.name === 'destino' && tipo.label == 'Entrega Recepción'
+                "
+              >
                 <q-radio
                   :disable="visualizar"
                   checked-icon="task_alt"
@@ -46,7 +51,11 @@
                   label="Personal"
                 />
               </div>
-              <div v-else-if="col.name === 'empleado'">
+              <div
+                v-else-if="
+                  col.name === 'empleado' && tipo.label == 'Entrega Recepción'
+                "
+              >
                 <q-select
                   :disable="visualizar"
                   v-if="props.row.destino == 'Personal'"
@@ -70,6 +79,29 @@
                 >
                 </q-select>
               </div>
+              <div
+                v-else-if="
+                  col.name === 'empleado' &&
+                  (concepto.label == 'Traspaso' ||
+                    concepto.label == 'Traspaso bodegas' ||
+                    concepto.label == 'Reemplazo')
+                "
+              >
+                {{
+                  props.row.destino == "Personal" ? col.value : props.row.bodega
+                }}
+              </div>
+              <div v-else-if="col.name === 'observaciones'">
+                {{ col.value }}
+              </div>
+              <div
+                v-else-if="
+                  col.name === 'estado_Fisico' &&
+                  concepto.label.includes('Pendiente')
+                "
+              >
+                {{ col.value }}
+              </div>
               <div v-else-if="col.name === 'inventario_Id'">
                 <q-btn
                   flat
@@ -90,7 +122,29 @@
                 >
                   <q-tooltip>Agregar observación</q-tooltip>
                 </q-btn>
+                <q-btn
+                  v-if="
+                    !visualizar &&
+                    tipo != null &&
+                    tipo.label != 'Entrega Recepción' &&
+                    tipo.label != 'Salida'
+                  "
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="delete"
+                  @click="
+                    eliminarInventario(
+                      isEditar ? props.row.id : props.row.inventario_Id
+                    )
+                  "
+                >
+                  <q-tooltip>Ver inventario</q-tooltip>
+                </q-btn>
               </div>
+              <label v-else-if="col.name == 'clave'" class="text-bold">{{
+                col.value
+              }}</label>
               <label v-else>{{ col.value }}</label>
             </q-td>
           </q-tr>
@@ -102,9 +156,10 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
+import { useEmpleadosStore } from "src/stores/empleados_store";
 import { useMovimientoInventario } from "src/stores/movimiento_inventario";
 import ModalVerInventario from "./ModalVerInventario.vue";
 
@@ -112,8 +167,15 @@ import ModalVerInventario from "./ModalVerInventario.vue";
 
 const $q = useQuasar();
 const movimientoStore = useMovimientoInventario();
-const { list_Detalle, list_Empleados, visualizar, list_Bodegas } =
+const empleadosStore = useEmpleadosStore();
+const { isEditar, list_Detalle, visualizar, list_Bodegas, movimiento } =
   storeToRefs(movimientoStore);
+const { list_Empleados } = storeToRefs(empleadosStore);
+const props = defineProps({
+  concepto: { type: Object },
+  tipo: { type: Object },
+});
+const visible_columns = ref([]);
 
 //-----------------------------------------------------------
 
@@ -135,7 +197,7 @@ const columns = [
   {
     name: "destino",
     align: "center",
-    label: "Asignar a ",
+    label: "Destino",
     field: "destino",
     sortable: false,
   },
@@ -144,6 +206,20 @@ const columns = [
     align: "center",
     label: "Asignar a",
     field: "empleado",
+    sortable: false,
+  },
+  {
+    name: "observaciones",
+    align: "center",
+    label: "Observaciones",
+    field: "observaciones",
+    sortable: false,
+  },
+  {
+    name: "estado_Fisico",
+    align: "center",
+    label: "Estado fisico",
+    field: "estado_Fisico",
     sortable: false,
   },
   {
@@ -166,14 +242,90 @@ const filter = ref("");
 
 //-----------------------------------------------------------
 
+watchEffect(() => {
+  if (props.concepto != null) {
+    if (props.concepto.label.includes("Pendiente")) {
+      visible_columns.value = [
+        "clave",
+        "inventario",
+        "observaciones",
+        "estado_Fisico",
+        "inventario_Id",
+      ];
+    } else if (props.tipo.label == "Salida") {
+      visible_columns.value = ["clave", "inventario", "inventario_Id"];
+    } else {
+      {
+        visible_columns.value = [
+          "clave",
+          "inventario",
+          "empleado",
+          "observaciones",
+          "inventario_Id",
+        ];
+      }
+    }
+  } else {
+    visible_columns.value = [
+      "clave",
+      "inventario",
+      "destino",
+      "empleado",
+      "inventario_Id",
+    ];
+  }
+});
+
+const eliminarInventario = async (id) => {
+  $q.dialog({
+    title: "Eliminar producto",
+    message: "¿Está seguro de eliminar el producto del listado?",
+    icon: "Warning",
+    persistent: true,
+    transitionShow: "scale",
+    transitionHide: "scale",
+    ok: {
+      icon: "delete",
+      color: "secondary",
+      label: "¡Sí!, eliminar",
+    },
+    cancel: {
+      icon: "close",
+      color: "red",
+      label: " No Cancelar",
+    },
+  }).onOk(async () => {
+    $q.loading.show();
+    let resp = null;
+    resp = await movimientoStore.deleteInventario(id);
+    $q.loading.hide();
+    if (resp.success) {
+      $q.notify({
+        position: "top-right",
+        type: "positive",
+        message: resp.data,
+      });
+      if (isEditar.value == true) {
+        await movimientoStore.loadDetalleMovimiento(movimiento.value.id);
+      }
+    } else {
+      $q.notify({
+        position: "top-right",
+        type: "negative",
+        message: resp.data,
+      });
+    }
+  });
+};
+
 const agregarObservacion = (id) => {
   let elemento = list_Detalle.value.findIndex((x) => x.inventario_Id == id);
   $q.dialog({
-    title: "Agregar observacion",
+    title: "Agregar observación",
     message: "Escribe la observación",
     prompt: {
       model: list_Detalle.value[elemento].observaciones,
-      type: "text", // optional
+      type: "text",
     },
     cancel: true,
     persistent: true,
@@ -191,50 +343,4 @@ const actualizarModalVer = (valor, value) => {
   movimientoStore.loadInventario(value);
   $q.loading.hide();
 };
-
-const eliminar = async (id) => {
-  $q.dialog({
-    title: "Eliminar producto",
-    message: "¿Está seguro de eliminar el producto del listado?",
-    icon: "Warning",
-    persistent: true,
-    transitionShow: "scale",
-    transitionHide: "scale",
-    ok: {
-      color: "positive",
-      label: "¡Sí!, eliminar",
-    },
-    cancel: {
-      color: "negative",
-      label: " No Cancelar",
-    },
-  }).onOk(async () => {
-    $q.loading.show();
-    let resp = null;
-    resp = await movimientoStore.deleteProducto(id);
-    $q.loading.hide();
-
-    if (resp.success) {
-      $q.loading.hide();
-      $q.notify({
-        position: "top-right",
-        type: "positive",
-        message: resp.data,
-      });
-    } else {
-      $q.loading.hide();
-      $q.notify({
-        position: "top-right",
-        type: "negative",
-        message: resp.data,
-      });
-    }
-  });
-};
 </script>
-<style lang="sass">
-.my-sticky-header-table
-  .q-table__top,
-  thead tr:first-child th
-    background-color: #DCDADD
-</style>

@@ -5,10 +5,13 @@
     transition-show="scale"
     transition-hide="scale"
   >
-    <q-card style="width: 800px; max-width: 80vw">
+    <q-card style="width: 800px; max-width: 90vw">
       <q-card-section class="row">
-        <div class="text-h5 text-purple-ieen text-bold absolute-center">
-          {{ !isEditar ? "Registrar proveedor" : "Editar proveedor" }}
+        <q-img src="../../../assets/IEEN300.png" width="70px" />
+        <div
+          class="text-h6 text-gray-ieen-1 text-bold absolute-center text-center"
+        >
+          {{ !isEditar ? "REGISTRAR PROVEEDOR" : "EDITAR PROVEEDOR" }}
         </div>
         <q-space />
         <q-btn
@@ -24,7 +27,6 @@
         <q-form class="row q-col-gutter-xs" @submit="onSubmit">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
-              filled
               color="purple-ieen"
               v-model.trim="proveedor.nombre"
               label="Nombre del proveedor"
@@ -39,7 +41,6 @@
           </div>
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
-              filled
               color="purple-ieen"
               v-model.trim="proveedor.razon_Social"
               label="Razón social"
@@ -54,7 +55,6 @@
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input
-              filled
               color="purple-ieen"
               v-model.trim="proveedor.rfc"
               label="RFC"
@@ -67,7 +67,6 @@
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input
-              filled
               color="purple-ieen"
               v-model.trim="proveedor.telefono"
               label="Teléfono"
@@ -82,7 +81,6 @@
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input
-              filled
               color="purple-ieen"
               v-model.trim="email"
               label="Email"
@@ -95,7 +93,6 @@
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-input
-              filled
               color="purple-ieen"
               v-model.trim="proveedor.direccion"
               label="Dirección"
@@ -107,7 +104,7 @@
             </q-input>
           </div>
           <q-space />
-          <div class="col-12 justify-end">
+          <div class="col-12 justify-end q-pt-lg">
             <div class="text-right q-gutter-xs">
               <q-btn
                 label="Cancelar"

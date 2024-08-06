@@ -1,6 +1,6 @@
 <template>
   <q-dialog
-    v-model="modalTraspaso"
+    v-model="modalAddAsignacion"
     persistent
     transition-show="scale"
     transition-hide="scale"
@@ -24,13 +24,15 @@
       <q-form @submit="onSubmit">
         <q-card-section>
           <div class="row">
-            <div class="col-12 q-pb-md">
+            <div class="col-12 q-pb-md text-bold">
               <q-select
                 color="purple-ieen"
                 v-model="catalogo_Id"
-                :options="listCatalogoFiltro"
+                :options="listCatalogosTodos"
                 label="Catálogo perteneciente del inventario"
                 hint="Seleccione catálogo"
+                :lazy-rules="true"
+                :rules="[(val) => !!val || 'El catálogo es requerido']"
               />
             </div>
             <div class="col-12">
@@ -45,16 +47,6 @@
                 hint="Selecciona una inventario"
                 multiple
               >
-                <template v-slot:before-options>
-                  <q-item-section class="q-pl-md">
-                    <q-checkbox
-                      left-label
-                      label="Seleccionar todos"
-                      color="green"
-                      v-model="seleccionar_Todos"
-                    />
-                  </q-item-section>
-                </template>
                 <template v-slot:option="{ itemProps, selected, opt }">
                   <q-item v-bind="itemProps">
                     <q-item-section>
@@ -101,7 +93,9 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useQuasar } from "quasar";
+import { useAsignacionStore } from "src/stores/asignacion_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
+import { useInventarioStore } from "src/stores/inventario_store";
 import { ref, watch } from "vue";
 import { useMovimientoInventario } from "../../../stores/movimiento_inventario";
 
@@ -110,15 +104,13 @@ import { useMovimientoInventario } from "../../../stores/movimiento_inventario";
 const $q = useQuasar();
 const movimientoInventarioStore = useMovimientoInventario();
 const catalogosStore = useCatalogoProductoStore();
-const {
-  modalTraspaso,
-  list_Inventario_By_Empleado,
-  movimiento,
-  isEditar,
-  detalle_Movimiento,
-  list_Detalle,
-} = storeToRefs(movimientoInventarioStore);
-const { listCatalogoFiltro } = storeToRefs(catalogosStore);
+const asignacionStore = useAsignacionStore();
+const inventarioStore = useInventarioStore();
+const { listaAsignacionInventario } = storeToRefs(asignacionStore);
+const { modalAddAsignacion, movimiento, isEditar, detalle_Movimiento } =
+  storeToRefs(movimientoInventarioStore);
+const { list_Inventario_By_Catalogo } = storeToRefs(inventarioStore);
+const { listCatalogosTodos } = storeToRefs(catalogosStore);
 const inventario_Asignado_Id = ref(null);
 const opciones_Inventario_Traspaso = ref([]);
 const props = defineProps({
@@ -128,47 +120,37 @@ const props = defineProps({
   personal_Traspaso: { type: Object },
   bodega_traspaso_Id: { type: Object },
 });
-const catalogo_Id = ref({ value: 0, label: "Todos" });
-const list = ref([]);
-const seleccionar_Todos = ref(false);
+const catalogo_Id = ref(null);
 
 //-----------------------------------------------------------
 
-watch(seleccionar_Todos, (val) => {
-  if (val == true) {
-    inventario_Asignado_Id.value = opciones_Inventario_Traspaso.value.map(
-      (option) => option
-    );
-  } else {
-    inventario_Asignado_Id.value = [];
+watch(catalogo_Id, (val) => {
+  if (val != null) {
+    cargarInventario(val);
   }
 });
 
+const cargarInventario = async (val) => {
+  await inventarioStore.loadInventarioByCatalogo(val.value);
+};
+
 const actualizarModal = (valor) => {
-  movimientoInventarioStore.actualizarModalTraspaso(valor);
+  movimientoInventarioStore.actualizarModalAddAsignacion(valor);
   inventario_Asignado_Id.value = null;
-  seleccionar_Todos.value = false;
-  catalogo_Id.value = { value: 0, label: "Todos" };
+  catalogo_Id.value = null;
 };
 
 const filterInventario = (val, update) => {
   update(() => {
     const needle = val.toLowerCase();
     let filteredArray = [];
-    if (catalogo_Id.value.value != 0) {
-      let filtro = list_Inventario_By_Empleado.value.filter(
+    if (catalogo_Id.value != null) {
+      let filtro = list_Inventario_By_Catalogo.value.filter(
         (x) => x.catalago_Id === catalogo_Id.value.value
       );
       filteredArray = filtro.filter(
         (obj1) =>
-          !list_Detalle.value.some(
-            (obj2) => obj2.inventario_Id === obj1.inventario_Id
-          )
-      );
-    } else {
-      filteredArray = list_Inventario_By_Empleado.value.filter(
-        (obj1) =>
-          !list_Detalle.value.some(
+          !listaAsignacionInventario.value.some(
             (obj2) => obj2.inventario_Id === obj1.inventario_Id
           )
       );
@@ -181,52 +163,19 @@ const filterInventario = (val, update) => {
 
 const onSubmit = async () => {
   let resp = null;
-  if (isEditar.value == true && detalle_Movimiento.value.id == null) {
-    inventario_Asignado_Id.value.forEach(async (element) => {
-      let filtro = list_Detalle.value.find(
-        (x) => x.inventario_Id == element.value
-      );
-      if (filtro == undefined) {
-        detalle_Movimiento.value.movimiento_Inventario_Id = movimiento.value.id;
-        detalle_Movimiento.value.inventario_Id = element.id;
-        detalle_Movimiento.value.destino = props.destino;
-        detalle_Movimiento.value.empleado_Id =
-          props.personal_Traspaso != null
-            ? props.personal_Traspaso.value
-            : props.personal_Traspaso;
-        detalle_Movimiento.value.bodega_Destino_Id =
-          props.bodega_traspaso_Id != null
-            ? props.bodega_traspaso_Id.value
-            : props.bodega_traspaso_Id;
-        resp = await movimientoInventarioStore.createDetalleMovimiento(
-          detalle_Movimiento.value
-        );
-      } else {
-        $q.dialog({
-          title: "Atención",
-          message: `El inventario ${element.clave} ya se agrego`,
-          icon: "Warning",
-          persistent: true,
-          transitionShow: "scale",
-          transitionHide: "scale",
-        });
-      }
+  if (inventario_Asignado_Id.value == null) {
+    $q.notify({
+      position: "center",
+      type: "warning",
+      message: "No seleccionó inventario",
     });
-    await movimientoInventarioStore.loadDetalleMovimiento(movimiento.value.id);
   } else {
     inventario_Asignado_Id.value.forEach(async (element) => {
-      let filtro = list_Detalle.value.find(
+      let filtro = listaAsignacionInventario.value.find(
         (x) => x.inventario_Id == element.value
       );
       if (filtro == undefined) {
-        resp = await movimientoInventarioStore.addInventario(
-          element,
-          "",
-          "",
-          props.destino,
-          props.personal_Traspaso,
-          props.bodega_traspaso_Id
-        );
+        resp = await asignacionStore.addInventario(null, element);
         if (resp.success == true) {
           actualizarModal(false);
           $q.notify({
@@ -243,17 +192,14 @@ const onSubmit = async () => {
           });
         }
       } else {
-        $q.dialog({
-          title: "Atención",
+        $q.notify({
+          position: "center",
+          type: "warning",
           message: `El inventario ${element.clave} ya se agrego`,
-          icon: "Warning",
-          persistent: true,
-          transitionShow: "scale",
-          transitionHide: "scale",
         });
       }
     });
+    inventario_Asignado_Id.value = null;
   }
-  inventario_Asignado_Id.value = null;
 };
 </script>

@@ -7,42 +7,61 @@
     </div>
   </template>
   <template v-else>
-    <div class="row">
+    <div class="row q-pl-lg q-pr-lg">
       <div class="col">
         <q-table
+          :grid="$q.screen.xs"
           :rows="listFiltroInventario"
           :columns="columns"
           :filter="filter"
           :pagination="pagination"
+          :visible-columns="visible_columns"
           row-key="id"
           rows-per-page-label="Filas por pagina"
           no-data-label="No hay registros"
+          class="my-sticky-last-column-table"
         >
           <template v-slot:top-left>
             <q-select
-              filled
+              outlined
+              dense
+              color="purple-ieen"
               class="q-pr-xs"
               v-model="catalogoId"
               :options="listCatalogosTodos"
               label="Selecciona un catalogo"
-              hint="Seleccione un estatus de inventarios a mostrar"
-              style="width: 260px"
+              hint="Seleccione un catálogo de inventarios"
+              style="width: 300px"
             >
             </q-select>
             <q-select
-              filled
+              outlined
+              dense
+              color="purple-ieen"
               class="q-pr-xs"
               v-model="estatusId"
+              placeholder="Todos"
               :options="estatus"
-              label="Selecciona un estatus"
-              hint="Seleccione un catalogo de inventarios a mostrar"
-              style="width: 260px"
+              :label="estatusId.length == 0 ? 'Todos' : 'Selecciona estatus'"
+              hint="Seleccione uno o más estatus"
+              style="width: 300px"
+              multiple
+              use-chips
             >
             </q-select>
+            <q-btn
+              flat
+              class="q-mr-md"
+              color="purple-ieen"
+              text-color="purple-ieen"
+              icon="cleaning_services"
+              @click="limpiarFiltros()"
+              label="Limpiar filtros"
+            />
           </template>
           <template v-slot:top-right>
             <q-input
-              borderless
+              outlined
               dense
               debounce="300"
               v-model="filter"
@@ -53,10 +72,114 @@
               </template>
             </q-input>
           </template>
-          <template v-slot:body="props">
+          <!--TEMPLATE SCREEN XS-->
+          <template v-if="$q.screen.xs" v-slot:item="props">
+            <div
+              class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+            >
+              <q-card bordered class="no-shadow">
+                <q-list dense>
+                  <q-item
+                    v-for="col in columns.filter(
+                      (col) => col.name !== 'id' && col.name !== 'vermas'
+                    )"
+                    :key="col.name"
+                  >
+                    <q-item-section>
+                      <q-item-label class="text-bold"
+                        >{{ col.label }}:</q-item-label
+                      >
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ props.row[col.name] }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+                <q-separator />
+                <q-card-section class="text-center">
+                  <q-btn
+                    v-if="modulo == null ? false : modulo.leer"
+                    flat
+                    round
+                    color="purple-ieen"
+                    icon="account_tree"
+                    @click="verKardex(props.row.id)"
+                  >
+                    <q-tooltip>Ver kardex</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    v-if="modulo == null ? false : modulo.leer"
+                    flat
+                    round
+                    color="purple-ieen"
+                    icon="image"
+                    @click="loadFotos(props.row.id, true)"
+                  >
+                    <q-tooltip>Ver imagen</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    v-if="modulo == null ? false : modulo.leer"
+                    flat
+                    round
+                    color="purple-ieen"
+                    icon="qr_code_scanner"
+                    @click="mostrarPDF(true, props.row.id)"
+                  >
+                    <q-tooltip>Generar PDF</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    v-if="modulo == null ? false : modulo.actualizar"
+                    flat
+                    round
+                    color="purple-ieen"
+                    icon="edit"
+                    @click="editar(props.row.id)"
+                  >
+                    <q-tooltip>Editar inventario</q-tooltip>
+                  </q-btn>
+                  <q-btn
+                    v-if="modulo == null ? false : modulo.eliminar"
+                    flat
+                    round
+                    color="purple-ieen"
+                    icon="delete"
+                    @click="eliminar(props.row.id)"
+                  >
+                    <q-tooltip>Eliminar inventario</q-tooltip>
+                  </q-btn>
+                </q-card-section>
+              </q-card>
+            </div>
+          </template>
+          <!--TEMPLATE SCREEN DESKTOP-->
+          <template v-slot:body="props" v-else>
             <q-tr :props="props">
-              <q-td v-for="col in props.cols" :key="col.name" :props="props">
+              <q-td auto-width>
+                <q-btn
+                  size="sm"
+                  color="purple-ieen"
+                  round
+                  dense
+                  @click="props.expand = !props.expand"
+                  :icon="props.expand ? 'remove' : 'add'"
+                  class="absolute-center"
+                />
+              </q-td>
+              <q-td
+                v-for="col in props.cols.filter((x) => x.name !== 'vermas')"
+                :key="col.name"
+                :props="props"
+              >
                 <div v-if="col.name === 'id'">
+                  <q-btn
+                    flat
+                    round
+                    color="purple-ieen"
+                    icon="account_tree"
+                    @click="verKardex(col.value)"
+                  >
+                    <q-tooltip>Ver kardex</q-tooltip>
+                  </q-btn>
                   <q-btn
                     flat
                     round
@@ -64,6 +187,7 @@
                     icon="image"
                     @click="loadFotos(col.value, true)"
                   >
+                    <q-tooltip>Ver imagen</q-tooltip>
                   </q-btn>
                   <q-btn
                     flat
@@ -107,7 +231,58 @@
                     {{ props.row["descripcion_completo"] }}
                   </q-tooltip>
                 </div>
+                <label v-else-if="col.name == 'clave'" class="text-bold">{{
+                  col.value
+                }}</label>
+                <label v-else-if="col.name == 'estatus'" class="text-bold">{{
+                  col.value
+                }}</label>
                 <label v-else>{{ col.value }}</label>
+              </q-td>
+            </q-tr>
+            <q-tr v-show="props.expand" :props="props">
+              <q-td colspan="100%">
+                <div class="text-left q-pa-xs">
+                  <b>Fecha de registro:</b>
+                  {{ props.row.fecha_Registro }}
+                </div>
+                <div class="text-left q-pa-xs">
+                  <b>Fecha de compra:</b>
+                  {{ props.row.fecha_compra }}
+                </div>
+                <div
+                  v-if="props.row.fecha_Baja != ''"
+                  class="text-left q-pa-xs"
+                >
+                  <b>Fecha de baja:</b>
+                  {{ props.row.fecha_Baja }}
+                </div>
+                <div
+                  v-if="props.row.fecha_Comodato != ''"
+                  class="text-left q-pa-xs"
+                >
+                  <b>Fecha comodato:</b>
+                  {{ props.row.fecha_Comodato }}
+                </div>
+                <div
+                  v-if="props.row.fecha_Donacion != ''"
+                  class="text-left q-pa-xs"
+                >
+                  <b>Fecha donación:</b>
+                  {{ props.row.fecha_Donacion }}
+                </div>
+                <div class="text-left q-pa-xs">
+                  <b>No. Factura:</b>
+                  {{ props.row.factura }}
+                </div>
+                <div class="text-left q-pa-xs">
+                  <b>UUID:</b>
+                  {{ props.row.uuid }}
+                </div>
+                <div class="text-left q-pa-xs">
+                  <b>Importe:</b>
+                  {{ props.row.importe }}
+                </div>
               </q-td>
             </q-tr>
           </template>
@@ -120,13 +295,13 @@
 </template>
 
 <script setup>
+import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
-import { useQuasar } from "quasar";
+import { useQuasar, QSpinnerFacebook, exportFile } from "quasar";
 import { onBeforeMount, ref, watchEffect } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useInventarioStore } from "../../../stores/inventario_store";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
-import { useEstatusStore } from "src/stores/estatus_store";
 import ModalFotos from "../components/ModalViewFotos.vue";
 import ModalPDF from "../components/ModalPDF.vue";
 
@@ -134,16 +309,26 @@ import ModalPDF from "../components/ModalPDF.vue";
 
 const $q = useQuasar();
 const authStore = useAuthStore();
-const { modulo } = storeToRefs(authStore);
 const inventarioStore = useInventarioStore();
 const catalogoStore = useCatalogoProductoStore();
-const estatusStore = useEstatusStore();
+const router = useRouter();
+const { modulo } = storeToRefs(authStore);
 const { listFiltroInventario, listInventario } = storeToRefs(inventarioStore);
 const { listCatalogosTodos } = storeToRefs(catalogoStore);
-const { estatus } = storeToRefs(estatusStore);
 const catalogoId = ref(null);
-const estatusId = ref(null);
+const estatusId = ref([]);
 const isLoading = ref(false);
+const estatus = ref([
+  "Activo",
+  "Asignado",
+  "Mantenimiento",
+  "Donación",
+  "Baja",
+  "Comodato",
+  "Pendiente Donación",
+  "Pendiente Baja",
+  "Pendiente Comodato",
+]);
 
 //-----------------------------------------------------------
 
@@ -154,18 +339,21 @@ onBeforeMount(() => {
 //-----------------------------------------------------------
 
 const cargarData = async () => {
-  if (catalogoId.value == null && estatusId.value == null) {
+  if (catalogoId.value == null) {
     $q.loading.show({
-      message: "Cargando...",
+      spinner: QSpinnerFacebook,
+      spinnerColor: "purple-ieen",
+      spinnerSize: 140,
+      backgroundColor: "purple-3",
+      message: "Espere un momento, por favor...",
+      messageColor: "black",
     });
     cargarInventarios();
     setTimeout(() => {
       $q.loading.hide();
     }, 2000);
   }
-  await estatusStore.loadEstatusList(true);
   await catalogoStore.loadCatalogoList(true);
-  estatusId.value = { value: 0, label: "Todos" };
   catalogoId.value = { value: 0, label: "Todos" };
 };
 
@@ -180,10 +368,10 @@ const filtrar = (listInventario, filtro) => {
       }
     }
     if (filtro.estatus !== undefined) {
-      if (filtro.estatus == "Todos") {
+      if (filtro.estatus.length == 0) {
         cumple = cumple && item.estatus === item.estatus;
       } else {
-        cumple = cumple && item.estatus === filtro.estatus;
+        cumple = cumple && estatusId.value.includes(item.estatus);
       }
     }
     return cumple;
@@ -193,14 +381,26 @@ const filtrar = (listInventario, filtro) => {
 watchEffect(() => {
   const filtro = {};
   if (catalogoId.value != null) filtro.catalogo = catalogoId.value.value;
-  if (estatusId.value != null) filtro.estatus = estatusId.value.label;
+  if (estatusId.value != null) filtro.estatus = estatusId.value;
   filtrar(listInventario.value, filtro);
 });
 
 //-----------------------------------------------------------
 
+const limpiarFiltros = () => {
+  catalogoId.value = { value: 0, label: "Todos" };
+  estatusId.value = [];
+};
+
 const editar = async (id) => {
-  $q.loading.show();
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   inventarioStore.updateEditar(true);
   await inventarioStore.loadInventario(id);
   inventarioStore.actualizarModal(true);
@@ -208,7 +408,14 @@ const editar = async (id) => {
 };
 
 const cargarInventarios = async () => {
-  $q.loading.show();
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   isLoading.value = true;
   await inventarioStore.loadInformacionInventarios();
   isLoading.value = false;
@@ -220,8 +427,58 @@ const loadFotos = (id, valor) => {
   inventarioStore.actualizarModalFotos(valor);
 };
 
+function wrapCsvValue(val, formatFn, row) {
+  let formatted = formatFn !== void 0 ? formatFn(val, row) : val;
+  formatted =
+    formatted === void 0 || formatted === null ? "" : String(formatted);
+  formatted = formatted.split('"').join('""');
+  return `"${formatted}"`;
+}
+
+const downloadInventario = () => {
+  let date = new Date().toLocaleDateString();
+  const content = [columns.map((col) => wrapCsvValue(col.label))]
+    .concat(
+      listFiltroInventario.value.map((row) =>
+        columns
+          .map((col) =>
+            wrapCsvValue(
+              typeof col.field === "function"
+                ? col.field(row)
+                : row[col.field === void 0 ? col.name : col.field],
+              col.format,
+              row
+            )
+          )
+          .join(",")
+      )
+    )
+    .join("\r\n");
+  const bom = "\uFEFF";
+  const status = exportFile(
+    `ListadoInventario_${date}`,
+    bom + content,
+    "text/csv;charset=utf-8"
+  );
+  if (status !== true) {
+    $q.notify({
+      message:
+        "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+      color: "negative",
+      icon: "warning",
+    });
+  }
+};
+
 const mostrarPDF = async (valor, id) => {
-  $q.loading.show();
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   // await inventarioStore.loadInventario(id);
   // if (inventario.value.ruta_PDF != null) {
   //   inventarioStore.actualizarModalPDF(valor);
@@ -243,15 +500,22 @@ const eliminar = async (id) => {
     transitionShow: "scale",
     transitionHide: "scale",
     ok: {
-      color: "positive",
+      color: "secondary",
       label: "¡Sí!, eliminar",
     },
     cancel: {
-      color: "negative",
+      color: "red",
       label: " No Cancelar",
     },
   }).onOk(async () => {
-    $q.loading.show();
+    $q.loading.show({
+      spinner: QSpinnerFacebook,
+      spinnerColor: "purple-ieen",
+      spinnerSize: 140,
+      backgroundColor: "purple-3",
+      message: "Espere un momento, por favor...",
+      messageColor: "black",
+    });
     const resp = await inventarioStore.deleteInventario(id);
     if (resp.success) {
       $q.loading.hide();
@@ -272,21 +536,36 @@ const eliminar = async (id) => {
   });
 };
 
+const verKardex = async (id) => {
+  await inventarioStore.loadInventario(id);
+  await inventarioStore.loadKardex(id);
+  router.push({
+    name: "historial_Inventario",
+  });
+};
+
 //-----------------------------------------------------------
 
+const visible_columns = ref([
+  "vermas",
+  "estatus",
+  "catalogo",
+  "bodega",
+  "empleado",
+  "clave",
+  "nombre_corto",
+  "descripcion",
+  "marca",
+  "modelo",
+  "numero_Serie",
+  "color",
+  "id",
+]);
 const columns = [
   {
-    name: "id",
+    name: "vermas",
     align: "center",
-    label: "Acciones",
-    field: "id",
-    sortable: true,
-  },
-  {
-    name: "catalogo",
-    align: "center",
-    label: "Catálogo perteneciente",
-    field: "catalogo",
+    label: "Ver más",
     sortable: true,
   },
   {
@@ -294,6 +573,13 @@ const columns = [
     align: "center",
     label: "Estatus",
     field: "estatus",
+    sortable: true,
+  },
+  {
+    name: "catalogo",
+    align: "center",
+    label: "Catálogo perteneciente",
+    field: "catalogo",
     sortable: true,
   },
   {
@@ -318,24 +604,17 @@ const columns = [
     sortable: true,
   },
   {
-    name: "descripcion",
-    align: "center",
-    label: "Descripción",
-    field: "descripcion",
-    sortable: true,
-  },
-  {
-    name: "descripcion_completo",
-    align: "center",
-    label: "Descripción",
-    field: "descripcion_completo",
-    sortable: true,
-  },
-  {
     name: "nombre_corto",
     align: "center",
     label: "Nombre",
     field: "nombre_corto",
+    sortable: true,
+  },
+  {
+    name: "descripcion",
+    align: "center",
+    label: "Descripción",
+    field: "descripcion",
     sortable: true,
   },
   {
@@ -369,15 +648,36 @@ const columns = [
   {
     name: "fecha_Registro",
     align: "center",
-    label: "Fecha de Registro",
+    label: "Fecha registro",
     field: "fecha_Registro",
     sortable: true,
   },
   {
     name: "fecha_compra",
     align: "center",
-    label: "Fecha de Compra",
+    label: "Fecha compra",
     field: "fecha_compra",
+    sortable: true,
+  },
+  {
+    name: "fecha_Baja",
+    align: "center",
+    label: "Fecha baja",
+    field: "fecha_Baja",
+    sortable: true,
+  },
+  {
+    name: "fecha_Comodato",
+    align: "center",
+    label: "Fecha comodato",
+    field: "fecha_Comodato",
+    sortable: true,
+  },
+  {
+    name: "fecha_Donacion",
+    align: "center",
+    label: "Fecha donación",
+    field: "fecha_Donacion",
     sortable: true,
   },
   {
@@ -401,14 +701,35 @@ const columns = [
     field: "importe",
     sortable: true,
   },
+  {
+    name: "id",
+    align: "center",
+    label: "Acciones",
+    field: "id",
+    sortable: true,
+  },
 ];
 
 const pagination = ref({
   page: 1,
-  rowsPerPage: 25,
+  rowsPerPage: 10,
   sortBy: "name",
   descending: false,
 });
 
 const filter = ref("");
 </script>
+<style lang="sass">
+.my-sticky-last-column-table
+  thead tr:last-child th:last-child
+    background-color: white
+
+  td:last-child
+    background-color: white
+
+  th:last-child,
+  td:last-child
+    position: sticky
+    right: 0
+    z-index: 1
+</style>

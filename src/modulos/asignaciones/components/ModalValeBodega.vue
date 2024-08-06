@@ -87,9 +87,11 @@ onBeforeMount(() => {
   bodegaStore.loadBodegasList();
 });
 
-watch(bodega_Id, (val) => {
-  empleadoStore.loadResponsableByArea(val.area_Id);
-  asignacion.value.area_Id = val.area_Id;
+watch(bodega_Id, async (val) => {
+  if (val != null) {
+    await empleadoStore.loadResponsableByArea(val.value);
+    asignacion.value.area_Id = val.area_Id;
+  }
 });
 //-----------------------------------------------------------
 

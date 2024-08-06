@@ -18,7 +18,7 @@ const ValeSalida = async () => {
       doc.setFontSize(10);
       doc.setFont("helvica", "bold");
       doc.text(
-        `INSTITUTO ESTATAL ELECTORAL DEL ESTADO DE NAYARIT \n \n VALE ${movimiento.value.tipo_Movimiento.toUpperCase()}`,
+        `INSTITUTO ESTATAL ELECTORAL DE NAYARIT \n \n VALE ${movimiento.value.tipo_Movimiento.toUpperCase()}`,
         140,
         15,
         null,

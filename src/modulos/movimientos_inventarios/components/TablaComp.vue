@@ -1,7 +1,8 @@
 <template>
-  <div class="row">
+  <div class="row q-pl-lg q-pr-lg">
     <div class="col">
       <q-table
+        :grid="$q.screen.xs"
         :rows="list_Movimientos_Filtro"
         :columns="columns"
         :filter="filter"
@@ -13,20 +14,22 @@
       >
         <template v-slot:top-left>
           <q-select
+            outlined
+            dense
             class="q-pr-xs"
             color="purple-ieen"
             style="width: 250px"
-            filled
             v-model="movimiento_Id"
             :options="tipos_Movimientos"
             label="Tipo de movimiento"
             hint="Seleccione una opción"
           />
           <q-select
+            outlined
+            dense
             class="q-pr-xs"
             color="purple-ieen"
             style="width: 250px"
-            filled
             v-model="estatus_Id"
             :options="list_Estatus"
             label="Estatus"
@@ -35,7 +38,7 @@
         </template>
         <template v-slot:top-right>
           <q-input
-            borderless
+            outlined
             dense
             debounce="300"
             v-model="filter"
@@ -46,12 +49,35 @@
             </template>
           </q-input>
         </template>
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              <div v-if="col.name === 'id'">
+        <!--TEMPLATE SCREEN XS-->
+        <template v-if="$q.screen.xs" v-slot:item="props">
+          <div
+            class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3 grid-style-transition"
+          >
+            <q-card bordered class="no-shadow">
+              <q-list dense>
+                <q-item
+                  v-for="col in props.cols.filter((col) => col.name !== 'id')"
+                  :key="col.name"
+                >
+                  <q-item-section>
+                    <q-item-label class="text-bold"
+                      >{{ col.label }}:</q-item-label
+                    >
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ col.value }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+              <q-separator />
+              <q-card-section class="text-center">
                 <q-btn
-                  v-if="modulo.actualizar && props.row.estatus == 'Afectado'"
+                  v-if="
+                    modulo == null
+                      ? false
+                      : modulo.actualizar && props.row.estatus == 'Afectado'
+                  "
                   flat
                   round
                   color="purple-ieen"
@@ -62,9 +88,106 @@
                 </q-btn>
                 <q-btn
                   v-if="
-                    modulo.actualizar &&
-                    props.row.estatus == 'Afectado' &&
-                    props.row.tipo_Movimiento == 'Salida'
+                    modulo == null
+                      ? false
+                      : modulo.actualizar &&
+                        props.row.estatus == 'Afectado' &&
+                        props.row.tipo_Movimiento == 'Salida'
+                  "
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="add_a_photo"
+                  @click="verFotos(props.row.id)"
+                >
+                  <q-tooltip>Fotos</q-tooltip>
+                </q-btn>
+                <q-btn
+                  v-if="
+                    modulo == null
+                      ? false
+                      : modulo.actualizar && props.row.estatus == 'Pendiente'
+                  "
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="edit"
+                  @click="editar(props.row.id)"
+                >
+                  <q-tooltip>Editar movimiento</q-tooltip>
+                </q-btn>
+                <q-btn
+                  v-if="
+                    modulo == null
+                      ? false
+                      : modulo.actualizar && props.row.estatus == 'Pendiente'
+                  "
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="send"
+                  @click="afectar(props.row.id)"
+                >
+                  <q-tooltip>Afectar movimiento</q-tooltip>
+                </q-btn>
+                <q-btn
+                  v-if="
+                    modulo == null
+                      ? false
+                      : modulo.actualizar && props.row.estatus == 'Pendiente'
+                  "
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="cancel"
+                  @click="cancelar(props.row.id)"
+                >
+                  <q-tooltip>Cancelar movimiento</q-tooltip>
+                </q-btn>
+                <q-btn
+                  v-if="
+                    modulo == null
+                      ? false
+                      : modulo.actualizar && props.row.estatus != 'Pendiente'
+                  "
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="search"
+                  @click="verMovimiento(props.row.id)"
+                >
+                  <q-tooltip>Ver movimiento</q-tooltip>
+                </q-btn>
+              </q-card-section>
+            </q-card>
+          </div>
+        </template>
+        <!--TEMPLATE SCREEN DESKTOP-->
+        <template v-slot:body="props" v-else>
+          <q-tr :props="props">
+            <q-td v-for="col in props.cols" :key="col.name" :props="props">
+              <div v-if="col.name === 'id'">
+                <q-btn
+                  v-if="
+                    modulo == null
+                      ? false
+                      : modulo.actualizar && props.row.estatus == 'Afectado'
+                  "
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="print"
+                  @click="descargarVale(props.row)"
+                >
+                  <q-tooltip>Vale movimiento</q-tooltip>
+                </q-btn>
+                <q-btn
+                  v-if="
+                    modulo == null
+                      ? false
+                      : modulo.actualizar &&
+                        props.row.estatus == 'Afectado' &&
+                        props.row.tipo_Movimiento == 'Salida'
                   "
                   flat
                   round
@@ -75,17 +198,25 @@
                   <q-tooltip>Fotos</q-tooltip>
                 </q-btn>
                 <q-btn
-                  v-if="modulo.actualizar && props.row.estatus == 'Pendiente'"
+                  v-if="
+                    modulo == null
+                      ? false
+                      : modulo.actualizar && props.row.estatus == 'Pendiente'
+                  "
                   flat
                   round
                   color="purple-ieen"
                   icon="edit"
                   @click="editar(col.value)"
                 >
-                  <q-tooltip>Afectar movimiento</q-tooltip>
+                  <q-tooltip>Editar movimiento</q-tooltip>
                 </q-btn>
                 <q-btn
-                  v-if="modulo.actualizar && props.row.estatus == 'Pendiente'"
+                  v-if="
+                    modulo == null
+                      ? false
+                      : modulo.actualizar && props.row.estatus == 'Pendiente'
+                  "
                   flat
                   round
                   color="purple-ieen"
@@ -95,17 +226,25 @@
                   <q-tooltip>Afectar movimiento</q-tooltip>
                 </q-btn>
                 <q-btn
-                  v-if="modulo.actualizar && props.row.estatus == 'Pendiente'"
+                  v-if="
+                    modulo == null
+                      ? false
+                      : modulo.actualizar && props.row.estatus == 'Pendiente'
+                  "
                   flat
                   round
                   color="purple-ieen"
                   icon="cancel"
                   @click="cancelar(col.value)"
                 >
-                  <q-tooltip>Afectar movimiento</q-tooltip>
+                  <q-tooltip>Cancelar movimiento</q-tooltip>
                 </q-btn>
                 <q-btn
-                  v-if="modulo.actualizar && props.row.estatus != 'Pendiente'"
+                  v-if="
+                    modulo == null
+                      ? false
+                      : modulo.actualizar && props.row.estatus != 'Pendiente'
+                  "
                   flat
                   round
                   color="purple-ieen"
@@ -115,6 +254,33 @@
                   <q-tooltip>Ver movimiento</q-tooltip>
                 </q-btn>
               </div>
+              <div v-else-if="col.name == 'estatus'">
+                <q-badge
+                  :color="
+                    col.value == 'Pendiente'
+                      ? 'orange'
+                      : col.value == 'Cancelado'
+                      ? 'red'
+                      : 'green'
+                  "
+                  :label="col.value"
+                >
+                  <q-icon
+                    :name="
+                      col.value == 'Pendiente'
+                        ? 'warning'
+                        : col.value == 'Cancelado'
+                        ? 'close'
+                        : 'done'
+                    "
+                  />
+                </q-badge>
+              </div>
+              <label
+                v-else-if="col.name == 'tipo_Movimiento'"
+                class="text-bold"
+                >{{ col.value }}</label
+              >
               <label v-else>{{ col.value }}</label>
             </q-td>
           </q-tr>
@@ -183,9 +349,9 @@ const descargarVale = async (row) => {
       movimientoStore.actualizarModalRecibio(true);
     } else {
       await EntregaRecepcion();
-      movimientoStore.limpiarInf(true);
     }
   }
+  movimientoStore.initDetalleMovimiento();
   $q.loading.hide();
 };
 
@@ -235,7 +401,7 @@ const afectar = async (id) => {
       $q.notify({
         position: "top-right",
         type: "positive",
-        message: resp.data,
+        message: "La asignación se afectó correctamente",
       });
       movimientoStore.loadInformacionMovimientos();
     } else {
@@ -243,10 +409,10 @@ const afectar = async (id) => {
       $q.notify({
         position: "top-right",
         type: "negative",
-        message: resp.data,
+        message:
+          "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
       });
     }
-    movimientoStore.limpiarInf(true);
   });
 };
 
@@ -336,6 +502,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: "concepto",
+    align: "center",
+    label: "Concepto",
+    field: "concepto",
+    sortable: true,
+  },
+  {
     name: "folio",
     align: "center",
     label: "Folio",
@@ -385,6 +558,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: "fecha_Movimiento",
+    align: "center",
+    label: "Fecha movimiento",
+    field: "fecha_Movimiento",
+    sortable: true,
+  },
+  {
     name: "fecha_Afecto",
     align: "center",
     label: "Fecha afecto",
@@ -402,7 +582,7 @@ const columns = [
 
 const pagination = ref({
   page: 1,
-  rowsPerPage: 25,
+  rowsPerPage: 10,
   sortBy: "name",
   descending: false,
 });

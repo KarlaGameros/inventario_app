@@ -31,14 +31,13 @@ export const useBodegaStore = defineStore("bodega", {
       try {
         let resp = await api.get("/Bodegas");
         let { data } = resp.data;
-        let listBodega = data.map((bodega) => {
+        this.bodegas = data.map((bodega) => {
           return {
             id: bodega.id,
             area: bodega.area,
             nombre: bodega.nombre,
           };
         });
-        this.bodegas = listBodega;
       } catch (error) {
         return {
           success: false,
@@ -94,11 +93,21 @@ export const useBodegaStore = defineStore("bodega", {
       try {
         let resp = await api.get("/Bodegas");
         let { data } = resp.data;
-        this.listBodega = data.map((bodega) => {
+        let filtro = [];
+        if (localStorage.getItem("perfil") == "Personal sin UTIE") {
+          filtro = data.filter(
+            (x) => x.area != "Unidad Técnica de Informática y Estadística"
+          );
+        } else {
+          filtro = data;
+        }
+        this.listBodega = filtro.map((bodega) => {
           return {
-            label: bodega.nombre,
+            id: bodega.id,
+            area: bodega.area,
+            nombre: bodega.nombre,
             value: bodega.id,
-            area_Id: bodega.area_Id,
+            label: bodega.nombre,
           };
         });
       } catch (error) {

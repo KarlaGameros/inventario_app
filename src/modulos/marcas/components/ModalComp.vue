@@ -5,10 +5,13 @@
     transition-show="scale"
     transition-hide="scale"
   >
-    <q-card style="width: 800px; max-width: 80vw">
+    <q-card style="width: 900px; max-width: 90vw">
       <q-card-section class="row">
-        <div class="text-h5 text-purple-ieen text-bold absolute-center">
-          {{ !isEditar ? "Registrar marca" : "Editar marca" }}
+        <q-img src="../../../assets/IEEN300.png" width="70px" />
+        <div
+          class="text-h6 text-gray-ieen-1 text-bold absolute-center text-center"
+        >
+          {{ !isEditar ? "REGISTRAR MARCA" : "EDITAR MARCA" }}
         </div>
         <q-space />
         <q-btn
@@ -25,7 +28,6 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
               color="purple-ieen"
-              filled
               v-model.trim="marca.clave"
               label="Nombre de la marca"
               hint="Ingrese nombre de la marca"
@@ -38,7 +40,6 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
               color="purple-ieen"
-              filled
               v-model.trim="marca.descripcion"
               label="Descripción de la marca"
               hint="Ingrese una descripción"
@@ -48,7 +49,7 @@
             >
             </q-input>
           </div>
-          <div class="col-12 justify-end">
+          <div class="col-12 justify-end q-pt-lg">
             <div class="text-right q-gutter-xs">
               <q-btn
                 label="Cancelar"

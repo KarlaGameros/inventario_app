@@ -26,7 +26,6 @@
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-sm">
               <q-select
                 color="purple-ieen"
-                filled
                 v-model="area_Id"
                 :options="list_Areas"
                 label="Área"
@@ -39,7 +38,6 @@
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
               <q-select
                 color="purple-ieen"
-                filled
                 v-model="personal_Id"
                 :options="list_Empleados"
                 label="Personal"
@@ -89,7 +87,7 @@ import EntregaRecepcion from "src/helpers/ValeEntregaRecepcion";
 const $q = useQuasar();
 const movimientoInventarioStore = useMovimientoInventario();
 const empleadosStore = useEmpleadosStore();
-const { modalRecibio } = storeToRefs(movimientoInventarioStore);
+const { modalRecibio, movimiento } = storeToRefs(movimientoInventarioStore);
 const { list_Areas, list_Empleados, personal_Id } = storeToRefs(empleadosStore);
 const area_Id = ref(null);
 
@@ -120,7 +118,6 @@ const actualizarModal = (valor) => {
   movimientoInventarioStore.actualizarModalRecibio(valor);
   area_Id.value = null;
   personal_Id.value = null;
-  movimientoInventarioStore.limpiarInf(true);
 };
 
 const onSubmit = async () => {

@@ -7,8 +7,8 @@
   >
     <q-card style="width: 800px; max-width: 80vw">
       <q-card-section class="row">
-        <div class="text-h5 text-purple-ieen text-bold absolute-center">
-          {{ !isEditar ? "Registrar modelos" : "Editar modelos" }}
+        <div class="text-h5 text-gray-ieen-1 text-bold absolute-center">
+          {{ !isEditar ? "REGISTRAR MODELOS" : "EDITAR MODELOS" }}
         </div>
         <q-space />
         <q-btn
@@ -25,7 +25,6 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
               color="purple-ieen"
-              filled
               v-model.trim="modelo.clave"
               label="Clave del modelo"
               hint="Ingrese clave"
@@ -38,7 +37,6 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-input
               color="purple-ieen"
-              filled
               v-model.trim="modelo.descripcion"
               label="Descripción"
               hint="Ingrese una descripción"

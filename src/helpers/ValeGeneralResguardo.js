@@ -19,7 +19,7 @@ const ValeGeneralResguardo = async () => {
       doc.setFontSize(10);
       doc.setFont("helvetica", "bold");
       doc.text(
-        "INSTITUTO ESTATAL ELECTORAL DEL ESTADO DE NAYARIT \n \n RESGUARDO GENERAL",
+        "INSTITUTO ESTATAL ELECTORAL DE NAYARIT \n \n RESGUARDO GENERAL",
         110,
         15,
         null,

@@ -56,6 +56,16 @@ const routes = [
         name: "entrega_recepcion",
         component: () => import("../modulos/entrega_recepcion/pages/IndexPage"),
       },
+      {
+        path: "/historial_Inventario",
+        name: "historial_Inventario",
+        component: () => import("../modulos/historialProducto/pages/IndexPage"),
+      },
+      {
+        path: "/tipos_Movimientos",
+        name: "tipos_Movimientos",
+        component: () => import("../modulos/tipos_Movimientos/pages/IndexPage"),
+      },
     ],
   },
 

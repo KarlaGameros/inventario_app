@@ -7,7 +7,10 @@
   >
     <q-card style="width: 1000px; max-width: 80vw">
       <q-card-section class="row">
-        <div class="text-h6">Asignación de factura</div>
+        <q-img src="../../../assets/IEEN300.png" width="80px" />
+        <div class="text-h5 text-gray-ieen-1 text-bold absolute-center">
+          ASIGNACIÓN DE FACTURA
+        </div>
         <q-space />
         <q-btn
           icon="close"
@@ -18,28 +21,41 @@
           v-close-popup
         />
       </q-card-section>
-
       <q-card-section>
         <q-form class="q-col-gutter-xs" @submit="onSubmit">
           <div class="row">
-            <q-radio
-              color="purple"
-              v-model="tipo"
-              val="individual"
-              label="Individual"
-            />
-            <q-radio
-              color="purple"
-              v-model="tipo"
-              val="paquete"
-              label="Paquete"
-            />
+            <div class="col-lg-6 col-sm-12">
+              <q-radio
+                checked-icon="task_alt"
+                unchecked-icon="panorama_fish_eye"
+                color="purple-ieen"
+                v-model="tipo"
+                val="individual"
+                label="Individual"
+                class="text-bold text-subtitle1"
+                size="lg"
+              />
+            </div>
+            <div class="col-lg-6 col-sm-12">
+              <q-radio
+                checked-icon="task_alt"
+                unchecked-icon="panorama_fish_eye"
+                color="purple-ieen"
+                size="lg"
+                v-model="tipo"
+                val="paquete"
+                class="text-bold text-subtitle1"
+                label="Paquete"
+              />
+            </div>
           </div>
+          <q-separator />
+          <br />
           <div
-            class="text-subtitle2 text-bold"
+            class="text-h6 text-bold text-center text-gray-ieen-1"
             v-show="general || tipo == 'individual'"
           >
-            General
+            -GENERAL-
           </div>
           <div class="row" v-if="general || tipo == 'individual'">
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pr-md">
@@ -168,7 +184,6 @@
               </div>
             </div>
           </div>
-
           <div class="col-12 justify-end q-pt-md">
             <q-table
               v-if="tipo == 'individual'"
@@ -238,7 +253,7 @@
                   label="Buscar"
                   color="secondary"
                   class="q-ml-sm"
-                  @click="buscarPaquete(paquete_Id.value)"
+                  @click="buscarPaquete()"
                 />
               </template>
               <template v-slot:top-right>
@@ -461,7 +476,7 @@ const columns = [
 
 const pagination = ref({
   page: 1,
-  rowsPerPage: 25,
+  rowsPerPage: 10,
   sortBy: "name",
   descending: false,
 });

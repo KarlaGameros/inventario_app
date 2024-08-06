@@ -19,19 +19,28 @@ const EntregaRecepcion = async () => {
     img.src = require("../assets/IEEN300.png");
     const doc = new jsPDF({
       orientation:
-        movimiento.value.tipo_Movimiento == "Entrega Recepción"
+        movimiento.value.tipo_Movimiento == "Entrega Recepción" ||
+        movimiento.value.concepto == "Reemplazo"
           ? "landscape"
           : "portrait",
       format: "letter",
     });
-
     function createHeader() {
       doc.addImage(img, "png", 10, 5, 35, 21);
       doc.setFontSize(10);
       doc.setFont("helvetica", "bold");
       if (movimiento.value.tipo_Movimiento == "Entrega Recepción") {
         doc.text(
-          "INSTITUTO ESTATAL ELECTORAL DEL ESTADO DE NAYARIT \n \n VALE DE ENTREGA-RECEPCIÓN",
+          "INSTITUTO ESTATAL ELECTORAL DE NAYARIT \n \n VALE DE ENTREGA-RECEPCIÓN",
+          140,
+          15,
+          null,
+          null,
+          "center"
+        );
+      } else if (movimiento.value.concepto == "Reemplazo") {
+        doc.text(
+          `INSTITUTO ESTATAL ELECTORAL DE NAYARIT \n \n VALE DE TRASPASO - REEMPLAZO`,
           140,
           15,
           null,
@@ -40,7 +49,7 @@ const EntregaRecepcion = async () => {
         );
       } else {
         doc.text(
-          "INSTITUTO ESTATAL ELECTORAL DEL ESTADO DE NAYARIT \n \n VALE DE TRASPASO",
+          "INSTITUTO ESTATAL ELECTORAL DE NAYARIT \n \n VALE DE TRASPASO",
           110,
           15,
           null,
@@ -82,7 +91,10 @@ const EntregaRecepcion = async () => {
       doc.rect(55, 35, 50, 5);
       doc.text(movimiento.value.fecha_Afecto, 60, 39);
 
-      if (movimiento.value.tipo_Movimiento == "Entrega Recepción") {
+      if (
+        movimiento.value.tipo_Movimiento == "Entrega Recepción" ||
+        movimiento.value.concepto == "Reemplazo"
+      ) {
         doc.setFillColor(84, 37, 131);
         doc.setDrawColor(0, 0, 0);
         doc.setLineWidth(0.3);
@@ -133,7 +145,6 @@ const EntregaRecepcion = async () => {
         doc.text("Responsable: ", 15, 56);
         doc.setFont("helvetica", "normal");
         doc.text(movimiento.value.empleado, 40, 56);
-
         doc.rect(10, 58, 191.8, 7);
         doc.setFont("helvetica", "bold");
         doc.setFontSize(10);
@@ -175,7 +186,6 @@ const EntregaRecepcion = async () => {
         { content: "Marca" },
         { content: "Modelo" },
         { content: "Observaciones" },
-        { content: "Asignación" },
         { content: "Asignado a" },
       ],
     ];
@@ -209,7 +219,6 @@ const EntregaRecepcion = async () => {
         item.marca,
         item.modelo,
         item.observaciones,
-        item.destino,
         item.destino == "Personal" ? item.empleado : item.bodega_Destino,
       ]),
       bodyStyles: { fontSize: 8, textColor: [0, 0, 0] },
@@ -219,6 +228,7 @@ const EntregaRecepcion = async () => {
 
     var maxY = 222;
     var currentY = doc.lastAutoTable.finalY;
+
     if (movimiento.value.tipo_Movimiento == "Entrega Recepción") {
       if (currentY > maxY) {
         doc.addPage();
@@ -283,11 +293,76 @@ const EntregaRecepcion = async () => {
         doc.setFontSize(9);
         doc.text("Responsable de área", 225, 200, null, null, "center");
       }
+    } else if (movimiento.value.concepto == "Reemplazo") {
+      if (currentY > maxY) {
+        doc.addPage();
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(10);
+        doc.text(
+          "________________________________________",
+          50,
+          190,
+          null,
+          null,
+          "center"
+        );
+        doc.text(movimiento.value.empleado, 50, 195, null, null, "center");
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9);
+        doc.text("Entregó", 50, 200, null, null, "center");
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(10);
+        doc.text(
+          "________________________________________",
+          225,
+          190,
+          null,
+          null,
+          "center"
+        );
+        doc.text(personal_Id.value.label, 225, 195, null, null, "center");
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9);
+        doc.text("Recibió", 225, 200, null, null, "center");
+      } else {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(10);
+        doc.text(
+          "________________________________________",
+          50,
+          190,
+          null,
+          null,
+          "center"
+        );
+        doc.text(movimiento.value.empleado, 50, 195, null, null, "center");
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9);
+        doc.text("Entregó", 50, 200, null, null, "center");
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(10);
+        doc.text(
+          "________________________________________",
+          225,
+          190,
+          null,
+          null,
+          "center"
+        );
+
+        doc.text(personal_Id.value.label, 225, 195, null, null, "center");
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9);
+        doc.text("Recibió", 225, 200, null, null, "center");
+      }
     } else {
       if (currentY > maxY) {
         doc.addPage();
         doc.setFont("helvetica", "bold");
         doc.setFontSize(10);
+
         if (movimiento.value.tipo_Movimiento == "Traspaso") {
           doc.line(10, 230, 90, 230);
           doc.text(movimiento.value.empleado, 50, 235, null, null, "center");
@@ -366,6 +441,7 @@ const EntregaRecepcion = async () => {
     }
 
     var newPageCount = doc.internal.getNumberOfPages();
+    console.log(newPageCount);
     for (var i = 0; i < newPageCount; i++) {
       createHeader();
       createFooter();
