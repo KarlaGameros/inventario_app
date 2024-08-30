@@ -18,9 +18,9 @@
         </div>
       </div>
     </div>
-    <TablaComp />
+    <HistorialComp />
   </q-page>
 </template>
 <script setup>
-import TablaComp from "../components/TablaComp.vue";
+import HistorialComp from "../components/HistorialComp.vue";
 </script>

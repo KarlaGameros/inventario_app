@@ -1,20 +1,4 @@
 <template>
-  <!-- <div class="row">
-    <div class="col-12">
-      <q-banner
-        inline-actions
-        class="text-justify bg-grey-2"
-        style="border-radius: 20px"
-      >
-        <template v-slot:avatar>
-          <q-icon name="inventory_2" flat color="purple-ieen" />
-        </template>
-        <div class="text-h6 text-purple-ieen text-bold q-pb-xs">
-          MI INVENTARIO
-        </div>
-      </q-banner>
-    </div>
-  </div> -->
   <br />
   <q-btn
     :to="{ name: 'inventario' }"
@@ -65,72 +49,17 @@
         <div class="q-ml-md" v-else style="width: 50px"></div>
       </div>
     </div>
-
-    <!-- <div class="col-lg-6 col-sm-12 q-pa-md q-gutter-sm">
-      <q-timeline color="purple-ieen">
-        <q-timeline-entry
-          v-for="movimiento in list_Kardex"
-          :key="movimiento"
-          :subtitle="movimiento.concepto"
-        >
-          <div>
-            <div>
-              <b>Folio del movimiento:</b> {{ movimiento.folio_Movimiento }}
-            </div>
-            <div>
-              <b>Fecha de movimiento:</b> {{ movimiento.fecha_Registro }}
-            </div>
-            <div>
-              <b>Tipo de movimiento:</b> {{ movimiento.tipo_Movimiento }}
-            </div>
-            <div><b>Capturista:</b> {{ movimiento.capturista }}</div>
-            <div><b>Fecha de registro:</b> {{ movimiento.fecha_Registro }}</div>
-          </div>
-        </q-timeline-entry>
-      </q-timeline>
-    </div> -->
   </div>
 </template>
 
 <script setup>
-import { useQuasar } from "quasar";
-import { onBeforeMount, onMounted, ref } from "vue";
 import { useInventarioStore } from "src/stores/inventario_store";
 import { storeToRefs } from "pinia";
 
 //-----------------------------------------------------------
 
-const $q = useQuasar();
 const inventarioStore = useInventarioStore();
 const { list_Kardex, inventario } = storeToRefs(inventarioStore);
-const inventario_Id = ref(null);
-const opciones_Inventario = ref([]);
-const simple = ref([
-  {
-    label: "EY-02-006 TABLON",
-    icon: "inventory",
-    children: [
-      {
-        label: "Good food  ",
-        children: [{ label: "Quality ingredients" }, { label: "Good recipe" }],
-      },
-      {
-        label: "Good service ",
-        children: [
-          { label: "Prompt attention" },
-          { label: "Professional waiter" },
-        ],
-      },
-      {
-        label: "Pleasant surroundings  ",
-        children: [
-          { label: "Good table presentation" },
-          { label: "Pleasing decor" },
-        ],
-      },
-    ],
-  },
-]);
 </script>
 <style lang="sass">
 .my-sticky-last-column-table
