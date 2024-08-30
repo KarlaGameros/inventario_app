@@ -14,7 +14,6 @@
         <q-btn flat round dense icon="apps" @click="show" />
       </q-toolbar>
     </q-header>
-
     <q-drawer
       v-model="leftDrawerOpen"
       show-if-above
@@ -178,21 +177,6 @@
               <q-item-label> Movimiento Inventario </q-item-label>
             </q-item-section>
           </q-item>
-          <!-- <q-item
-            v-if="CatalogosConList.some((element) => element == 'SI-ENT-REC')"
-            :content-inset-level="2"
-            :header-inset-level="2"
-            :to="{ name: 'entrega_recepcion' }"
-          >
-            <q-item-section avatar>
-              <q-icon name="receipt_long" color="purple-ieen" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label class="text-purple-ieen label-title text-bold">
-                Entrega recepcion
-              </q-item-label>
-            </q-item-section>
-          </q-item> -->
           <q-item
             v-if="CatalogosConList.some((element) => element == 'SI-MI-INV')"
             :content-inset-level="2"
@@ -349,9 +333,6 @@ export default defineComponent({
             break;
           case "SI-MI-INV":
             CatalogosConList.value.push("SI-MI-INV");
-            break;
-          case "SI-ENT-REC":
-            CatalogosConList.value.push("SI-ENT-REC");
             break;
           case "SI-CAT-PRO":
             CatalogosConList.value.push("SI-CAT-PRO");

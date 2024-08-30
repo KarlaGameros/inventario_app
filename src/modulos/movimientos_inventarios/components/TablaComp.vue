@@ -337,6 +337,7 @@ const cargarData = async () => {
 };
 
 const descargarVale = async (row) => {
+  console.log(row);
   $q.loading.show();
   await movimientoStore.loadMovimiento(row.id);
   await movimientoStore.loadDetalleMovimiento(row.id);
@@ -344,7 +345,9 @@ const descargarVale = async (row) => {
   if (row.tipo_Movimiento == "Salida") {
     await ValeSalida();
   } else {
-    await empleadoStore.loadResponsableByArea(row.area_Id);
+    if (row.area_Id != null) {
+      await empleadoStore.loadResponsableByArea(row.area_Id);
+    }
     if (movimiento.value.tipo_Movimiento == "Traspaso") {
       movimientoStore.actualizarModalRecibio(true);
     } else {
@@ -392,6 +395,7 @@ const afectar = async (id) => {
     },
   }).onOk(async () => {
     $q.loading.show();
+
     let resp = await movimientoStore.afectarMovimiento(
       id,
       movimiento.value.tipo_Movimiento

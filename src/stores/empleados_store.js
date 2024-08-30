@@ -9,6 +9,7 @@ export const useEmpleadosStore = defineStore("empleados", {
     list_Empleados: [],
     list_Empleados_Inventario: [],
     personal_Id: null,
+    personal_Id_Elaboro: null,
     empleado: {
       id: null,
       nombres: null,
@@ -132,6 +133,7 @@ export const useEmpleadosStore = defineStore("empleados", {
             value: detalle.id,
             puesto: detalle.puesto,
             puesto_Id: detalle.puesto_Id,
+            area: detalle.area,
           };
         });
       } catch (error) {

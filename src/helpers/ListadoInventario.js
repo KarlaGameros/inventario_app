@@ -1,7 +1,7 @@
+import { useInventarioStore } from "src/stores/inventario_store";
 import { storeToRefs } from "pinia";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { useInventarioStore } from "src/stores/inventario_store";
 
 const ReporteListadoInventario = async () => {
   try {
@@ -9,6 +9,7 @@ const ReporteListadoInventario = async () => {
     const { listFiltroInventario } = storeToRefs(inventarioStore);
     let detalleData = listFiltroInventario.value;
     let img = new Image();
+
     img.src = require("../assets/IEEN300.png");
     let totalPagesExp = "{total_pages_count_string}";
     const doc = new jsPDF({ orientation: "landscape", format: "legal" });

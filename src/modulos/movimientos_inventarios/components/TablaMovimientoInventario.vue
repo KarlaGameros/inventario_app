@@ -91,9 +91,6 @@
                   props.row.destino == "Personal" ? col.value : props.row.bodega
                 }}
               </div>
-              <div v-else-if="col.name === 'observaciones'">
-                {{ col.value }}
-              </div>
               <div
                 v-else-if="
                   col.name === 'estado_Fisico' &&
@@ -253,7 +250,12 @@ watchEffect(() => {
         "inventario_Id",
       ];
     } else if (props.tipo.label == "Salida") {
-      visible_columns.value = ["clave", "inventario", "inventario_Id"];
+      visible_columns.value = [
+        "clave",
+        "inventario",
+        "observaciones",
+        "inventario_Id",
+      ];
     } else {
       {
         visible_columns.value = [

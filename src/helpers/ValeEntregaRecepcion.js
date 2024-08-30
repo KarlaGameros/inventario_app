@@ -12,7 +12,8 @@ const EntregaRecepcion = async () => {
     const empleadoStore = useEmpleadosStore();
     const { movimiento, list_Detalle } = storeToRefs(movimientosStore);
     const { miInventario } = storeToRefs(miInventarioStore);
-    const { empleado, personal_Id } = storeToRefs(empleadoStore);
+    const { empleado, personal_Id, personal_Id_Elaboro } =
+      storeToRefs(empleadoStore);
     await movimientosStore.loadMovimiento(movimiento.value.id);
     await movimientosStore.loadDetalleMovimiento(movimiento.value.id);
     let img = new Image();
@@ -49,7 +50,11 @@ const EntregaRecepcion = async () => {
         );
       } else {
         doc.text(
-          "INSTITUTO ESTATAL ELECTORAL DE NAYARIT \n \n VALE DE TRASPASO",
+          `INSTITUTO ESTATAL ELECTORAL DE NAYARIT \n \n VALE DE TRASPASO ${
+            movimiento.value.concepto != "Traspaso"
+              ? `- ${movimiento.value.concepto.toUpperCase()}`
+              : ""
+          }`,
           110,
           15,
           null,
@@ -127,6 +132,41 @@ const EntregaRecepcion = async () => {
 
         doc.setFont("helvetica", "normal");
         doc.text(movimiento.value.area, 28, 70);
+      } else if (
+        movimiento.value.tipo_Movimiento == "Traspaso" &&
+        movimiento.value.concepto.includes("Pendiente")
+      ) {
+        doc.setFillColor(84, 37, 131);
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(0.3);
+        doc.rect(10, 45, 191.8, 6, "FD");
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8);
+        doc.text("DATOS DEL RESPONSABLE", 85, 49);
+
+        doc.setTextColor(0, 0, 0);
+
+        doc.rect(10, 51, 191.8, 7, "FD");
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(10);
+        doc.text("Responsable: ", 15, 56);
+        doc.setFont("helvetica", "normal");
+        doc.text(personal_Id_Elaboro.value.label, 40, 56);
+        doc.rect(10, 58, 191.8, 7);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(10);
+        doc.text("Cargo:", 15, 63);
+        doc.setFont("helvetica", "normal");
+        doc.text(personal_Id_Elaboro.value.puesto, 30, 63);
+
+        doc.rect(10, 65, 191.8, 7);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(10);
+        doc.text("Área:", 15, 70);
+
+        doc.setFont("helvetica", "normal");
+        doc.text(personal_Id_Elaboro.value.area, 28, 70);
       } else {
         doc.setFillColor(84, 37, 131);
         doc.setDrawColor(0, 0, 0);
@@ -190,6 +230,17 @@ const EntregaRecepcion = async () => {
       ],
     ];
 
+    var headerTraspasoPen = [
+      [
+        { content: "Clave" },
+        { content: "No. Serie" },
+        { content: "Descripción" },
+        { content: "Marca" },
+        { content: "Modelo" },
+        { content: "Observaciones" },
+      ],
+    ];
+
     jsPDF.autoTableSetDefaults({
       headStyles: { fillColor: [84, 37, 131], halign: "center" },
       styles: {
@@ -211,7 +262,11 @@ const EntregaRecepcion = async () => {
       theme: "grid",
       startY: 72,
       margin: { left: 10, rigth: 10, top: 72 },
-      head: header,
+      head:
+        movimiento.value.concepto != "Traspaso" &&
+        movimiento.value.concepto != "Reemplazo"
+          ? headerTraspasoPen
+          : header,
       body: list_Detalle.value.map((item) => [
         item.clave,
         item.no_Serie,
@@ -362,11 +417,29 @@ const EntregaRecepcion = async () => {
         doc.addPage();
         doc.setFont("helvetica", "bold");
         doc.setFontSize(10);
-
-        if (movimiento.value.tipo_Movimiento == "Traspaso") {
+        if (
+          movimiento.value.tipo_Movimiento == "Traspaso" &&
+          movimiento.value.concepto != null &&
+          !movimiento.value.concepto.includes("Pendiente")
+        ) {
           doc.line(10, 230, 90, 230);
           doc.text(movimiento.value.empleado, 50, 235, null, null, "center");
           doc.text("Entregó", 50, 240, null, null, "center");
+        } else if (
+          movimiento.value.tipo_Movimiento == "Traspaso" &&
+          movimiento.value.concepto != null &&
+          movimiento.value.concepto.includes("Pendiente")
+        ) {
+          doc.line(10, 230, 90, 230);
+          doc.text(
+            personal_Id_Elaboro.value.label,
+            50,
+            235,
+            null,
+            null,
+            "center"
+          );
+          doc.text("Elaboró", 50, 240, null, null, "center");
         } else {
           doc.line(70, 260, 145, 260);
           doc.text(
@@ -381,7 +454,11 @@ const EntregaRecepcion = async () => {
         }
 
         //--------------------------------------------------------------------------//
-        if (movimiento.value.tipo_Movimiento == "Traspaso") {
+        if (
+          movimiento.value.tipo_Movimiento == "Traspaso" &&
+          movimiento.value.concepto != null &&
+          !movimiento.value.concepto.includes("Pendiente")
+        ) {
           doc.line(125, 230, 205, 230);
           doc.text(
             `${personal_Id.value.label}`,
@@ -392,6 +469,21 @@ const EntregaRecepcion = async () => {
             "center"
           );
           doc.text("Recibió", 165, 240, null, null, "center");
+        } else if (
+          movimiento.value.tipo_Movimiento == "Traspaso" &&
+          movimiento.value.concepto != null &&
+          movimiento.value.concepto.includes("Pendiente")
+        ) {
+          doc.line(125, 230, 205, 230);
+          doc.text(
+            `${personal_Id.value.label}`,
+            165,
+            235,
+            null,
+            null,
+            "center"
+          );
+          doc.text("Vo. Bo.", 165, 240, null, null, "center");
         } else {
           doc.line(70, 260, 145, 260);
           doc.text(
@@ -407,10 +499,29 @@ const EntregaRecepcion = async () => {
       } else {
         doc.setFont("helvetica", "bold");
         doc.setFontSize(10);
-        if (movimiento.value.tipo_Movimiento == "Traspaso") {
+        if (
+          movimiento.value.tipo_Movimiento == "Traspaso" &&
+          movimiento.value.concepto != null &&
+          !movimiento.value.concepto.includes("Pendiente")
+        ) {
           doc.line(10, 230, 90, 230);
           doc.text(movimiento.value.empleado, 50, 235, null, null, "center");
           doc.text("Entregó", 50, 240, null, null, "center");
+        } else if (
+          movimiento.value.tipo_Movimiento == "Traspaso" &&
+          movimiento.value.concepto != null &&
+          movimiento.value.concepto.includes("Pendiente")
+        ) {
+          doc.line(10, 230, 90, 230);
+          doc.text(
+            personal_Id_Elaboro.value.label,
+            50,
+            235,
+            null,
+            null,
+            "center"
+          );
+          doc.text("Elaboró", 50, 240, null, null, "center");
         } else {
           doc.line(70, 260, 145, 260);
           doc.text(
@@ -423,9 +534,12 @@ const EntregaRecepcion = async () => {
           );
           doc.text("Personal responsable", 108, 270, null, null, "center");
         }
-
         //--------------------------------------------------------------------------//
-        if (movimiento.value.tipo_Movimiento == "Traspaso") {
+        if (
+          movimiento.value.tipo_Movimiento == "Traspaso" &&
+          movimiento.value.concepto != null &&
+          !movimiento.value.concepto.includes("Pendiente")
+        ) {
           doc.line(125, 230, 205, 230);
           doc.text(
             `${personal_Id.value.label}`,
@@ -436,12 +550,26 @@ const EntregaRecepcion = async () => {
             "center"
           );
           doc.text("Recibió", 165, 240, null, null, "center");
+        } else if (
+          movimiento.value.tipo_Movimiento == "Traspaso" &&
+          movimiento.value.concepto != null &&
+          movimiento.value.concepto.includes("Pendiente")
+        ) {
+          doc.line(125, 230, 205, 230);
+          doc.text(
+            `${personal_Id.value.label}`,
+            165,
+            235,
+            null,
+            null,
+            "center"
+          );
+          doc.text("Vo. Bo.", 165, 240, null, null, "center");
         }
       }
     }
 
     var newPageCount = doc.internal.getNumberOfPages();
-    console.log(newPageCount);
     for (var i = 0; i < newPageCount; i++) {
       createHeader();
       createFooter();

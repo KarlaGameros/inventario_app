@@ -20,9 +20,54 @@
           v-close-popup
         />
       </q-card-section>
-      <q-form @submit="onSubmit" ref="RegistroMovimiento">
+      <q-form @submit="onSubmit">
         <q-card-section>
+          <div
+            class="row"
+            v-if="
+              movimiento.concepto != null &&
+              movimiento.concepto.includes('Pendiente')
+            "
+          >
+            <div class="col-12 text-bold">
+              Seleccione personal que elaboró traspaso
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-sm">
+              <q-select
+                color="purple-ieen"
+                v-model="area_Id_Elaboro"
+                :options="list_Areas"
+                label="Área que elaboró"
+                hint="Seleccione la área que elaboró el traspaso"
+                :lazy-rules="true"
+                :rules="[(val) => !!val || 'El área es requerida']"
+              >
+              </q-select>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-select
+                color="purple-ieen"
+                v-model="personal_Id_Elaboro"
+                :options="list_Empleados"
+                label="Personal que elaboró"
+                hint="Seleccione el personal que elaboró el traspaso"
+                :lazy-rules="true"
+                :rules="[(val) => !!val || 'El personal es requerido']"
+              >
+              </q-select>
+            </div>
+          </div>
           <div class="row">
+            <div
+              v-if="
+                movimiento.concepto != null &&
+                movimiento.concepto.includes('Pendiente')
+              "
+              class="col-12 text-bold"
+            >
+              <br />
+              Seleccione personal que dará visto bueno
+            </div>
             <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-sm">
               <q-select
                 color="purple-ieen"
@@ -88,8 +133,10 @@ const $q = useQuasar();
 const movimientoInventarioStore = useMovimientoInventario();
 const empleadosStore = useEmpleadosStore();
 const { modalRecibio, movimiento } = storeToRefs(movimientoInventarioStore);
-const { list_Areas, list_Empleados, personal_Id } = storeToRefs(empleadosStore);
+const { list_Areas, list_Empleados, personal_Id, personal_Id_Elaboro } =
+  storeToRefs(empleadosStore);
 const area_Id = ref(null);
+const area_Id_Elaboro = ref(null);
 
 //-----------------------------------------------------------
 
@@ -102,6 +149,13 @@ onBeforeMount(() => {
 watch(area_Id, async (val) => {
   if (val != null) {
     personal_Id.value = null;
+    await empleadosStore.loadEmpleadosByArea(val.value);
+  }
+});
+
+watch(area_Id_Elaboro, async (val) => {
+  if (val != null) {
+    personal_Id_Elaboro.value = null;
     await empleadosStore.loadEmpleadosByArea(val.value);
   }
 });

@@ -863,7 +863,6 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
                 this.asignacion.tipo = element.tipo;
                 this.asignacion.detalle = element.detalle;
                 this.asignacion.bodega_Id = element.bodega_Id;
-
                 if (element.tipo != "Bodega") {
                   respAsignacion = await api.post(
                     "/AsignacionesInventarios",

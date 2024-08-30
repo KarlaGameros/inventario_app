@@ -36,6 +36,7 @@ export const useBodegaStore = defineStore("bodega", {
             id: bodega.id,
             area: bodega.area,
             nombre: bodega.nombre,
+            siglas: bodega.siglas,
           };
         });
       } catch (error) {
@@ -101,15 +102,18 @@ export const useBodegaStore = defineStore("bodega", {
         } else {
           filtro = data;
         }
-        this.listBodega = filtro.map((bodega) => {
+        let list = filtro.map((bodega) => {
           return {
             id: bodega.id,
             area: bodega.area,
+            area_Id: bodega.area_Id,
             nombre: bodega.nombre,
             value: bodega.id,
-            label: bodega.nombre,
+            label: `${bodega.nombre} - ${bodega.siglas}`,
+            siglas: bodega.siglas,
           };
         });
+        this.listBodega = list.sort((a, b) => a.area_Id - b.area_Id);
       } catch (error) {
         return {
           success: false,

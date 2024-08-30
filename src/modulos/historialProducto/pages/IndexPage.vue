@@ -22,36 +22,5 @@
   </q-page>
 </template>
 <script setup>
-import { useQuasar } from "quasar";
-import { useAuthStore } from "../../../stores/auth_store";
-import { onBeforeMount } from "vue";
-import { storeToRefs } from "pinia";
 import TablaComp from "../components/TablaComp.vue";
-
-//-----------------------------------------------------------
-
-const $q = useQuasar();
-const authStore = useAuthStore();
-const { modulo } = storeToRefs(authStore);
-const siglas = "SI-HIS-INV";
-
-//-----------------------------------------------------------
-
-onBeforeMount(() => {
-  leerPermisos();
-});
-
-//-----------------------------------------------------------
-
-const leerPermisos = async () => {
-  $q.loading.show();
-  await authStore.loadModulo(siglas);
-  $q.loading.hide();
-};
-
-const actualizarModal = (valor) => {
-  $q.loading.show();
-  bodegaStore.actualizarModal(valor);
-  $q.loading.hide();
-};
 </script>

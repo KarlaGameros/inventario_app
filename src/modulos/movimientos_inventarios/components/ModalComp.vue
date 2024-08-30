@@ -201,7 +201,7 @@
                 :disable="isEditar || visualizar || area_Id == null"
                 label="Personal"
                 v-model="empleado_Id"
-                :options="list_Empleados"
+                :options="list_Empleados_Inventario"
                 hint="Seleccione personal"
                 :lazy-rules="true"
                 :rules="[(val) => !!val || 'El personal es requerido']"
@@ -248,7 +248,7 @@
                 :disable="isEditar || visualizar || area_Id == null"
                 label="Personal"
                 v-model="empleado_Id"
-                :options="list_Empleados"
+                :options="list_Empleados_Inventario"
                 hint="Seleccione personal"
                 :lazy-rules="true"
                 :rules="[(val) => !!val || 'El personal es requerido']"
@@ -270,7 +270,7 @@
                 :disable="isEditar || visualizar || area_Id == null"
                 label="Personal"
                 v-model="empleado_Id"
-                :options="list_Empleados"
+                :options="list_Empleados_Inventario"
                 hint="Seleccione personal"
                 :lazy-rules="true"
                 :rules="[(val) => !!val || 'El personal es requerido']"
@@ -487,7 +487,7 @@
             <div
               v-if="
                 concepto_Movimiento != null &&
-                concepto_Movimiento.label.includes('Pendiente') &&
+                concepto_Movimiento.label == 'Pendiente Baja' &&
                 !visualizar
               "
               class="col-12 text-bold"
@@ -495,7 +495,7 @@
               <q-input
                 color="purple-ieen"
                 v-model="observacion"
-                label="Justificación"
+                label="Justificación / Observaciones"
                 type="textarea"
               />
             </div>
@@ -529,8 +529,6 @@
                   !isEditar &&
                   !visualizar) ||
                 (tipo_Movimiento != null &&
-                  tipo_Movimiento.label == 'Entrega Recepción') ||
-                (tipo_Movimiento != null &&
                   tipo_Movimiento.label != 'Entrega Recepción' &&
                   concepto_Movimiento != null &&
                   concepto_Movimiento.label != 'Reemplazo')
@@ -539,11 +537,7 @@
             >
               <div class="text-right q-gutter-xs">
                 <q-btn
-                  :disable="
-                    isEditar &&
-                    tipo_Movimiento.label == 'Entrega Recepción' &&
-                    tipo_Movimiento.label == 'Salida'
-                  "
+                  :disable="isEditar"
                   icon-right="add_circle"
                   label="Agregar"
                   color="secondary"
@@ -722,16 +716,13 @@ const {
   detalle_Movimiento,
   list_Movimientos_Pendiente,
 } = storeToRefs(movimientoInventarioStore);
-const { list_Empleados } = storeToRefs(empleadosStore);
+const { list_Empleados, list_Empleados_Inventario } =
+  storeToRefs(empleadosStore);
 const { listBodega } = storeToRefs(bodegaStore);
 const { listaAsignacionInventario, asignacion } = storeToRefs(asignacionStore);
-const { list_Inventario_By_Catalogo } = storeToRefs(inventarioStore);
 const tipo_Movimiento = ref(null);
 const inventario_Id = ref(null);
 const opciones_Inventario = ref([...list_Inventario.value]);
-const opciones_Inventario_Asignacion = ref([
-  ...list_Inventario_By_Catalogo.value,
-]);
 const concepto_Movimiento = ref(null);
 const bodega_Id = ref(null);
 const area_Id = ref(null);
@@ -751,7 +742,6 @@ const tipo_Traspaso_Id = ref("Todo");
 const opciones_Inventario_Traspaso = ref([]);
 const pendiente_Id = ref(null);
 const catalogo_Id = ref(null);
-const loading = ref(false);
 
 //-----------------------------------------------------------
 
@@ -820,7 +810,7 @@ watch(area_Id, async (val) => {
   if (val != null) {
     if (!isEditar.value && !visualizar.value) {
       empleado_Id.value = null;
-      await empleadosStore.loadEmpleadosByArea(val.value);
+      await empleadosStore.loadEmpleadosByAreaInventario(val.value);
     }
   }
 });
@@ -881,6 +871,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: "observaciones",
+    align: "center",
+    label: "Observaciones",
+    field: "observaciones",
+    sortable: false,
+  },
+  {
     name: "id",
     align: "center",
     label: "Acciones",
@@ -939,6 +936,7 @@ const cargarData = async () => {
   await movimientoInventarioStore.loadAreas();
   await inventarioStore.loadListInventario(0);
   await catalogoStore.loadCatalogoList(false);
+  await catalogoStore.loadCatalogoFiltro();
   await bodegaStore.loadBodegasList();
   await proveedorStore.loadInformacionProvedores();
   $q.loading.hide();
@@ -1483,6 +1481,8 @@ const onSubmit = async () => {
           resp.id,
           tipo_Movimiento.value.label
         );
+        await movimientoInventarioStore.loadMovimiento(resp.id);
+        asignacion.value.puesto_Id = movimiento.value.puesto_Id;
         let respAsignacion = await asignacionStore.createAsignacion(
           asignacion.value
         );
