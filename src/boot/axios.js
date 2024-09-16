@@ -8,13 +8,13 @@ import axios from "axios";
 // "export default () => {}" function below (which runs individually
 // for each client)
 
-const api = axios.create({
-  baseURL: "http://sistema.ieenayarit.org:9170/api",
-});
-
 // const api = axios.create({
-//   baseURL: "http://sistema.ieenayarit.org:9270/api",
+//   baseURL: "https://1j8vp7c9-7289.usw3.devtunnels.ms/api",
 // });
+
+const api = axios.create({
+  baseURL: "http://sistema.ieenayarit.org:9270/api",
+});
 
 api.interceptors.request.use((config) => {
   config.headers = {
@@ -29,6 +29,7 @@ api.interceptors.response.use(
     if (error.response.status == 401) {
       alert("Su sesión ha expirado, sera redireccionado al logín");
       localStorage.clear();
+      sessionStorage.clear();
       window.location = "http://sistema.ieenayarit.org:9271?return=false";
     }
     return Promise.reject();

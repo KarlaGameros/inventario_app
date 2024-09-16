@@ -1,7 +1,7 @@
 <template>
   <br />
   <q-btn
-    :to="{ name: 'inventario' }"
+    @click="regresar"
     icon="arrow_back"
     label="Regresar"
     class="q-mb-md"
@@ -40,6 +40,18 @@
               <b>Fecha de registro:</b> {{ movimiento.fecha_Registro }} <br />
               <b>Tipo de movimiento:</b> {{ movimiento.tipo_Movimiento }} <br />
               <b>Capturista:</b> {{ movimiento.capturista }} <br />
+              <b v-if="movimiento.empleado != null && movimiento.empleado != ''"
+                >Personal: {{ movimiento.empleado }}
+              </b>
+              <br />
+              <b
+                v-if="
+                  movimiento.destino == 'Bodega' &&
+                  movimiento.bodega_Destino != null
+                "
+                >Bodega destino: {{ movimiento.bodega_Destino }}
+              </b>
+              <br />
             </div>
           </q-card-section>
         </q-card>
@@ -53,13 +65,22 @@
 </template>
 
 <script setup>
+import { useRouter } from "vue-router";
 import { useInventarioStore } from "src/stores/inventario_store";
 import { storeToRefs } from "pinia";
 
 //-----------------------------------------------------------
 
+const router = useRouter();
 const inventarioStore = useInventarioStore();
 const { list_Kardex, inventario } = storeToRefs(inventarioStore);
+
+const regresar = () => {
+  inventarioStore.initInventario();
+  router.push({
+    name: "inventario",
+  });
+};
 </script>
 <style lang="sass">
 .my-sticky-last-column-table

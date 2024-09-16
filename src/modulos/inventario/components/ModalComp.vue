@@ -119,6 +119,7 @@
             class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
           >
             <q-input
+              color="purple-ieen"
               v-model.trim="inventario.descripcion"
               label="Descripción del producto"
               name="descripcion"
@@ -133,6 +134,7 @@
             class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
           >
             <q-input
+              color="purple-ieen"
               v-model.trim="inventario.nombre_corto"
               label="Nombre corto"
               name="nombre_corto"
@@ -195,6 +197,7 @@
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
           >
             <q-input
+              color="purple-ieen"
               v-model="inventario.numero_Serie"
               label="Numero de serie"
               autogrow
@@ -208,6 +211,7 @@
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
           >
             <q-input
+              color="purple-ieen"
               v-model.trim="cantidad"
               label="Cantidad"
               type="number"
@@ -222,6 +226,7 @@
             class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md"
           >
             <q-input
+              color="purple-ieen"
               type="number"
               v-model.number="inventario.importe"
               label="Importe"
@@ -235,6 +240,7 @@
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
             <q-input
+              color="purple-ieen"
               v-model.trim="inventario.numero_factura"
               label="Número de factura"
               name="Número de factura"
@@ -242,11 +248,16 @@
             </q-input>
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pb-md">
-            <q-input v-model.trim="inventario.uuid" label="UUID" name="UUID">
+            <q-input
+              color="purple-ieen"
+              v-model.trim="inventario.uuid"
+              label="UUID"
+              name="UUID"
+            >
             </q-input>
           </div>
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-            <q-input v-model="date" label="Fecha de compra">
+            <q-input color="purple-ieen" v-model="date" label="Fecha de compra">
               <template v-slot:append>
                 <q-icon name="event" class="cursor-pointer">
                   <q-popup-proxy
@@ -269,70 +280,98 @@
               </template>
             </q-input>
           </div>
-          <q-card
+          <div
             v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
           >
             <q-file
               accept="image/png, image/jpeg"
-              color="purple-12"
+              color="purple-ieen"
               v-model="foto1"
               label="Foto 1"
             >
               <template v-slot:prepend>
-                <q-icon name="attach_file" />
+                <q-icon name="image" />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  name="close"
+                  @click.stop.prevent="foto1 = null"
+                  class="cursor-pointer"
+                />
               </template>
             </q-file>
             <img v-if="isEditar" :src="inventario.foto_1" />
-          </q-card>
-          <q-card
+          </div>
+          <div
             v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
           >
             <q-file
               accept="image/png, image/jpeg"
-              color="purple-12"
+              color="purple-ieen"
               v-model="foto2"
               label="Foto 2"
             >
               <template v-slot:prepend>
-                <q-icon name="attach_file" />
+                <q-icon name="image" />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  name="close"
+                  @click.stop.prevent="foto2 = null"
+                  class="cursor-pointer"
+                />
               </template>
             </q-file>
             <img v-if="isEditar" :src="inventario.foto_2" />
-          </q-card>
-          <q-card
+          </div>
+          <div
             v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
           >
             <q-file
               accept="image/png, image/jpeg"
-              color="purple-12"
+              color="purple-ieen"
               v-model="foto3"
               label="Foto 3"
             >
               <template v-slot:prepend>
-                <q-icon name="attach_file" />
+                <q-icon name="image" />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  name="close"
+                  @click.stop.prevent="foto3 = null"
+                  class="cursor-pointer"
+                />
               </template>
             </q-file>
             <img v-if="isEditar" :src="inventario.foto_3" />
-          </q-card>
-          <q-card
+          </div>
+          <div
             v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
           >
             <q-file
               accept="image/png, image/jpeg"
-              color="purple-12"
+              color="purple-ieen"
               v-model="foto4"
               label="Foto 4"
             >
               <template v-slot:prepend>
-                <q-icon name="attach_file" />
+                <q-icon name="image" />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  name="close"
+                  @click.stop.prevent="foto4 = null"
+                  class="cursor-pointer"
+                />
               </template>
             </q-file>
             <img v-if="isEditar" :src="inventario.foto_4" />
-          </q-card>
+          </div>
           <!----------------------------------------------------------------------------->
           <div
             v-if="radio == 'paquete'"
@@ -349,10 +388,11 @@
             <q-separator />
             <q-tab-panels v-model="tab" animated class="shadow-2">
               <!-- GENERAL -->
-              <q-tab-panel name="general">
+              <q-tab-panel name="general" class="row">
                 <div class="text-h6">General</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    color="purple-ieen"
                     v-model.trim="inventario.descripcion"
                     label="Descripción del producto"
                     autogrow
@@ -363,6 +403,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    color="purple-ieen"
                     v-model.trim="inventario.nombre_corto"
                     label="Nombre corto"
                     autogrow
@@ -371,69 +412,67 @@
                   >
                   </q-input>
                 </div>
-                <div class="row">
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
-                    <q-select
-                      color="purple-ieen"
-                      v-model="marcaId"
-                      :options="opcionesMarca"
-                      label="Marca"
-                      hint="Selecciona una marca"
-                      lazy-rules
-                      use-input
-                      @filter="buscarMarca"
-                      :rules="[(val) => !!val || 'La marca es requerida']"
-                    >
-                    </q-select>
-                  </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-select
-                      color="purple-ieen"
-                      v-model="modeloId"
-                      :options="opcionesModelo"
-                      label="Modelo"
-                      hint="Selecciona modelo"
-                      use-input
-                      lazy-rules
-                      @filter="buscarModelo"
-                      :rules="[(val) => !!val || 'El modelo es requerida']"
-                    >
-                    </q-select>
-                  </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                  <q-select
+                    color="purple-ieen"
+                    v-model="marcaId"
+                    :options="opcionesMarca"
+                    label="Marca"
+                    hint="Selecciona una marca"
+                    lazy-rules
+                    use-input
+                    @filter="buscarMarca"
+                    :rules="[(val) => !!val || 'La marca es requerida']"
+                  >
+                  </q-select>
                 </div>
-                <div class="row q-pb-md">
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
-                    <q-input
-                      v-model.trim="inventario.color"
-                      label="Color"
-                      autogrow
-                    >
-                    </q-input>
-                  </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-input
-                      type="number"
-                      v-model.number="inventario.importe"
-                      label="Importe"
-                      name="Importe"
-                      autogrow
-                    >
-                      <template v-slot:prepend>
-                        <q-icon name="$" />
-                      </template>
-                    </q-input>
-                  </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-select
+                    color="purple-ieen"
+                    v-model="modeloId"
+                    :options="opcionesModelo"
+                    label="Modelo"
+                    hint="Selecciona modelo"
+                    use-input
+                    lazy-rules
+                    @filter="buscarModelo"
+                    :rules="[(val) => !!val || 'El modelo es requerida']"
+                  >
+                  </q-select>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                  <q-input
+                    color="purple-ieen"
+                    v-model.trim="inventario.color"
+                    label="Color"
+                    autogrow
+                  >
+                  </q-input>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-input
+                    color="purple-ieen"
+                    type="number"
+                    v-model.number="inventario.importe"
+                    label="Importe"
+                    name="Importe"
+                    autogrow
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="$" />
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-sm">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto1"
                     bottom-slots
                     label="Foto 1"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -444,16 +483,16 @@
                     </template>
                   </q-file>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto2"
                     bottom-slots
                     label="Foto 2"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -464,16 +503,16 @@
                     </template>
                   </q-file>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-sm">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto3"
                     bottom-slots
                     label="Foto 3"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -484,17 +523,16 @@
                     </template>
                   </q-file>
                 </div>
-
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto4"
                     bottom-slots
                     label="Foto 4"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -530,10 +568,11 @@
                 </div>
               </q-tab-panel>
               <!-- EXTENSION A -->
-              <q-tab-panel name="extension_a">
+              <q-tab-panel name="extension_a" class="row">
                 <div class="text-h6">Extensión A</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    color="purple-ieen"
                     v-if="isEditar"
                     v-model.trim="inventario.clave_a"
                     label="Clave del producto"
@@ -545,6 +584,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    color="purple-ieen"
                     v-model.trim="inventario.descripcion_a"
                     label="Descripción del producto"
                     autogrow
@@ -555,6 +595,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    color="purple-ieen"
                     v-model.trim="inventario.nombre_corto_a"
                     label="Nombre corto"
                     autogrow
@@ -565,68 +606,66 @@
                   >
                   </q-input>
                 </div>
-                <div class="row">
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
-                    <q-select
-                      color="purple-ieen"
-                      v-model="marcaId_A"
-                      :options="opcionesMarca"
-                      label="Marca"
-                      hint="Selecciona una marca"
-                      lazy-rules
-                      use-input
-                      @filter="buscarMarca"
-                      :rules="[(val) => !!val || 'La marca es requerida']"
-                    >
-                    </q-select>
-                  </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-select
-                      color="purple-ieen"
-                      v-model="modeloId_A"
-                      :options="opcionesModelo"
-                      label="Modelo"
-                      hint="Selecciona modelo"
-                      lazy-rules
-                      use-input
-                      @filter="buscarModelo"
-                      :rules="[(val) => !!val || 'El modelo es requerida']"
-                    >
-                    </q-select>
-                  </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                  <q-select
+                    color="purple-ieen"
+                    v-model="marcaId_A"
+                    :options="opcionesMarca"
+                    label="Marca"
+                    hint="Selecciona una marca"
+                    lazy-rules
+                    use-input
+                    @filter="buscarMarca"
+                    :rules="[(val) => !!val || 'La marca es requerida']"
+                  >
+                  </q-select>
                 </div>
-                <div class="row q-pb-md">
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
-                    <q-input
-                      v-model.trim="inventario.color_a"
-                      label="Color"
-                      autogrow
-                    >
-                    </q-input>
-                  </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-input
-                      type="number"
-                      v-model.number="inventario.importe_a"
-                      label="Importe"
-                      name="Importe"
-                    >
-                      <template v-slot:prepend>
-                        <q-icon name="$" />
-                      </template>
-                    </q-input>
-                  </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-select
+                    color="purple-ieen"
+                    v-model="modeloId_A"
+                    :options="opcionesModelo"
+                    label="Modelo"
+                    hint="Selecciona modelo"
+                    lazy-rules
+                    use-input
+                    @filter="buscarModelo"
+                    :rules="[(val) => !!val || 'El modelo es requerida']"
+                  >
+                  </q-select>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                  <q-input
+                    color="purple-ieen"
+                    v-model.trim="inventario.color_a"
+                    label="Color"
+                    autogrow
+                  >
+                  </q-input>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-input
+                    color="purple-ieen"
+                    type="number"
+                    v-model.number="inventario.importe_a"
+                    label="Importe"
+                    name="Importe"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="$" />
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pr-sm">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto1_a"
                     bottom-slots
                     label="Foto 1"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -637,16 +676,16 @@
                     </template>
                   </q-file>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto2_a"
                     bottom-slots
                     label="Foto 2"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -657,16 +696,16 @@
                     </template>
                   </q-file>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pr-sm">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto3_a"
                     bottom-slots
                     label="Foto 3"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -677,16 +716,16 @@
                     </template>
                   </q-file>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto4_a"
                     bottom-slots
                     label="Foto 4"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -702,10 +741,11 @@
                 <!-------------------------------------------------------------------------->
               </q-tab-panel>
               <!-- EXTENSION B -->
-              <q-tab-panel name="extension_b">
+              <q-tab-panel name="extension_b" class="row">
                 <div class="text-h6">Extensión B</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    color="purple-ieen"
                     v-if="isEditar"
                     v-model.trim="inventario.clave_b"
                     label="Clave del producto"
@@ -717,6 +757,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    color="purple-ieen"
                     v-model.trim="inventario.descripcion_b"
                     label="Descripción del producto"
                     autogrow
@@ -727,6 +768,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    color="purple-ieen"
                     v-model.trim="inventario.nombre_corto_b"
                     label="Nombre corto"
                     autogrow
@@ -737,68 +779,66 @@
                   >
                   </q-input>
                 </div>
-                <div class="row">
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
-                    <q-select
-                      color="purple-ieen"
-                      v-model="marcaId_B"
-                      :options="opcionesMarca"
-                      label="Marca"
-                      hint="Selecciona una marca"
-                      lazy-rules
-                      use-input
-                      @filter="buscarMarca"
-                      :rules="[(val) => !!val || 'La marca es requerida']"
-                    >
-                    </q-select>
-                  </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-select
-                      color="purple-ieen"
-                      v-model="modeloId_B"
-                      :options="opcionesModelo"
-                      label="Modelo"
-                      hint="Selecciona modelo"
-                      lazy-rules
-                      use-input
-                      @filter="buscarModelo"
-                      :rules="[(val) => !!val || 'El modelo es requerida']"
-                    >
-                    </q-select>
-                  </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                  <q-select
+                    color="purple-ieen"
+                    v-model="marcaId_B"
+                    :options="opcionesMarca"
+                    label="Marca"
+                    hint="Selecciona una marca"
+                    lazy-rules
+                    use-input
+                    @filter="buscarMarca"
+                    :rules="[(val) => !!val || 'La marca es requerida']"
+                  >
+                  </q-select>
                 </div>
-                <div class="row q-pb-md">
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
-                    <q-input
-                      v-model.trim="inventario.color_b"
-                      label="Color"
-                      autogrow
-                    >
-                    </q-input>
-                  </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-input
-                      type="number"
-                      v-model.number="inventario.importe_b"
-                      label="Importe"
-                      name="Importe"
-                    >
-                      <template v-slot:prepend>
-                        <q-icon name="$" />
-                      </template>
-                    </q-input>
-                  </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-select
+                    color="purple-ieen"
+                    v-model="modeloId_B"
+                    :options="opcionesModelo"
+                    label="Modelo"
+                    hint="Selecciona modelo"
+                    lazy-rules
+                    use-input
+                    @filter="buscarModelo"
+                    :rules="[(val) => !!val || 'El modelo es requerida']"
+                  >
+                  </q-select>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                  <q-input
+                    color="purple-ieen"
+                    v-model.trim="inventario.color_b"
+                    label="Color"
+                    autogrow
+                  >
+                  </q-input>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-input
+                    color="purple-ieen"
+                    type="number"
+                    v-model.number="inventario.importe_b"
+                    label="Importe"
+                    name="Importe"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="$" />
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pr-sm">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto1_b"
                     bottom-slots
                     label="Foto 1"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -809,16 +849,16 @@
                     </template>
                   </q-file>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto2_b"
                     bottom-slots
                     label="Foto 2"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -829,16 +869,16 @@
                     </template>
                   </q-file>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pr-sm">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto3_b"
                     bottom-slots
                     label="Foto 3"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -849,16 +889,16 @@
                     </template>
                   </q-file>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto4_b"
                     bottom-slots
                     label="Foto 4"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -874,10 +914,11 @@
                 <!-------------------------------------------------------------------------->
               </q-tab-panel>
               <!-- EXTENSION C -->
-              <q-tab-panel name="extension_c">
+              <q-tab-panel name="extension_c" class="row">
                 <div class="text-h6">Extensión C</div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    color="purple-ieen"
                     v-if="isEditar"
                     v-model.trim="inventario.clave_c"
                     label="Clave del producto"
@@ -889,6 +930,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    color="purple-ieen"
                     v-model.trim="inventario.descripcion_c"
                     label="Descripción del producto"
                     autogrow
@@ -899,6 +941,7 @@
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                   <q-input
+                    color="purple-ieen"
                     v-model.trim="inventario.nombre_corto_c"
                     label="Nombre corto"
                     autogrow
@@ -909,69 +952,66 @@
                   >
                   </q-input>
                 </div>
-                <div class="row">
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
-                    <q-select
-                      color="purple-ieen"
-                      v-model="marcaId_C"
-                      :options="opcionesMarca"
-                      label="Marca"
-                      hint="Selecciona una marca"
-                      lazy-rules
-                      use-input
-                      @filter="buscarMarca"
-                      :rules="[(val) => !!val || 'La marca es requerida']"
-                    >
-                    </q-select>
-                  </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-select
-                      color="purple-ieen"
-                      v-model="modeloId_C"
-                      :options="opcionesModelo"
-                      label="Modelo"
-                      hint="Selecciona modelo"
-                      lazy-rules
-                      use-input
-                      @filter="buscarModelo"
-                      :rules="[(val) => !!val || 'El modelo es requerida']"
-                    >
-                    </q-select>
-                  </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                  <q-select
+                    color="purple-ieen"
+                    v-model="marcaId_C"
+                    :options="opcionesMarca"
+                    label="Marca"
+                    hint="Selecciona una marca"
+                    lazy-rules
+                    use-input
+                    @filter="buscarMarca"
+                    :rules="[(val) => !!val || 'La marca es requerida']"
+                  >
+                  </q-select>
                 </div>
-                <div class="row q-pb-md">
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
-                    <q-input
-                      v-model.trim="inventario.color_c"
-                      label="Color"
-                      autogrow
-                    >
-                    </q-input>
-                  </div>
-                  <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <q-input
-                      type="number"
-                      v-model.number="inventario.importe_c"
-                      label="Importe"
-                      name="Importe"
-                    >
-                      <template v-slot:prepend>
-                        <q-icon name="$" />
-                      </template>
-                    </q-input>
-                  </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-select
+                    color="purple-ieen"
+                    v-model="modeloId_C"
+                    :options="opcionesModelo"
+                    label="Modelo"
+                    hint="Selecciona modelo"
+                    lazy-rules
+                    use-input
+                    @filter="buscarModelo"
+                    :rules="[(val) => !!val || 'El modelo es requerida']"
+                  >
+                  </q-select>
                 </div>
-
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 q-pr-xs">
+                  <q-input
+                    color="purple-ieen"
+                    v-model.trim="inventario.color_c"
+                    label="Color"
+                    autogrow
+                  >
+                  </q-input>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                  <q-input
+                    color="purple-ieen"
+                    type="number"
+                    v-model.number="inventario.importe_c"
+                    label="Importe"
+                    name="Importe"
+                  >
+                    <template v-slot:prepend>
+                      <q-icon name="$" />
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pr-sm">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto1_c"
                     bottom-slots
                     label="Foto 1"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -982,16 +1022,16 @@
                     </template>
                   </q-file>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto2_c"
                     bottom-slots
                     label="Foto 2"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -1002,16 +1042,16 @@
                     </template>
                   </q-file>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 q-pr-sm">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto3_c"
                     bottom-slots
                     label="Foto 3"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -1022,16 +1062,16 @@
                     </template>
                   </q-file>
                 </div>
-                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                   <q-file
+                    color="purple-ieen"
                     v-model="foto4_c"
                     bottom-slots
                     label="Foto 4"
-                    counter
                     accept="image/png, image/jpeg"
                   >
                     <template v-slot:prepend>
-                      <q-icon name="cloud_upload" @click.stop.prevent />
+                      <q-icon name="image" @click.stop.prevent />
                     </template>
                     <template v-slot:append>
                       <q-icon
@@ -1126,7 +1166,7 @@ const modeloId_B = ref(null);
 const modeloId_C = ref(null);
 const cantidad = ref(null);
 const radio = ref("individual");
-const date = ref("");
+const date = ref(null);
 
 const foto1 = ref();
 const foto2 = ref();
@@ -1159,28 +1199,16 @@ const tab = ref("general");
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
-  bodegaStore.loadBodegasList();
-  catalogoStore.loadCatalogoListNormal();
-  marcaStore.loadMarcaList();
+  cargarData();
 });
 
 //-----------------------------------------------------------
-
-watch(modal, (val) => {
-  if (val == false) {
-    radio.value = "individual";
-  }
-});
 
 watch(marcaId, (val) => {
   if (val != null) {
     loadMarca(val);
   }
 });
-
-const loadMarca = async (marca) => {
-  await modeloStore.modeloByMarca(marca.value);
-};
 
 watch(marcaId_A, (val) => {
   if (val != null) {
@@ -1202,21 +1230,12 @@ watch(marcaId_C, (val) => {
 
 watch(radio, (val) => {
   if (val != null) {
-    catalogoId.value = null;
-    bodegaId.value = null;
-    marcaId.value = null;
-    modeloId.value = null;
-    cantidad.value = null;
-    foto1.value = null;
-    foto2.value = null;
-    foto3.value = null;
-    foto4.value = null;
-    inventarioStore.initInventario();
+    limpiar();
   }
 });
 
 watch(inventario.value, (val) => {
-  if (val != null) {
+  if (val.id != null) {
     cargarBodega(val);
     cargarCatalogo(val);
     cargarMarca(val);
@@ -1229,6 +1248,18 @@ watch(cantidad, (val) => {
     inventarioStore.addCantidad(cantidad.value, catalogoId);
   }
 });
+
+//-----------------------------------------------------------
+
+const cargarData = async () => {
+  await bodegaStore.loadBodegasList();
+  await catalogoStore.loadCatalogoListNormal();
+  await marcaStore.loadMarcaList();
+};
+
+const loadMarca = async (marca) => {
+  await modeloStore.modeloByMarca(marca.value);
+};
 
 //-----------------------------------------------------------
 
@@ -1325,18 +1356,26 @@ const cargarModelo = async (val) => {
   }
 };
 
-const actualizarModal = (valor) => {
-  inventarioStore.actualizarModal(valor);
-  inventarioStore.updateEditar(false);
+const limpiar = () => {
   catalogoId.value = null;
   bodegaId.value = null;
   marcaId.value = null;
   modeloId.value = null;
   cantidad.value = null;
-  radio.value = null;
-  isEditar.value = false;
+  foto1.value = null;
+  foto2.value = null;
+  foto3.value = null;
+  foto4.value = null;
   date.value = null;
   inventarioStore.initInventario();
+};
+
+const actualizarModal = (valor) => {
+  inventarioStore.actualizarModal(valor);
+  inventarioStore.updateEditar(false);
+  limpiar();
+  isEditar.value = false;
+  radio.value = "individual";
 };
 
 const onSubmit = async () => {

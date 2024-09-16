@@ -132,7 +132,6 @@ export const useEmpleadosStore = defineStore("empleados", {
             label: `${detalle.nombres} ${detalle.apellido_Paterno} ${detalle.apellido_Materno}`,
             value: detalle.id,
             puesto: detalle.puesto,
-            puesto_Id: detalle.puesto_Id,
             area: detalle.area,
           };
         });
@@ -153,6 +152,7 @@ export const useEmpleadosStore = defineStore("empleados", {
           return {
             label: empleado.label,
             value: empleado.value,
+            puesto_Id: empleado.puesto,
           };
         });
       } catch (error) {

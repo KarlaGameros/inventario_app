@@ -42,9 +42,12 @@ export const useMiInventarioStore = defineStore("mi_inventario", {
             bodega: miInventario.bodega,
             marca: miInventario.marca,
             modelo: miInventario.modelo,
-            numero_serie: miInventario.numero_Serie,
+            numero_Serie: miInventario.numero_Serie,
             color: miInventario.color,
-            importe: `$ ${miInventario.importe}`,
+            importe:
+              miInventario.importe == null
+                ? "SIN IMPORTE"
+                : `$${miInventario.importe}`,
             empleado: miInventario.empleado,
             empleado_Id: miInventario.empleado_Id,
           };

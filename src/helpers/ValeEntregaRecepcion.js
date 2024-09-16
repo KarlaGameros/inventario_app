@@ -134,7 +134,8 @@ const EntregaRecepcion = async () => {
         doc.text(movimiento.value.area, 28, 70);
       } else if (
         movimiento.value.tipo_Movimiento == "Traspaso" &&
-        movimiento.value.concepto.includes("Pendiente")
+        (movimiento.value.concepto.includes("Pendiente") ||
+          movimiento.value.concepto == "Traspaso bodegas")
       ) {
         doc.setFillColor(84, 37, 131);
         doc.setDrawColor(0, 0, 0);
@@ -420,15 +421,26 @@ const EntregaRecepcion = async () => {
         if (
           movimiento.value.tipo_Movimiento == "Traspaso" &&
           movimiento.value.concepto != null &&
-          !movimiento.value.concepto.includes("Pendiente")
+          !movimiento.value.concepto.includes("Pendiente") &&
+          movimiento.value.concepto != "Traspaso bodegas"
         ) {
           doc.line(10, 230, 90, 230);
-          doc.text(movimiento.value.empleado, 50, 235, null, null, "center");
+          doc.text(
+            movimiento.value.empleado == null
+              ? movimiento.value.capturista
+              : movimiento.value.empleado,
+            50,
+            235,
+            null,
+            null,
+            "center"
+          );
           doc.text("Entregó", 50, 240, null, null, "center");
         } else if (
           movimiento.value.tipo_Movimiento == "Traspaso" &&
           movimiento.value.concepto != null &&
-          movimiento.value.concepto.includes("Pendiente")
+          (movimiento.value.concepto.includes("Pendiente") ||
+            movimiento.value.concepto == "Traspaso bodegas")
         ) {
           doc.line(10, 230, 90, 230);
           doc.text(
@@ -443,7 +455,11 @@ const EntregaRecepcion = async () => {
         } else {
           doc.line(70, 260, 145, 260);
           doc.text(
-            `${movimiento.value.empleado}`,
+            `${
+              movimiento.value.empleado == null
+                ? movimiento.value.capturista
+                : movimiento.value.empleado
+            }`,
             108,
             265,
             null,
@@ -457,7 +473,8 @@ const EntregaRecepcion = async () => {
         if (
           movimiento.value.tipo_Movimiento == "Traspaso" &&
           movimiento.value.concepto != null &&
-          !movimiento.value.concepto.includes("Pendiente")
+          !movimiento.value.concepto.includes("Pendiente") &&
+          movimiento.value.concepto != "Traspaso bodegas"
         ) {
           doc.line(125, 230, 205, 230);
           doc.text(
@@ -472,7 +489,8 @@ const EntregaRecepcion = async () => {
         } else if (
           movimiento.value.tipo_Movimiento == "Traspaso" &&
           movimiento.value.concepto != null &&
-          movimiento.value.concepto.includes("Pendiente")
+          (movimiento.value.concepto.includes("Pendiente") ||
+            movimiento.value.concepto == "Traspaso bodegas")
         ) {
           doc.line(125, 230, 205, 230);
           doc.text(
@@ -502,15 +520,26 @@ const EntregaRecepcion = async () => {
         if (
           movimiento.value.tipo_Movimiento == "Traspaso" &&
           movimiento.value.concepto != null &&
-          !movimiento.value.concepto.includes("Pendiente")
+          !movimiento.value.concepto.includes("Pendiente") &&
+          movimiento.value.concepto != "Traspaso bodegas"
         ) {
           doc.line(10, 230, 90, 230);
-          doc.text(movimiento.value.empleado, 50, 235, null, null, "center");
+          doc.text(
+            movimiento.value.empleado == null
+              ? movimiento.value.capturista
+              : movimiento.value.empleado,
+            50,
+            235,
+            null,
+            null,
+            "center"
+          );
           doc.text("Entregó", 50, 240, null, null, "center");
         } else if (
           movimiento.value.tipo_Movimiento == "Traspaso" &&
           movimiento.value.concepto != null &&
-          movimiento.value.concepto.includes("Pendiente")
+          (movimiento.value.concepto.includes("Pendiente") ||
+            movimiento.value.concepto == "Traspaso bodegas")
         ) {
           doc.line(10, 230, 90, 230);
           doc.text(
@@ -525,7 +554,11 @@ const EntregaRecepcion = async () => {
         } else {
           doc.line(70, 260, 145, 260);
           doc.text(
-            `${movimiento.value.empleado}`,
+            `${
+              movimiento.value.empleado == null
+                ? movimiento.value.capturista
+                : movimiento.value.empleado
+            }`,
             108,
             265,
             null,
@@ -535,10 +568,12 @@ const EntregaRecepcion = async () => {
           doc.text("Personal responsable", 108, 270, null, null, "center");
         }
         //--------------------------------------------------------------------------//
+
         if (
           movimiento.value.tipo_Movimiento == "Traspaso" &&
           movimiento.value.concepto != null &&
-          !movimiento.value.concepto.includes("Pendiente")
+          !movimiento.value.concepto.includes("Pendiente") &&
+          movimiento.value.concepto != "Traspaso bodegas"
         ) {
           doc.line(125, 230, 205, 230);
           doc.text(
@@ -553,7 +588,8 @@ const EntregaRecepcion = async () => {
         } else if (
           movimiento.value.tipo_Movimiento == "Traspaso" &&
           movimiento.value.concepto != null &&
-          movimiento.value.concepto.includes("Pendiente")
+          (movimiento.value.concepto.includes("Pendiente") ||
+            movimiento.value.concepto == "Traspaso bodegas")
         ) {
           doc.line(125, 230, 205, 230);
           doc.text(

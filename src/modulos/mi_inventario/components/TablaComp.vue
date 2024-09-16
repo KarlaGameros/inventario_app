@@ -112,6 +112,9 @@ const cargarData = async () => {
 const generarValeByEmpleado = async (valor) => {
   $q.loading.show();
   await empleadosStore.loadEmpleadoById(listMiInventario.value[0].empleado_Id);
+  // await asignacionStore.loadInventarioByEmpleado(
+  //   listMiInventario.value[0].empleado_Id
+  // );
   await asignacionStore.loadInventarioByEmpleado(
     listMiInventario.value[0].empleado_Id
   );

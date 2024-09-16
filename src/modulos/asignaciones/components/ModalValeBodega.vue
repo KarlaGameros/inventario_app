@@ -87,15 +87,21 @@ onBeforeMount(() => {
   bodegaStore.loadBodegasList();
 });
 
-watch(bodega_Id, async (val) => {
+watch(bodega_Id, (val) => {
   if (val != null) {
-    await empleadoStore.loadResponsableByArea(val.value);
-    asignacion.value.area_Id = val.area_Id;
+    cargarResponsable(val);
   }
 });
 //-----------------------------------------------------------
 
+const cargarResponsable = async (val) => {
+  $q.loading.show();
+  await empleadoStore.loadResponsableByArea(val.area_Id);
+  $q.loading.hide();
+};
+
 const actualizarModal = (valor) => {
+  empleadoStore.initEmpleado();
   asignacionStore.actualizarModalValeBodega(valor);
 };
 
@@ -113,6 +119,7 @@ const onSubmit = async () => {
     asignacion.value.empleado = empleado.value.nombres;
     asignacion.value.puesto = empleado.value.puesto;
     asignacion.value.tipo = "Bodega";
+    asignacion.value.bodega_Id = bodega_Id.value.value;
     resp = await asignacionStore.createAsignacion(asignacion.value);
     fecha = resp.fecha;
     await asignacionStore.valeByBodega(bodega_Id.value.value, fecha);

@@ -274,7 +274,7 @@ import { useQuasar } from "quasar";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useEstatusStore } from "src/stores/estatus_store";
 import { useInventarioStore } from "src/stores/inventario_store";
-import { onBeforeMount, onMounted, ref, watch, watchEffect } from "vue";
+import { onBeforeMount, ref, watch, watchEffect } from "vue";
 import { useAsignacionStore } from "../../../stores/asignacion_store";
 import { useEmpleadosStore } from "src/stores/empleados_store";
 import { useBodegaStore } from "src/stores/bodega_store";
@@ -291,7 +291,6 @@ const catalogoStore = useCatalogoProductoStore();
 const inventarioStore = useInventarioStore();
 const empleadoStore = useEmpleadosStore();
 const bodegaStore = useBodegaStore();
-
 const { estatus } = storeToRefs(estatusStore);
 const { inventarios } = storeToRefs(inventarioStore);
 const { listCatalogosTodos } = storeToRefs(catalogoStore);
@@ -356,6 +355,7 @@ watch(asignacion.value, (val) => {
       cargarArea(val);
       cargarPuestos(val);
       catalogo_Id.value = { value: 0, label: "Todos" };
+      date.value = val.fecha_Asignacion;
     }
   }
 });
@@ -639,9 +639,7 @@ const registrar = async () => {
   asignacion.value.area_Id = parseInt(area_Id.value.value);
   asignacion.value.eliminado = false;
   asignacion.value.tipo = "Personal";
-  if (isEditar.value == false) {
-    asignacion.value.fecha_Asignacion = date.value;
-  }
+  asignacion.value.fecha_Asignacion = date.value;
   if (isEditar.value == true) {
     resp = await asignacionStore.updateAsignacion(asignacion.value);
   } else {

@@ -94,7 +94,7 @@
               v-if="tipo_Movimiento != null"
               class="col-lg-4 col-md-4 col-sm-6 col-xs-12 text-bold"
             >
-              <q-input
+              <!-- <q-input
                 color="purple-ieen"
                 :disable="isEditar || visualizar"
                 v-model="date"
@@ -123,6 +123,70 @@
                     </q-popup-proxy>
                   </q-icon>
                 </template>
+              </q-input> -->
+              <q-input
+                label="Fecha del movimiento"
+                color="purple-ieen"
+                v-if="!isEditar"
+                v-model="date"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        color="purple-ieen"
+                        v-model="date"
+                        mask="YYYY-MM-DD HH:mm"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Close"
+                            color="purple"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+                <template v-slot:append>
+                  <q-icon name="access_time" class="cursor-pointer">
+                    <q-popup-proxy
+                      cover
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-time
+                        color="purple-ieen"
+                        v-model="date"
+                        mask="YYYY-MM-DD HH:mm"
+                        format24h
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Close"
+                            color="purple-ieen"
+                            flat
+                          />
+                        </div>
+                      </q-time>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+              <q-input
+                color="purple-ieen"
+                v-else
+                disable
+                v-model="movimiento.fecha_Movimiento"
+                label="Fecha del movimiento"
+              >
               </q-input>
             </div>
 
@@ -728,7 +792,6 @@ const bodega_Id = ref(null);
 const area_Id = ref(null);
 const empleado_Id = ref(null);
 const observacion = ref(null);
-const date = ref(null);
 const estado_Fisico = ref(null);
 const listEstadoFisicoBaja = ref(["Malo", "Obsoleto", "No requerido en 1 año"]);
 const listEstadoFisico = ref(["Bueno", "Regular"]);
@@ -742,6 +805,7 @@ const tipo_Traspaso_Id = ref("Todo");
 const opciones_Inventario_Traspaso = ref([]);
 const pendiente_Id = ref(null);
 const catalogo_Id = ref(null);
+const date = ref(null);
 
 //-----------------------------------------------------------
 
@@ -750,6 +814,7 @@ onBeforeMount(() => {
 });
 
 //-----------------------------------------------------------
+
 watch(modal, (val) => {
   if (val == true && !isEditar.value && !visualizar.value) {
     limpiarRegistro();
@@ -811,6 +876,7 @@ watch(area_Id, async (val) => {
     if (!isEditar.value && !visualizar.value) {
       empleado_Id.value = null;
       await empleadosStore.loadEmpleadosByAreaInventario(val.value);
+      await empleadosStore.loadEmpleadosByArea(val.value);
     }
   }
 });
@@ -919,7 +985,10 @@ const obtenerFecha = () => {
   let year = dateActual.getFullYear();
   let month = String(dateActual.getMonth() + 1).padStart(2, "0");
   let day = String(dateActual.getDate()).padStart(2, "0");
-  date.value = `${year}/${month}/${day}`;
+  let hours = String(dateActual.getHours());
+  let minutes = String(dateActual.getMinutes());
+  let seconds = String(dateActual.getSeconds());
+  date.value = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
 const cargarData = async () => {
@@ -1410,14 +1479,20 @@ const onSubmit = async () => {
       for (let index = 0; index < list_Detalle.value.length; index++) {
         const element = list_Detalle.value[index];
 
-        if (typeof element.empleado === "object" && element.empleado != null) {
-          element.empleado_Id = element.empleado.value;
-        }
         if (
+          element.destino == "Personal" &&
+          typeof element.empleado === "object" &&
+          element.empleado != null
+        ) {
+          element.empleado_Id = element.empleado.value;
+          element.bodega_Destino_Id = null;
+        } else if (
+          element.destino == "Bodega" &&
           typeof element.bodega_Destino === "object" &&
           element.bodega_Destino != null
         ) {
           element.bodega_Destino_Id = parseInt(element.bodega_Destino.value);
+          element.empleado_Id = null;
         } else {
           element.bodega_Destino_Id = element.bodega_Destino_Id;
         }
@@ -1436,6 +1511,7 @@ const onSubmit = async () => {
         movimiento.value.area_Id = area_Id.value.value;
         movimiento.value.puesto_Id = empleado_Id.value.puesto_Id;
         movimiento.value.detalle = list_Detalle.value;
+        asignacion.value.puesto_Id = empleado_Id.value.puesto_Id;
         asignacion.value.empleado_Id = empleado_Id.value.value;
         asignacion.value.detalle = listaAsignacionInventario.value;
         asignacion.value.area_Id = area_Id.value.value;
@@ -1474,6 +1550,8 @@ const onSubmit = async () => {
     }
     if (resp.success) {
       if (
+        tipo_Movimiento.value != null &&
+        tipo_Movimiento.value.label == "Traspaso" &&
         concepto_Movimiento.value != null &&
         concepto_Movimiento.value.label == "Reemplazo"
       ) {
@@ -1482,7 +1560,7 @@ const onSubmit = async () => {
           tipo_Movimiento.value.label
         );
         await movimientoInventarioStore.loadMovimiento(resp.id);
-        asignacion.value.puesto_Id = movimiento.value.puesto_Id;
+
         let respAsignacion = await asignacionStore.createAsignacion(
           asignacion.value
         );

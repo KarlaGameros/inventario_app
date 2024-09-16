@@ -70,7 +70,7 @@ const ReporteBodega = async () => {
       );
     }
     //--------------------------------------------------------------------------//
-
+    console.log(asignacion.value);
     doc.setFillColor(84, 37, 131);
     doc.rect(9.7, 45, 191.99, 6, "FD");
     doc.setTextColor(255, 255, 255);

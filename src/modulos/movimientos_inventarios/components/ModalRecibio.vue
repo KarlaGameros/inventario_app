@@ -26,7 +26,8 @@
             class="row"
             v-if="
               movimiento.concepto != null &&
-              movimiento.concepto.includes('Pendiente')
+              (movimiento.concepto.includes('Pendiente') ||
+                movimiento.concepto == 'Traspaso bodegas')
             "
           >
             <div class="col-12 text-bold">
@@ -61,7 +62,8 @@
             <div
               v-if="
                 movimiento.concepto != null &&
-                movimiento.concepto.includes('Pendiente')
+                (movimiento.concepto.includes('Pendiente') ||
+                  movimiento.concepto == 'Traspaso bodegas')
               "
               class="col-12 text-bold"
             >

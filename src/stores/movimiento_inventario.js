@@ -703,7 +703,7 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
             estatus: inventario.estatus,
           };
         });
-        this.list_Inventario = list.filter((x) => x.estatus != "Baja");
+        this.list_Inventario = list.filter((x) => x.estatus == "Activo");
       } catch (error) {
         return {
           success: false,
@@ -829,10 +829,15 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
           observaciones: observacion,
           estado_Fisico: estado_Fisico,
           destino: destino,
-          empleado_Id: empleado_Id != null ? empleado_Id.value : null,
+          empleado_Id:
+            destino == "Personal" && empleado_Id != null
+              ? empleado_Id.value
+              : null,
           empleado: empleado_Id != null ? empleado_Id.label : null,
           bodega_Destino_Id:
-            bodega_Destino_Id != null ? bodega_Destino_Id.value : null,
+            destino == "Bodega" && bodega_Destino_Id != null
+              ? bodega_Destino_Id.value
+              : null,
           bodega: bodega_Destino_Id != null ? bodega_Destino_Id.label : null,
         });
         return { success: true };

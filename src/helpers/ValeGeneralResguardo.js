@@ -3,11 +3,14 @@ import { storeToRefs } from "pinia";
 import { useAsignacionStore } from "src/stores/asignacion_store";
 import { useEmpleadosStore } from "src/stores/empleados_store";
 import autoTable from "jspdf-autotable";
+import { useMiInventarioStore } from "src/stores/mi_inventario";
 
 const ValeGeneralResguardo = async () => {
   try {
     const asignacionStore = useAsignacionStore();
     const empleadosStore = useEmpleadosStore();
+    const miInventarioStore = useMiInventarioStore();
+    const { listMiInventario } = storeToRefs(miInventarioStore);
     const { list_Inventario_By_Empleado } = storeToRefs(asignacionStore);
     const { empleado } = storeToRefs(empleadosStore);
 
@@ -115,7 +118,6 @@ const ValeGeneralResguardo = async () => {
         lineWidth: 0.1,
       },
     });
-
     autoTable(doc, {
       theme: "grid",
       startY: 62,
@@ -128,7 +130,7 @@ const ValeGeneralResguardo = async () => {
         item.marca,
         item.modelo,
         item.color == null ? "SIN COLOR" : item.color,
-        item.importe == undefined ? "SIN IMPORTE" : `$${item.importe}`,
+        item.importe == null ? "SIN IMPORTE" : `$${item.importe}`,
       ]),
       bodyStyles: { fontSize: 8, textColor: [0, 0, 0] },
       tableLineColor: [0, 0, 0],

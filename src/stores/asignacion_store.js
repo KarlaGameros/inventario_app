@@ -114,6 +114,7 @@ export const useAsignacionStore = defineStore("asignacion", {
               color: inventario.color,
               fecha_Registro: inventario.fecha_Registro,
               folio_Asignacion: inventario.folio_Asignacion,
+              importe: inventario.importe,
             };
           });
           this.list_Inventario_By_Empleado.sort((a, b) =>
@@ -571,7 +572,7 @@ export const useAsignacionStore = defineStore("asignacion", {
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success === true) {
-            this.listInventarioByBodega = data.map((inventario) => {
+            let list = data.map((inventario) => {
               return {
                 id: inventario.id,
                 clave: inventario.clave,
@@ -581,8 +582,12 @@ export const useAsignacionStore = defineStore("asignacion", {
                 modelo: inventario.modelo,
                 color: inventario.color,
                 importe: inventario.importe,
+                estatus: inventario.estatus,
               };
             });
+            this.listInventarioByBodega = list.filter(
+              (x) => x.estatus == "Activo"
+            );
             return { success };
           }
         } else {

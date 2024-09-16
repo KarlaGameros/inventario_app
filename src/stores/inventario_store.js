@@ -308,12 +308,16 @@ export const useInventarioStore = defineStore("inventario", {
             capturista: movimiento.capturista,
             bodega_Origen: movimiento.bodega_Origen,
             bodega_Destino: movimiento.bodega_Destino,
-            destino: movimiento.bodega,
+            destino: movimiento.destino,
             observaciones: movimiento.observaciones,
             estado_Fisico: movimiento.estado_Fisico,
             fecha_Registro: movimiento.fecha_Registro,
             fecha_Movimiento: movimiento.fecha_Movimiento,
+            timeStamp: movimiento.timeStamp,
           };
+        });
+        list_Kardex.sort((a, b) => {
+          return new Date(a.fecha_Registro) - new Date(b.fecha_Registro);
         });
         this.list_Kardex = listCompra.concat(list_Kardex);
       } catch (error) {
