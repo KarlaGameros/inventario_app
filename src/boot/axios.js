@@ -1,4 +1,5 @@
 import { boot } from "quasar/wrappers";
+import { EncryptStorage } from "storage-encryption";
 import axios from "axios";
 
 // Be careful when using SSR for cross-request state pollution
@@ -8,17 +9,29 @@ import axios from "axios";
 // "export default () => {}" function below (which runs individually
 // for each client)
 
-// const api = axios.create({
-//   baseURL: "https://1j8vp7c9-7289.usw3.devtunnels.ms/api",
-// });
+const encryptStorage = new EncryptStorage("SECRET_KEY", "sessionStorage");
+const urlActual = window.location.href;
+//const isLocal = urlActual.includes("sistema.ieenayarit.org") ? false : true;
+let arrUrl = urlActual.split(":");
+let urlSistemas = arrUrl[0] + ":" + arrUrl[1];
 
-const api = axios.create({
-  baseURL: "http://sistema.ieenayarit.org:9270/api",
-});
+let urlAxios = "";
+if (urlActual.includes("localhost")) {
+  urlAxios = "http://192.168.2.110:9270/api";
+  urlSistemas = "http://192.168.2.110";
+} else {
+  urlAxios = arrUrl[0] + ":" + arrUrl[1] + ":9270/api";
+}
+
+const api = axios.create({ baseURL: urlAxios });
+
+// const api = axios.create({
+//   baseURL: "https://xdxd2lf8-7289.usw3.devtunnels.ms/api",
+// });
 
 api.interceptors.request.use((config) => {
   config.headers = {
-    Authorization: `Bearer ${localStorage.getItem("key")}`,
+    Authorization: `Bearer ${encryptStorage.decrypt("key")}`,
   };
   return config;
 });
@@ -29,8 +42,7 @@ api.interceptors.response.use(
     if (error.response.status == 401) {
       alert("Su sesión ha expirado, sera redireccionado al logín");
       localStorage.clear();
-      sessionStorage.clear();
-      window.location = "http://sistema.ieenayarit.org:9271?return=false";
+      window.location = urlSistemas + ":9271?return=false";
     }
     return Promise.reject();
   }
@@ -48,4 +60,4 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 });
 
-export { api };
+export { api, urlSistemas };

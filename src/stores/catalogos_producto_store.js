@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { api } from "src/boot/axios";
+import { EncryptStorage } from "storage-encryption";
 
+const encryptStorage = new EncryptStorage("SECRET_KEY", "sessionStorage");
 export const useCatalogoProductoStore = defineStore("catalogo", {
   state: () => ({
     modal: false,
@@ -145,7 +147,7 @@ export const useCatalogoProductoStore = defineStore("catalogo", {
         let resp = await api.get("/Catalagos");
         let { data } = resp.data;
         let filtro = [];
-        if (localStorage.getItem("perfil") == "Personal sin UTIE") {
+        if (encryptStorage.decrypt("perfil") == "Personal sin UTIE") {
           filtro = data.filter((x) => x.clave != "EY-02");
         } else {
           filtro = data;

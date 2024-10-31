@@ -13,6 +13,7 @@
     >
       <template v-slot:top-left>
         <q-select
+          color="purple-ieen"
           outlined
           dense
           label="Área"
@@ -24,12 +25,13 @@
         >
         </q-select>
         <q-select
+          color="purple-ieen"
           dense
           outlined
-          v-if="hidden == false"
+          v-if="areaId.value != 0"
           label="Empleado"
           v-model="empleado_Id"
-          :options="listEmpleados"
+          :options="list_Empleados"
           hint="Selecciona una empleado"
           style="width: 260px"
         >
@@ -55,111 +57,97 @@
         >
           <q-card bordered class="no-shadow">
             <q-list dense>
-              <q-item
-                v-for="col in props.cols.filter((col) => col.name !== 'id')"
-                :key="col.name"
-              >
+              <q-item v-for="col in props.cols" :key="col.name">
                 <q-item-section>
                   <q-item-label class="text-bold"
                     >{{ col.label }}:</q-item-label
                   >
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>{{ col.value }}</q-item-label>
+                  <div v-if="col.name == 'id'">
+                    <q-btn
+                      v-show="
+                        modulo.actualizar &&
+                        props.row.estatus == 'Pendiente' &&
+                        props.row.tipo != 'Bodega'
+                      "
+                      flat
+                      round
+                      color="purple-ieen"
+                      icon="edit"
+                      @click="editar(props.row.id)"
+                    />
+                    <q-btn
+                      v-show="modulo.leer && props.row.estatus != 'Pendiente'"
+                      flat
+                      round
+                      color="purple-ieen"
+                      icon="search"
+                      @click="visualizar(props.row.id)"
+                    />
+                    <q-btn
+                      v-show="modulo.leer && props.row.tipo == 'Bodega'"
+                      flat
+                      round
+                      color="purple-ieen"
+                      icon="search"
+                      @click="visualizarByBodega(props.row)"
+                    />
+                    <q-btn
+                      v-show="
+                        modulo.actualizar &&
+                        props.row.estatus == 'Pendiente' &&
+                        props.row.tipo != 'Bodega'
+                      "
+                      flat
+                      round
+                      color="purple-ieen"
+                      icon="send"
+                      @click="afectar(props.row.id)"
+                    />
+                    <q-btn
+                      v-show="
+                        modulo.actualizar &&
+                        props.row.estatus == 'Afectado' &&
+                        props.row.tipo == 'Personal'
+                      "
+                      flat
+                      round
+                      color="purple-ieen"
+                      icon="print"
+                      @click="GenerarVale(props.row.id)"
+                    />
+                    <q-btn
+                      v-show="modulo.actualizar && props.row.tipo == 'Bodega'"
+                      flat
+                      round
+                      color="purple-ieen"
+                      icon="print"
+                      @click="
+                        GenerarValeBodega(
+                          props.row.fecha_Registro,
+                          props.row.id
+                        )
+                      "
+                    />
+                    <q-btn
+                      v-show="
+                        modulo.actualizar &&
+                        props.row.estatus == 'Pendiente' &&
+                        props.row.tipo != 'Bodega'
+                      "
+                      flat
+                      round
+                      color="purple-ieen"
+                      icon="cancel"
+                      @click="cancelar(props.row.id)"
+                    />
+                  </div>
+                  <q-item-label v-else>{{ col.value }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
             <q-separator />
-            <q-card-section class="text-center">
-              <q-btn
-                v-show="
-                  modulo.actualizar &&
-                  props.row.estatus == 'Pendiente' &&
-                  props.row.tipo != 'Bodega'
-                "
-                flat
-                round
-                color="purple-ieen"
-                icon="edit"
-                @click="editar(props.row.id)"
-              >
-                <q-tooltip>Editar asignación</q-tooltip>
-              </q-btn>
-              <q-btn
-                v-show="modulo.leer && props.row.estatus != 'Pendiente'"
-                flat
-                round
-                color="purple-ieen"
-                icon="search"
-                @click="visualizar(props.row.id)"
-              >
-                <q-tooltip>Ver asignación</q-tooltip>
-              </q-btn>
-              <q-btn
-                v-show="modulo.leer && props.row.tipo == 'Bodega'"
-                flat
-                round
-                color="purple-ieen"
-                icon="search"
-                @click="visualizarByBodega(props.row)"
-              >
-                <q-tooltip>Ver asignación por bodega</q-tooltip>
-              </q-btn>
-              <q-btn
-                v-show="
-                  modulo.actualizar &&
-                  props.row.estatus == 'Pendiente' &&
-                  props.row.tipo != 'Bodega'
-                "
-                flat
-                round
-                color="purple-ieen"
-                icon="send"
-                @click="afectar(props.row.id)"
-              >
-                <q-tooltip>Afectar asignación</q-tooltip>
-              </q-btn>
-              <q-btn
-                v-show="
-                  modulo.actualizar &&
-                  props.row.estatus == 'Afectado' &&
-                  props.row.tipo == 'Personal'
-                "
-                flat
-                round
-                color="purple-ieen"
-                icon="print"
-                @click="GenerarVale(props.row.id)"
-              >
-                <q-tooltip>Generar vale</q-tooltip>
-              </q-btn>
-              <q-btn
-                v-show="modulo.actualizar && props.row.tipo == 'Bodega'"
-                flat
-                round
-                color="purple-ieen"
-                icon="print"
-                @click="
-                  GenerarValeBodega(props.row.fecha_Registro, props.row.id)
-                "
-              >
-                <q-tooltip>Generar vale bodega</q-tooltip>
-              </q-btn>
-              <q-btn
-                v-show="
-                  modulo.actualizar &&
-                  props.row.estatus == 'Pendiente' &&
-                  props.row.tipo != 'Bodega'
-                "
-                flat
-                round
-                color="purple-ieen"
-                icon="cancel"
-                @click="cancelar(props.row.id)"
-              >
-                <q-tooltip>Cancelar asignación</q-tooltip>
-              </q-btn>
-            </q-card-section>
           </q-card>
         </div>
       </template>
@@ -290,11 +278,12 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { useQuasar } from "quasar";
+import { useQuasar, QSpinnerFacebook } from "quasar";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useAsignacionStore } from "src/stores/asignacion_store";
 import { onBeforeMount, ref, watch, watchEffect } from "vue";
 import { useInventarioStore } from "src/stores/inventario_store";
+import { useEmpleadosStore } from "src/stores/empleados_store";
 import ValeResguardo from "../../../helpers/ValeResguardo";
 import ValeByBodega from "../../../helpers/ValeByBodega";
 
@@ -303,42 +292,65 @@ import ValeByBodega from "../../../helpers/ValeByBodega";
 const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
 const inventarioStore = useInventarioStore();
+const empleadosStore = useEmpleadosStore();
 const authStore = useAuthStore();
 const { modulo } = storeToRefs(authStore);
 const {
   asignaciones,
   areas,
-  listEmpleados,
   listFiltroAsignaciones,
   listaAsignacionInventario,
 } = storeToRefs(asignacionStore);
+const { list_Empleados } = storeToRefs(empleadosStore);
 const { inventarios } = storeToRefs(inventarioStore);
 const areaId = ref(null);
 const empleado_Id = ref(null);
-const hidden = ref(false);
 const inventariosEliminar = ref([]);
 
 //-----------------------------------------------------------
 
 onBeforeMount(() => {
-  asignacionStore.loadInformacionAsignaciones();
-  asignacionStore.loadAreasList(true);
-  areaId.value = { label: "Todos", value: 0 };
-  empleado_Id.value = { value: 0, label: "Todos" };
+  cargarData();
 });
 
 //-----------------------------------------------------------
 
 watch(areaId, (val) => {
   if (val.value != 0) {
-    asignacionStore.loadEmpleadosByArea(areaId.value.value, true);
-    hidden.value = false;
-  } else {
-    hidden.value = true;
+    getEmpleadosByArea(val);
   }
 });
 
 //-----------------------------------------------------------
+
+const cargarData = async () => {
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
+  areaId.value = { label: "Todos", value: 0 };
+  empleado_Id.value = { value: 0, label: "Todos" };
+  await asignacionStore.loadInformacionAsignaciones();
+  await asignacionStore.loadAreasList(true);
+  $q.loading.hide();
+};
+
+const getEmpleadosByArea = async (val) => {
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
+  await empleadosStore.loadEmpleadosByArea(val.value, true);
+  $q.loading.hide();
+};
 
 const filtrar = (asignaciones, filtro) => {
   listFiltroAsignaciones.value = asignaciones.filter((item) => {
@@ -448,6 +460,14 @@ const filter = ref("");
 //-----------------------------------------------------------
 
 const validarInventario = async (id) => {
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   inventariosEliminar.value = [];
   await asignacionStore.detalleAsignacion(id);
   await inventarioStore.loadListInventario(0);
@@ -457,31 +477,54 @@ const validarInventario = async (id) => {
       (element) => element.value == elementInventario.inventario_Id
     );
     if (found == undefined) {
-      inventariosEliminar.value.push(elementInventario.id);
+      inventariosEliminar.value.push(elementInventario);
     }
   }
   if (inventariosEliminar.value.length != 0) {
+    let listaHTML = "<ul>";
+    inventariosEliminar.value.forEach((inventario) => {
+      listaHTML += `<li><b>${inventario.clave}</b> -
+        ${inventario.descripcion}</li>`;
+    });
+    listaHTML += "</ul>";
+    $q.loading.hide();
     $q.dialog({
       title: "Uno o más productos ya fueron asignados a otro personal",
-      message: "¿Desea eliminar el producto de esta lista?",
+      message: `¿Desea eliminar los bienes de la asignación?
+                ${listaHTML}`,
       icon: "Warning",
       persistent: true,
+      html: true,
       transitionShow: "scale",
       transitionHide: "scale",
       ok: {
-        color: "positive",
-        label: "Si, Aceptar",
+        color: "secondary",
+        label: "Si, eliminar",
       },
       cancel: {
-        color: "negative",
-        label: "No cancelar",
+        color: "red",
+        label: "No, regresar",
       },
     }).onOk(async () => {
       inventariosEliminar.value.forEach(async (element) => {
-        let resp = await asignacionStore.deleteDetalle(element, id);
+        let resp = await asignacionStore.deleteDetalle(element.id);
+        if (resp.success) {
+          $q.notify({
+            position: "top-right",
+            type: "positive",
+            message: resp.data,
+          });
+        } else {
+          $q.notify({
+            position: "top-right",
+            type: "negative",
+            message: resp.data,
+          });
+        }
       });
     });
   } else {
+    $q.loading.hide();
     return true;
   }
 };
@@ -491,7 +534,7 @@ const afectar = async (id) => {
   if (resp == true) {
     $q.dialog({
       title: "Afectar asignación",
-      message: "Al aceptar, se ejecutaran los movimientos realizados",
+      message: "Al aceptar, se ejecutarán los movimientos realizados",
       icon: "Warning",
       persistent: true,
       transitionShow: "scale",
@@ -514,7 +557,7 @@ const afectar = async (id) => {
           type: "positive",
           message: resp.data,
         });
-        asignacionStore.loadInformacionAsignaciones();
+        await asignacionStore.loadInformacionAsignaciones();
         asignacionStore.initAsignacion();
       } else {
         $q.loading.hide();
@@ -554,7 +597,7 @@ const cancelar = async (id) => {
         type: "secondary",
         message: resp.data,
       });
-      asignacionStore.loadInformacionAsignaciones();
+      await asignacionStore.loadInformacionAsignaciones();
       asignacionStore.initAsignacion();
     } else {
       $q.loading.hide();

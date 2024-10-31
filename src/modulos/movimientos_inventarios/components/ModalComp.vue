@@ -601,7 +601,11 @@
             >
               <div class="text-right q-gutter-xs">
                 <q-btn
-                  :disable="isEditar"
+                  :disable="
+                    isEditar &&
+                    concepto_Movimiento != null &&
+                    !concepto_Movimiento.label.includes('Pendiente')
+                  "
                   icon-right="add_circle"
                   label="Agregar"
                   color="secondary"
@@ -876,7 +880,7 @@ watch(area_Id, async (val) => {
     if (!isEditar.value && !visualizar.value) {
       empleado_Id.value = null;
       await empleadosStore.loadEmpleadosByAreaInventario(val.value);
-      await empleadosStore.loadEmpleadosByArea(val.value);
+      await empleadosStore.loadEmpleadosByArea(val.value, false);
     }
   }
 });
@@ -884,7 +888,7 @@ watch(area_Id, async (val) => {
 watch(area_Traspaso, async (val) => {
   if (val != null) {
     personal_Traspaso.value = null;
-    await empleadosStore.loadEmpleadosByArea(val.value);
+    await empleadosStore.loadEmpleadosByArea(val.value, false);
   }
 });
 
@@ -1025,7 +1029,7 @@ const cargarArea = async (val) => {
 };
 
 const cargarEmpleado = async (val) => {
-  await empleadosStore.loadEmpleadosByArea(val.area_Id);
+  await empleadosStore.loadEmpleadosByArea(val.area_Id, false);
   if (empleado_Id.value == null) {
     let empleadoFiltrado = list_Empleados.value.find(
       (x) => x.value == `${val.empleado_Id}`

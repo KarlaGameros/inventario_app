@@ -13,15 +13,6 @@
       </div>
       <div class="text-body2">{{ miInventario.nombre_completo }}</div>
       <div class="text-body2">{{ miInventario.area }}</div>
-      <template v-slot:action>
-        <q-btn
-          v-if="listMiInventario.length > 0"
-          color="purple-ieen"
-          label="Descargar listado"
-          icon-right="download"
-          @click="generarValeByEmpleado(true)"
-        />
-      </template>
     </q-banner>
   </div>
   <div class="q-pb-md">
@@ -47,44 +38,122 @@
       </div>
     </q-banner>
   </div>
-  <div class="row">
-    <div class="col">
-      <q-table
-        :grid="$q.screen.xs"
-        :rows="listMiInventario"
-        :columns="columns"
-        :filter="filter"
-        :pagination="pagination"
-        row-key="id"
-        rows-per-page-label="Filas por pagina"
-        no-data-label="No hay registros"
-      >
-        <template v-slot:top-right>
-          <q-input
-            borderless
-            dense
-            debounce="300"
-            v-model="filter"
-            placeholder="Buscar.."
+  <q-card>
+    <q-tabs
+      active-color="white"
+      indicator-color="purple-ieen"
+      align="justify"
+      :breakpoint="0"
+      v-model="tab"
+      inline-label
+      class="bg-blue-grey-3 text-white shadow-2"
+    >
+      <q-tab name="personal" icon="person" label="Personal" />
+      <q-tab v-if="bodega" name="bodega" icon="apartment" label="Por bodega" />
+    </q-tabs>
+    <q-tab-panels v-model="tab" animated>
+      <q-tab-panel name="personal">
+        <q-btn
+          v-if="listMiInventario.length > 0"
+          color="purple-ieen"
+          label="Descargar listado"
+          icon-right="download"
+          class="q-mb-md"
+          @click="generarValeByEmpleado()"
+        />
+        <div class="col">
+          <q-table
+            :grid="$q.screen.xs"
+            :rows="listMiInventario"
+            :columns="columns"
+            :filter="filter"
+            :pagination="pagination"
+            row-key="id"
+            rows-per-page-label="Filas por pagina"
+            no-data-label="No hay registros"
           >
-            <template v-slot:append>
-              <q-icon name="search" />
+            <template v-slot:top-right>
+              <q-input
+                borderless
+                dense
+                debounce="300"
+                v-model="filter"
+                placeholder="Buscar.."
+              >
+                <template v-slot:append>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
             </template>
-          </q-input>
-        </template>
-      </q-table>
-    </div>
-  </div>
+          </q-table>
+        </div>
+      </q-tab-panel>
+      <q-tab-panel name="bodega">
+        <div class="row">
+          <div class="col-lg-3 col-xs-12 q-pr-md">
+            <q-select
+              dense
+              color="purple-ieen"
+              label="Bodega"
+              v-model="bodega_Id"
+              :options="bodegas_Filtrado"
+              hint="Seleccione una bodega"
+            />
+          </div>
+          <div class="col-lg-3 col-xs-12">
+            <q-btn
+              v-if="listInventarioByBodega.length > 0"
+              color="purple-ieen"
+              label="Descargar listado"
+              icon-right="download"
+              class="q-mb-md"
+              @click="generarValeByBodega()"
+            />
+          </div>
+        </div>
+        <br />
+        <div class="col">
+          <q-table
+            :grid="$q.screen.xs"
+            :rows="list_Inventario_By_Bodega"
+            :columns="columns"
+            :filter="filter"
+            :pagination="pagination"
+            row-key="id"
+            rows-per-page-label="Filas por pagina"
+            no-data-label="No hay registros"
+          >
+            <template v-slot:top-right>
+              <q-input
+                borderless
+                dense
+                debounce="300"
+                v-model="filter"
+                placeholder="Buscar.."
+              >
+                <template v-slot:append>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+            </template>
+          </q-table>
+        </div>
+      </q-tab-panel>
+    </q-tab-panels>
+  </q-card>
 </template>
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { useQuasar } from "quasar";
+import { useQuasar, QSpinnerFacebook } from "quasar";
 import { useEmpleadosStore } from "src/stores/empleados_store";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useMiInventarioStore } from "../../../stores/mi_inventario";
 import { useAsignacionStore } from "src/stores/asignacion_store";
+import { useInventarioStore } from "src/stores/inventario_store";
+import { useBodegaStore } from "src/stores/bodega_store";
 import ValeGeneralResguardo from "../../../helpers/ValeGeneralResguardo";
+import ValeGeneralByBodega from "src/helpers/ValeGeneralByBodega";
 
 //-----------------------------------------------------------
 
@@ -92,7 +161,17 @@ const $q = useQuasar();
 const miInventarioStore = useMiInventarioStore();
 const empleadosStore = useEmpleadosStore();
 const asignacionStore = useAsignacionStore();
+const inventarioStore = useInventarioStore();
+const bodegasStore = useBodegaStore();
+const { bodegas } = storeToRefs(bodegasStore);
+const { listInventarioByBodega } = storeToRefs(inventarioStore);
 const { listMiInventario, miInventario } = storeToRefs(miInventarioStore);
+const { empleadoUsuario, empleado } = storeToRefs(empleadosStore);
+const tab = ref("personal");
+const bodega_Id = ref(null);
+const bodega = ref(false);
+const bodegas_Filtrado = ref([]);
+const list_Inventario_By_Bodega = ref([]);
 
 //-----------------------------------------------------------
 
@@ -102,23 +181,86 @@ onBeforeMount(() => {
 
 //-----------------------------------------------------------
 
+watch(bodega_Id, (val) => {
+  if (val != null) {
+    cargarInventarioByBodega(val);
+  }
+});
+
+//-----------------------------------------------------------
+
 const cargarData = async () => {
-  $q.loading.show();
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
+  await empleadosStore.loadEmpleadoByUsuario();
+  await empleadosStore.loadResponsableByArea(empleadoUsuario.value.area_Id);
+  if (empleadoUsuario.value.id == empleado.value.id) {
+    await bodegasStore.loadInformacionBodega();
+    bodega.value = true;
+    bodegas_Filtrado.value = bodegas.value.filter(
+      (x) => x.area_Id == empleado.value.area_Id
+    );
+  } else {
+    bodega.value = false;
+  }
   await miInventarioStore.loadMiInventario();
   await miInventarioStore.loadUser();
   $q.loading.hide();
 };
 
-const generarValeByEmpleado = async (valor) => {
-  $q.loading.show();
+const cargarInventarioByBodega = async (val) => {
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
+  await empleadosStore.loadResponsableByArea(val.area_Id);
+  await inventarioStore.inventarioByBodega(val.value);
+  list_Inventario_By_Bodega.value = listInventarioByBodega.value.filter(
+    (x) => x.estatus == "Activo" && x.empleado_Id == null
+  );
+  $q.loading.hide();
+};
+
+const generarValeByEmpleado = async () => {
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   await empleadosStore.loadEmpleadoById(listMiInventario.value[0].empleado_Id);
-  // await asignacionStore.loadInventarioByEmpleado(
-  //   listMiInventario.value[0].empleado_Id
-  // );
   await asignacionStore.loadInventarioByEmpleado(
     listMiInventario.value[0].empleado_Id
   );
   await ValeGeneralResguardo();
+  $q.loading.hide();
+};
+
+const generarValeByBodega = async () => {
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
+  await ValeGeneralByBodega(
+    list_Inventario_By_Bodega.value,
+    bodega_Id.value.label
+  );
   $q.loading.hide();
 };
 
@@ -168,10 +310,10 @@ const columns = [
     sortable: true,
   },
   {
-    name: "numero_serie",
+    name: "numero_Serie",
     align: "center",
     label: "Número de serie",
-    field: "numero_serie",
+    field: "numero_Serie",
     sortable: true,
   },
   {

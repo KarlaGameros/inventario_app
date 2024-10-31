@@ -126,7 +126,7 @@ onBeforeMount(() => {
 
 watch(area_Id, (val) => {
   if (val != null) {
-    entregaRecepcionStore.loadEmpleadosByArea(area_Id.value.value);
+    entregaRecepcionStore.loadEmpleadosByArea(area_Id.value.value, false);
   }
 });
 

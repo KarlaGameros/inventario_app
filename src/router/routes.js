@@ -66,6 +66,12 @@ const routes = [
         name: "tipos_Movimientos",
         component: () => import("../modulos/tipos_Movimientos/pages/IndexPage"),
       },
+      {
+        path: "/notificaciones",
+        name: "notificaciones",
+        component: () =>
+          import("../modulos/notificaciones/pages/IndexPage.vue"),
+      },
     ],
   },
 

@@ -127,7 +127,7 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { useQuasar } from "quasar";
+import { useQuasar, QSpinnerFacebook } from "quasar";
 import { ref, watch } from "vue";
 import { useMovimientoInventario } from "../../../stores/movimiento_inventario";
 
@@ -135,7 +135,6 @@ import { useMovimientoInventario } from "../../../stores/movimiento_inventario";
 
 const $q = useQuasar();
 const movimientoInventarioStore = useMovimientoInventario();
-
 const { modalFotos, list_Detalle, detalle_Movimiento } = storeToRefs(
   movimientoInventarioStore
 );
@@ -147,13 +146,26 @@ const detalle_Id = ref(null);
 
 //-----------------------------------------------------------
 
-watch(detalle_Id, async (val) => {
+watch(detalle_Id, (val) => {
   if (val != null) {
-    await movimientoInventarioStore.loadDetalleMovimientoById(val.value);
+    getDetalleMovimiento(val);
   }
 });
 
 //-----------------------------------------------------------
+
+const getDetalleMovimiento = async (val) => {
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
+  await movimientoInventarioStore.loadDetalleMovimientoById(val.value);
+  $q.loading.hide();
+};
 
 const actualizarModal = (valor) => {
   movimientoInventarioStore.actualizarModalFotos(valor);
@@ -167,14 +179,20 @@ const actualizarModal = (valor) => {
 };
 
 const onSubmit = async () => {
-  $q.loading.show();
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   let fotografiasFormData = new FormData();
-  let resp = null;
   fotografiasFormData.append("Foto_1", foto_1.value);
   fotografiasFormData.append("Foto_2", foto_2.value);
   fotografiasFormData.append("Foto_3", foto_3.value);
   fotografiasFormData.append("Foto_4", foto_4.value);
-  resp = await movimientoInventarioStore.agregarFotografias(
+  let resp = await movimientoInventarioStore.agregarFotografias(
     detalle_Id.value.value,
     fotografiasFormData
   );

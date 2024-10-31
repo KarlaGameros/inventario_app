@@ -37,15 +37,13 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { useQuasar } from "quasar";
 import { useAsignacionStore } from "src/stores/asignacion_store";
 import { ref } from "vue";
 
 //-----------------------------------------------------------
 
-const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
-const { listInventarioByBodega, isShow } = storeToRefs(asignacionStore);
+const { listInventarioByBodega } = storeToRefs(asignacionStore);
 
 //-----------------------------------------------------------
 
@@ -76,5 +74,3 @@ const filter = ref("");
 
 //-----------------------------------------------------------
 </script>
-
-<style></style>

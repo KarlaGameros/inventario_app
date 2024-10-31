@@ -80,8 +80,8 @@
               <q-card bordered class="no-shadow">
                 <q-list dense>
                   <q-item
-                    v-for="col in columns.filter(
-                      (col) => col.name !== 'id' && col.name !== 'vermas'
+                    v-for="col in props.cols.filter(
+                      (col) => col.name !== 'vermas'
                     )"
                     :key="col.name"
                   >
@@ -91,63 +91,62 @@
                       >
                     </q-item-section>
                     <q-item-section>
-                      <q-item-label>{{ props.row[col.name] }}</q-item-label>
+                      <div v-if="col.name == 'id'">
+                        <q-btn
+                          v-if="modulo == null ? false : modulo.leer"
+                          flat
+                          round
+                          color="purple-ieen"
+                          icon="account_tree"
+                          @click="verKardex(props.row.id)"
+                        >
+                          <q-tooltip>Ver kardex</q-tooltip>
+                        </q-btn>
+                        <q-btn
+                          v-if="modulo == null ? false : modulo.leer"
+                          flat
+                          round
+                          color="purple-ieen"
+                          icon="image"
+                          @click="loadFotos(props.row.id, true)"
+                        >
+                          <q-tooltip>Ver imagen</q-tooltip>
+                        </q-btn>
+                        <q-btn
+                          v-if="modulo == null ? false : modulo.leer"
+                          flat
+                          round
+                          color="purple-ieen"
+                          icon="qr_code_scanner"
+                          @click="mostrarPDF(true, props.row.id)"
+                        >
+                          <q-tooltip>Generar PDF</q-tooltip>
+                        </q-btn>
+                        <q-btn
+                          v-if="modulo == null ? false : modulo.actualizar"
+                          flat
+                          round
+                          color="purple-ieen"
+                          icon="edit"
+                          @click="editar(props.row.id)"
+                        >
+                          <q-tooltip>Editar inventario</q-tooltip>
+                        </q-btn>
+                        <q-btn
+                          v-if="modulo == null ? false : modulo.eliminar"
+                          flat
+                          round
+                          color="purple-ieen"
+                          icon="delete"
+                          @click="eliminar(props.row.id)"
+                        >
+                          <q-tooltip>Eliminar inventario</q-tooltip>
+                        </q-btn>
+                      </div>
+                      <q-item-label v-else>{{ col.value }}</q-item-label>
                     </q-item-section>
                   </q-item>
                 </q-list>
-                <q-separator />
-                <q-card-section class="text-center">
-                  <q-btn
-                    v-if="modulo == null ? false : modulo.leer"
-                    flat
-                    round
-                    color="purple-ieen"
-                    icon="account_tree"
-                    @click="verKardex(props.row.id)"
-                  >
-                    <q-tooltip>Ver kardex</q-tooltip>
-                  </q-btn>
-                  <q-btn
-                    v-if="modulo == null ? false : modulo.leer"
-                    flat
-                    round
-                    color="purple-ieen"
-                    icon="image"
-                    @click="loadFotos(props.row.id, true)"
-                  >
-                    <q-tooltip>Ver imagen</q-tooltip>
-                  </q-btn>
-                  <q-btn
-                    v-if="modulo == null ? false : modulo.leer"
-                    flat
-                    round
-                    color="purple-ieen"
-                    icon="qr_code_scanner"
-                    @click="mostrarPDF(true, props.row.id)"
-                  >
-                    <q-tooltip>Generar PDF</q-tooltip>
-                  </q-btn>
-                  <q-btn
-                    v-if="modulo == null ? false : modulo.actualizar"
-                    flat
-                    round
-                    color="purple-ieen"
-                    icon="edit"
-                    @click="editar(props.row.id)"
-                  >
-                    <q-tooltip>Editar inventario</q-tooltip>
-                  </q-btn>
-                  <q-btn
-                    v-if="modulo == null ? false : modulo.eliminar"
-                    flat
-                    round
-                    color="purple-ieen"
-                    icon="delete"
-                    @click="eliminar(props.row.id)"
-                  >
-                    <q-tooltip>Eliminar inventario</q-tooltip>
-                  </q-btn>
-                </q-card-section>
               </q-card>
             </div>
           </template>
@@ -282,6 +281,14 @@
                 <div class="text-left q-pa-xs">
                   <b>Importe:</b>
                   {{ props.row.importe }}
+                </div>
+                <div class="text-left q-pa-xs">
+                  <b>Observaciones:</b>
+                  {{
+                    props.row.observaciones != null
+                      ? props.row.observaciones
+                      : "Sin observaciones"
+                  }}
                 </div>
               </q-td>
             </q-tr>

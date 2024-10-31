@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { api } from "src/boot/axios";
+import { EncryptStorage } from "storage-encryption";
 
+const encryptStorage = new EncryptStorage("SECRET_KEY", "sessionStorage");
 export const useInventarioStore = defineStore("inventario", {
   state: () => ({
     modal: false,
@@ -216,6 +218,7 @@ export const useInventarioStore = defineStore("inventario", {
             uuid: inventario.uuiD_Factura,
             paquete_Id: inventario.paquete_Id,
             value: inventario.id,
+            observaciones: inventario.observaciones,
             label: `${inventario.clave}-${inventario.nombre_Corto}`,
             fecha_Baja: inventario.fecha_Baja,
             fecha_Comodato: inventario.fecha_Comodato,
@@ -506,7 +509,7 @@ export const useInventarioStore = defineStore("inventario", {
         let resp = await api.get(`/Inventarios/ByCatalogo/${id}`);
         let { data } = resp.data;
         let filtro = [];
-        if (localStorage.getItem("perfil") == "Personal sin UTIE") {
+        if (encryptStorage.decrypt("perfil") == "Personal sin UTIE") {
           filtro = data.filter(
             (x) => x.estatus == "Activo" && x.bodega != "Bodega UTIE"
           );
@@ -671,6 +674,11 @@ export const useInventarioStore = defineStore("inventario", {
                 modelo: inventario.modelo,
                 color: inventario.color,
                 importe: inventario.importe,
+                catalogo: inventario.catalago,
+                bodega: inventario.bodega,
+                numero_Serie: inventario.numero_Serie,
+                estatus: inventario.estatus,
+                empleado_Id: inventario.empleado_Id,
               };
             });
             return { success, data };

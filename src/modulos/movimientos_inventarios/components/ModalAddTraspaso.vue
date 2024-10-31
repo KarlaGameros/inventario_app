@@ -129,7 +129,6 @@ const props = defineProps({
   bodega_traspaso_Id: { type: Object },
 });
 const catalogo_Id = ref({ value: 0, label: "Todos" });
-const list = ref([]);
 const seleccionar_Todos = ref(false);
 
 //-----------------------------------------------------------

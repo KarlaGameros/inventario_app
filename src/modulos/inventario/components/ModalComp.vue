@@ -280,9 +280,9 @@
               </template>
             </q-input>
           </div>
-          <div
+          <q-card
             v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
           >
             <q-file
               accept="image/png, image/jpeg"
@@ -295,6 +295,7 @@
               </template>
               <template v-slot:append>
                 <q-icon
+                  v-if="foto1 != null"
                   name="close"
                   @click.stop.prevent="foto1 = null"
                   class="cursor-pointer"
@@ -302,10 +303,10 @@
               </template>
             </q-file>
             <img v-if="isEditar" :src="inventario.foto_1" />
-          </div>
-          <div
+          </q-card>
+          <q-card
             v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
           >
             <q-file
               accept="image/png, image/jpeg"
@@ -318,6 +319,7 @@
               </template>
               <template v-slot:append>
                 <q-icon
+                  v-if="foto2 != null"
                   name="close"
                   @click.stop.prevent="foto2 = null"
                   class="cursor-pointer"
@@ -325,10 +327,10 @@
               </template>
             </q-file>
             <img v-if="isEditar" :src="inventario.foto_2" />
-          </div>
-          <div
+          </q-card>
+          <q-card
             v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
           >
             <q-file
               accept="image/png, image/jpeg"
@@ -341,6 +343,7 @@
               </template>
               <template v-slot:append>
                 <q-icon
+                  v-if="foto3 != null"
                   name="close"
                   @click.stop.prevent="foto3 = null"
                   class="cursor-pointer"
@@ -348,10 +351,10 @@
               </template>
             </q-file>
             <img v-if="isEditar" :src="inventario.foto_3" />
-          </div>
-          <div
+          </q-card>
+          <q-card
             v-if="radio != 'paquete'"
-            class="col-lg-3 col-md-3 col-sm-3 col-xs-12"
+            class="col-lg-3 col-md-3 col-sm-3 col-xs-12 my-card"
           >
             <q-file
               accept="image/png, image/jpeg"
@@ -364,6 +367,7 @@
               </template>
               <template v-slot:append>
                 <q-icon
+                  v-if="foto4 != null"
                   name="close"
                   @click.stop.prevent="foto4 = null"
                   class="cursor-pointer"
@@ -371,7 +375,7 @@
               </template>
             </q-file>
             <img v-if="isEditar" :src="inventario.foto_4" />
-          </div>
+          </q-card>
           <!----------------------------------------------------------------------------->
           <div
             v-if="radio == 'paquete'"

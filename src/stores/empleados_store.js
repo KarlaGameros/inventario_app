@@ -10,6 +10,11 @@ export const useEmpleadosStore = defineStore("empleados", {
     list_Empleados_Inventario: [],
     personal_Id: null,
     personal_Id_Elaboro: null,
+    empleadoUsuario: {
+      id: null,
+      area_Id: null,
+      area: null,
+    },
     empleado: {
       id: null,
       nombres: null,
@@ -67,7 +72,9 @@ export const useEmpleadosStore = defineStore("empleados", {
             this.empleado.nombres = `${data.nombres} ${data.apellido_Paterno} ${data.apellido_Materno}`;
             this.empleado.puesto_Id = data.puesto_Id;
             this.empleado.area_Id = data.area_Id;
-            this.empleado.area = data.area;
+            this.empleado.area = data.area == null ? "" : data.area;
+            this.empleado.tratamiento =
+              data.tratamiento == null ? "" : data.tratamiento;
           }
         }
       } catch (error) {
@@ -122,11 +129,12 @@ export const useEmpleadosStore = defineStore("empleados", {
     },
 
     //-----------------------------------------------------------
-    async loadEmpleadosByArea(id) {
+    async loadEmpleadosByArea(id, filtro) {
       try {
+        this.list_Empleados = [];
         let resp = await api.get(`/Empleados/ByArea/${id}`);
         let { data } = resp.data;
-        this.list_Empleados = data.map((detalle) => {
+        let listEmpleados = data.map((detalle) => {
           return {
             puesto_Id: detalle.puesto_Id,
             label: `${detalle.nombres} ${detalle.apellido_Paterno} ${detalle.apellido_Materno}`,
@@ -135,6 +143,13 @@ export const useEmpleadosStore = defineStore("empleados", {
             area: detalle.area,
           };
         });
+        if (filtro == true) {
+          listEmpleados.splice(0, 0, {
+            value: 0,
+            label: "Todos",
+          });
+        }
+        this.list_Empleados = listEmpleados;
       } catch (error) {
         return {
           success: false,
@@ -155,6 +170,25 @@ export const useEmpleadosStore = defineStore("empleados", {
             puesto_Id: empleado.puesto,
           };
         });
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
+    async loadEmpleadoByUsuario() {
+      try {
+        let resp = await api.get("/Empleados/ByUsuario");
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success == true) {
+            this.empleadoUsuario.id = data.id;
+            this.empleadoUsuario.area_Id = data.area_Id;
+          }
+        }
       } catch (error) {
         return {
           success: false,

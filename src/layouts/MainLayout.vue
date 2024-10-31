@@ -11,6 +11,72 @@
           @click="toggleLeftDrawer"
         />
         <q-toolbar-title> Sistema inventario </q-toolbar-title>
+        <q-badge rounded :color="onLine == true ? 'green' : 'red'" />
+        <q-btn flat round dense icon="notifications">
+          <q-badge v-if="no_notificaciones > 0" color="red" floating>{{
+            no_notificaciones > 5 ? "5+" : no_notificaciones
+          }}</q-badge>
+          <q-menu>
+            <q-list style="min-width: 100px">
+              <div
+                class="q-pl-md q-pt-sm q-pb-sm q-pr-md text-bold text-h6 text-grey-9"
+              >
+                Notificaciones
+              </div>
+              <div>
+                <q-item
+                  style="max-width: 420px"
+                  v-for="notificacion in notificaciones"
+                  :key="notificacion.id"
+                  clickable
+                  v-ripple
+                  @click="detalle(notificacion)"
+                >
+                  <q-item-section>
+                    <q-item-label>{{ notificacion.titulo }}</q-item-label>
+                    <q-item-label caption lines="3"
+                      >{{ notificacion.mensaje }}
+                    </q-item-label>
+                  </q-item-section>
+
+                  <q-item-section side>
+                    {{ notificacion.fecha_Registro }}
+                    <q-badge
+                      v-if="notificacion.leido == false"
+                      color="blue"
+                      rounded
+                      class="q-mr-sm"
+                    />
+                  </q-item-section>
+                </q-item>
+              </div>
+              <q-card
+                v-if="notificaciones.length > 0"
+                class="text-center no-shadow no-border q-pa-sm"
+              >
+                <q-btn
+                  label="Marcar todo como leido"
+                  color="purple-ieen"
+                  flat
+                  class="text-indigo-8"
+                  @click="marcarLeido"
+                ></q-btn>
+                <q-btn
+                  flat
+                  label="Ver todos"
+                  color="purple-ieen"
+                  class="text-indigo-8"
+                  @click="toNotificaciones"
+                ></q-btn>
+              </q-card>
+              <q-card class="text-center no-shadow no-border q-pa-sm" v-else>
+                <div class="text-indigo-8 text-purple-ieen">
+                  Sin notificaciones
+                </div>
+              </q-card>
+            </q-list>
+          </q-menu>
+        </q-btn>
         <q-btn flat round dense icon="apps" @click="show" />
       </q-toolbar>
     </q-header>
@@ -225,143 +291,225 @@
   </q-layout>
 </template>
 
-<script>
+<script setup>
 import { storeToRefs } from "pinia";
-import { useQuasar } from "quasar";
+import { useQuasar, QSpinnerFacebook } from "quasar";
 import { useAuthStore } from "src/stores/auth_store";
-import { defineComponent, onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { EncryptStorage } from "storage-encryption";
+import { useNotifications } from "../helpers/signalRService";
+import { useNotificacionStore } from "../stores/notificaciones_store";
+import { urlSistemas } from "src/boot/axios";
 
-export default defineComponent({
-  name: "MainLayout",
-  storage: Storage | undefined,
-  components: {},
+//----------------------------------------------------------
 
-  setup() {
-    const leftDrawerOpen = ref(false);
-    const $q = useQuasar();
-    const route = useRoute();
-    const router = useRouter();
-    const authStore = useAuthStore();
-    const usuario = ref("");
-    const { modulos, sistemas, apps } = storeToRefs(authStore);
-    const CatalogosConList = ref([]);
-    const ConsumiblesList = ref([]);
-    const SolicitudesList = ref([]);
+const leftDrawerOpen = ref(false);
+const $q = useQuasar();
+const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
+const notificacionStore = useNotificacionStore();
+const encryptStorage = new EncryptStorage("SECRET_KEY", "sessionStorage");
+const { startConnection, onReceiveNotification, onLine } = useNotifications();
+const { notificaciones, no_notificaciones, notificaciones_all } =
+  storeToRefs(notificacionStore);
+const usuario = ref("");
+const { modulos, sistemas, apps } = storeToRefs(authStore);
+const CatalogosConList = ref([]);
 
-    onBeforeMount(async () => {
-      if (route.query.key) {
-        $q.loading.show();
-        localStorage.setItem("key", route.query.key);
-        const resp = await authStore.validarToken(
-          route.query.key,
-          route.query.sistema
-        );
-        $q.loading.hide();
-        if (resp.success == false) {
-          localStorage.removeItem("key");
-          window.location = "http://sistema.ieenayarit.org:9271?return=false";
-        }
-      }
+//----------------------------------------------------------
 
-      if (route.query.sistema) {
-        localStorage.setItem("sistema", route.query.sistema);
-      }
-
-      if (route.query.usr) {
-        localStorage.setItem("usuario", route.query.usr);
-        usuario.value = localStorage.getItem("usuario");
-      } else {
-        if (localStorage.getItem("usuario") != null) {
-          usuario.value = localStorage.getItem("usuario");
-        }
-      }
-      await loadMenu();
+onBeforeMount(async () => {
+  if (route.query.key) {
+    $q.loading.show({
+      spinner: QSpinnerFacebook,
+      spinnerColor: "purple-ieen",
+      spinnerSize: 140,
+      backgroundColor: "purple-3",
+      message: "Espere un momento, por favor...",
+      messageColor: "black",
     });
+    encryptStorage.encrypt("key", route.query.key);
+    const resp = await authStore.validarToken(
+      route.query.key,
+      route.query.sistema
+    );
+    $q.loading.hide();
+    if (resp.success == false) {
+      localStorage.clear();
+      sessionStorage.clear();
+      encryptStorage.remove("key");
+      window.location = "http://sistema.ieenayarit.org:9271?return=false";
+    }
+  }
 
-    const show = () => {
-      $q.bottomSheet({
-        message: "Aplicaciones",
-        grid: true,
-        actions: apps.value,
-      }).onOk((action) => {
-        if (action.label == "Cerrar sesión") {
-          localStorage.clear();
-          sessionStorage.clear()
-          window.location = "http://sistema.ieenayarit.org:9271?return=false";
-        } else if (action.label == "Ir a universo") {
-          window.location = "http://sistema.ieenayarit.org:9271?return=true";
-        } else {
-          window.location =
-            action.url +
-            `/#/?key=${localStorage.getItem("key")}&sistema=${
-              action.id
-            }&usr=${localStorage.getItem("usuario")}`;
-        }
-      });
-    };
+  if (route.query.sistema) {
+    encryptStorage.encrypt("sistema", route.query.sistema);
+  }
 
-    const loadMenu = async () => {
-      $q.loading.show();
-      await authStore.loadSistemas();
-      await authStore.loadModulos();
-      await authStore.loadPerfil();
-      modulos.value.forEach((element) => {
-        switch (element.siglas_Modulo) {
-          case "SI-CAT-BOD":
-            CatalogosConList.value.push("SI-CAT-BOD");
-            break;
-          case "SI-CAT-ASI":
-            CatalogosConList.value.push("SI-CAT-ASI");
-            break;
-          case "SI-CAT-CAT":
-            CatalogosConList.value.push("SI-CAT-CAT");
-            break;
-          case "SI-CAT-EST":
-            CatalogosConList.value.push("SI-CAT-EST");
-            break;
-          case "SI-CAT-INV":
-            CatalogosConList.value.push("SI-CAT-INV");
-            break;
-          case "SI-CAT-MAR":
-            CatalogosConList.value.push("SI-CAT-MAR");
-            break;
-          case "SI-MOV-INV":
-            CatalogosConList.value.push("SI-MOV-INV");
-            break;
-          case "SI-CAT-MOD":
-            CatalogosConList.value.push("SI-CAT-MOD");
-            break;
-          case "SI-MI-INV":
-            CatalogosConList.value.push("SI-MI-INV");
-            break;
-          case "SI-CAT-PRO":
-            CatalogosConList.value.push("SI-CAT-PRO");
-            break;
-          case "SI-ASI-FAC":
-            CatalogosConList.value.push("SI-ASI-FAC");
-            break;
-          case "SI-TIP-MOV":
-            CatalogosConList.value.push("SI-TIP-MOV");
-            break;
-        }
-      });
-      $q.loading.hide();
-    };
-
-    return {
-      leftDrawerOpen,
-      CatalogosConList,
-      ConsumiblesList,
-      SolicitudesList,
-      usuario,
-      show,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
-    };
-  },
+  if (route.query.usr) {
+    encryptStorage.encrypt("usuario", route.query.usr);
+    usuario.value = encryptStorage.decrypt("usuario");
+  } else {
+    if (encryptStorage.decrypt("usuario") != null) {
+      usuario.value = encryptStorage.decrypt("usuario");
+    }
+  }
+  await loadMenu();
+  await notificacionStore.loadNotificaciones();
+  await notificacionStore.loadNotificacionesAll();
+  conectar_signalr();
 });
+
+const conectar_signalr = async () => {
+  await startConnection();
+  onReceiveNotification();
+};
+
+const toggleLeftDrawer = () => {
+  leftDrawerOpen.value = !leftDrawerOpen.value;
+};
+
+const detalle = async (row) => {
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
+  let resp = await notificacionStore.leerNotificacion(row.id);
+  if (resp.success == true) {
+    await notificacionStore.loadNotificaciones();
+  }
+  // let url = sistemas.value.find((x) => x.sistema_Id == row.sistema_Id);
+  // if (url.label == "Pases de salida") {
+  //   router.push({
+  //     name: "misSolicitudes",
+  //   });
+  // } else {
+  //   window.location =
+  //     url.url +
+  //     `/#/?key=${encryptStorage.decrypt("key")}&sistema=${
+  //       row.sistema_Id
+  //     }&usr=${encryptStorage.decrypt("usuario")}`;
+  // }
+  $q.loading.hide();
+};
+
+const marcarLeido = async () => {
+  let resp = await notificacionStore.leerTodas();
+  if (resp.success) {
+    $q.notify({
+      position: "top-right",
+      type: "positive",
+      message: resp.data,
+      actions: [
+        {
+          icon: "close",
+          color: "white",
+          round: true,
+          handler: () => {},
+        },
+      ],
+    });
+    await notificacionStore.loadNotificaciones();
+    await notificacionStore.loadNotificacionesAll();
+  } else {
+    $q.notify({
+      position: "top-right",
+      type: "negative",
+      message: resp.data,
+      actions: [
+        {
+          icon: "close",
+          color: "white",
+          round: true,
+          handler: () => {},
+        },
+      ],
+    });
+  }
+};
+
+const toNotificaciones = () => {
+  router.push({
+    name: "notificaciones",
+  });
+};
+
+const show = () => {
+  $q.bottomSheet({
+    message: "Aplicaciones",
+    grid: true,
+    actions: apps.value,
+  }).onOk((action) => {
+    if (action.label == "Cerrar sesión") {
+      localStorage.clear();
+      sessionStorage.clear();
+      encryptStorage.remove("key");
+      window.location = `${urlSistemas}:9271?return=false`;
+    } else if (action.label == "Ir a universo") {
+      window.location = `${urlSistemas}:9271?return=true`;
+    } else {
+      window.location =
+        `${urlSistemas}:${action.url.split(":")[2]}` +
+        `/#/?key=${encryptStorage.decrypt("key")}&sistema=${
+          action.id
+        }&usr=${encryptStorage.decrypt("usuario")}`;
+    }
+  });
+};
+
+const loadMenu = async () => {
+  $q.loading.show();
+  await authStore.loadSistemas();
+  await authStore.loadModulos();
+  await authStore.loadPerfil();
+  modulos.value.forEach((element) => {
+    switch (element.siglas_Modulo) {
+      case "SI-CAT-BOD":
+        CatalogosConList.value.push("SI-CAT-BOD");
+        break;
+      case "SI-CAT-ASI":
+        CatalogosConList.value.push("SI-CAT-ASI");
+        break;
+      case "SI-CAT-CAT":
+        CatalogosConList.value.push("SI-CAT-CAT");
+        break;
+      case "SI-CAT-EST":
+        CatalogosConList.value.push("SI-CAT-EST");
+        break;
+      case "SI-CAT-INV":
+        CatalogosConList.value.push("SI-CAT-INV");
+        break;
+      case "SI-CAT-MAR":
+        CatalogosConList.value.push("SI-CAT-MAR");
+        break;
+      case "SI-MOV-INV":
+        CatalogosConList.value.push("SI-MOV-INV");
+        break;
+      case "SI-CAT-MOD":
+        CatalogosConList.value.push("SI-CAT-MOD");
+        break;
+      case "SI-MI-INV":
+        CatalogosConList.value.push("SI-MI-INV");
+        break;
+      case "SI-CAT-PRO":
+        CatalogosConList.value.push("SI-CAT-PRO");
+        break;
+      case "SI-ASI-FAC":
+        CatalogosConList.value.push("SI-ASI-FAC");
+        break;
+      case "SI-TIP-MOV":
+        CatalogosConList.value.push("SI-TIP-MOV");
+        break;
+    }
+  });
+  $q.loading.hide();
+};
 </script>
 
 <style lang="scss">

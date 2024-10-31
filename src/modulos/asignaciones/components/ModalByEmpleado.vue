@@ -38,7 +38,7 @@
           <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
             <q-select
               v-model="empleado_Id"
-              :options="listEmpleados"
+              :options="list_Empleados"
               label="Personal"
               :lazy-rules="true"
               :rules="[(val) => !!val || 'El personal es requerido']"
@@ -57,7 +57,6 @@
               <template v-slot:top-right>
                 <q-input
                   borderless
-                  outlined
                   dense
                   debounce="300"
                   v-model="filter"
@@ -108,7 +107,8 @@ import ValeGeneralResguardo from "../../../helpers/ValeGeneralResguardo";
 const $q = useQuasar();
 const asignacionStore = useAsignacionStore();
 const empleadosStore = useEmpleadosStore();
-const { modalByEmpleado, areas, listEmpleados, list_Inventario_By_Empleado } =
+const { list_Empleados } = storeToRefs(empleadosStore);
+const { modalByEmpleado, areas, list_Inventario_By_Empleado } =
   storeToRefs(asignacionStore);
 const area_Id = ref(null);
 const empleado_Id = ref(null);
@@ -125,15 +125,13 @@ onBeforeMount(() => {
 watch(area_Id, (val) => {
   if (val != null) {
     empleado_Id.value = null;
-    asignacionStore.loadEmpleadosByArea(val.value);
+    getEmpleadosByArea(val);
   }
 });
 
-watch(empleado_Id, async (val) => {
+watch(empleado_Id, (val) => {
   if (val != null) {
-    empleadosStore.initEmpleado();
-    await empleadosStore.loadEmpleadoById(empleado_Id.value.value);
-    await asignacionStore.loadInventarioByEmpleado(empleado_Id.value.value);
+    getInventarioByEmpleado(val);
   }
 });
 
@@ -145,6 +143,16 @@ const cargarData = async () => {
 
 const onSubmit = async () => {
   await ValeGeneralResguardo();
+};
+
+const getEmpleadosByArea = async (val) => {
+  await empleadosStore.loadEmpleadosByArea(val.value, false);
+};
+
+const getInventarioByEmpleado = async () => {
+  empleadosStore.initEmpleado();
+  await empleadosStore.loadEmpleadoById(empleado_Id.value.value);
+  await asignacionStore.loadInventarioByEmpleado(empleado_Id.value.value);
 };
 
 const actualizarModal = (valor) => {

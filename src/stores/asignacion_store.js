@@ -14,7 +14,6 @@ export const useAsignacionStore = defineStore("asignacion", {
     asignaciones: [],
     listaAsignacionInventario: [],
     listInventarioByBodega: [],
-    listEmpleados: [],
     listFiltroAsignaciones: [],
     list_Inventario_By_Empleado: [],
     areas: [],
@@ -207,34 +206,6 @@ export const useAsignacionStore = defineStore("asignacion", {
         return {
           success: false,
           data: "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
-        };
-      }
-    },
-
-    //-----------------------------------------------------------
-
-    async loadEmpleadosByArea(id, especial) {
-      try {
-        let detalle = await api.get(`/Empleados/ByArea/${id}`);
-        let listEmpleados = detalle.data.data.map((detalle) => {
-          return {
-            puesto_Id: detalle.puesto_Id,
-            label: `${detalle.nombres} ${detalle.apellido_Paterno} ${detalle.apellido_Materno}`,
-            value: detalle.id,
-            puesto: detalle.puesto,
-          };
-        });
-        if (especial == true) {
-          listEmpleados.splice(0, 0, {
-            value: 0,
-            label: "Todos",
-          });
-        }
-        this.listEmpleados = listEmpleados;
-      } catch (error) {
-        return {
-          success: false,
-          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
         };
       }
     },
@@ -437,25 +408,12 @@ export const useAsignacionStore = defineStore("asignacion", {
       }
     },
 
-    async deleteDetalle(id, idasignacion) {
+    async deleteDetalle(id) {
       try {
         let resp = await api.delete(`/DetalleAsignaciones/${id}`);
         if (resp.status == 200) {
           const { success, data } = resp.data;
           if (success === true) {
-            let resp = await api.get(
-              `/DetalleAsignaciones/BySolicitud/${idasignacion}`
-            );
-            let { data } = resp.data;
-            this.listaAsignacionInventario = data.map((asignacion) => {
-              return {
-                id: asignacion.id,
-                asignacion_Id: asignacion.asignacion_Id,
-                clave: asignacion.inventario,
-                descripcion: asignacion.descripcion,
-                inventario_Id: asignacion.inventario_Id,
-              };
-            });
             return { success, data };
           } else {
             return { success, data };

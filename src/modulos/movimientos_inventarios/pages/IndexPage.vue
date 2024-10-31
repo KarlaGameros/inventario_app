@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { useQuasar } from "quasar";
+import { useQuasar, QSpinnerFacebook } from "quasar";
 import { storeToRefs } from "pinia";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useMovimientoInventario } from "src/stores/movimiento_inventario";
@@ -72,16 +72,21 @@ onBeforeMount(() => {
 //-----------------------------------------------------------
 
 const leerPermisos = async () => {
-  $q.loading.show();
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   await authStore.loadModulo(siglas);
   $q.loading.hide();
 };
 
 const actualizarModal = (valor) => {
-  $q.loading.show();
   movimientoInventarioStore.initMovimiento();
   movimientoInventarioStore.initDetalleMovimiento();
   movimientoInventarioStore.actualizarModal(valor);
-  $q.loading.hide();
 };
 </script>

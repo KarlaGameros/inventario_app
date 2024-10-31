@@ -19,11 +19,8 @@
       </div>
     </div>
     <div class="row">
-      <div class="col">
-        <div
-          v-if="$q.screen.xs"
-          class="text-right q-pa-md items-start q-gutter-md"
-        >
+      <div class="col text-right">
+        <div v-if="$q.screen.xs" class="q-pa-md items-start q-gutter-md">
           <q-list dense padding class="rounded-borders">
             <q-item>
               <q-btn
@@ -314,10 +311,10 @@ const columns = [
     sortable: true,
   },
   {
-    name: "descripcion",
+    name: "descripcion_completo",
     align: "center",
     label: "Descripción",
-    field: "descripcion",
+    field: "descripcion_completo",
     sortable: true,
   },
   {
@@ -409,6 +406,13 @@ const columns = [
     align: "center",
     label: "Importe",
     field: "importe",
+    sortable: true,
+  },
+  {
+    name: "observaciones",
+    align: "center",
+    label: "Observaciones",
+    field: "observaciones",
     sortable: true,
   },
 ];

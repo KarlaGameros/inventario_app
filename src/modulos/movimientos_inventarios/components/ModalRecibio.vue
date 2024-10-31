@@ -123,7 +123,7 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { useQuasar } from "quasar";
+import { useQuasar, QSpinnerFacebook } from "quasar";
 import { useEmpleadosStore } from "src/stores/empleados_store";
 import { onBeforeMount, ref, watch } from "vue";
 import { useMovimientoInventario } from "../../../stores/movimiento_inventario";
@@ -148,25 +148,45 @@ onBeforeMount(() => {
 
 //-----------------------------------------------------------
 
-watch(area_Id, async (val) => {
+watch(area_Id, (val) => {
   if (val != null) {
     personal_Id.value = null;
-    await empleadosStore.loadEmpleadosByArea(val.value);
+    getEmpleadosByArea(val);
   }
 });
 
-watch(area_Id_Elaboro, async (val) => {
+watch(area_Id_Elaboro, (val) => {
   if (val != null) {
     personal_Id_Elaboro.value = null;
-    await empleadosStore.loadEmpleadosByArea(val.value);
+    getEmpleadosByArea(val);
   }
 });
 
 //-----------------------------------------------------------
 
 const cargarData = async () => {
-  $q.loading.show();
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   await empleadosStore.loadAreasList();
+  $q.loading.hide();
+};
+
+const getEmpleadosByArea = async (val) => {
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
+  await empleadosStore.loadEmpleadosByArea(val.value, false);
   $q.loading.hide();
 };
 
@@ -177,7 +197,14 @@ const actualizarModal = (valor) => {
 };
 
 const onSubmit = async () => {
-  $q.loading.show();
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   await EntregaRecepcion();
   actualizarModal(false);
   $q.loading.hide();

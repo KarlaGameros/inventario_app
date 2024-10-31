@@ -137,7 +137,7 @@
                 v-if="!isShow && !isEditar"
                 label="Empleado"
                 v-model="empleado_Id"
-                :options="listEmpleados"
+                :options="list_Empleados"
                 hint="Selecciona una empleado"
               >
                 <template v-slot:prepend>
@@ -254,7 +254,7 @@
               <q-btn
                 icon-right="save"
                 v-if="!isShow"
-                :disable="habilitar_Button"
+                :disable="listaAsignacionInventario.length == 0"
                 label="Guardar"
                 type="submit"
                 color="secondary"
@@ -274,7 +274,7 @@ import { useQuasar } from "quasar";
 import { useCatalogoProductoStore } from "src/stores/catalogos_producto_store";
 import { useEstatusStore } from "src/stores/estatus_store";
 import { useInventarioStore } from "src/stores/inventario_store";
-import { onBeforeMount, ref, watch, watchEffect } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import { useAsignacionStore } from "../../../stores/asignacion_store";
 import { useEmpleadosStore } from "src/stores/empleados_store";
 import { useBodegaStore } from "src/stores/bodega_store";
@@ -300,12 +300,12 @@ const {
   areas,
   puestos,
   listaAsignacionInventario,
-  listEmpleados,
   isEditar,
   isShow,
   isByBodega,
   detalleAsignaciones,
 } = storeToRefs(asignacionStore);
+const { list_Empleados } = storeToRefs(empleadoStore);
 const estatus_Id = ref(null);
 const area_Id = ref(null);
 const puesto_Id = ref(null);
@@ -314,12 +314,10 @@ const inventario_Id = ref(null);
 const empleado_Id = ref(null);
 const catalogo_Id = ref(null);
 const opciones_Inventario = ref([...inventarios.value]);
-const habilitar_Button = ref(false);
 const loading = ref(false);
 const qr = ref(false);
 const codigo_QR = ref("");
 const codigo_QR_Ref = ref(null);
-const isSmallScreen = ref(window.matchMedia("(max-width: 768px)").matches);
 const tipo_Asignacion = ref("personal");
 
 //-----------------------------------------------------------
@@ -341,41 +339,34 @@ onBeforeMount(() => {
 
 //-----------------------------------------------------------
 
-watch(
-  () => window.innerWidth,
-  (width) => {
-    isSmallScreen.value = width <= 768;
-  }
-);
-
 watch(asignacion.value, (val) => {
   if (isEditar.value == true || isShow.value == true) {
     if (val.id != null) {
       cargarEstatus(val);
       cargarArea(val);
-      cargarPuestos(val);
+      cargarPuesto(val);
       catalogo_Id.value = { value: 0, label: "Todos" };
       date.value = val.fecha_Asignacion;
     }
   }
 });
 
-watch(catalogo_Id, (val) => {
+watch(catalogo_Id, async (val) => {
   if (val != null) {
     inventario_Id.value = null;
-    inventarioStore.loadListInventario(val.value);
+    await inventarioStore.loadListInventario(val.value);
   }
 });
 
-watch(area_Id, (val) => {
+watch(area_Id, async (val) => {
   if (val != null) {
     if (tipo_Asignacion.value == "bodega") {
-      empleadoStore.loadResponsableByArea(area_Id.value.value);
+      await empleadoStore.loadResponsableByArea(area_Id.value.value);
     } else {
-      asignacionStore.loadEmpleadosByArea(area_Id.value.value, false);
       empleado_Id.value = null;
       puesto_Id.value = null;
       puesto.value = null;
+      await empleadoStore.loadEmpleadosByArea(area_Id.value.value, false);
     }
   }
 });
@@ -390,14 +381,6 @@ watch(empleado_Id, (val) => {
 watch(modal, (val) => {
   if (val == true) {
     catalogo_Id.value = { value: 0, label: "Todos" };
-  }
-});
-
-watchEffect(() => {
-  if (listaAsignacionInventario.value.length > 0) {
-    habilitar_Button.value = false;
-  } else {
-    habilitar_Button.value = true;
   }
 });
 
@@ -434,12 +417,12 @@ const cargarArea = async (val) => {
   if (area_Id.value == null) {
     let areaFiltrado = areas.value.find((x) => x.value == `${val.area_Id}`);
     area_Id.value = areaFiltrado;
-    await asignacionStore.loadEmpleadosByArea(val.area_Id, false);
+    await empleadoStore.loadEmpleadosByArea(val.area_Id, false);
     cargarEmpleado(val);
   }
 };
 
-const cargarPuestos = async (val) => {
+const cargarPuesto = async (val) => {
   if (puesto_Id.value == null) {
     let puestoFiltrado = puestos.value.find(
       (x) => x.value == `${val.puesto_Id}`
@@ -450,7 +433,7 @@ const cargarPuestos = async (val) => {
 
 const cargarEmpleado = async (val) => {
   if (empleado_Id.value == null) {
-    let empleadoFiltrado = listEmpleados.value.find(
+    let empleadoFiltrado = list_Empleados.value.find(
       (x) => x.value == `${val.empleado_Id}`
     );
     empleado_Id.value = empleadoFiltrado;
@@ -467,14 +450,14 @@ const limpiarCampos = () => {
   puesto.value = null;
   puesto_Id.value = null;
   tipo_Asignacion.value = "personal";
+  catalogo_Id.value = { value: 0, label: "Todos" };
   empleadoStore.initEmpleado();
+  asignacionStore.initAsignacion();
 };
 
 const actualizarModal = (valor) => {
   limpiarCampos();
-  catalogo_Id.value = { value: 0, label: "Todos" };
   asignacionStore.actualizarModal(valor);
-  asignacionStore.initAsignacion();
   asignacionStore.updateEditar(false);
   asignacionStore.updateIsBodega(false);
 };
@@ -506,7 +489,6 @@ const filterInventario = (val, update) => {
         loading.value = false;
       }, 1000);
     });
-
     return;
   }
   update(() => {
@@ -518,50 +500,36 @@ const filterInventario = (val, update) => {
 };
 
 const validateForm = async () => {
-  if (isEditar.value == false) {
+  if (!isEditar.value) {
     if (
       area_Id.value == null ||
       empleado_Id.value == null ||
       puesto_Id.value == null
     ) {
-      $q.dialog({
-        title: "Atención",
+      $q.notify({
+        position: "center",
+        type: "warning",
         message: "Llenar los datos del personal",
-        icon: "Warning",
-        persistent: true,
-        transitionShow: "scale",
-        transitionHide: "scale",
       });
     } else {
       return true;
     }
-  } else if (isEditar.value == true) {
-    if (
-      asignacion.value.area_Id == null ||
-      asignacion.value.empleado_Id == null ||
-      asignacion.value.puesto_Id == null
-    ) {
-      $q.dialog({
-        title: "Atención",
-        message: "Llenar los datos del personal",
-        icon: "Warning",
-        persistent: true,
-        transitionShow: "scale",
-        transitionHide: "scale",
-      });
-    } else {
-      return true;
-    }
+  } else {
+    return true;
   }
 };
 
 const agregarProducto = async () => {
   let respValidate = await validateForm();
   if (respValidate == true) {
-    if (listaAsignacionInventario.value.length == 0) {
+    let resp = null;
+    let filtro = listaAsignacionInventario.value.find(
+      (x) => x.inventario_Id == inventario_Id.value.value
+    );
+    if (filtro == undefined) {
       if (isEditar.value == true) {
         detalleAsignaciones.value.inventario_Id = inventario_Id.value.value;
-        await asignacionStore.createDetalleAsignacion(
+        resp = await asignacionStore.createDetalleAsignacion(
           asignacion.value.id,
           detalleAsignaciones.value
         );
@@ -569,6 +537,20 @@ const agregarProducto = async () => {
           asignacion.value.id,
           inventario_Id.value
         );
+        if (resp.success == true) {
+          $q.notify({
+            position: "top-right",
+            type: "positive",
+            message: "Se agrego correctamente",
+          });
+        } else {
+          $q.notify({
+            position: "top-right",
+            type: "negative",
+            message:
+              "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+          });
+        }
       } else {
         await asignacionStore.addInventario(
           asignacion.value.id,
@@ -577,53 +559,11 @@ const agregarProducto = async () => {
       }
       inventario_Id.value = null;
     } else {
-      let resp = null;
-      let filtro = listaAsignacionInventario.value.find(
-        (x) => x.inventario_Id == inventario_Id.value.value
-      );
-      if (filtro == undefined) {
-        if (isEditar.value == true) {
-          detalleAsignaciones.value.inventario_Id = inventario_Id.value.value;
-          resp = await asignacionStore.createDetalleAsignacion(
-            asignacion.value.id,
-            detalleAsignaciones.value
-          );
-          await asignacionStore.addInventario(
-            asignacion.value.id,
-            inventario_Id.value
-          );
-          if (resp.success == true) {
-            $q.notify({
-              position: "top-right",
-              type: "positive",
-              message: "Se agrego correctamente",
-            });
-          } else {
-            $q.notify({
-              position: "top-right",
-              type: "negative",
-              message:
-                "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
-            });
-          }
-        } else {
-          await asignacionStore.addInventario(
-            asignacion.value.id,
-            inventario_Id.value
-          );
-        }
-
-        inventario_Id.value = null;
-      } else {
-        $q.dialog({
-          title: "Atención",
-          message: "El producto ya se agrego",
-          icon: "Warning",
-          persistent: true,
-          transitionShow: "scale",
-          transitionHide: "scale",
-        });
-      }
+      $q.notify({
+        position: "center",
+        type: "warning",
+        message: "El producto ya se agrego anteriormente",
+      });
     }
   }
 };
@@ -640,29 +580,30 @@ const registrar = async () => {
   asignacion.value.eliminado = false;
   asignacion.value.tipo = "Personal";
   asignacion.value.fecha_Asignacion = date.value;
+
   if (isEditar.value == true) {
     resp = await asignacionStore.updateAsignacion(asignacion.value);
   } else {
     resp = await asignacionStore.createAsignacion(asignacion.value);
   }
+
   if (resp.success) {
+    $q.loading.hide();
     $q.notify({
       position: "top-right",
       type: "positive",
       message: resp.data,
     });
     actualizarModal(false);
-    limpiarCampos();
     asignacionStore.initAsignacion();
-    asignacionStore.loadInformacionAsignaciones();
+    await asignacionStore.loadInformacionAsignaciones();
   } else {
+    $q.loading.hide();
     $q.notify({
       position: "top-right",
       type: "negative",
       message: resp.data,
     });
   }
-
-  $q.loading.hide();
 };
 </script>

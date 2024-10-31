@@ -56,109 +56,99 @@
           >
             <q-card bordered class="no-shadow">
               <q-list dense>
-                <q-item
-                  v-for="col in props.cols.filter((col) => col.name !== 'id')"
-                  :key="col.name"
-                >
+                <q-item v-for="col in props.cols" :key="col.name">
                   <q-item-section>
                     <q-item-label class="text-bold"
                       >{{ col.label }}:</q-item-label
                     >
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>{{ col.value }}</q-item-label>
+                    <div v-if="col.name == 'id'">
+                      <q-btn
+                        v-if="
+                          modulo == null
+                            ? false
+                            : modulo.actualizar &&
+                              props.row.estatus == 'Afectado'
+                        "
+                        flat
+                        round
+                        color="purple-ieen"
+                        icon="print"
+                        @click="descargarVale(props.row)"
+                      />
+                      <q-btn
+                        v-if="
+                          modulo == null
+                            ? false
+                            : modulo.actualizar &&
+                              props.row.estatus == 'Afectado' &&
+                              props.row.tipo_Movimiento == 'Salida'
+                        "
+                        flat
+                        round
+                        color="purple-ieen"
+                        icon="add_a_photo"
+                        @click="verFotos(col.value)"
+                      />
+                      <q-btn
+                        v-if="
+                          modulo == null
+                            ? false
+                            : modulo.actualizar &&
+                              props.row.estatus == 'Pendiente'
+                        "
+                        flat
+                        round
+                        color="purple-ieen"
+                        icon="edit"
+                        @click="editar(col.value)"
+                      />
+                      <q-btn
+                        v-if="
+                          modulo == null
+                            ? false
+                            : modulo.actualizar &&
+                              props.row.estatus == 'Pendiente'
+                        "
+                        flat
+                        round
+                        color="purple-ieen"
+                        icon="send"
+                        @click="afectar(col.value)"
+                      />
+                      <q-btn
+                        v-if="
+                          modulo == null
+                            ? false
+                            : modulo.actualizar &&
+                              props.row.estatus == 'Pendiente'
+                        "
+                        flat
+                        round
+                        color="purple-ieen"
+                        icon="cancel"
+                        @click="cancelar(col.value)"
+                      />
+                      <q-btn
+                        v-if="
+                          modulo == null
+                            ? false
+                            : modulo.actualizar &&
+                              props.row.estatus != 'Pendiente'
+                        "
+                        flat
+                        round
+                        color="purple-ieen"
+                        icon="search"
+                        @click="verMovimiento(col.value)"
+                      />
+                    </div>
+                    <q-item-label v-else>{{ col.value }}</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
               <q-separator />
-              <q-card-section class="text-center">
-                <q-btn
-                  v-if="
-                    modulo == null
-                      ? false
-                      : modulo.actualizar && props.row.estatus == 'Afectado'
-                  "
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="print"
-                  @click="descargarVale(props.row)"
-                >
-                  <q-tooltip>Vale movimiento</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="
-                    modulo == null
-                      ? false
-                      : modulo.actualizar &&
-                        props.row.estatus == 'Afectado' &&
-                        props.row.tipo_Movimiento == 'Salida'
-                  "
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="add_a_photo"
-                  @click="verFotos(props.row.id)"
-                >
-                  <q-tooltip>Fotos</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="
-                    modulo == null
-                      ? false
-                      : modulo.actualizar && props.row.estatus == 'Pendiente'
-                  "
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="edit"
-                  @click="editar(props.row.id)"
-                >
-                  <q-tooltip>Editar movimiento</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="
-                    modulo == null
-                      ? false
-                      : modulo.actualizar && props.row.estatus == 'Pendiente'
-                  "
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="send"
-                  @click="afectar(props.row.id)"
-                >
-                  <q-tooltip>Afectar movimiento</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="
-                    modulo == null
-                      ? false
-                      : modulo.actualizar && props.row.estatus == 'Pendiente'
-                  "
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="cancel"
-                  @click="cancelar(props.row.id)"
-                >
-                  <q-tooltip>Cancelar movimiento</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="
-                    modulo == null
-                      ? false
-                      : modulo.actualizar && props.row.estatus != 'Pendiente'
-                  "
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="search"
-                  @click="verMovimiento(props.row.id)"
-                >
-                  <q-tooltip>Ver movimiento</q-tooltip>
-                </q-btn>
-              </q-card-section>
             </q-card>
           </div>
         </template>
@@ -292,7 +282,7 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { useQuasar } from "quasar";
+import { useQuasar, QSpinnerFacebook } from "quasar";
 import { onBeforeMount, ref, watchEffect } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
 import { useMovimientoInventario } from "../../../stores/movimiento_inventario";
@@ -330,15 +320,28 @@ onBeforeMount(() => {
 //-----------------------------------------------------------
 
 const cargarData = async () => {
-  $q.loading.show();
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   await movimientoStore.loadInformacionMovimientos();
   await movimientoStore.loadBodegas();
   $q.loading.hide();
 };
 
 const descargarVale = async (row) => {
-  console.log(row);
-  $q.loading.show();
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   await movimientoStore.loadMovimiento(row.id);
   await movimientoStore.loadDetalleMovimiento(row.id);
   await miInventarioStore.loadUser();
@@ -359,7 +362,14 @@ const descargarVale = async (row) => {
 };
 
 const verFotos = async (id) => {
-  $q.loading.show();
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   await movimientoStore.loadMovimiento(id);
   await movimientoStore.loadDetalleMovimiento(id);
   movimientoStore.actualizarModalFotos(true);
@@ -367,7 +377,14 @@ const verFotos = async (id) => {
 };
 
 const editar = async (id) => {
-  $q.loading.show();
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   movimientoStore.updateEditar(true);
   movimientoStore.updateVisualizar(false);
   movimientoStore.actualizarModal(true);
@@ -377,7 +394,6 @@ const editar = async (id) => {
 };
 
 const afectar = async (id) => {
-  await movimientoStore.loadMovimiento(id);
   $q.dialog({
     title: "Afectar movimiento",
     message: "¿Está seguro de afectar el movimiento?",
@@ -394,8 +410,15 @@ const afectar = async (id) => {
       label: " No Cancelar",
     },
   }).onOk(async () => {
-    $q.loading.show();
-
+    $q.loading.show({
+      spinner: QSpinnerFacebook,
+      spinnerColor: "purple-ieen",
+      spinnerSize: 140,
+      backgroundColor: "purple-3",
+      message: "Espere un momento, por favor...",
+      messageColor: "black",
+    });
+    await movimientoStore.loadMovimiento(id);
     let resp = await movimientoStore.afectarMovimiento(
       id,
       movimiento.value.tipo_Movimiento
@@ -421,7 +444,14 @@ const afectar = async (id) => {
 };
 
 const verMovimiento = async (id) => {
-  $q.loading.show();
+  $q.loading.show({
+    spinner: QSpinnerFacebook,
+    spinnerColor: "purple-ieen",
+    spinnerSize: 140,
+    backgroundColor: "purple-3",
+    message: "Espere un momento, por favor...",
+    messageColor: "black",
+  });
   movimientoStore.updateVisualizar(true);
   movimientoStore.actualizarModal(true);
   await movimientoStore.loadMovimiento(id);
@@ -446,7 +476,14 @@ const cancelar = async (id) => {
       label: " No Cancelar",
     },
   }).onOk(async () => {
-    $q.loading.show();
+    $q.loading.show({
+      spinner: QSpinnerFacebook,
+      spinnerColor: "purple-ieen",
+      spinnerSize: 140,
+      backgroundColor: "purple-3",
+      message: "Espere un momento, por favor...",
+      messageColor: "black",
+    });
     const resp = await movimientoStore.cancelarMovimiento(id);
     if (resp.success) {
       $q.loading.hide();

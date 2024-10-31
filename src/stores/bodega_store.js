@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { api } from "src/boot/axios";
+import { EncryptStorage } from "storage-encryption";
 
+const encryptStorage = new EncryptStorage("SECRET_KEY", "sessionStorage");
 export const useBodegaStore = defineStore("bodega", {
   state: () => ({
     modal: false,
@@ -33,10 +35,13 @@ export const useBodegaStore = defineStore("bodega", {
         let { data } = resp.data;
         this.bodegas = data.map((bodega) => {
           return {
+            value: bodega.id,
+            label: bodega.nombre,
             id: bodega.id,
             area: bodega.area,
             nombre: bodega.nombre,
             siglas: bodega.siglas,
+            area_Id: bodega.area_Id,
           };
         });
       } catch (error) {
@@ -95,7 +100,7 @@ export const useBodegaStore = defineStore("bodega", {
         let resp = await api.get("/Bodegas");
         let { data } = resp.data;
         let filtro = [];
-        if (localStorage.getItem("perfil") == "Personal sin UTIE") {
+        if (encryptStorage.decrypt("perfil") == "Personal sin UTIE") {
           filtro = data.filter(
             (x) => x.area != "Unidad Técnica de Informática y Estadística"
           );

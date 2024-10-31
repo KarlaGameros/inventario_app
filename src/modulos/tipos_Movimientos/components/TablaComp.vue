@@ -31,43 +31,35 @@
           >
             <q-card bordered class="no-shadow">
               <q-list dense>
-                <q-item
-                  v-for="col in props.cols.filter((col) => col.name !== 'id')"
-                  :key="col.name"
-                >
+                <q-item v-for="col in props.cols" :key="col.name">
                   <q-item-section>
                     <q-item-label class="text-bold"
                       >{{ col.label }}:</q-item-label
                     >
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>{{ col.value }}</q-item-label>
+                    <div v-if="col.name == 'id'">
+                      <q-btn
+                        v-if="modulo == null ? false : modulo.actualizar"
+                        flat
+                        round
+                        color="purple-ieen"
+                        icon="add_circle"
+                        @click="addConceptos(col.value)"
+                      />
+                      <q-btn
+                        v-if="modulo == null ? false : modulo.actualizar"
+                        flat
+                        round
+                        color="purple-ieen"
+                        icon="visibility"
+                        @click="editar(col.value)"
+                      />
+                    </div>
+                    <q-item-label v-else>{{ col.value }}</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
-              <q-separator />
-              <q-card-section class="text-center">
-                <q-btn
-                  v-if="modulo == null ? false : modulo.actualizar"
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="add_circle"
-                  @click="addConceptos(props.row.id)"
-                >
-                  <q-tooltip>Agregar conceptos</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="modulo == null ? false : modulo.actualizar"
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="visibility"
-                  @click="editar(props.row.id)"
-                >
-                  <q-tooltip>Ver tipo de movimiento</q-tooltip>
-                </q-btn>
-              </q-card-section>
             </q-card>
           </div>
         </template>

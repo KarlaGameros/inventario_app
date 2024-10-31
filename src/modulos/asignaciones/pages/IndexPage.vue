@@ -69,12 +69,14 @@ import ModalValeBodega from "../components/ModalValeBodega.vue";
 import TablaComp from "../components/TablaComp.vue";
 import ModalComp from "../components/ModalComp.vue";
 import ModalByEmpleado from "../components/ModalByEmpleado.vue";
+import { useEmpleadosStore } from "src/stores/empleados_store";
 
 //-----------------------------------------------------------
 
 const $q = useQuasar();
 const authStore = useAuthStore();
 const asignacionStore = useAsignacionStore();
+const empleadosStore = useEmpleadosStore();
 const { modulo } = storeToRefs(authStore);
 const siglas = "SI-CAT-ASI";
 
@@ -97,7 +99,7 @@ const actualizarModal = (valor) => {
   asignacionStore.actualizarModal(valor);
   asignacionStore.updateVisualizar(false);
   asignacionStore.initAsignacion();
-  asignacionStore.loadEmpleadosByArea(0, false);
+  //empleadosStore.loadEmpleadosByArea(0, false);
   $q.loading.hide();
 };
 

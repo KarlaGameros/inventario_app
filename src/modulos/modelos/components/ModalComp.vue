@@ -67,7 +67,6 @@
           </div>
         </q-form>
       </q-card-section>
-
       <q-card-section>
         <TablaModelo />
       </q-card-section>

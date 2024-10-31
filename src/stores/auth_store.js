@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
 import { api } from "src/boot/axios";
+import { EncryptStorage } from "storage-encryption";
+import { urlSistemas } from "src/boot/axios";
 
+const encryptStorage = new EncryptStorage("SECRET_KEY", "sessionStorage");
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     modulos: [],
@@ -27,13 +30,13 @@ export const useAuthStore = defineStore("auth", {
             puesto_Id,
           } = resp.data;
           if (success === true) {
-            localStorage.setItem("empleado", empleado);
-            localStorage.setItem("perfil", perfil);
-            localStorage.setItem("perfil_Id", perfil_Id);
-            localStorage.setItem("area", area);
-            localStorage.setItem("area_Id", area_Id);
-            localStorage.setItem("puesto", puesto);
-            localStorage.setItem("puesto_Id", puesto_Id);
+            encryptStorage.decrypt("empleado", empleado);
+            encryptStorage.decrypt("perfil", perfil);
+            encryptStorage.decrypt("perfil_Id", perfil_Id);
+            encryptStorage.decrypt("area", area);
+            encryptStorage.decrypt("area_Id", area_Id);
+            encryptStorage.decrypt("puesto", puesto);
+            encryptStorage.decrypt("puesto_Id", puesto_Id);
             return success;
           } else {
             return { success };
@@ -72,22 +75,23 @@ export const useAuthStore = defineStore("auth", {
                 return {
                   id: app.sistema_Id,
                   label: app.sistema,
-                  avatar: app.logo_Url,
+                  avatar:
+                    app.logo_Url == null
+                      ? `${urlSistemas}:9270/Imagenes/Sistemas/67cfdabe-0538-4324-b711-93bcb6cb9a60.png`
+                      : `${urlSistemas}:9270${app.logo_Url.split("9270")[1]}`,
                   url: app.url,
                 };
               });
               const logOut = {
                 id: 0,
                 label: "Cerrar sesión",
-                avatar:
-                  "http://sistema.ieenayarit.org:9270/Imagenes/Sistemas/dbb9640f-dd18-4fc3-b530-7041d8594240.png",
+                avatar: `${urlSistemas}:9270/Imagenes/Sistemas/dbb9640f-dd18-4fc3-b530-7041d8594240.png`,
                 url: "",
               };
               const universoIEEN = {
                 id: 0,
                 label: "Ir a universo",
-                avatar:
-                  "http://sistema.ieenayarit.org:9270/Imagenes/Sistemas/67cfdabe-0538-4324-b711-93bcb6cb9a60.png",
+                avatar: `${urlSistemas}:9270/Imagenes/Sistemas/67cfdabe-0538-4324-b711-93bcb6cb9a60.png`,
                 url: "",
               };
 
@@ -114,7 +118,7 @@ export const useAuthStore = defineStore("auth", {
 
     async loadModulos() {
       try {
-        const sistema = localStorage.getItem("sistema");
+        const sistema = encryptStorage.decrypt("sistema");
         const resp = await api.get(
           `/PermisosModulosUsuarios/Bysuario/${sistema}`
         );
@@ -167,9 +171,9 @@ export const useAuthStore = defineStore("auth", {
         const resp = await api.get("/SistemasUsuarios/ByUSuario");
         let { data } = resp.data;
         let filtro = data.find(
-          (x) => x.sistema_Id == parseInt(localStorage.getItem("sistema"))
+          (x) => x.sistema_Id == parseInt(encryptStorage.decrypt("sistema"))
         );
-        localStorage.setItem("perfil", filtro.perfil);
+        encryptStorage.encrypt("perfil", filtro.perfil);
       } catch (error) {
         return {
           success: false,

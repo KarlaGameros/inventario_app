@@ -32,43 +32,35 @@
           >
             <q-card bordered class="no-shadow">
               <q-list dense>
-                <q-item
-                  v-for="col in props.cols.filter((col) => col.name !== 'id')"
-                  :key="col.name"
-                >
+                <q-item v-for="col in props.cols" :key="col.name">
                   <q-item-section>
                     <q-item-label class="text-bold"
                       >{{ col.label }}:</q-item-label
                     >
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>{{ col.value }}</q-item-label>
+                    <div v-if="col.name == 'id'">
+                      <q-btn
+                        v-if="modulo == null ? false : modulo.actualizar"
+                        flat
+                        round
+                        color="purple-ieen"
+                        icon="edit"
+                        @click="editar(props.row.id)"
+                      />
+                      <q-btn
+                        v-if="modulo == null ? false : modulo.eliminar"
+                        flat
+                        round
+                        color="purple-ieen"
+                        icon="delete"
+                        @click="eliminar(props.row.id)"
+                      />
+                    </div>
+                    <q-item-label v-else>{{ col.value }}</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
-              <q-separator />
-              <q-card-section class="text-center">
-                <q-btn
-                  v-if="modulo == null ? false : modulo.actualizar"
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="edit"
-                  @click="editar(props.row.id)"
-                >
-                  <q-tooltip>Editar proveedor</q-tooltip>
-                </q-btn>
-                <q-btn
-                  v-if="modulo == null ? false : modulo.eliminar"
-                  flat
-                  round
-                  color="purple-ieen"
-                  icon="delete"
-                  @click="eliminar(props.row.id)"
-                >
-                  <q-tooltip>Eliminar proveedor</q-tooltip>
-                </q-btn>
-              </q-card-section>
             </q-card>
           </div>
         </template>
