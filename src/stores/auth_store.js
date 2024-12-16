@@ -30,13 +30,13 @@ export const useAuthStore = defineStore("auth", {
             puesto_Id,
           } = resp.data;
           if (success === true) {
-            encryptStorage.decrypt("empleado", empleado);
-            encryptStorage.decrypt("perfil", perfil);
-            encryptStorage.decrypt("perfil_Id", perfil_Id);
-            encryptStorage.decrypt("area", area);
-            encryptStorage.decrypt("area_Id", area_Id);
-            encryptStorage.decrypt("puesto", puesto);
-            encryptStorage.decrypt("puesto_Id", puesto_Id);
+            encryptStorage.encrypt("empleado", empleado);
+            encryptStorage.encrypt("perfil", perfil);
+            encryptStorage.encrypt("perfil_Id", perfil_Id);
+            encryptStorage.encrypt("area", area);
+            encryptStorage.encrypt("area_Id", area_Id);
+            encryptStorage.encrypt("puesto", puesto);
+            encryptStorage.encrypt("puesto_Id", puesto_Id);
             return success;
           } else {
             return { success };

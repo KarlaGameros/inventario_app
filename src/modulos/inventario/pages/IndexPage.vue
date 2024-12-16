@@ -276,6 +276,13 @@ const generarExcel = () => {
 
 const columns = [
   {
+    name: "id",
+    align: "center",
+    label: "Id",
+    field: "id",
+    sortable: true,
+  },
+  {
     name: "catalogo",
     align: "center",
     label: "Catálogo perteneciente",

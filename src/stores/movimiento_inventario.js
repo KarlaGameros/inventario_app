@@ -951,6 +951,28 @@ export const useMovimientoInventario = defineStore("movimiento_inventario", {
     },
 
     //-----------------------------------------------------------
+    async cancelarAfectadoMovimiento(id) {
+      try {
+        const resp = await api.get(
+          `/MovimientosInventarios/CancelarAfectado/${id}`
+        );
+        if (resp.status == 200) {
+          const { success, data } = resp.data;
+          if (success === true) {
+            return { success, data };
+          } else {
+            return { success, data };
+          }
+        }
+      } catch (error) {
+        return {
+          success: false,
+          data: "Ocurrió un error, intentelo de nuevo. Si el error perisiste, contacte a soporte",
+        };
+      }
+    },
+
+    //-----------------------------------------------------------
     actualizarModal(valor) {
       this.modal = valor;
     },

@@ -243,6 +243,22 @@
                 >
                   <q-tooltip>Ver movimiento</q-tooltip>
                 </q-btn>
+                <q-btn
+                  v-if="
+                    modulo == null
+                      ? false
+                      : modulo.eliminar &&
+                        props.row.estatus == 'Afectado' &&
+                        perfil == 'Super Administrador'
+                  "
+                  flat
+                  round
+                  color="purple-ieen"
+                  icon="delete"
+                  @click="cancelarAfectadoMovimiento(col.value)"
+                >
+                  <q-tooltip>Cancelar movimiento afectado</q-tooltip>
+                </q-btn>
               </div>
               <div v-else-if="col.name == 'estatus'">
                 <q-badge
@@ -282,6 +298,7 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
+import { EncryptStorage } from "storage-encryption";
 import { useQuasar, QSpinnerFacebook } from "quasar";
 import { onBeforeMount, ref, watchEffect } from "vue";
 import { useAuthStore } from "../../../stores/auth_store";
@@ -298,6 +315,7 @@ const authStore = useAuthStore();
 const movimientoStore = useMovimientoInventario();
 const miInventarioStore = useMiInventarioStore();
 const empleadoStore = useEmpleadosStore();
+const encryptStorage = new EncryptStorage("SECRET_KEY", "sessionStorage");
 const { movimientos, movimiento } = storeToRefs(movimientoStore);
 const { modulo } = storeToRefs(authStore);
 const tipos_Movimientos = ref([
@@ -310,6 +328,7 @@ const list_Estatus = ref(["Todos", "Pendiente", "Afectado", "Cancelado"]);
 const movimiento_Id = ref("Todos");
 const estatus_Id = ref("Todos");
 const list_Movimientos_Filtro = ref([]);
+const perfil = ref(encryptStorage.decrypt("perfil"));
 
 //-----------------------------------------------------------
 
@@ -374,6 +393,69 @@ const verFotos = async (id) => {
   await movimientoStore.loadDetalleMovimiento(id);
   movimientoStore.actualizarModalFotos(true);
   $q.loading.hide();
+};
+
+const cancelarAfectadoMovimiento = async (id) => {
+  $q.dialog({
+    title: "¿Está seguro de cancelar el movimiento afectado?",
+    message: "Se revertirán los cambios afectados",
+    icon: "Warning",
+    persistent: true,
+    transitionShow: "scale",
+    transitionHide: "scale",
+    ok: {
+      color: "secondary",
+      label: "¡Sí!, cancelar",
+    },
+    cancel: {
+      color: "red",
+      label: " No, regresar",
+    },
+  }).onOk(async () => {
+    $q.dialog({
+      title: "Confirmar selección",
+      message: "¿Está seguro de cancelar el movimiento afectado?",
+      icon: "Warning",
+      persistent: true,
+      transitionShow: "scale",
+      transitionHide: "scale",
+      ok: {
+        color: "secondary",
+        label: "¡Sí!, cancelar",
+      },
+      cancel: {
+        color: "red",
+        label: " No, regresar",
+      },
+    }).onOk(async () => {
+      $q.loading.show({
+        spinner: QSpinnerFacebook,
+        spinnerColor: "purple-ieen",
+        spinnerSize: 140,
+        backgroundColor: "purple-3",
+        message: "Espere un momento, por favor...",
+        messageColor: "black",
+      });
+      let resp = await movimientoStore.cancelarAfectadoMovimiento(id);
+      if (resp.success) {
+        $q.loading.hide();
+        $q.notify({
+          position: "top-right",
+          type: "positive",
+          message: resp.data,
+        });
+        await movimientoStore.loadInformacionMovimientos();
+      } else {
+        $q.loading.hide();
+        $q.notify({
+          position: "top-right",
+          type: "negative",
+          message:
+            "Ocurrió un error, inténtelo de nuevo. Si el error persiste, contacte a soporte",
+        });
+      }
+    });
+  });
 };
 
 const editar = async (id) => {

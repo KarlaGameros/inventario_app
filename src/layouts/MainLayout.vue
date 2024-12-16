@@ -51,6 +51,15 @@
                 </q-item>
               </div>
               <q-card
+                class="text-center no-shadow no-border q-pa-sm"
+                v-if="notificaciones.length == 0"
+              >
+                <div class="text-indigo-8 text-purple-ieen">
+                  Sin notificaciones
+                </div>
+              </q-card>
+              <q-separator />
+              <q-card
                 v-if="notificaciones.length > 0"
                 class="text-center no-shadow no-border q-pa-sm"
               >
@@ -68,11 +77,6 @@
                   class="text-indigo-8"
                   @click="toNotificaciones"
                 ></q-btn>
-              </q-card>
-              <q-card class="text-center no-shadow no-border q-pa-sm" v-else>
-                <div class="text-indigo-8 text-purple-ieen">
-                  Sin notificaciones
-                </div>
               </q-card>
             </q-list>
           </q-menu>
@@ -384,18 +388,12 @@ const detalle = async (row) => {
   if (resp.success == true) {
     await notificacionStore.loadNotificaciones();
   }
-  // let url = sistemas.value.find((x) => x.sistema_Id == row.sistema_Id);
-  // if (url.label == "Pases de salida") {
-  //   router.push({
-  //     name: "misSolicitudes",
-  //   });
-  // } else {
-  //   window.location =
-  //     url.url +
-  //     `/#/?key=${encryptStorage.decrypt("key")}&sistema=${
-  //       row.sistema_Id
-  //     }&usr=${encryptStorage.decrypt("usuario")}`;
-  // }
+  let url = sistemas.value.find((x) => x.sistema_Id == row.sistema_Id);
+  window.location =
+    url.url +
+    `/#/?key=${encryptStorage.decrypt("key")}&sistema=${
+      row.sistema_Id
+    }&usr=${encryptStorage.decrypt("usuario")}`;
   $q.loading.hide();
 };
 
