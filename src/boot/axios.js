@@ -17,10 +17,10 @@ let urlSistemas = arrUrl[0] + ":" + arrUrl[1];
 
 let urlAxios = "";
 if (urlActual.includes("localhost")) {
-  urlAxios = "http://192.168.2.110:9270/api";
+  urlAxios = "http://192.168.2.110:9170/api";
   urlSistemas = "http://192.168.2.110";
 } else {
-  urlAxios = arrUrl[0] + ":" + arrUrl[1] + ":9270/api";
+  urlAxios = arrUrl[0] + ":" + arrUrl[1] + ":9170/api";
 }
 
 const api = axios.create({ baseURL: urlAxios });

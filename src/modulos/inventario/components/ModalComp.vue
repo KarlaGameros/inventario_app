@@ -1199,6 +1199,11 @@ const tabsDefinition = [
 ];
 const tabs = ref(tabsDefinition.slice(0, 0));
 const tab = ref("general");
+const formRefs = ref({
+  extension_a: null,
+  extension_b: null,
+  extension_c: null,
+});
 
 //-----------------------------------------------------------
 
